@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "868639680484",
+    "project_id": "mathmatric-c4bcc",
+    "storage_bucket": "mathmatric-c4bcc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:868639680484:android:91395a8a82f6e74181c9f1",
+        "android_client_info": {
+          "package_name": "com.example.math_matric"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5Fhs39o6mYDkbFwa1ksSEsWcrSQShw0U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
