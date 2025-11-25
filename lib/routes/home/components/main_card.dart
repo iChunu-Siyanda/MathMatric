@@ -65,8 +65,8 @@ class _MainCardState extends State<MainCard>
     final bool showHover = _isHovered;
 
     return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
+      onEnter: (context) => setState(() => _isHovered = true),
+      onExit: (context) => setState(() => _isHovered = false),
       child: GestureDetector(
         onTapDown: _onTapDown,
         onTapUp: (d) {
@@ -88,7 +88,7 @@ class _MainCardState extends State<MainCard>
                 color: Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(showHover ? 0.2 : 0.1),
+                    color: Colors.black.withValues(alpha:showHover ? 0.2 : 0.1),
                     blurRadius: showHover ? 20 : 10,
                     spreadRadius: showHover ? 2 : 1,
                     offset: Offset(0, showHover ? 10 : 5),
@@ -98,7 +98,7 @@ class _MainCardState extends State<MainCard>
               child: Transform.scale(
                 scale: scale,
                 child: Container(
-                  height: 200,
+                  height: 400,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     gradient: const LinearGradient(

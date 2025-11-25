@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:math_matric/routes/paper1/presentation/components/main_card.dart';
+import 'package:math_matric/routes/home/components/main_card.dart';
 import 'package:math_matric/routes/paper1/presentation/pages/paper1_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -74,14 +74,6 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
 
-          // Paper 1:
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Text("Paper 1", style: TextStyle(fontSize: 30)),
-            ),
-          ),
-
           SliverToBoxAdapter(
             child: MainCard(
               text: "Paper 1",
@@ -94,14 +86,6 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
 
-          //Paper 2:
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Text("Paper 2", style: TextStyle(fontSize: 30)),
-            ),
-          ),
-
           SliverToBoxAdapter(
             child: MainCard(
               text: "Paper 2",
@@ -111,14 +95,6 @@ class _HomePageState extends State<HomePage> {
                   MaterialPageRoute(builder: (context) => Paper1Page()),
                 );
               },
-            ),
-          ),
-
-          //Community
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Text("Community", style: TextStyle(fontSize: 30)),
             ),
           ),
 

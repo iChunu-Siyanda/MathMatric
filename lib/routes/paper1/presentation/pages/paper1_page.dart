@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:math_matric/routes/paper1/data/paper_item.dart';
+import 'package:math_matric/routes/paper1/data/paper_item_data.dart';
 import 'package:math_matric/routes/paper1/presentation/animations/grid_insertion_controller.dart';
-import 'package:math_matric/routes/paper1/presentation/components/paper_tile.dart';
+import 'package:math_matric/routes/paper1/presentation/components/paper_screen/paper_tile.dart';
 
 class Paper1Page extends StatefulWidget {
   const Paper1Page({super.key});
@@ -13,16 +14,7 @@ class Paper1Page extends StatefulWidget {
 class _PaperGridPageState extends State<Paper1Page> {
   final GlobalKey<SliverAnimatedGridState> _gridKey = GlobalKey();
 
-  final List<PaperItem> _items = const [
-    PaperItem(title: "Streak", brief: "Road to passing with flying colours"),
-    PaperItem(title: 'Class Notes', brief: 'Notes on every section'),
-    PaperItem(title: 'Practice Quizzes', brief: 'Practice makes perferct'),
-    PaperItem(title: 'March', brief: 'March Tests'),
-    PaperItem(title: 'June', brief: 'June Examinations'),
-    PaperItem(title: 'Prelims', brief: 'Preliminary Examinations'),
-    PaperItem(title: 'November', brief: 'November Examinations'),
-    PaperItem(title: "IEB", brief: "IEB examinations")
-  ];
+  final List<PaperItem> _items = PaperItemData.items;
 
   @override
   void initState() {
@@ -67,10 +59,7 @@ class _PaperGridPageState extends State<Paper1Page> {
               ),
               itemBuilder: (context, index, animation) {
                 final data = _items[index];
-                return PaperTile(
-                  data: data,
-                  animation: animation,
-                );
+                return PaperTile(data: data, animation: animation);
               },
             ),
           ),
