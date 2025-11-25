@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:math_matric/auth/compnents/my_button.dart';
-import 'package:math_matric/auth/compnents/my_text.dart';
-import 'package:math_matric/auth/compnents/show_invalid_msg.dart';
+import 'package:math_matric/auth/auth_components/my_button.dart';
+import 'package:math_matric/auth/auth_components/my_text.dart';
+import 'package:math_matric/auth/auth_components/show_invalid_msg.dart';
 
 
 class RegisterPage extends StatefulWidget {
@@ -64,7 +64,7 @@ class _RegisterPageState extends State<RegisterPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               //Image logo
-              Image.asset('lib/images/x.png', height: 60),
+              Image.asset('assets/images/x.png', height: 60),
 
               SizedBox(height: 10.0),
 

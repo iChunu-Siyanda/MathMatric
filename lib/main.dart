@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:math_matric/auth/auth_firebase.dart';
 import 'package:math_matric/firebase_options.dart';
 
-
-Future<void> main() async{
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MainApp());
@@ -16,9 +15,29 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        body: AuthFirebase(),
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color.fromARGB(255, 78, 169, 207),
+          brightness: Brightness.light,
+        ).copyWith(
+          primary: const Color.fromARGB(255, 78, 169, 207),  // Electric Blue
+          secondary: Colors.white,            
+          tertiary: const Color(0xFF39FF14),  // Neon Green accent
+        ),
       ),
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Color.fromARGB(255, 0, 14, 38),
+          brightness: Brightness.dark,
+        ).copyWith(
+          primary: const Color(0xFF000B1E),   // Deep Navy
+          tertiary: const Color(0xFF39FF14),  // Neon Green accent
+        )
+      ),
+      themeMode: ThemeMode.system,
+      home: Scaffold(body: AuthFirebase()),
     );
   }
 }

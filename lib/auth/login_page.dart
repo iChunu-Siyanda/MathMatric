@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:math_matric/auth/forgot_password_page.dart';
-import 'package:math_matric/auth/compnents/my_button.dart';
-import 'package:math_matric/auth/compnents/my_text.dart';
-import 'package:math_matric/auth/compnents/show_invalid_msg.dart';
-import 'package:math_matric/auth/compnents/square_tile.dart';
+import 'package:math_matric/auth/auth_components/my_button.dart';
+import 'package:math_matric/auth/auth_components/my_text.dart';
+import 'package:math_matric/auth/auth_components/show_invalid_msg.dart';
+import 'package:math_matric/auth/auth_components/square_tile.dart';
 
 class LoginPage extends StatefulWidget {
   final void Function()? loginBtn;
@@ -54,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               //Image logo
-              Image.asset('lib/images/x.png', height: 60),
+              Image.asset('assets/images/x.png', height: 60),
 
               SizedBox(height: 10.0),
 
@@ -168,14 +168,14 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   //Google Login
                   GestureDetector(
-                    child: SquareTile(imagePath: "lib/images/google.png"),
+                    child: SquareTile(imagePath: "assets/images/google.png"),
                   ),
 
                   SizedBox(width: 10.0),
 
                   //Apple Login
                   GestureDetector(
-                    child: SquareTile(imagePath: "lib/images/apple.png"),
+                    child: SquareTile(imagePath: "assets/images/apple.png"),
                   ),
                 ],
               ),

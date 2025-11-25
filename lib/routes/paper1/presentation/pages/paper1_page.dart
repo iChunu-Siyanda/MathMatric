@@ -1,0 +1,81 @@
+import 'package:flutter/material.dart';
+import 'package:math_matric/routes/paper1/data/paper_item.dart';
+import 'package:math_matric/routes/paper1/presentation/animations/grid_insertion_controller.dart';
+import 'package:math_matric/routes/paper1/presentation/components/paper_tile.dart';
+
+class Paper1Page extends StatefulWidget {
+  const Paper1Page({super.key});
+
+  @override
+  State<Paper1Page> createState() => _PaperGridPageState();
+}
+
+class _PaperGridPageState extends State<Paper1Page> {
+  final GlobalKey<SliverAnimatedGridState> _gridKey = GlobalKey();
+
+  final List<PaperItem> _items = const [
+    PaperItem(title: "Streak", brief: "Road to passing with flying colours"),
+    PaperItem(title: 'Class Notes', brief: 'Notes on every section'),
+    PaperItem(title: 'Practice Quizzes', brief: 'Practice makes perferct'),
+    PaperItem(title: 'March', brief: 'March Tests'),
+    PaperItem(title: 'June', brief: 'June Examinations'),
+    PaperItem(title: 'Prelims', brief: 'Preliminary Examinations'),
+    PaperItem(title: 'November', brief: 'November Examinations'),
+    PaperItem(title: "IEB", brief: "IEB examinations")
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final controller = GridInsertionController(
+        gridState: _gridKey.currentState!,
+        totalItems: _items.length,
+      );
+      controller.staggerInsert();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            pinned: true,
+            expandedHeight: 140,
+            flexibleSpace: const FlexibleSpaceBar(
+              centerTitle: true,
+              title: Text('Paper 1'),
+            ),
+          ),
+
+          const SliverPadding(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          ),
+
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            sliver: SliverAnimatedGrid(
+              key: _gridKey,
+              initialItemCount: 0,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 12,
+                crossAxisSpacing: 12,
+                childAspectRatio: 0.75,
+              ),
+              itemBuilder: (context, index, animation) {
+                final data = _items[index];
+                return PaperTile(
+                  data: data,
+                  animation: animation,
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
