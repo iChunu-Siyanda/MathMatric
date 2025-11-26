@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:math_matric/routes/paper1/data/topic_item.dart';
-import 'package:math_matric/routes/paper1/presentation/components/exam/exam_model.dart';
-import 'package:math_matric/routes/paper1/presentation/components/paper_screen/topic_list_tile.dart';
-import 'package:math_matric/routes/paper1/presentation/pages/section_type.dart';
+import 'package:math_matric/routes/papers/resources/models/topic_item.dart';
+import 'package:math_matric/routes/papers/resources/widgets/components/topic_list_tile.dart';
+import 'package:math_matric/routes/papers/resources/widgets/components/section_type.dart';
 
 class TopicsSliverList extends StatefulWidget {
   final ScrollController scrollController;
@@ -96,13 +95,9 @@ class _TopicsSliverListState extends State<TopicsSliverList>
                       context,
                       MaterialPageRoute(
                         builder: (_) => SectionType(
-                          exam: ExamModel(
-                            year: item.title, 
-                            questionPdf: "Question Paper", 
-                            memoPdf: "Memo"
-                          ), 
-                          type1: '', 
-                          type2: '',
+                          pageTitle: item.pageTitle,
+                          tabTitles: item.tab.tabTitles,
+                          tabPages: item.tab.tabPages,
                         )
                       ),
                     );

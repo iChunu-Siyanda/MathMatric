@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:math_matric/routes/home/components/main_card.dart';
-import 'package:math_matric/routes/paper1/presentation/pages/paper1_page.dart';
+import 'package:math_matric/routes/papers/paper_1/screens/paper_1_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,7 +21,7 @@ class _HomePageState extends State<HomePage> {
           SliverAppBar(
             backgroundColor: colorScheme.primary,
             leading: Icon(Icons.menu, color: colorScheme.onPrimary),
-            expandedHeight: 300,
+            expandedHeight: 200,
             pinned: true,
             floating: false,
             flexibleSpace: FlexibleSpaceBar(
@@ -36,7 +36,7 @@ class _HomePageState extends State<HomePage> {
           // CarouselView
           SliverToBoxAdapter(
             child: SizedBox(
-              height: 250,
+              height: 350,
               child: CarouselView.weighted(
                 flexWeights: const <int>[1, 3, 1],
                 shrinkExtent: 50.0,

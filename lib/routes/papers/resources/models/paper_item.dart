@@ -1,4 +1,4 @@
-import 'package:math_matric/routes/paper1/data/topic_item.dart';
+import 'package:math_matric/routes/papers/resources/models/topic_item.dart';
 
 class PaperItem {
   final String title;

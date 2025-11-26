@@ -22,9 +22,9 @@ class MainApp extends StatelessWidget {
           seedColor: const Color.fromARGB(255, 78, 169, 207),
           brightness: Brightness.light,
         ).copyWith(
-          primary: const Color.fromARGB(255, 78, 169, 207),  // Electric Blue
+          primary: const Color.fromARGB(255, 78, 169, 207), 
           secondary: Colors.white,            
-          tertiary: const Color(0xFF39FF14),  // Neon Green accent
+          tertiary: const Color(0xFF39FF14), 
         ),
       ),
       darkTheme: ThemeData(

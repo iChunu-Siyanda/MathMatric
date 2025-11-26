@@ -98,7 +98,7 @@ class _MainCardState extends State<MainCard>
               child: Transform.scale(
                 scale: scale,
                 child: Container(
-                  height: 400,
+                  height: 300,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     gradient: const LinearGradient(

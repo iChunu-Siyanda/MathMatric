@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:math_matric/routes/paper1/presentation/components/exam/exam_memo_page.dart';
-import 'package:math_matric/routes/paper1/presentation/components/exam/exam_model.dart';
-import 'package:math_matric/routes/paper1/presentation/components/exam/exam_paper_page.dart';
 
 class SectionType extends StatefulWidget {
-  final ExamModel exam;
-  final String type1;
-  final String type2;
+  final String pageTitle;
+  final List<String> tabTitles;
+  final List<Widget> tabPages;
 
-  const SectionType({super.key, required this.exam, required this.type1, required this.type2});
+  const SectionType({super.key, required this.tabPages, required this.tabTitles, required this.pageTitle});
 
   @override
   State<SectionType> createState() => _SectionTypeState();
@@ -35,15 +32,14 @@ class _SectionTypeState extends State<SectionType>
             pinned: true,
             expandedHeight: 120,
             centerTitle: true,
-            title: Text("${widget.exam.year} Exam"), 
+            title: Text(widget.pageTitle), 
             bottom: TabBar(
               controller: _tabController,
-              labelColor: Colors.white,
-              unselectedLabelColor: Colors.white70,
-              indicatorColor: Colors.white,
+              labelColor: Colors.black,
+              unselectedLabelColor: const Color.fromARGB(179, 97, 95, 95),
+              indicatorColor: Colors.black,
               tabs: [
-                Tab(text: widget.type1),
-                Tab(text: widget.type2),
+                for (final title in widget.tabTitles) Tab(text: title),
               ],
             ),
           )
@@ -51,10 +47,7 @@ class _SectionTypeState extends State<SectionType>
 
         body: TabBarView(
           controller: _tabController,
-          children: [
-            ExamPaperPage(pdfPath: widget.exam.questionPdf),
-            ExamMemoPage(pdfPath: widget.exam.memoPdf),
-          ],
+          children: widget.tabPages
         ),
       ),
     );

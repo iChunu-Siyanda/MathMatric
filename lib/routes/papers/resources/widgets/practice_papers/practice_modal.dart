@@ -1,10 +1,8 @@
-class ExamModel {
-  final String year;
+class PracticeModal {
   final String questionPdf;
   final String memoPdf;
 
-  const ExamModel({
-    required this.year,
+  const PracticeModal({
     required this.questionPdf,
     required this.memoPdf,
   });
