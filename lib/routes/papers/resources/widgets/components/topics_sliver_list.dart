@@ -2,12 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:math_matric/routes/papers/resources/models/topic_item.dart';
 import 'package:math_matric/routes/papers/resources/widgets/components/topic_list_tile.dart';
 import 'package:math_matric/routes/papers/resources/widgets/components/section_type.dart';
+import 'package:math_matric/routes/papers/resources/widgets/exam/exam_memo_page.dart';
+import 'package:math_matric/routes/papers/resources/widgets/exam/exam_paper_page.dart';
 
 class TopicsSliverList extends StatefulWidget {
   final ScrollController scrollController;
   final List<TopicItem> content;
   final String listTopicTitle;
-  const TopicsSliverList({super.key, required this.scrollController, required this.content, required this.listTopicTitle});
+  const TopicsSliverList({
+    super.key,
+    required this.scrollController,
+    required this.content,
+    required this.listTopicTitle,
+  });
 
   @override
   State<TopicsSliverList> createState() => _TopicsSliverListState();
@@ -41,11 +48,18 @@ class _TopicsSliverListState extends State<TopicsSliverList>
 
   // returns an animation for a specific index inside [0..1]
   Animation<double> _itemInterval(int index) {
-    final double start = (index * _staggerMs) / _controller.duration!.inMilliseconds;
-    final double end = ((index * _staggerMs) + (_staggerMs + 150)) / _controller.duration!.inMilliseconds;
+    final double start =
+        (index * _staggerMs) / _controller.duration!.inMilliseconds;
+    final double end =
+        ((index * _staggerMs) + (_staggerMs + 150)) /
+        _controller.duration!.inMilliseconds;
     return CurvedAnimation(
       parent: _controller,
-      curve: Interval(start.clamp(0.0, 1.0), end.clamp(0.0, 1.0), curve: Curves.easeOut),
+      curve: Interval(
+        start.clamp(0.0, 1.0),
+        end.clamp(0.0, 1.0),
+        curve: Curves.easeOut,
+      ),
     );
   }
 
@@ -58,60 +72,59 @@ class _TopicsSliverListState extends State<TopicsSliverList>
           pinned: true,
           expandedHeight: 120,
           backgroundColor: Colors.white,
-          flexibleSpace: FlexibleSpaceBar(centerTitle: true, title: Text(widget.listTopicTitle)),
-        ),
-
-        SliverPadding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-        ),
-
-        // animated sliver list
-        SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              if (index >= widget.content.length) return null;
-              final item = widget.content[index];
-              final anim = _itemInterval(index);
-
-              return AnimatedBuilder(
-                animation: anim,
-                builder: (context, child) {
-                  // slide from below and fade
-                  final double translateY = (1.0 - anim.value) * 18;
-                  final double opacity = anim.value;
-                  return Opacity(
-                    opacity: opacity,
-                    child: Transform.translate(
-                      offset: Offset(0, translateY),
-                      child: child,
-                    ),
-                  );
-                },
-                child: TopicListTile(
-                  item: item,
-                  onTap: () {
-                    // Please keep this synchronous
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => SectionType(
-                          pageTitle: item.pageTitle,
-                          tabTitles: item.tab.tabTitles,
-                          tabPages: item.tab.tabPages,
-                        )
-                      ),
-                    );
-                  },
-                ),
-              );
-            },
-            childCount: widget.content.length,
+          flexibleSpace: FlexibleSpaceBar(
+            centerTitle: true,
+            title: Text(widget.listTopicTitle),
           ),
         ),
 
-        SliverPadding(
-          padding: const EdgeInsets.only(bottom: 96),
+        SliverPadding(padding: const EdgeInsets.symmetric(vertical: 8)),
+
+        // animated sliver list
+        SliverList(
+          delegate: SliverChildBuilderDelegate((context, index) {
+            if (index >= widget.content.length) return null;
+            final item = widget.content[index];
+            final anim = _itemInterval(index);
+
+            return AnimatedBuilder(
+              animation: anim,
+              builder: (context, child) {
+                // slide from below and fade
+                final double translateY = (1.0 - anim.value) * 18;
+                final double opacity = anim.value;
+                return Opacity(
+                  opacity: opacity,
+                  child: Transform.translate(
+                    offset: Offset(0, translateY),
+                    child: child,
+                  ),
+                );
+              },
+              child: TopicListTile(
+                item: item,
+                onTap: () {
+                  // keep this synchronous
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => SectionType(
+                        pageTitle: item.pageTitle,
+                        tabTitles: item.tab.tabTitles,
+                        tabPages: [
+                          ExamPaperPage(pdfPath: '', pdfTitle: '',),
+                          ExamMemoPage(pdfPath: '',),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            );
+          }, childCount: widget.content.length),
         ),
+
+        SliverPadding(padding: const EdgeInsets.only(bottom: 96)),
       ],
     );
   }
