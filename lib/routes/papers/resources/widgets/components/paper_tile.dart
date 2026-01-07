@@ -49,7 +49,7 @@ class PaperTile extends StatelessWidget {
                         ),
                         child: TopicsSliverList(
                           scrollController: scrollController,
-                          content: data.topics,
+                          content: data,
                           listTopicTitle: data.topicTitle,
                         ),
                       );

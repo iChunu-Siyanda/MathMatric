@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:math_matric/routes/papers/paper_1/data/exam_paper.dart';
+import 'package:math_matric/routes/papers/resources/models/paper_item.dart';
 import 'package:math_matric/routes/papers/resources/models/topic_item.dart';
 import 'package:math_matric/routes/papers/resources/widgets/components/topic_list_tile.dart';
 import 'package:math_matric/routes/papers/resources/widgets/components/section_type.dart';
@@ -7,7 +9,7 @@ import 'package:math_matric/routes/papers/resources/widgets/exam/exam_paper_page
 
 class TopicsSliverList extends StatefulWidget {
   final ScrollController scrollController;
-  final List<TopicItem> content;
+  final PaperItem content;
   final String listTopicTitle;
   const TopicsSliverList({
     super.key,
@@ -30,7 +32,7 @@ class _TopicsSliverListState extends State<TopicsSliverList>
   void initState() {
     super.initState();
 
-    final totalMs = (widget.content.length + 1) * _staggerMs;
+    final totalMs = (widget.content.topics.length + 1) * _staggerMs;
     _controller = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: totalMs),
@@ -83,8 +85,8 @@ class _TopicsSliverListState extends State<TopicsSliverList>
         // animated sliver list
         SliverList(
           delegate: SliverChildBuilderDelegate((context, index) {
-            if (index >= widget.content.length) return null;
-            final item = widget.content[index];
+            if (index >= widget.content.topics.length) return null;
+            final item = widget.content.topics[index];
             final anim = _itemInterval(index);
 
             return AnimatedBuilder(
@@ -112,16 +114,17 @@ class _TopicsSliverListState extends State<TopicsSliverList>
                         pageTitle: item.pageTitle,
                         tabTitles: item.tab.tabTitles,
                         tabPages: [
-                          ExamPaperPage(pdfPath: '', pdfTitle: '',),
+                          ExamPaperPage(pdfPath: ExamPaperRepository.papers.first, pdfTitle: ExamPaperRepository.papers.first,),
                           ExamMemoPage(pdfPath: '',),
                         ],
+                        content: widget.content,
                       ),
                     ),
                   );
                 },
               ),
             );
-          }, childCount: widget.content.length),
+          }, childCount: widget.content.topics.length),
         ),
 
         SliverPadding(padding: const EdgeInsets.only(bottom: 96)),

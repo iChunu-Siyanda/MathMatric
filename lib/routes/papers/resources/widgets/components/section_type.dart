@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:math_matric/routes/papers/resources/models/paper_item.dart';
 
 class SectionType extends StatefulWidget {
   final String pageTitle;
   final List<String> tabTitles;
   final List<Widget> tabPages;
+  final PaperItem ? content;
 
-  const SectionType({super.key, required this.tabPages, required this.tabTitles, required this.pageTitle});
+  const SectionType({super.key, required this.tabPages, required this.tabTitles, required this.pageTitle, this.content});
 
   @override
   State<SectionType> createState() => _SectionTypeState();

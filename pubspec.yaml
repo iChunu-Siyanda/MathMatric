@@ -22,5 +22,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
-    - assets/papers/paper_1/
-    - assets/papers/paper_2/
+    - assets/papers/

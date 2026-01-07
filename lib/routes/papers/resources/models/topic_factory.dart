@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:math_matric/routes/papers/paper_1/data/exam_paper.dart';
 import 'package:math_matric/routes/papers/resources/models/tab_model.dart';
 import 'package:math_matric/routes/papers/resources/models/topic_item.dart';
-import 'package:math_matric/routes/papers/resources/widgets/exam/exam_memo_page.dart';
-import 'package:math_matric/routes/papers/resources/widgets/exam/exam_paper_page.dart';
 
 enum TabType {
   progress,
@@ -16,22 +13,21 @@ class TopicFactory {
   static Map<TabType,TabModel> tabSets = {
     TabType.progress : TabModel(
       tabTitles: ["Streak", "Scores"],
-      tabPages: [ExamPaperPage(pdfPath: ExamPaperRepository.papers.first.assetPath, pdfTitle: ExamPaperRepository.papers.first.title,), ExamMemoPage(pdfPath: "")],
+      //tabPages: [ExamPaperPage(pdfPath: ExamPaperRepository.papers.first.assetPath, pdfTitle: ExamPaperRepository.papers.first.title,), ExamMemoPage(pdfPath: "")],
     ),
 
     TabType.classNotes: TabModel(
       tabTitles: ["Tips", "Class Notes"],
-      tabPages: [ExamPaperPage(pdfPath: ExamPaperRepository.papers.first.assetPath, pdfTitle: ExamPaperRepository.papers.first.title,), ExamMemoPage(pdfPath: "")],
+      //tabPages: [ExamPaperPage(pdfPath: ExamPaperRepository.papers.first.assetPath, pdfTitle: ExamPaperRepository.papers.first.title,), ExamMemoPage(pdfPath: "")],
     ),
 
     TabType.practice: TabModel(
       tabTitles: ["Quiz", "Practice Tests"],
-      tabPages: [ExamPaperPage(pdfPath: ExamPaperRepository.papers.first.assetPath, pdfTitle: ExamPaperRepository.papers.first.title,), ExamMemoPage(pdfPath: "")],
+      //tabPages: [ExamPaperPage(pdfPath: ExamPaperRepository.papers.first.assetPath, pdfTitle: ExamPaperRepository.papers.first.title,), ExamMemoPage(pdfPath: "")],
     ),
-
     TabType.exam: TabModel(
       tabTitles: ["Questions", "Memo"],
-      tabPages: [ExamPaperPage(pdfPath: ExamPaperRepository.papers.first.assetPath, pdfTitle: ExamPaperRepository.papers.first.title,), ExamMemoPage(pdfPath: "")],
+      //tabPages: [ExamPaperPage(pdfPath: ExamPaperRepository.papers.first.assetPath, pdfTitle: ExamPaperRepository.papers.first.title,), ExamMemoPage(pdfPath: "")],
     ),
   };
 

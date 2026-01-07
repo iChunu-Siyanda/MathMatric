@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:math_matric/routes/papers/resources/models/exam_paper_model.dart';
 import 'package:math_matric/routes/papers/resources/widgets/exam/exam_paper_viewer.dart';
 
 class ExamPaperPage extends StatefulWidget {
-  final String pdfPath;
-  final String pdfTitle;
+  final ExamPaperModel pdfPath;
+  final ExamPaperModel pdfTitle;
 
   const ExamPaperPage({super.key, required this.pdfPath, required this.pdfTitle});
 
@@ -49,8 +50,8 @@ class _ExamPaperPageState extends State<ExamPaperPage>
       context,
       MaterialPageRoute(
         builder: (_) => ExamPaperViewer(
-          title: widget.pdfTitle,
-          pdfAssetPath: widget.pdfPath,
+          title: widget.pdfTitle.title,
+          pdfAssetPath: widget.pdfPath.assetPath,
         ),
       ),
     );
