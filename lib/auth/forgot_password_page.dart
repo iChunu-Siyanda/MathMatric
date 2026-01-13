@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:math_matric/auth/auth_components/my_text.dart';
+import 'package:math_matric/auth/auth_components/auth_background.dart';
+import 'package:math_matric/auth/auth_components/my_button.dart';
+import 'package:math_matric/auth/auth_components/my_text_field.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -10,64 +12,78 @@ class ForgotPasswordPage extends StatefulWidget {
 }
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
-  final _emailController = TextEditingController();
+  final emailController = TextEditingController();
+  bool isLoading = false;
 
-  @override
-  void dispose() {
-    _emailController.dispose();
-    super.dispose();
-  }
+  Future<void> resetPassword() async {
+    setState(() => isLoading = true);
 
-  Future passwordReset() async {
     try {
       await FirebaseAuth.instance.sendPasswordResetEmail(
-        email: _emailController.text.trim(),
+        email: emailController.text.trim(),
       );
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(content: Text("Password Reset Link Sent! Please Check Your Email"));
-        },
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Password reset link sent to your email"),
+        ),
       );
     } on FirebaseAuthException catch (e) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(content: Text(e.message.toString()));
-        },
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? "Something went wrong")),
       );
+    } finally {
+      setState(() => isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(backgroundColor: Colors.grey[300], elevation: 0),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+    return Scaffold(
+      body: AuthBackground(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0),
-              child: Text(
-                "Forgot Your Password? Enter Your Email Below. You Will Receive A Link To Reset Your Password",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 10.0),
+            Text(
+              "Reset Password",
+              style: TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.w700,
+                color: Colors.grey[900],
               ),
             ),
 
-            SizedBox(height: 10.0),
+            const SizedBox(height: 10),
 
-            MyText(controller: _emailController, obscure: false, hint: "Email"),
+            Text(
+              "Enter your email and we’ll send you a reset link",
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey[600]),
+            ),
 
-            SizedBox(height: 10),
+            const SizedBox(height: 28),
 
-            MaterialButton(
-              onPressed: passwordReset,
-              color: Colors.grey[300],
-              child: Text(
-                "Reset Password",
-                style: TextStyle(color: Colors.black),
+            MyTextField(
+              controller: emailController,
+              hint: "Email address",
+              obscure: false,
+            ),
+
+            const SizedBox(height: 28),
+
+            MyButton(
+              label: "Send Reset Link",
+              isLoading: isLoading,
+              onPressed: resetPassword,
+            ),
+
+            const SizedBox(height: 20),
+
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                "Back to login",
+                style: TextStyle(color: Color(0xFF1B6EF3)),
               ),
             ),
           ],

@@ -1,30 +1,59 @@
 import 'package:flutter/material.dart';
 
 class MyButton extends StatelessWidget {
-  
-  final Function()? onTapBtn;
-  final String message;
-  const MyButton({super.key, required this.onTapBtn, required this.message});
+  final String label;
+  final bool isLoading;
+  final VoidCallback onPressed;
+
+  const MyButton({
+    super.key, 
+    required this.label,
+    required this.onPressed,
+    this.isLoading = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTapBtn,
-      child: Container(
-        padding: EdgeInsets.all(25.0),
+      onTap: isLoading ? null : onPressed,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        height: 56,
         decoration: BoxDecoration(
-          color: Colors.black,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(16),
+          gradient: const LinearGradient(
+            colors: [
+              Color(0xFF1B6EF3),
+              Color(0xFF144ECF),
+            ],
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF1B6EF3).withOpacity(0.35),
+              blurRadius: 18,
+              offset: const Offset(0, 10),
+            ),
+          ],
         ),
         child: Center(
-          child: Text(
-            message,
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
-          ),
+          child: isLoading
+              ? const SizedBox(
+                  width: 22,
+                  height: 22,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.5,
+                    valueColor: AlwaysStoppedAnimation(Colors.white),
+                  ),
+                )
+              : Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                    letterSpacing: 0.4,
+                  ),
+                ),
         ),
       ),
     );

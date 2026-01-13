@@ -1,15 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:math_matric/auth/forgot_password_page.dart';
+import 'package:math_matric/auth/auth_components/auth_background.dart';
 import 'package:math_matric/auth/auth_components/my_button.dart';
-import 'package:math_matric/auth/auth_components/my_text.dart';
-import 'package:math_matric/auth/auth_components/show_invalid_msg.dart';
-import 'package:math_matric/auth/auth_components/square_tile.dart';
+import 'package:math_matric/auth/auth_components/my_text_field.dart';
+import 'forgot_password_page.dart';
 
 class LoginPage extends StatefulWidget {
-  final void Function()? loginBtn;
+  final void Function()? onRegisterTap;
 
-  const LoginPage({super.key, required this.loginBtn});
+  const LoginPage({super.key, this.onRegisterTap});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -19,193 +18,160 @@ class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  //Sign in user
-  void signUserIn() async {
-    //Show loading circle
-    showDialog(
-      context: context,
-      builder: (context) {
-        return const Center(child: CircularProgressIndicator());
-      },
-    );
+  bool isLoading = false;
 
-    //try to sign in user
+  Future<void> signUserIn() async {
+    setState(() => isLoading = true);
+
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
       );
-
-      //pop circle
-      Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
-      Navigator.pop(context);
-      showInvalidMsg(context, e.code);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? "Login failed")),
+      );
+    } finally {
+      setState(() => isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200],
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              //Image logo
-              Image.asset('assets/images/x.png', height: 60),
-
-              SizedBox(height: 10.0),
-
-              //welcome back message
-              Text(
-                "Welcome Back! You've been missed",
-                style: TextStyle(color: Colors.grey[800]),
-              ),
-
-              SizedBox(height: 10.0),
-
-              //Username & Password textField
-              MyText(
-                controller: emailController,
-                obscure: false,
-                hint: "Email",
-              ),
-
-              SizedBox(height: 10.0),
-
-              MyText(
-                controller: passwordController,
-                obscure: true,
-                hint: "Password",
-              ),
-
-              SizedBox(height: 5.0),
-
-              //Forgot password link
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 25.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context, 
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return ForgotPasswordPage();
-                            }
-                          )
-                        );
-                      },
-                      child: Text(
-                        "Forgot Password",
-                        style: TextStyle(color: Colors.blue),
+      body: AuthBackground(
+        child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      /// LOGO
+                      Center(
+                        child: Image.asset(
+                          'assets/images/x.png',
+                          height: 64,
+                        ),
                       ),
-                    ),
+        
+                      const SizedBox(height: 24),
+        
+                      /// TITLE
+                      Text(
+                        "Welcome Back",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.grey[900],
+                        ),
+                      ),
+        
+                      const SizedBox(height: 6),
+        
+                      Text(
+                        "Sign in to continue your maths journey",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+        
+                      const SizedBox(height: 28),
+        
+                      /// EMAIL
+                      MyTextField(
+                        controller: emailController,
+                        hint: "Email address",
+                        obscure: false,
+                      ),
+        
+                      const SizedBox(height: 16),
+        
+                      /// PASSWORD
+                      MyTextField(
+                        controller: passwordController,
+                        hint: "Password",
+                        obscure: true,
+                      ),
+        
+                      const SizedBox(height: 12),
+        
+                      /// FORGOT PASSWORD
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const ForgotPasswordPage(),
+                              ),
+                            );
+                          },
+                          child: const Text(
+                            "Forgot password?",
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF1B6EF3),
+                            ),
+                          ),
+                        ),
+                      ),
+        
+                      const SizedBox(height: 24),
+        
+                      /// PREMIUM BUTTON
+                      MyButton(
+                        label: "Sign In",
+                        isLoading: isLoading,
+                        onPressed: signUserIn,
+                      ),
+        
+                      const SizedBox(height: 28),
+        
+                      /// DIVIDER
+                      Row(
+                        children: [
+                          Expanded(child: Divider(color: Colors.grey[300])),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12),
+                            child: Text(
+                              "or",
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ),
+                          Expanded(child: Divider(color: Colors.grey[300])),
+                        ],
+                      ),
+        
+                      const SizedBox(height: 22),
+        
+                      /// REGISTER
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "New to MathMatric?",
+                            style: TextStyle(color: Colors.grey[700]),
+                          ),
+                          const SizedBox(width: 6),
+                          GestureDetector(
+                            onTap: widget.onRegisterTap,
+                            child: const Text(
+                              "Create account",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF1B6EF3),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ],
-              ),
-
-              SizedBox(height: 10.0),
-
-              //Sign in button
-              Padding(
-                padding: const EdgeInsets.all(23.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: MyButton(onTapBtn: signUserIn, message: "Sign In"),
-                    ),
-                  ],
-                ),
-              ),
-
-              SizedBox(height: 10.0),
-
-              //Or continue with other platforms
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(width: 30),
-
-                  // Left line
-                  Expanded(
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 10),
-                      height: 1,
-                      color: Colors.grey[300],
-                    ),
-                  ),
-
-                  // Text in the middle
-                  Text(
-                    "Or Continue With",
-                    style: TextStyle(color: Colors.grey[800]),
-                  ),
-
-                  // Right line
-                  Expanded(
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 10),
-                      height: 1,
-                      color: Colors.grey[300],
-                    ),
-                  ),
-
-                  SizedBox(width: 30),
-                ],
-              ),
-
-              SizedBox(height: 15.0),
-
-              //Google & Apple Login
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  //Google Login
-                  GestureDetector(
-                    child: SquareTile(imagePath: "assets/images/google.png"),
-                  ),
-
-                  SizedBox(width: 10.0),
-
-                  //Apple Login
-                  GestureDetector(
-                    child: SquareTile(imagePath: "assets/images/apple.png"),
-                  ),
-                ],
-              ),
-
-              SizedBox(height: 15.0),
-
-              //Register Account
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Registered Yet?",
-                    style: TextStyle(color: Colors.grey[800]),
-                  ),
-
-                  SizedBox(width: 5.0),
-
-                  GestureDetector(
-                    onTap: widget.loginBtn,
-                    child: Text(
-                      "Registered Now",
-                      style: TextStyle(color: Colors.blue),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
       ),
-    );
+    );  
   }
 }

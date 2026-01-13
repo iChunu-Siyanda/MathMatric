@@ -1,14 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:math_matric/auth/auth_components/auth_background.dart';
 import 'package:math_matric/auth/auth_components/my_button.dart';
-import 'package:math_matric/auth/auth_components/my_text.dart';
-import 'package:math_matric/auth/auth_components/show_invalid_msg.dart';
-
+import 'package:math_matric/auth/auth_components/my_text_field.dart';
 
 class RegisterPage extends StatefulWidget {
-  final Function()? registerBtn;
+  final VoidCallback? onLoginTap;
 
-  const RegisterPage({super.key, required this.registerBtn});
+  const RegisterPage({super.key, this.onLoginTap});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -19,125 +18,116 @@ class _RegisterPageState extends State<RegisterPage> {
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
-  //Sign up user
-  void signUserUp() async {
-    //Show loading circle
-    showDialog(
-      context: context,
-      builder: (context) {
-        return const Center(child: CircularProgressIndicator());
-      },
-    );
+  bool isLoading = false;
+
+  Future<void> signUserUp() async {
+    if (passwordController.text != confirmPasswordController.text) {
+      _showMessage("Passwords do not match");
+      return;
+    }
+
+    setState(() => isLoading = true);
 
     try {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => const Center(child: CircularProgressIndicator()),
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
       );
-
-      // Check if passwords match
-      if (passwordController.text == confirmPasswordController.text) {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailController.text.trim(),
-          password: passwordController.text.trim(),
-        );
-        Navigator.pop(context); // close loading circle
-      } else {
-        Navigator.pop(context); // close loading circle
-        showInvalidMsg(context, "Passwords do not match. Please try again.");
-        return; // stop execution
-      }
     } on FirebaseAuthException catch (e) {
-      Navigator.pop(context); // close loading circle
-      showInvalidMsg(context, e.code); // show error
+      _showMessage(e.message ?? "Registration failed");
+    } finally {
+      setState(() => isLoading = false);
     }
+  }
+
+  void _showMessage(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(msg)),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200],
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              //Image logo
-              Image.asset('assets/images/x.png', height: 60),
+      body: AuthBackground(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset('assets/images/x.png', height: 64),
 
-              SizedBox(height: 10.0),
+            const SizedBox(height: 24),
 
-              //welcome back message
-              Text(
-                "Welcome! Sign Up Your New Account",
-                style: TextStyle(color: Colors.grey[800]),
+            Text(
+              "Create Account",
+              style: TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.w700,
+                color: Colors.grey[900],
               ),
+            ),
 
-              SizedBox(height: 10.0),
+            const SizedBox(height: 6),
 
-              //Username, Password, and Confirm Password textField
-              MyText(
-                controller: emailController,
-                obscure: false,
-                hint: "Username",
-              ),
+            Text(
+              "Start your maths success journey",
+              style: TextStyle(color: Colors.grey[600]),
+            ),
 
-              SizedBox(height: 10.0),
+            const SizedBox(height: 28),
 
-              MyText(
-                controller: passwordController,
-                obscure: true,
-                hint: "Password",
-              ),
+            MyTextField(
+              controller: emailController,
+              hint: "Email address",
+              obscure: false,
+            ),
 
-              SizedBox(height: 10.0),
+            const SizedBox(height: 16),
 
-              MyText(
-                controller: confirmPasswordController,
-                obscure: true,
-                hint: "Confirm Password",
-              ),
+            MyTextField(
+              controller: passwordController,
+              hint: "Password",
+              obscure: true,
+            ),
 
-              SizedBox(height: 5.0),
+            const SizedBox(height: 16),
 
-              //Sign in button
-              Padding(
-                padding: const EdgeInsets.all(23.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: MyButton(onTapBtn: signUserUp, message: "Sign Up"),
-                    ),
-                  ],
+            MyTextField(
+              controller: confirmPasswordController,
+              hint: "Confirm password",
+              obscure: true,
+            ),
+
+            const SizedBox(height: 28),
+
+            MyButton(
+              label: "Create Account",
+              isLoading: isLoading,
+              onPressed: signUserUp,
+            ),
+
+            const SizedBox(height: 28),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Already have an account?",
+                  style: TextStyle(color: Colors.grey[700]),
                 ),
-              ),
-
-              SizedBox(height: 10.0),
-
-              //Already Have Account? Back To Login Page
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Already Have Account?",
-                    style: TextStyle(color: Colors.grey[800]),
-                  ),
-
-                  SizedBox(width: 5.0),
-
-                  GestureDetector(
-                    onTap: widget.registerBtn,
-                    child: Text(
-                      "Login Now",
-                      style: TextStyle(color: Colors.blue),
+                const SizedBox(width: 6),
+                GestureDetector(
+                  onTap: widget.onLoginTap,
+                  child: const Text(
+                    "Sign in",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF1B6EF3),
                     ),
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
