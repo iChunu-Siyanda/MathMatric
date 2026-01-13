@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:math_matric/routes/drawer/math_matric_drawer.dart';
 import 'package:math_matric/routes/home/components/auto_sliding_carousel.dart';
 import 'package:math_matric/routes/home/components/continue_studying_card.dart';
 import 'package:math_matric/routes/home/components/discussions_card.dart';
@@ -24,7 +25,7 @@ class _HomePageState extends State<HomePage> {
           // Sliver AppBar
           SliverAppBar(
             backgroundColor: colorScheme.primary,
-            leading: Icon(Icons.menu, color: colorScheme.onPrimary),
+            //leading: Icon(Icons.menu, color: colorScheme.onPrimary),
             expandedHeight: 200,
             pinned: true,
             floating: false,
@@ -101,6 +102,8 @@ class _HomePageState extends State<HomePage> {
           // ),
         ],
       ),
+
+      drawer: MathMatricDrawer(streak: 8,),
     );
   }
 }

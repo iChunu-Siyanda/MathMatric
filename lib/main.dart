@@ -38,7 +38,7 @@ class MainApp extends StatelessWidget {
         )
       ),
       themeMode: ThemeMode.system,
-      home: Scaffold(body: AuthFirebase()),
+      home: Scaffold(body: AuthFirebase(),),
     );
   }
 }
