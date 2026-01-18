@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:math_matric/routes/papers/resources/models/paper_item.dart';
-import 'package:math_matric/routes/papers/resources/widgets/components/topics_sliver_list.dart';
+import 'package:math_matric/routes/papers/resources/components/topics_sliver_list.dart';
 
 class PaperTile extends StatelessWidget {
   final PaperItem data;

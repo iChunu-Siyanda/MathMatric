@@ -31,8 +31,7 @@ class TileTopics{
     title: "My Progress",
     names: [
       "Streak",
-      "Scores",
-      "Study Reminders"
+      "Progress Score",
     ],
     tabType: TabType.progress,
     colorPicker: colorPicker,

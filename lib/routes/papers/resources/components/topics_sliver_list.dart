@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:math_matric/routes/papers/paper_1/data/exam_paper.dart';
 import 'package:math_matric/routes/papers/resources/models/paper_item.dart';
 import 'package:math_matric/routes/papers/resources/models/topic_item.dart';
-import 'package:math_matric/routes/papers/resources/widgets/components/topic_list_tile.dart';
-import 'package:math_matric/routes/papers/resources/widgets/components/section_type.dart';
+import 'package:math_matric/routes/papers/resources/components/topic_list_tile.dart';
+import 'package:math_matric/routes/papers/resources/components/section_type.dart';
 import 'package:math_matric/routes/papers/resources/widgets/exam/exam_memo_page.dart';
 import 'package:math_matric/routes/papers/resources/widgets/exam/exam_paper_page.dart';
 

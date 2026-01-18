@@ -62,7 +62,7 @@ class _AnimatedBaseCardState extends State<AnimatedBaseCard>
         onTapCancel: _controller.reverse,
         child: AnimatedBuilder(
           animation: _controller,
-          builder: (_, _) {
+          builder: (_, context) {
             return Transform.scale(
               scale: scale,
               child: AnimatedContainer(

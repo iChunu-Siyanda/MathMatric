@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:math_matric/routes/papers/resources/components/paper_tile.dart';
 import 'package:math_matric/routes/papers/resources/models/paper_item.dart';
 import 'package:math_matric/routes/papers/paper_1/data/paper_item_data.dart';
 import 'package:math_matric/routes/papers/resources/animations/grid_insertion_controller.dart';
-import 'package:math_matric/routes/papers/resources/widgets/components/paper_tile.dart';
 
 class Paper1Page extends StatefulWidget {
   const Paper1Page({super.key});
