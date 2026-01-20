@@ -12,7 +12,7 @@ class PaperItemData {
       topics: TileTopics.myProgress,
     ),
     PaperItem(
-      title: 'Class Notes', //Cheat Sheet
+      title: 'Class Notes', 
       brief: 'Notes on every section',
       topicTitle: TileTopics.classNotesTitle,
       topics: TileTopics.classNotes,
@@ -34,7 +34,7 @@ class PaperItemData {
       brief: 'June Examinations',
       topicTitle: TileTopics.examJuneTitle,
       topics: TileTopics.juneExams,
-      paper: ExamPaperRepository.papers
+      paper: ExamPaperRepository.papers["June"]
     ),
     PaperItem(
       title: 'Prelims',
@@ -50,7 +50,7 @@ class PaperItemData {
     ),
     PaperItem(
       title: "IEB",
-      brief: "IEB examinations",
+      brief: "IEB Examinations",
       topicTitle: TileTopics.examIebTitle,
       topics: TileTopics.iebExams,
     ),

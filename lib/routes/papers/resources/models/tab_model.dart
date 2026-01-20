@@ -1,9 +1,13 @@
+import 'package:math_matric/routes/papers/resources/models/section_tab.dart';
+
 class TabModel {
-  final List<String> tabTitles;
+  final List<SectionTab> tabs;
   //final List<Widget> tabPages;
 
   const TabModel({
-    required this.tabTitles,
+    required this.tabs,
     //required this.tabPages,
   });
 }
+
+

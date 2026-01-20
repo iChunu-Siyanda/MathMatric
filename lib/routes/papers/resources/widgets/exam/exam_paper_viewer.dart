@@ -30,6 +30,9 @@ class _ExamPaperViewerState extends State<ExamPaperViewer> {
 
     // Load total pages
     _pdfController.document.then((doc) {
+      //Never call setState without checking mounted
+      //If you call setState after any async operation, always check mounted first
+      if (!mounted) return; 
       setState(() {
         _totalPages = doc.pagesCount;
       });
@@ -37,6 +40,7 @@ class _ExamPaperViewerState extends State<ExamPaperViewer> {
 
     _pdfController.addListener(() {
       final newPage = _pdfController.page;
+      if (!mounted) return;
       if (newPage != _currentPage) {
         setState(() {
           _currentPage = newPage;

@@ -29,7 +29,7 @@ class MyButton extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF1B6EF3).withOpacity(0.35),
+              color: const Color(0xFF1B6EF3).withValues(alpha:0.35),
               blurRadius: 18,
               offset: const Offset(0, 10),
             ),

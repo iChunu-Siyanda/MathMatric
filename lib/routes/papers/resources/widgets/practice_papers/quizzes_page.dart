@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 class QuizzesPage extends StatefulWidget {
-  final String pdfPath;
-  const QuizzesPage({super.key, required this.pdfPath});
+  const QuizzesPage({super.key});
 
   @override
   State<QuizzesPage> createState() => _QuizzesPageState();
@@ -13,7 +12,7 @@ class _QuizzesPageState extends State<QuizzesPage> {
   Widget build(BuildContext context) {
     return Center(
       child: Text(
-        "Question Paper:\n${widget.pdfPath}",
+        "Question Paper: Practice Quizzes",
         textAlign: TextAlign.center,
         style: const TextStyle(fontSize: 20),
       ),

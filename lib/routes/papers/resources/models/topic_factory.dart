@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:math_matric/routes/papers/resources/models/section_tab.dart';
 import 'package:math_matric/routes/papers/resources/models/tab_model.dart';
 import 'package:math_matric/routes/papers/resources/models/topic_item.dart';
+import 'package:math_matric/routes/papers/resources/widgets/class_notes/class_notes_page.dart';
+import 'package:math_matric/routes/papers/resources/widgets/class_notes/class_notes_tips.dart';
+import 'package:math_matric/routes/papers/resources/widgets/exam/exam_memo_page.dart';
+import 'package:math_matric/routes/papers/resources/widgets/exam/exam_paper_page.dart';
+import 'package:math_matric/routes/papers/resources/widgets/my_progress/streak/screen/streak_screen.dart';
+import 'package:math_matric/routes/papers/resources/widgets/practice_papers/practice_page.dart';
+import 'package:math_matric/routes/papers/resources/widgets/practice_papers/quizzes_page.dart';
 
 enum TabType {
   progress,
@@ -10,24 +18,54 @@ enum TabType {
 }
 
 class TopicFactory {
-  static Map<TabType,TabModel> tabSets = {
-    TabType.progress : TabModel(
-      tabTitles: ["Streak", "Scores"],
-      //tabPages: [ExamPaperPage(pdfPath: ExamPaperRepository.papers.first.assetPath, pdfTitle: ExamPaperRepository.papers.first.title,), ExamMemoPage(pdfPath: "")],
-    ),
+  static Map<TabType, TabModel> tabSets = {
+    //My Progress
+    TabType.progress: TabModel(tabs: [
+      SectionTab(
+          title: "Streak",
+          builder: (ctx) => StreakScreen()), //Lazy-loaded widgets in the builder
+      SectionTab(title: "Scores", builder: (ctx) => StreakScreen())
+    ]),
 
+    //Class Notes
     TabType.classNotes: TabModel(
-      tabTitles: ["Tips", "Class Notes"],
-      //tabPages: [ExamPaperPage(pdfPath: ExamPaperRepository.papers.first.assetPath, pdfTitle: ExamPaperRepository.papers.first.title,), ExamMemoPage(pdfPath: "")],
+      tabs: [
+        SectionTab(
+          title: "Tips",
+          builder: (ctx) => ClassNotesTips(),
+        ),
+        SectionTab(title: "Class Notes", builder: (ctx) => ClassNotesPage())
+      ],
     ),
 
+    //Practice
     TabType.practice: TabModel(
-      tabTitles: ["Quiz", "Practice Tests"],
-      //tabPages: [ExamPaperPage(pdfPath: ExamPaperRepository.papers.first.assetPath, pdfTitle: ExamPaperRepository.papers.first.title,), ExamMemoPage(pdfPath: "")],
+      tabs: [
+        SectionTab(
+          title: "Quiz",
+          builder: (ctx) => QuizzesPage(),
+        ),
+        SectionTab(
+          title: "Practice Tests",
+          builder: (ctx) => PracticePage(),
+        ),
+      ],
     ),
+
+    //Exams
     TabType.exam: TabModel(
-      tabTitles: ["Questions", "Memo"],
-      //tabPages: [ExamPaperPage(pdfPath: ExamPaperRepository.papers.first.assetPath, pdfTitle: ExamPaperRepository.papers.first.title,), ExamMemoPage(pdfPath: "")],
+      tabs: [
+        SectionTab(
+          title: "Questions",
+          builder: (ctx) => ExamPaperPage(
+            contextData: ctx,
+          ),
+        ),
+        SectionTab(
+          title: "Memo",
+          builder: (ctx) => ExamMemoPage(contextData: ctx),
+        ),
+      ],
     ),
   };
 
@@ -50,7 +88,7 @@ class TopicFactory {
       );
     });
   }
-  
+
   static List<TopicItem> categories({
     required String title,
     required List<String> names,

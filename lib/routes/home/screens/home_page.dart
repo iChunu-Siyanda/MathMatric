@@ -4,7 +4,7 @@ import 'package:math_matric/routes/home/components/auto_sliding_carousel.dart';
 import 'package:math_matric/routes/home/components/continue_studying_card.dart';
 import 'package:math_matric/routes/home/components/discussions_card.dart';
 import 'package:math_matric/routes/home/components/path_card.dart';
-import 'package:math_matric/routes/papers/paper_1/screens/paper_1_page.dart';
+import 'package:math_matric/routes/papers/paper_1/screen/paper_1_page.dart';
 
 
 class HomePage extends StatefulWidget {
