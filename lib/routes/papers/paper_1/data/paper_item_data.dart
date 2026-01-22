@@ -1,6 +1,5 @@
-import 'package:math_matric/routes/papers/paper_1/data/exam_paper.dart';
 import 'package:math_matric/routes/papers/paper_1/data/tile_topics_data.dart';
-import 'package:math_matric/routes/papers/resources/models/paper_item.dart';
+import 'package:math_matric/routes/papers/resources/models/paper_item_modal.dart';
 
 
 class PaperItemData {
@@ -34,7 +33,6 @@ class PaperItemData {
       brief: 'June Examinations',
       topicTitle: TileTopics.examJuneTitle,
       topics: TileTopics.juneExams,
-      paper: ExamPaperRepository.papers["June"]
     ),
     PaperItem(
       title: 'Prelims',

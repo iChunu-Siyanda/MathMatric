@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:math_matric/routes/papers/resources/models/section_tab.dart';
+import 'package:math_matric/routes/papers/resources/models/section_tab_modal.dart';
 import 'package:math_matric/routes/papers/resources/models/tab_model.dart';
-import 'package:math_matric/routes/papers/resources/models/topic_item.dart';
+import 'package:math_matric/routes/papers/resources/models/topic_item_modal.dart';
 import 'package:math_matric/routes/papers/resources/widgets/class_notes/class_notes_page.dart';
 import 'package:math_matric/routes/papers/resources/widgets/class_notes/class_notes_tips.dart';
 import 'package:math_matric/routes/papers/resources/widgets/exam/exam_memo_page.dart';
 import 'package:math_matric/routes/papers/resources/widgets/exam/exam_paper_page.dart';
 import 'package:math_matric/routes/papers/resources/widgets/my_progress/streak/screen/streak_screen.dart';
-import 'package:math_matric/routes/papers/resources/widgets/practice_papers/practice_page.dart';
-import 'package:math_matric/routes/papers/resources/widgets/practice_papers/quizzes_page.dart';
+import 'package:math_matric/routes/papers/resources/widgets/practice/practice_page.dart';
+import 'package:math_matric/routes/papers/resources/widgets/practice/quizzes_page.dart';
 
 enum TabType {
   progress,

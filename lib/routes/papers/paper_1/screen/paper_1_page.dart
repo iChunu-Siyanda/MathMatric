@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:math_matric/routes/papers/resources/components/paper_tile.dart';
-import 'package:math_matric/routes/papers/resources/models/paper_item.dart';
+import 'package:math_matric/routes/papers/resources/components/main/paper_tile.dart';
+import 'package:math_matric/routes/papers/resources/models/paper_item_modal.dart';
 import 'package:math_matric/routes/papers/paper_1/data/paper_item_data.dart';
 import 'package:math_matric/routes/papers/resources/animations/grid_insertion_controller.dart';
+import 'package:math_matric/routes/papers/paper_1/data/streak_data.dart';
+import 'package:math_matric/routes/papers/resources/models/streak_variant_modal.dart';
 
 class Paper1Page extends StatefulWidget {
   const Paper1Page({super.key});
@@ -41,11 +43,9 @@ class _PaperGridPageState extends State<Paper1Page> {
               title: Text('Paper 1'),
             ),
           ),
-
           const SliverPadding(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           ),
-
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             sliver: SliverAnimatedGrid(
@@ -59,7 +59,13 @@ class _PaperGridPageState extends State<Paper1Page> {
               ),
               itemBuilder: (context, index, animation) {
                 final data = _items[index];
-                return PaperTile(data: data, animation: animation);
+
+                return  PaperTile(
+                    data: data,
+                    animation: animation,
+                    variant: index == 0 ? SheetVariant.streak:SheetVariant.topics,
+                    streakData: index == 0 ? StreakData.streakData:null,
+                  );
               },
             ),
           ),

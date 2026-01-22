@@ -1,4 +1,4 @@
-import 'package:math_matric/routes/papers/resources/models/section_tab.dart';
+import 'package:math_matric/routes/papers/resources/models/section_tab_modal.dart';
 
 class TabModel {
   final List<SectionTab> tabs;

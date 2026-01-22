@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:math_matric/routes/papers/resources/models/section_context_modal.dart';
-import 'package:math_matric/routes/papers/resources/models/section_tab.dart';
+import 'package:math_matric/routes/papers/resources/models/section_tab_modal.dart';
 
 class SectionType extends StatefulWidget {
   final String pageTitle;

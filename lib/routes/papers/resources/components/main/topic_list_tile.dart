@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:math_matric/routes/papers/resources/models/topic_item.dart';
+import 'package:math_matric/routes/papers/resources/models/topic_item_modal.dart';
 
 class TopicListTile extends StatefulWidget {
   final TopicItem item;

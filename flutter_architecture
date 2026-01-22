@@ -1,0 +1,70 @@
+Lib/-> auth/
+    -> bloc/
+    -> routes/
+    -> firebasa_options.dart
+    -> main.dart
+
+    //------ Auth Folder -----------
+    auth/->auth_components/   #This contains all the components to help the UI.
+        ->auth_main/   # This contains logic and UI of the auth Folder.
+
+
+    //-------- BLoC Folder ---------
+    # More bloc folders to be added
+    bloc/-> AuthBloc/
+        -> HabitBloc/ #Contains habit_bloc.dart, habit_event.dart, and habit_state.dart
+
+
+    //------- Routes Folder --------
+    routes/-> drawer/ # Contains the drawer UI and Components folder for the UI.
+        -> home/ # Contains the screen folder and components folder. There are a lot of moving parts here.
+        -> papers/ # This is the bulk of the app. So let's go in depth.
+
+        //Papers Folder
+        # paper_1 and paper_2 folders will have the same structure but take in different data.
+        papers/-> paper_1/
+            -> paper_2/
+            -> resources/
+
+            paper_1/-> data/ # paper_item_data.dart, tile_topics.data (This data is for paper 1 not paper 2).
+                -> screen/ paper_1_page.dart # UI of the paper 1 section.
+
+
+        //Resources Folder
+        resources/-> animations/ #contains the card grid insertion count animation.
+            -> components/-> main/  -> paper_tile.dart
+                                    -> section_type.dart
+                                    -> topic_list_tile.dart
+                                    -> topics_sliver_list.dart
+                                    -> topic_factory.dart
+                        ->supporting/ # Contains all components for the main folder
+
+            -> models/  -> exam_paper_model.dart
+                        -> paper_item_modal.dart
+                        -> section_context_modal.dart
+                        -> section_tab_modal.dart
+                        -> streak_variant_modal.dart
+                        -> tab_modal.dart
+                        -> topic_item_modal.dart
+                        -> practice_modal.dart
+
+            -> widgets/ -> class_notes/ -> class_notes_tips_page.dart
+                                        -> class_notes_page.dart
+
+                        -> exam/    -> exam_memo_page.dart
+                                    -> exam_paper_page.dart
+                                    -> exam_paper_viewer.dart
+
+                        -> my_progress/ -> logic/ -> habit_entry_helper.dart
+
+                                        -> modal/   -> habit_entry_modal.dart
+                                                    -> activities.dart
+                                                    -> habit_summary.dart
+
+                                        -> progress_score/
+
+                                        -> streak/  -> components/
+                                                    -> screen/
+
+                        -> practice/-> quizzes_page.dart
+                                    -> practice_page.dart

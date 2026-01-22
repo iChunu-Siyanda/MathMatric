@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:math_matric/routes/papers/resources/models/topic_factory.dart';
+import 'package:math_matric/routes/papers/resources/components/main/topic_factory.dart';
 
 class TileTopics{
   static const years = [2024, 2023, 2022, 2021, 2020, 2019];
