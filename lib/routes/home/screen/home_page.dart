@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:math_matric/app/router.dart';
+import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
 import 'package:math_matric/routes/drawer/math_matric_drawer.dart';
 import 'package:math_matric/routes/home/components/auto_sliding_carousel.dart';
 import 'package:math_matric/routes/home/components/continue_studying_card.dart';
 import 'package:math_matric/routes/home/components/discussions_card.dart';
 import 'package:math_matric/routes/home/components/path_card.dart';
-import 'package:math_matric/routes/papers/paper_1/screen/paper_1_page.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -67,7 +68,7 @@ class _HomePageState extends State<HomePage> {
                   ],
                   //gradient: [Colors.blue, Colors.indigo],
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder:(context) => Paper1Page()));
+                    Navigator.pushNamed(context, Routes.papers, arguments: PaperType.paper1);
                   },
                 ),
                 PathCard(

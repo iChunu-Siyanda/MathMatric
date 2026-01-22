@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
 import 'package:math_matric/routes/papers/resources/components/main/paper_tile.dart';
-import 'package:math_matric/routes/papers/resources/models/paper_item_modal.dart';
+import 'package:math_matric/features/papers/domain/entities/paper_item.dart';
 import 'package:math_matric/routes/papers/paper_1/data/paper_item_data.dart';
 import 'package:math_matric/routes/papers/resources/animations/grid_insertion_controller.dart';
 import 'package:math_matric/routes/papers/paper_1/data/streak_data.dart';
 import 'package:math_matric/routes/papers/resources/models/streak_variant_modal.dart';
 
-class Paper1Page extends StatefulWidget {
-  const Paper1Page({super.key});
+class PapersPage extends StatefulWidget {
+  final PaperType paperType;
+  const PapersPage({super.key, required this.paperType});
 
   @override
-  State<Paper1Page> createState() => _PaperGridPageState();
+  State<PapersPage> createState() => _PaperGridPageState();
 }
 
-class _PaperGridPageState extends State<Paper1Page> {
+class _PaperGridPageState extends State<PapersPage> {
   final GlobalKey<SliverAnimatedGridState> _gridKey = GlobalKey();
 
   final List<PaperItem> _items = PaperItemData.items;
@@ -38,9 +40,9 @@ class _PaperGridPageState extends State<Paper1Page> {
           SliverAppBar(
             pinned: true,
             expandedHeight: 140,
-            flexibleSpace: const FlexibleSpaceBar(
+            flexibleSpace: FlexibleSpaceBar(
               centerTitle: true,
-              title: Text('Paper 1'),
+              title: Text(widget.paperType == PaperType.paper1 ? 'Paper 1':'Paper 2'),
             ),
           ),
           const SliverPadding(

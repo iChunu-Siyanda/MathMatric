@@ -1,27 +1,19 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:math_matric/auth/auth_firebase.dart';
-import 'package:math_matric/firebase_options.dart';
-import 'package:math_matric/bloc/HabitBloc/habit_bloc.dart';
+import 'app/app.dart';
+import 'app/bloc_observer.dart';
+import 'firebase_options.dart';
 
-Future<void> main() async {
+import 'package:firebase_core/firebase_core.dart';
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MainApp());
-}
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => HabitBloc(),
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: Scaffold(body: AuthFirebase(),),
-      ),
-    );
-  }
+  Bloc.observer = AppBlocObserver();
+
+  runApp(const MathMatricApp());
 }

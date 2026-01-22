@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:math_matric/routes/papers/resources/components/supporting/paper_card.dart';
 import 'package:math_matric/routes/papers/resources/components/supporting/streak_sliver.dart';
-import 'package:math_matric/routes/papers/resources/models/paper_item_modal.dart';
+import 'package:math_matric/features/papers/domain/entities/paper_item.dart';
 import 'package:math_matric/routes/papers/resources/components/main/topics_sliver_list.dart';
 import 'package:math_matric/routes/papers/resources/models/streak_variant_modal.dart';
 

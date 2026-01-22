@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:math_matric/routes/papers/resources/models/paper_item_modal.dart';
+import 'package:math_matric/features/papers/domain/entities/paper_item.dart';
 
 class TopContentOfCard extends StatelessWidget {
   const TopContentOfCard({

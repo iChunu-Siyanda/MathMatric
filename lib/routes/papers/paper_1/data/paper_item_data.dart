@@ -1,5 +1,5 @@
 import 'package:math_matric/routes/papers/paper_1/data/tile_topics_data.dart';
-import 'package:math_matric/routes/papers/resources/models/paper_item_modal.dart';
+import 'package:math_matric/features/papers/domain/entities/paper_item.dart';
 
 
 class PaperItemData {
