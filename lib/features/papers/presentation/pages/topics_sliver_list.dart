@@ -31,7 +31,7 @@ class _TopicsSliverListState extends State<TopicsSliverList>
     _controller = AnimationController(
       vsync: this,
       duration: Duration(
-          milliseconds: (widget.content.topics.length + 1) * _staggerMs),
+          milliseconds: (widget.content.section!.topics.length + 1) * _staggerMs),
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) => _controller.forward());
@@ -71,7 +71,7 @@ class _TopicsSliverListState extends State<TopicsSliverList>
         SliverList(
           delegate: SliverChildBuilderDelegate(
             (context, index) {
-              final item = widget.content.topics[index];
+              final item = widget.content.section!.topics[index];
               final anima = _itemInterval(index);
 
               return AnimatedBuilder(
@@ -103,7 +103,7 @@ class _TopicsSliverListState extends State<TopicsSliverList>
                 ),
               );
             },
-            childCount: widget.content.topics.length,
+            childCount: widget.content.section!.topics.length,
           ),
         ),
         const SliverPadding(padding: EdgeInsets.only(bottom: 96)),
