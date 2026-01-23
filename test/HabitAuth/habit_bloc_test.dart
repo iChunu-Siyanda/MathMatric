@@ -3,9 +3,9 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:math_matric/bloc/HabitBloc/habit_bloc.dart';
 import 'package:math_matric/bloc/HabitBloc/habit_event.dart';
 import 'package:math_matric/bloc/HabitBloc/habit_state.dart';
-import 'package:math_matric/routes/papers/resources/widgets/my_progress/logic/habit_entry_helper.dart';
-import 'package:math_matric/routes/papers/resources/widgets/my_progress/models/activities.dart';
-import 'package:math_matric/routes/papers/resources/widgets/my_progress/models/habit_entry_model.dart';
+import 'package:math_matric/routes/papers/resources/my_progress/logic/habit_entry_helper.dart';
+import 'package:math_matric/routes/papers/resources/my_progress/models/activities.dart';
+import 'package:math_matric/routes/papers/resources/my_progress/models/habit_entry_model.dart';
 
 // Helper to create normalized HabitEntry
 HabitEntry createEntry({

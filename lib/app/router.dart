@@ -3,7 +3,7 @@ import 'package:math_matric/auth/login_page.dart';
 import 'package:math_matric/auth/splash_page.dart';
 import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
 import 'package:math_matric/routes/home/screen/home_page.dart';
-import 'package:math_matric/features/papers/presentation/page/papers_page.dart';
+import 'package:math_matric/features/papers/presentation/pages/papers_page.dart';
 
 class Routes {
   static const String initial = '/';

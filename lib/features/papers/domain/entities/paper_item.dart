@@ -1,19 +1,32 @@
-import 'package:math_matric/routes/papers/resources/models/exam_paper_model.dart';
-import 'package:math_matric/routes/papers/resources/models/topic_item_modal.dart';
-//import 'package:math_matric/routes/papers/resources/tabPages/tab_pages.dart';
-
 class PaperItem {
   final String title;
   final String brief;
-  final String topicTitle;           
-  final List<TopicItem> topics; 
-  final List<ExamPaperModel> ? paper;
+  final Section ? section;
 
   const PaperItem({
     required this.title,
     required this.brief,
-    required this.topicTitle,
-    required this.topics,
-    this.paper,
+    this.section,
   });
 }
+
+class Section {
+  final String title;
+  final List<dynamic> topics;
+
+  const Section({
+    required this.title,
+    required this.topics,
+  });
+}
+
+
+
+// PaperBloc emits PaperLoaded(sections) → your PaperPage grid receives sections
+// PaperTile → TopicsSliverList → passes its PaperItem (section)
+// TopicsSliverList → SectionType → passes both PaperItem and TopicItem via SectionContext
+
+// features/papers/
+// ├── domain/          ← entities, use cases, abstract repositories
+// ├── data/            ← repository implementations, local/remote data sources
+// └── presentation/    ← UI + blocs + widgets
