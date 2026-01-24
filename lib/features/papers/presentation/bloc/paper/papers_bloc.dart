@@ -22,7 +22,7 @@ class PapersBloc extends Bloc<PapersEvent, PapersState> {
       final paper = await getPaperData(event.paperType);
       emit(PapersLoaded(paper as PaperItem));
     } catch (e) {
-      emit(const PapersError('Failed to load paper'));
+      emit(PapersError('Failed to load paper and Error: $e'));
     }
   }
 

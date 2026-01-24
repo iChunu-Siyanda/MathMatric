@@ -19,3 +19,11 @@ void main() async {
 }
 
 //UI → Bloc → PaperRepository (abstract) → PaperRepositoryImpl (data) → DataSource
+
+
+// 🟦 EVENT → PapersBloc: Instance of 'LoadPaperRequested'
+// 🟩 STATE → PapersBloc: Change { currentState: Instance of 'PapersInitial', nextState: Instance of 'PapersLoading' }
+// 🟩 STATE → PapersBloc: Change { currentState: Instance of 'PapersLoading', nextState: Instance of 'PapersError' }
+// 🟦 EVENT → PapersBloc: Instance of 'LoadPaperRequested'
+// 🟩 STATE → PapersBloc: Change { currentState: Instance of 'PapersInitial', nextState: Instance of 'PapersLoading' }
+// 🟩 STATE → PapersBloc: Change { currentState: Instance of 'PapersLoading', nextState: Instance of 'PapersError' }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:math_matric/features/papers/data/local/exam_paper.dart';
-import 'package:math_matric/features/papers/data/model/exam_paper_model.dart';
+import 'package:math_matric/features/papers/domain/entities/exam_paper.dart';
 import 'package:math_matric/features/papers/presentation/navigation/section_context_modal.dart';
 import 'package:math_matric/features/papers/presentation/widget/main/exam_paper_viewer.dart';
 
@@ -16,7 +16,7 @@ class _ExamPaperPageState extends State<ExamPaperPage>
   late final AnimationController _controller;
   late final Animation<double> _fadeAnim;
 
-  final Set<ExamPaperModel> _savedPapers = {};
+  final Set<ExamPaper> _savedPapers = {};
 
   @override
   void initState() {
@@ -43,7 +43,7 @@ class _ExamPaperPageState extends State<ExamPaperPage>
     super.dispose();
   }
 
-  void _openPdf(ExamPaperModel paper) {
+  void _openPdf(ExamPaper paper) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -66,9 +66,9 @@ class _ExamPaperPageState extends State<ExamPaperPage>
         children: papersBySession.entries
             .expand(
               (entry) => [
-                _sessionHeader(entry.key.name),
+                _sessionHeader(entry.key as String),
                 const SizedBox(height: 12),
-                ...entry.value.map(_paperCard),
+                ...entry.value.map<Widget>(_paperCard),
                 const SizedBox(height: 24),
               ],
             )
@@ -88,7 +88,7 @@ class _ExamPaperPageState extends State<ExamPaperPage>
     );
   }
 
-  Widget _paperCard(ExamPaperModel paper) {
+  Widget _paperCard(ExamPaper paper) {
     final isSaved = _savedPapers.contains(paper);
 
     return Padding(

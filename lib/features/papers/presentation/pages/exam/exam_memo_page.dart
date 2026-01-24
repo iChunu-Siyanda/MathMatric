@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:math_matric/features/papers/data/local/exam_paper.dart';
-import 'package:math_matric/features/papers/data/model/exam_paper_model.dart';
+import 'package:math_matric/features/papers/domain/entities/exam_paper.dart';
 import 'package:math_matric/features/papers/presentation/navigation/section_context_modal.dart';
 import 'package:math_matric/features/papers/presentation/widget/main/exam_paper_viewer.dart';
 
@@ -41,14 +41,15 @@ class _ExamMemoPageState extends State<ExamMemoPage>
     super.dispose();
   }
 
-  void _openMemo(ExamPaperModel paper) {
+  void _openMemo(ExamPaper paper) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => ExamPaperViewer(
-          title: "${paper.title} – Memo",
-          pdfAssetPath: paper.assetPath//paper.memoAssetPath, when you created memo path
-        ),
+            title: "${paper.title} – Memo",
+            pdfAssetPath: paper
+                .assetPath //paper.memoAssetPath, when you created memo path
+            ),
       ),
     );
   }
@@ -60,18 +61,15 @@ class _ExamMemoPageState extends State<ExamMemoPage>
     return FadeTransition(
       opacity: _fadeAnim,
       child: ListView(
-        padding: const EdgeInsets.all(16),
-        children: papersBySession.entries
-            .expand(
-              (entry) => [
-                _sessionHeader(entry.key.name),
-                const SizedBox(height: 12),
-                ...entry.value.map(_memoCard),
-                const SizedBox(height: 24),
-              ],
-            )
-            .toList(),
-      ),
+          padding: const EdgeInsets.all(16),
+          children: papersBySession.entries
+              .expand((entry) => [
+                    _sessionHeader(entry.key as String), // ExamSession
+                    const SizedBox(height: 12),
+                    ...entry.value.map<Widget>(_memoCard), // List<ExamPaper>
+                    const SizedBox(height: 24),
+                  ])
+              .toList()),
     );
   }
 
@@ -86,7 +84,7 @@ class _ExamMemoPageState extends State<ExamMemoPage>
     );
   }
 
-  Widget _memoCard(ExamPaperModel paper) {
+  Widget _memoCard(ExamPaper paper) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: GestureDetector(
@@ -155,8 +153,7 @@ class _ExamMemoPageState extends State<ExamMemoPage>
                       Container(
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         decoration: BoxDecoration(
-                          color:
-                              Colors.white.withValues(alpha: 0.95),
+                          color: Colors.white.withValues(alpha: 0.95),
                           borderRadius: BorderRadius.circular(14),
                         ),
                         alignment: Alignment.center,
