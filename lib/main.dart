@@ -17,3 +17,5 @@ void main() async {
 
   runApp(const MathMatricApp());
 }
+
+//UI → Bloc → PaperRepository (abstract) → PaperRepositoryImpl (data) → DataSource

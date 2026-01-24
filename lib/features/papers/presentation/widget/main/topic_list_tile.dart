@@ -19,11 +19,11 @@ class _TopicListTileState extends State<TopicListTile> {
   bool _hover = false;
   bool _pressed = false;
 
-  void _handleTapDown(_) {
+  void _handleTapDown(TapDownDetails _) {
     setState(() => _pressed = true);
   }
 
-  void _handleTapUp(_) {
+  void _handleTapUp(TapUpDetails _) {
     setState(() => _pressed = false);
   }
 
@@ -35,7 +35,7 @@ class _TopicListTileState extends State<TopicListTile> {
   Widget build(BuildContext context) {
     final double scale = _pressed ? 0.975 : 1.0;
     final double elevation = _hover ? 18 : 6;
-    final borderRadius = BorderRadius.circular(12);
+    final BorderRadius borderRadius = BorderRadius.circular(12);
 
     return MouseRegion(
       onEnter: (context) => setState(() => _hover = true),

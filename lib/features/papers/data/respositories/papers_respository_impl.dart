@@ -10,7 +10,7 @@ class PapersRepositoryImpl implements PapersRepository {
   PapersRepositoryImpl(this.localDataSource);
 
   Future<PaperItem> getPaperData(PaperType type) async {
-    final items = localDataSource.getItems(type);
+    //final items = localDataSource.getItems(type);
 
     return PaperItem(
       title: type == PaperType.paper1 ? 'Paper 1' : 'Paper 2',

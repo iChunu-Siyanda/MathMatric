@@ -42,13 +42,16 @@ class _RegisterPageState extends State<RegisterPage> {
           email: emailController.text.trim(),
           password: passwordController.text.trim(),
         );
+        if (!mounted) return;
         Navigator.pop(context); // close loading circle
       } else {
+        if (!mounted) return;
         Navigator.pop(context); // close loading circle
         showInvalidMsg(context, "Passwords do not match. Please try again.");
         return; // stop execution
       }
     } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
       Navigator.pop(context); // close loading circle
       showInvalidMsg(context, e.code); // show error
     }

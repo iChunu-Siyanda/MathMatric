@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:math_matric/features/papers/data/local/exam_paper.dart';
-import 'package:math_matric/routes/papers/resources/models/exam_paper_model.dart';
+import 'package:math_matric/features/papers/data/model/exam_paper_model.dart';
 import 'package:math_matric/features/papers/presentation/navigation/section_context_modal.dart';
 import 'package:math_matric/features/papers/presentation/widget/main/exam_paper_viewer.dart';
 

@@ -1,4 +1,4 @@
-import 'package:math_matric/routes/papers/resources/models/exam_paper_model.dart';
+import 'package:math_matric/features/papers/data/model/exam_paper_model.dart';
 
 //Enums are much better than strings, they are safe(compile-time safety).
 enum ExamSession { 

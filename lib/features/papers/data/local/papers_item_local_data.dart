@@ -1,4 +1,4 @@
-import 'package:math_matric/features/papers/data/local/tile_topics_P1_data.dart';
+import 'package:math_matric/features/papers/data/local/tile_topics_p1_data.dart';
 import 'package:math_matric/features/papers/domain/entities/paper_item.dart';
 import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
 

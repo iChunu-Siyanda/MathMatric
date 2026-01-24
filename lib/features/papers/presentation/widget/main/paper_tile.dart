@@ -4,6 +4,7 @@ import 'package:math_matric/features/papers/presentation/widget/supporting/strea
 import 'package:math_matric/features/papers/domain/entities/paper_item.dart';
 import 'package:math_matric/features/papers/presentation/pages/topics_sliver_list.dart';
 import 'package:math_matric/routes/papers/resources/models/streak_variant_modal.dart';
+
 //data.topics
 class PaperTile extends StatelessWidget {
   final SheetVariant variant;
@@ -11,13 +12,44 @@ class PaperTile extends StatelessWidget {
   final PaperItem data;
   final Animation<double> animation;
 
-  const PaperTile(
+  const PaperTile._(
       {super.key,
-        required this.data,
-        this.streakData,
-        required this.animation,
-        required this.variant
-      });
+      required this.data,
+      this.streakData,
+      required this.animation,
+      required this.variant})
+      : assert(
+          variant != SheetVariant.streak || streakData != null,
+          'streakData must be provided for SheetVariant.streak',
+        );
+
+  factory PaperTile.streak({
+    required PaperItem data,
+    required StreakContent streakData,
+    required Animation<double> animation,
+    Key? key,
+  }) {
+    return PaperTile._(
+      key: key,
+      variant: SheetVariant.streak,
+      data: data,
+      streakData: streakData,
+      animation: animation,
+    );
+  }
+
+  factory PaperTile.topics({
+    required PaperItem data,
+    required Animation<double> animation,
+    Key? key,
+  }) {
+    return PaperTile._(
+      key: key,
+      variant: SheetVariant.topics,
+      data: data,
+      animation: animation,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +92,7 @@ class PaperTile extends StatelessWidget {
                         ),
                         child: CustomScrollView(
                           controller: scrollController,
-                          slivers: _buildSlivers(context,scrollController),
+                          slivers: _buildSlivers(context, scrollController),
                         ),
                         // child: TopicsSliverList(
                         //   scrollController: scrollController,
@@ -80,12 +112,15 @@ class PaperTile extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildSlivers(BuildContext context, ScrollController scrollController) {
+  List<Widget> _buildSlivers(
+      BuildContext context, ScrollController scrollController) {
     switch (variant) {
       case SheetVariant.streak:
         return [
           _SheetGrabHandle(),
-          StreakSliver(content: streakData!,),
+          StreakSliver(
+            content: streakData!,
+          ),
         ];
 
       case SheetVariant.topics:

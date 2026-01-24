@@ -8,8 +8,7 @@ import 'package:math_matric/features/papers/presentation/bloc/paper/papers_state
 
 import 'package:math_matric/features/papers/presentation/widget/main/paper_tile.dart';
 import 'package:math_matric/routes/papers/resources/animations/grid_insertion_controller.dart';
-import 'package:math_matric/routes/papers/resources/models/streak_variant_modal.dart';
-import 'package:math_matric/routes/papers/paper_1/data/streak_data.dart';
+import 'package:math_matric/routes/papers/streak_data/streak_data.dart';
 
 class PapersPage extends StatefulWidget {
   final PaperType paperType;
@@ -29,9 +28,7 @@ class _PapersPageState extends State<PapersPage> {
     super.initState();
 
     /// Tell Bloc to load the correct paper
-    context
-        .read<PapersBloc>()
-        .add(LoadPaperRequested(widget.paperType));
+    context.read<PapersBloc>().add(LoadPaperRequested(widget.paperType));
   }
 
   void _runGridAnimation(int itemCount) {
@@ -54,7 +51,7 @@ class _PapersPageState extends State<PapersPage> {
           }
 
           if (state is PapersLoaded) {
-            final items = state.paper.section!.topics; // 👈 entity data
+            final items = state.paper.section!.topics; 
 
             _runGridAnimation(items.length);
 
@@ -79,7 +76,7 @@ class _PapersPageState extends State<PapersPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   sliver: SliverAnimatedGrid(
                     key: _gridKey,
-                    initialItemCount: 0,
+                    initialItemCount: items.length + 1,
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
@@ -88,16 +85,19 @@ class _PapersPageState extends State<PapersPage> {
                       childAspectRatio: 0.75,
                     ),
                     itemBuilder: (context, index, animation) {
-                      final data = items[index];
+                      if (index == 0) {
+                        return PaperTile.streak(
+                          streakData: StreakData.streakData,
+                          animation: animation,
+                          data: items.first,
+                        );
+                      }
 
-                      return PaperTile(
+                      final data = items[index - 1];
+
+                      return PaperTile.topics(
                         data: data,
                         animation: animation,
-                        variant: index == 0
-                            ? SheetVariant.streak
-                            : SheetVariant.topics,
-                        streakData:
-                            index == 0 ? StreakData.streakData : null,
                       );
                     },
                   ),

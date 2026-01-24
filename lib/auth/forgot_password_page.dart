@@ -23,12 +23,15 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         email: emailController.text.trim(),
       );
 
+      if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Password reset link sent to your email"),
         ),
       );
     } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.message ?? "Something went wrong")),
       );

@@ -43,8 +43,8 @@ class _AnimatedBaseCardState extends State<AnimatedBaseCard>
     super.dispose();
   }
 
-  void _down(_) => _controller.forward();
-  void _up(_) => _controller.reverse();
+  void _down(TapDownDetails _) => _controller.forward();
+  void _up(TapUpDetails _) => _controller.reverse();
 
   @override
   Widget build(BuildContext context) {

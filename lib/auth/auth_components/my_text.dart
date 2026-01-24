@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MyText extends StatelessWidget {
-  final controller;
+  final TextEditingController controller;
   final bool  obscure;
   final String hint;
 
