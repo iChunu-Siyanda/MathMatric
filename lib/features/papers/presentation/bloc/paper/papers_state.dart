@@ -16,7 +16,7 @@ class PapersLoading extends PapersState {
 
 // Successfully loaded a paper
 class PapersLoaded extends PapersState {
-  final PaperItem paper;
+  final List<PaperItem> paper;
 
   const PapersLoaded(this.paper);
 }

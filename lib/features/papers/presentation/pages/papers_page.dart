@@ -51,7 +51,7 @@ class _PapersPageState extends State<PapersPage> {
           }
 
           if (state is PapersLoaded) {
-            final items = state.paper.section!.topics; 
+            final items = state.paper; 
 
             _runGridAnimation(items.length);
 
@@ -76,7 +76,7 @@ class _PapersPageState extends State<PapersPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   sliver: SliverAnimatedGrid(
                     key: _gridKey,
-                    initialItemCount: items.length + 1,
+                    initialItemCount: 1,
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,

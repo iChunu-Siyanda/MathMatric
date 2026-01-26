@@ -1,17 +1,17 @@
-import 'package:math_matric/features/papers/domain/entities/exam_paper.dart';
+import 'package:math_matric/features/papers/domain/entities/paper_item.dart';
 import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
 import 'package:math_matric/features/papers/domain/respositories/papers_respository.dart';
 
 class GetPaperData {
-  final PapersRepository repository;
+  final PapersTileRepository repository;
 
   GetPaperData(this.repository);
 
-  Future<ExamPaper> call(PaperType type) {
+  Future<List<PaperItem>> call(PaperType type) {
     if (type == PaperType.paper1) {
-      return repository.getPaper1();
+      return repository.getPaper1Tile();
     } else {
-      return repository.getPaper2();
+      return repository.getPaper2Tile();
     }
   }
 }

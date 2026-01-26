@@ -1,6 +1,6 @@
-import 'package:math_matric/features/papers/domain/entities/exam_paper.dart';
+import 'package:math_matric/features/papers/domain/entities/paper_item.dart';
 
-abstract class PapersRepository {
-  Future<ExamPaper> getPaper1();
-  Future<ExamPaper> getPaper2();
+abstract class PapersTileRepository {
+  Future<List<PaperItem>> getPaper1Tile();
+  Future<List<PaperItem>> getPaper2Tile();
 }

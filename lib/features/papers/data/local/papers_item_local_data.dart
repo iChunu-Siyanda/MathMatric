@@ -3,17 +3,17 @@ import 'package:math_matric/features/papers/domain/entities/paper_item.dart';
 import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
 
 
-class PapersLocalData {
+class PaperTileLocalData {
   List<PaperItem> getItems(PaperType type) {
     switch (type) {
       case PaperType.paper1:
-        return _paper1Items();
+        return _paper1TileItems();
       case PaperType.paper2:
-        return _paper2Items();
+        return _paper2TileItems();
     }
   }
 
-  List<PaperItem> _paper1Items() => [
+  List<PaperItem> _paper1TileItems() => [
         PaperItem(
           title: "My Progress",
           brief: "Passing with flying colours",
@@ -56,7 +56,7 @@ class PapersLocalData {
         ),
       ];
 
-  List<PaperItem> _paper2Items() => [
+  List<PaperItem> _paper2TileItems() => [
         PaperItem(
           title: "My Progress",
           brief: "Passing with flying colours",

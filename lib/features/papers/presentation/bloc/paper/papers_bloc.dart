@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:math_matric/features/papers/domain/entities/paper_item.dart';
 import 'package:math_matric/features/papers/domain/usercases/get_paper_data.dart';
 import 'package:math_matric/features/papers/presentation/bloc/paper/papers_event.dart';
 import 'package:math_matric/features/papers/presentation/bloc/paper/papers_state.dart';
@@ -20,7 +19,7 @@ class PapersBloc extends Bloc<PapersEvent, PapersState> {
 
     try {
       final paper = await getPaperData(event.paperType);
-      emit(PapersLoaded(paper as PaperItem));
+      emit(PapersLoaded(paper));
     } catch (e) {
       emit(PapersError('Failed to load paper and Error: $e'));
     }
