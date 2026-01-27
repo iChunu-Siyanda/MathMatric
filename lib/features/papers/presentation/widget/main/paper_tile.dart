@@ -8,7 +8,7 @@ import 'package:math_matric/routes/papers/resources/models/streak_variant_modal.
 //data.topics
 class PaperTile extends StatelessWidget {
   final SheetVariant variant;
-  final StreakContent ? streakData;
+  final StreakContent? streakData;
   final PaperItem data;
   final Animation<double> animation;
 

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
 import 'package:math_matric/features/papers/presentation/bloc/paper/papers_bloc.dart';
 import 'package:math_matric/features/papers/presentation/bloc/paper/papers_event.dart';
 import 'package:math_matric/features/papers/presentation/bloc/paper/papers_state.dart';
-
 import 'package:math_matric/features/papers/presentation/widget/main/paper_tile.dart';
 import 'package:math_matric/routes/papers/resources/animations/grid_insertion_controller.dart';
 import 'package:math_matric/routes/papers/streak_data/streak_data.dart';
@@ -76,7 +74,7 @@ class _PapersPageState extends State<PapersPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   sliver: SliverAnimatedGrid(
                     key: _gridKey,
-                    initialItemCount: 1,
+                    initialItemCount: 0,
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
@@ -93,7 +91,7 @@ class _PapersPageState extends State<PapersPage> {
                         );
                       }
 
-                      final data = items[index - 1];
+                      final data = items[index];
 
                       return PaperTile.topics(
                         data: data,

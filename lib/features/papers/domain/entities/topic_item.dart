@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:math_matric/features/papers/domain/entities/tab_entitiesl.dart';
+import 'package:math_matric/features/papers/domain/entities/tab_entities.dart';
 
 class TopicItem {
   final String title;
