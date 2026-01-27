@@ -16,4 +16,4 @@ class ResetPapers extends PapersEvent {
   const ResetPapers();
 }
 
-//One clear intent: “Load this paper”.
+//One clear intent: “Load this paper”, and reset state when leaving page.
