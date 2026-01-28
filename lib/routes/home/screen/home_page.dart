@@ -68,7 +68,7 @@ class _HomePageState extends State<HomePage> {
                   ],
                   //gradient: [Colors.blue, Colors.indigo],
                   onTap: () {
-                    Navigator.pushNamed(context, Routes.papers, arguments: PaperType.paper1);
+                    Navigator.pushNamed(context, Routes.paperTypePage, arguments: PaperType.paper1);
                   },
                 ),
                 PathCard(
