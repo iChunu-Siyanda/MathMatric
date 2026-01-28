@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:math_matric/features/papers/domain/entities/exam_page_mode.dart.dart';
 import 'package:math_matric/features/papers/presentation/navigation/section_tab_entities.dart';
 import 'package:math_matric/features/papers/domain/entities/tab_entities.dart';
 import 'package:math_matric/features/papers/domain/entities/topic_item.dart';
 import 'package:math_matric/features/papers/presentation/pages/class_notes/class_notes_page.dart';
 import 'package:math_matric/features/papers/presentation/pages/class_notes/class_notes_tips.dart';
-import 'package:math_matric/features/papers/presentation/pages/exam/exam_memo_page.dart';
 import 'package:math_matric/features/papers/presentation/pages/exam/exam_paper_page.dart';
 import 'package:math_matric/routes/papers/resources/my_progress/streak/screen/streak_screen.dart';
 import 'package:math_matric/features/papers/presentation/pages/practice/practice_page.dart';
@@ -60,11 +60,17 @@ class TopicFactory {
           title: "Questions",
           builder: (ctx) => ExamPaperPage(
             contextData: ctx,
+            mode: ExamPageMode.paper,
+            paperType: ctx.paperType,
           ),
         ),
         SectionTab(
           title: "Memo",
-          builder: (ctx) => ExamMemoPage(contextData: ctx),
+          builder: (ctx) => ExamPaperPage(
+            contextData: ctx,
+            mode: ExamPageMode.memo,
+            paperType: ctx.paperType,
+          ),
         ),
       ],
     ),

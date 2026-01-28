@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:math_matric/features/papers/domain/entities/paper_item.dart';
+import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
 import 'package:math_matric/features/papers/presentation/widget/main/topic_list_tile.dart';
 import 'package:math_matric/features/papers/presentation/pages/section_type.dart';
 import 'package:math_matric/features/papers/presentation/navigation/section_context_modal.dart';
@@ -8,12 +9,14 @@ class TopicsSliverList extends StatefulWidget {
   final ScrollController scrollController;
   final PaperItem content;
   final String listTopicTitle;
+  final PaperType paperType;
 
   const TopicsSliverList({
     super.key,
     required this.scrollController,
     required this.content,
     required this.listTopicTitle,
+    required this.paperType
   });
 
   @override
@@ -94,7 +97,7 @@ class _TopicsSliverListState extends State<TopicsSliverList>
                           tabs: item.tab.tabs,
                           sectionContext: SectionContext(
                             paper: widget.content, 
-                            topic: item, 
+                            topic: item, paperType: widget.paperType, 
                           ),
                         ),
                       ),

@@ -8,8 +8,8 @@ enum ExamSession {
   iebNovember,
 }
 
-class ExamPaperRepository {
-  Map<ExamSession, List<ExamPaper>> getItems(PaperType type){
+class ExamPaperData {
+  Map<ExamSession, List<ExamPaper>> getExamItems(PaperType type){
     switch (type){
       case PaperType.paper1:
         return _getExamPaper1();

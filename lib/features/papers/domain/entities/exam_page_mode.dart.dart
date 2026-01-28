@@ -1,0 +1,4 @@
+enum ExamPageMode {
+  paper,
+  memo,
+}

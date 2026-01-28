@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
 import 'package:math_matric/features/papers/presentation/widget/supporting/paper_card.dart';
 import 'package:math_matric/features/papers/presentation/widget/supporting/streak_sliver.dart';
 import 'package:math_matric/features/papers/domain/entities/paper_item.dart';
@@ -10,12 +11,14 @@ class PaperTile extends StatelessWidget {
   final SheetVariant variant;
   final StreakContent? streakData;
   final PaperItem data;
+  final PaperType paperType;
   final Animation<double> animation;
 
   const PaperTile._(
       {super.key,
       required this.data,
       this.streakData,
+      required this.paperType,
       required this.animation,
       required this.variant})
       : assert(
@@ -27,6 +30,7 @@ class PaperTile extends StatelessWidget {
     required PaperItem data,
     required StreakContent streakData,
     required Animation<double> animation,
+    required PaperType paperType,
     Key? key,
   }) {
     return PaperTile._(
@@ -35,12 +39,14 @@ class PaperTile extends StatelessWidget {
       data: data,
       streakData: streakData,
       animation: animation,
+      paperType: paperType,
     );
   }
 
   factory PaperTile.topics({
     required PaperItem data,
     required Animation<double> animation,
+    required PaperType paperType,
     Key? key,
   }) {
     return PaperTile._(
@@ -48,6 +54,7 @@ class PaperTile extends StatelessWidget {
       variant: SheetVariant.topics,
       data: data,
       animation: animation,
+      paperType: paperType,
     );
   }
 
@@ -129,7 +136,8 @@ class PaperTile extends StatelessWidget {
           TopicsSliverList(
             content: data,
             scrollController: scrollController,
-            listTopicTitle: data.section!.title, //data.topicTitle
+            listTopicTitle: data.section!.title,
+            paperType: paperType, 
           ),
         ];
     }

@@ -24,8 +24,7 @@ class _PapersPageState extends State<PapersPage> {
   @override
   void initState() {
     super.initState();
-
-    /// Tell Bloc to load the correct paper
+    // Tell Bloc to load the correct paper
     context.read<PapersBloc>().add(LoadPaperRequested(widget.paperType));
   }
 
@@ -49,7 +48,7 @@ class _PapersPageState extends State<PapersPage> {
           }
 
           if (state is PapersLoaded) {
-            final items = state.paper; 
+            final items = state.paper;
 
             _runGridAnimation(items.length);
 
@@ -88,6 +87,7 @@ class _PapersPageState extends State<PapersPage> {
                           streakData: StreakData.streakData,
                           animation: animation,
                           data: items.first,
+                          paperType: widget.paperType,
                         );
                       }
 
@@ -96,6 +96,7 @@ class _PapersPageState extends State<PapersPage> {
                       return PaperTile.topics(
                         data: data,
                         animation: animation,
+                        paperType: widget.paperType,
                       );
                     },
                   ),

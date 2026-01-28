@@ -1,3 +1,4 @@
+import 'package:math_matric/features/papers/data/local/exam_paper_data.dart';
 import 'package:math_matric/features/papers/domain/entities/exam_paper.dart';
 
 abstract class ExamState {
@@ -16,9 +17,9 @@ class ExamPaperLoading extends ExamState{
 
 //Exam papers are loaded
 class ExamPaperLoaded extends ExamState{
-  final List<ExamPaper> examPaper;
+  final Map<ExamSession, List<ExamPaper>> examPapers;
 
-  const ExamPaperLoaded(this.examPaper);
+  const ExamPaperLoaded(this.examPapers);
 }
 
 //Error state missing any data

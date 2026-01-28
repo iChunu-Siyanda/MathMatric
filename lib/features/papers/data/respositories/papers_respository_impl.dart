@@ -8,24 +8,14 @@ class PapersRepositoryImpl implements PapersTileRepository {
 
   PapersRepositoryImpl(this.localDataSource);
 
-  Future<PaperItem> getPaperData(PaperType type) async {
-    //final items = localDataSource.getItems(type);
-    return PaperItem(
-      title: type == PaperType.paper1 ? 'Paper 1' : 'Paper 2',
-      brief: '',
-      section: Section(title: "", topics: [])
-      //section: Section(title: "", topics: type == PaperType.paper1 ? items.expand((e) => e.section!.topics).toList():items.expand((e) => e.topics).toList(),), 
-    );
-  }
-
   @override
   Future<List<PaperItem>> getPaper1Tile() async {
-    return PaperTileLocalData().getItems(PaperType.paper1);
+    return PaperTileLocalData().getPaperItems(PaperType.paper1);
   }
 
   @override
   Future<List<PaperItem>> getPaper2Tile() async {
-    return PaperTileLocalData().getItems(PaperType.paper2);
+    return PaperTileLocalData().getPaperItems(PaperType.paper2);
   }
 }
 

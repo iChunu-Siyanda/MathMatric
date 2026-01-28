@@ -4,7 +4,7 @@ import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
 
 
 class PaperTileLocalData {
-  List<PaperItem> getItems(PaperType type) {
+  List<PaperItem> getPaperItems(PaperType type) {
     switch (type) {
       case PaperType.paper1:
         return _paper1TileItems();
