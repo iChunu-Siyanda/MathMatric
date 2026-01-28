@@ -101,11 +101,6 @@ class PaperTile extends StatelessWidget {
                           controller: scrollController,
                           slivers: _buildSlivers(context, scrollController),
                         ),
-                        // child: TopicsSliverList(
-                        //   scrollController: scrollController,
-                        //   content: data,
-                        //   listTopicTitle: data.topicTitle,
-                        // ),
                       );
                     },
                   );

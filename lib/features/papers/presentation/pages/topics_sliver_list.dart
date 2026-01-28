@@ -4,6 +4,7 @@ import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
 import 'package:math_matric/features/papers/presentation/widget/main/topic_list_tile.dart';
 import 'package:math_matric/features/papers/presentation/pages/section_type.dart';
 import 'package:math_matric/features/papers/presentation/navigation/section_context_modal.dart';
+
 //data topic list
 class TopicsSliverList extends StatefulWidget {
   final ScrollController scrollController;
@@ -11,13 +12,12 @@ class TopicsSliverList extends StatefulWidget {
   final String listTopicTitle;
   final PaperType paperType;
 
-  const TopicsSliverList({
-    super.key,
-    required this.scrollController,
-    required this.content,
-    required this.listTopicTitle,
-    required this.paperType
-  });
+  const TopicsSliverList(
+      {super.key,
+      required this.scrollController,
+      required this.content,
+      required this.listTopicTitle,
+      required this.paperType});
 
   @override
   State<TopicsSliverList> createState() => _TopicsSliverListState();
@@ -34,7 +34,8 @@ class _TopicsSliverListState extends State<TopicsSliverList>
     _controller = AnimationController(
       vsync: this,
       duration: Duration(
-          milliseconds: (widget.content.section!.topics.length + 1) * _staggerMs),
+          milliseconds:
+              (widget.content.section!.topics.length + 1) * _staggerMs),
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) => _controller.forward());
@@ -60,8 +61,7 @@ class _TopicsSliverListState extends State<TopicsSliverList>
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      controller: widget.scrollController,
+    return SliverMainAxisGroup(
       slivers: [
         SliverAppBar(
           pinned: true,
@@ -96,8 +96,9 @@ class _TopicsSliverListState extends State<TopicsSliverList>
                           pageTitle: item.pageTitle,
                           tabs: item.tab.tabs,
                           sectionContext: SectionContext(
-                            paper: widget.content, 
-                            topic: item, paperType: widget.paperType, 
+                            paper: widget.content,
+                            topic: item,
+                            paperType: widget.paperType,
                           ),
                         ),
                       ),
@@ -109,7 +110,9 @@ class _TopicsSliverListState extends State<TopicsSliverList>
             childCount: widget.content.section!.topics.length,
           ),
         ),
-        const SliverPadding(padding: EdgeInsets.only(bottom: 96)),
+        const SliverPadding(
+          padding: EdgeInsets.only(bottom: 96),
+        ),
       ],
     );
   }

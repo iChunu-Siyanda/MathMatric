@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:math_matric/auth/auth_firebase.dart';
 import 'package:math_matric/auth/login_page.dart';
+import 'package:math_matric/features/papers/data/local/exam_paper_data.dart';
 import 'package:math_matric/features/papers/data/local/papers_item_local_data.dart';
+import 'package:math_matric/features/papers/data/respositories/exam_repository_impl.dart';
 import 'package:math_matric/features/papers/data/respositories/papers_respository_impl.dart';
 import 'package:math_matric/features/papers/domain/entities/exam_page_arguments.dart';
 import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
@@ -50,12 +52,12 @@ class AppRouter {
 
       case Routes.examPage:
         final args = settings.arguments as ExamPageArguments;
-        final localExamDataSource = PaperTileLocalData();
-        final repository = PapersRepositoryImpl(localExamDataSource);
-        final getExamPaperData = GetPaperData(repository);
+        final localExamDataSource = ExamPaperData();
+        final repository = ExamPaperRepositoryImpl(localExamDataSource);
+        final getExamPaperData = GetExamPaperData(repository);
         return MaterialPageRoute(
           builder: (_) => BlocProvider(
-            create: (_) => ExamBloc(getExamPaperData as GetExamPaperData),
+            create: (_) => ExamBloc(getExamPaperData),
             child: ExamPaperPage(
               contextData: args.contextData,
               mode: args.mode,

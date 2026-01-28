@@ -94,7 +94,7 @@ class _ExamPaperPageState extends State<ExamPaperPage>
             children: examPapers.entries
                 .expand(
                   (entry) => [
-                    _sessionHeader(entry.key as String),
+                    _sessionHeader(entry.key.name),
                     const SizedBox(height: 12),
                     ...entry.value.map(_documentCard),
                     const SizedBox(height: 24),
