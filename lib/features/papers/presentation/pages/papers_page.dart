@@ -69,37 +69,33 @@ class _PapersPageState extends State<PapersPage> {
                 const SliverPadding(
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 ),
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  sliver: SliverAnimatedGrid(
-                    key: _gridKey,
-                    initialItemCount: 0,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 12,
-                      crossAxisSpacing: 12,
-                      childAspectRatio: 0.75,
-                    ),
-                    itemBuilder: (context, index, animation) {
-                      if (index == 0) {
-                        return PaperTile.streak(
-                          streakData: StreakData.streakData,
-                          animation: animation,
-                          data: items.first,
-                          paperType: widget.paperType,
-                        );
-                      }
-
-                      final data = items[index];
-
-                      return PaperTile.topics(
-                        data: data,
+                SliverAnimatedGrid(
+                  key: _gridKey,
+                  initialItemCount: 0,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 12,
+                    childAspectRatio: 0.75,
+                  ),
+                  itemBuilder: (context, index, animation) {
+                    if (index == 0) {
+                      return PaperTile.streak(
+                        streakData: StreakData.streakData,
                         animation: animation,
+                        data: items.first,
                         paperType: widget.paperType,
                       );
-                    },
-                  ),
+                    }
+
+                    final data = items[index];
+
+                    return PaperTile.topics(
+                      data: data,
+                      animation: animation,
+                      paperType: widget.paperType,
+                    );
+                  },
                 ),
               ],
             );

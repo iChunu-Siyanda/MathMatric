@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:math_matric/features/papers/domain/entities/exam_page_mode.dart.dart';
-import 'package:math_matric/features/papers/presentation/navigation/section_tab_entities.dart';
-import 'package:math_matric/features/papers/domain/entities/tab_entities.dart';
+import 'package:math_matric/app/navigation/section_tab_entities.dart';
+import 'package:math_matric/app/navigation/tab_entities.dart';
 import 'package:math_matric/features/papers/domain/entities/topic_item.dart';
 import 'package:math_matric/features/papers/presentation/pages/class_notes/class_notes_page.dart';
 import 'package:math_matric/features/papers/presentation/pages/class_notes/class_notes_tips.dart';

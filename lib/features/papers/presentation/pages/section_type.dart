@@ -4,8 +4,8 @@ import 'package:math_matric/features/papers/data/local/exam_paper_data.dart';
 import 'package:math_matric/features/papers/data/respositories/exam_repository_impl.dart';
 import 'package:math_matric/features/papers/domain/usercases/get_exam_paper_data.dart';
 import 'package:math_matric/features/papers/presentation/bloc/exam/exam_bloc.dart';
-import 'package:math_matric/features/papers/presentation/navigation/section_context_modal.dart';
-import 'package:math_matric/features/papers/presentation/navigation/section_tab_entities.dart';
+import 'package:math_matric/app/navigation/section_context_modal.dart';
+import 'package:math_matric/app/navigation/section_tab_entities.dart';
 
 class SectionType extends StatefulWidget {
   final String pageTitle;

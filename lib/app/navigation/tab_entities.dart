@@ -1,4 +1,4 @@
-import 'package:math_matric/features/papers/presentation/navigation/section_tab_entities.dart';
+import 'package:math_matric/app/navigation/section_tab_entities.dart';
 
 class TabModel {
   final List<SectionTab> tabs;

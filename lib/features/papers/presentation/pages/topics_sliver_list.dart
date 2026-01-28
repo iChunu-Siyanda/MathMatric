@@ -3,7 +3,7 @@ import 'package:math_matric/features/papers/domain/entities/paper_item.dart';
 import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
 import 'package:math_matric/features/papers/presentation/widget/main/topic_list_tile.dart';
 import 'package:math_matric/features/papers/presentation/pages/section_type.dart';
-import 'package:math_matric/features/papers/presentation/navigation/section_context_modal.dart';
+import 'package:math_matric/app/navigation/section_context_modal.dart';
 
 //data topic list
 class TopicsSliverList extends StatefulWidget {

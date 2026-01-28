@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:math_matric/features/papers/presentation/navigation/section_context_modal.dart';
+import 'package:math_matric/app/navigation/section_context_modal.dart';
 
 class SectionTab {
   final String title;

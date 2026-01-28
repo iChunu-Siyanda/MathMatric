@@ -30,27 +30,26 @@ class StreakCard extends StatelessWidget {
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
                   'Current Streak',
-                  style: TextStyle(color: Colors.white70, fontSize: 14),
+                  style: TextStyle(color: Colors.white70, fontSize: 20),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 30),
                 Text(
                   '$current',
                   style: const TextStyle(
-                    fontSize: 72,
+                    fontSize: 80,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
                 ),
                 const Text(
-                  'days',
-                  style: TextStyle(color: Colors.white54),
+                  'Days',
+                  style: TextStyle(color: Colors.white54, fontSize: 15),
                 ),
               ],
             ),

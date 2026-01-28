@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:math_matric/features/papers/presentation/widget/supporting/streak_card.dart';
 import 'package:math_matric/features/streak/domain/entities/streak_variant_modal.dart';
+import 'package:math_matric/features/streak/presentation/bloc/habit_bloc.dart';
 import 'package:math_matric/features/streak/presentation/pages/streak_screen.dart';
 
 class StreakSliver extends StatelessWidget {
@@ -25,7 +27,9 @@ class StreakSliver extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => StreakScreen(), //Receives content
+                    builder: (BuildContext context) => BlocProvider(
+                      create: (_) => HabitBloc() ,
+                      child: StreakScreen()), 
                   ),
                 );
               },
@@ -33,7 +37,9 @@ class StreakSliver extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => StreakScreen(),
+                    builder: (_) => BlocProvider(
+                      create: (BuildContext context) => HabitBloc(),
+                      child: StreakScreen()),
                   ),
                 );
               },
