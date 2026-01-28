@@ -1,6 +1,6 @@
 //“What does the UI need to know right now?”
-import 'package:math_matric/routes/papers/resources/my_progress/models/habit_entry_model.dart';
-import 'package:math_matric/routes/papers/resources/my_progress/models/habit_summary.dart';
+import 'package:math_matric/features/streak/domain/entities/habit_entry_model.dart';
+import 'package:math_matric/features/streak/data/models/habit_summary.dart';
 
 class HabitState {
   final List<HabitEntry> entries;

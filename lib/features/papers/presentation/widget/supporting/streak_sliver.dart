@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:math_matric/features/papers/presentation/widget/supporting/streak_card.dart';
-import 'package:math_matric/routes/papers/resources/models/streak_variant_modal.dart';
-import 'package:math_matric/routes/papers/resources/my_progress/streak/screen/streak_screen.dart';
+import 'package:math_matric/features/streak/domain/entities/streak_variant_modal.dart';
+import 'package:math_matric/features/streak/presentation/pages/streak_screen.dart';
 
 class StreakSliver extends StatelessWidget {
   final StreakContent content;

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:math_matric/routes/papers/resources/my_progress/models/habit_entry_model.dart';
-import 'package:math_matric/routes/papers/resources/my_progress/streak/components/section_header.dart';
-import 'package:math_matric/routes/papers/resources/my_progress/streak/slivers/calender_grid.dart';
-import 'package:math_matric/routes/papers/resources/my_progress/streak/slivers/weekday_header.dart';
+import 'package:math_matric/features/streak/domain/entities/habit_entry_model.dart';
+import 'package:math_matric/features/streak/presentation/widgets/section_header.dart';
+import 'package:math_matric/features/streak/presentation/widgets/calender_grid.dart';
+import 'package:math_matric/features/streak/presentation/widgets/weekday_header.dart';
 
 
 class StreakTimelineSliver extends StatelessWidget {

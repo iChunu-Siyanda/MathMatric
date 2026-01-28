@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:math_matric/routes/papers/resources/my_progress/logic/habit_entry_helper.dart';
-import 'package:math_matric/routes/papers/resources/my_progress/models/activities.dart';
-import 'package:math_matric/routes/papers/resources/my_progress/models/habit_entry_model.dart';
+import 'package:math_matric/features/streak/domain/usercase/habit_entry_helper.dart';
+import 'package:math_matric/features/streak/domain/entities/activities.dart';
+import 'package:math_matric/features/streak/domain/entities/habit_entry_model.dart';
 
 // Helper to create normalized HabitEntry
 HabitEntry entry({

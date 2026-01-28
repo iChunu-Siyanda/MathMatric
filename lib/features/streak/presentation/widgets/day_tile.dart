@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:math_matric/routes/papers/resources/my_progress/streak/components/streak_intensity.dart';
+import 'package:math_matric/features/streak/presentation/widgets/streak_intensity.dart';
 
 class DayTile extends StatelessWidget {
   final int studyMinutes;

@@ -89,18 +89,6 @@ class _HomePageState extends State<HomePage> {
 
           //Discussions Card
           SliverToBoxAdapter(child: DiscussionsCard(onTap: () {}, backgroundImg: "assets/images/hands_img.jpg",)),
-
-          // SliverToBoxAdapter(
-          //   child: MainCard(
-          //     text: "Community",
-          //     onPressed: () {
-          //       Navigator.push(
-          //         context,
-          //         MaterialPageRoute(builder: (context) => Paper1Page()),
-          //       );
-          //     },
-          //   ),
-          // ),
         ],
       ),
 

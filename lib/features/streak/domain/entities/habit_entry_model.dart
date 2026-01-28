@@ -1,6 +1,6 @@
 
 
-import 'package:math_matric/routes/papers/resources/my_progress/models/activities.dart';
+import 'package:math_matric/features/streak/domain/entities/activities.dart';
 
 class HabitEntry {
   final DateTime date; // normalized date (YYYY-MM-DD)

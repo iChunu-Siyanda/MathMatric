@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:math_matric/bloc/HabitBloc/habit_bloc.dart';
-import 'package:math_matric/bloc/HabitBloc/habit_state.dart';
-import 'package:math_matric/routes/papers/resources/my_progress/streak/slivers/steak_footer_sliver.dart';
-import 'package:math_matric/routes/papers/resources/my_progress/streak/slivers/streak_insight_sliver.dart';
-import 'package:math_matric/routes/papers/resources/my_progress/streak/slivers/streak_pattern_sliver.dart';
-import 'package:math_matric/routes/papers/resources/my_progress/streak/slivers/streak_timeline_sliver.dart';
+import 'package:math_matric/features/streak/presentation/bloc/habit_bloc.dart';
+import 'package:math_matric/features/streak/presentation/bloc/habit_state.dart';
+import 'package:math_matric/features/streak/presentation/widgets/steak_footer_sliver.dart';
+import 'package:math_matric/features/streak/presentation/widgets/streak_insight_sliver.dart';
+import 'package:math_matric/features/streak/presentation/widgets/streak_pattern_sliver.dart';
+import 'package:math_matric/features/streak/presentation/widgets/streak_timeline_sliver.dart';
 
 class StreakScreen extends StatelessWidget {
   const StreakScreen({super.key});

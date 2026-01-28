@@ -1,6 +1,6 @@
 //“Does this day count as a study day?”
-import 'package:math_matric/routes/papers/resources/my_progress/models/activities.dart';
-import 'package:math_matric/routes/papers/resources/my_progress/models/habit_entry_model.dart';
+import 'package:math_matric/features/streak/domain/entities/activities.dart';
+import 'package:math_matric/features/streak/domain/entities/habit_entry_model.dart';
 
 bool isValidStudyDay(HabitEntry entry) {
   final hasEnoughTime = entry.studyMinutes >= 20;
