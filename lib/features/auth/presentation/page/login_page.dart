@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:math_matric/auth/auth_components/auth_background.dart';
-import 'package:math_matric/auth/auth_components/my_button.dart';
-import 'package:math_matric/auth/auth_components/my_text_field.dart';
+import 'package:math_matric/features/auth/presentation/widgets/auth_background.dart';
+import 'package:math_matric/features/auth/presentation/widgets/my_button.dart';
+import 'package:math_matric/features/auth/presentation/widgets/my_text_field.dart';
 import 'forgot_password_page.dart';
 
 class LoginPage extends StatefulWidget {

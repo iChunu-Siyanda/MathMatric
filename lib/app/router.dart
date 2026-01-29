@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:math_matric/auth/auth_firebase.dart';
-import 'package:math_matric/auth/login_page.dart';
+import 'package:math_matric/features/auth/presentation/navigation/auth_firebase.dart';
+import 'package:math_matric/features/auth/presentation/page/login_page.dart';
 import 'package:math_matric/features/papers/data/local/exam_paper_data.dart';
 import 'package:math_matric/features/papers/data/local/papers_item_local_data.dart';
 import 'package:math_matric/features/papers/data/respositories/exam_repository_impl.dart';
