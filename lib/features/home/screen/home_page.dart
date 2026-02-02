@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:math_matric/app/router.dart';
 import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
-import 'package:math_matric/routes/drawer/math_matric_drawer.dart';
-import 'package:math_matric/routes/home/components/auto_sliding_carousel.dart';
-import 'package:math_matric/routes/home/components/continue_studying_card.dart';
-import 'package:math_matric/routes/home/components/discussions_card.dart';
-import 'package:math_matric/routes/home/components/path_card.dart';
+import 'package:math_matric/features/drawer/math_matric_drawer.dart';
+import 'package:math_matric/features/home/components/auto_sliding_carousel.dart';
+import 'package:math_matric/features/home/components/continue_studying_card.dart';
+import 'package:math_matric/features/home/components/discussions_card.dart';
+import 'package:math_matric/features/home/components/path_card.dart';
 
 
 class HomePage extends StatefulWidget {

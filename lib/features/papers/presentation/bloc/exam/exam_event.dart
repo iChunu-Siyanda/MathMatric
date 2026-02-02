@@ -4,14 +4,20 @@ abstract class ExamEvent {
   const ExamEvent();
 }
 
-//Exam viewer/TopicsSliverList opens this fires up
-class ExamPaperRequested extends ExamEvent{
+class ExamPaperRequested extends ExamEvent {
   final PaperType paperType;
 
   const ExamPaperRequested(this.paperType);
 }
 
-//Reset when leaving page.
-class ResetExamPapers extends ExamEvent{
+//specific exam (Paper + Memo tabs)
+class ExamPaperFocusRequested extends ExamEvent {
+  final String paperId;
+
+  const ExamPaperFocusRequested(this.paperId);
+}
+
+// Reset when leaving page
+class ResetExamPapers extends ExamEvent {
   const ResetExamPapers();
 }

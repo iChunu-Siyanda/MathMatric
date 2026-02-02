@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:math_matric/routes/drawer/components/drawer_item.dart';
-import 'package:math_matric/routes/drawer/components/streak_indicator.dart';
+import 'package:math_matric/features/drawer/components/drawer_item.dart';
+import 'package:math_matric/features/drawer/components/streak_indicator.dart';
 
 class MathMatricDrawer extends StatelessWidget {
   final int streak;

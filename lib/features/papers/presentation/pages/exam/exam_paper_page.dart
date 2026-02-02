@@ -69,7 +69,7 @@ class _ExamPaperPageState extends State<ExamPaperPage>
           title: isPaper ? paper.title : "${paper.title} – Memo",
           pdfAssetPath: isPaper
               ? paper.assetPath
-              : paper.assetPath, // replace with memoAssetPath later
+              : paper.assetPath, //memoAssetPath
         ),
       ),
     );

@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:math_matric/features/auth/presentation/navigation/login_or_register.dart';
-import 'package:math_matric/routes/home/screen/home_page.dart';
+import 'package:math_matric/features/home/screen/home_page.dart';
 
 class AuthFirebase extends StatelessWidget {
   const AuthFirebase({super.key});

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:math_matric/routes/home/components/animated_base_card.dart';
+import 'package:math_matric/features/home/components/animated_base_card.dart';
 
 class DiscussionsCard extends StatelessWidget {
   final VoidCallback onTap;

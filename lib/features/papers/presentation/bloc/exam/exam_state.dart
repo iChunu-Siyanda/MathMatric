@@ -15,11 +15,22 @@ class ExamPaperLoading extends ExamState{
   const ExamPaperLoading();
 }
 
-//Exam papers are loaded
+//Exam papers are loaded. Browsing state
 class ExamPaperLoaded extends ExamState{
   final Map<ExamSession, List<ExamPaper>> examPapers;
 
   const ExamPaperLoaded(this.examPapers);
+}
+
+//Focus state, getting specific papers
+class ExamPaperFocusLoaded extends ExamState {
+  final ExamPaper paper;
+  final ExamPaper memo;
+
+  ExamPaperFocusLoaded({
+    required this.paper,
+    required this.memo,
+  });
 }
 
 //Error state missing any data
