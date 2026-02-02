@@ -96,7 +96,7 @@ class _AutoSlidingCarouselState extends State<AutoSlidingCarousel> {
 
     return SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15),
+        padding: const EdgeInsets.symmetric(horizontal: 10,),
         child: MouseRegion(
           onEnter: (_) => _pause(),
           onExit: (_) => _resume(),
@@ -136,7 +136,7 @@ class _CarouselCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 16),
+      margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 6),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [colors.primary, colors.primaryContainer],

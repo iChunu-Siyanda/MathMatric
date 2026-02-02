@@ -18,6 +18,7 @@ class DiscussionsCard extends StatelessWidget {
     return AnimatedBaseCard(
       height: 130,
       onTap: onTap,
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: Stack(
         children: [
           if (backgroundImg != null) Positioned.fill(child: Image.asset(backgroundImg!, fit: BoxFit.cover,)),

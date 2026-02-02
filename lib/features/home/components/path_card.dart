@@ -24,7 +24,7 @@ class PathCard extends StatelessWidget {
     return AnimatedBaseCard(
       height: 200,
       onTap: onTap,
-      margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 12),
+      margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
       child: _PathCardBody(
         imgPath: imgPath,
         gradient: gradient,

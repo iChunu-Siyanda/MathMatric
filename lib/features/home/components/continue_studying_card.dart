@@ -27,6 +27,7 @@ class ContinueStudyingCard extends StatelessWidget {
 
     return AnimatedBaseCard(
       height: 200,
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       onTap: onTap,
       child: Stack(children: [
         if (backgroundImg != null)

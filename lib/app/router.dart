@@ -13,7 +13,7 @@ import 'package:math_matric/features/papers/domain/usercases/get_paper_data.dart
 import 'package:math_matric/features/papers/presentation/bloc/exam/exam_bloc.dart';
 import 'package:math_matric/features/papers/presentation/bloc/paper/papers_bloc.dart';
 import 'package:math_matric/features/papers/presentation/pages/exam/exam_paper_page.dart';
-import 'package:math_matric/features/home/screen/home_page.dart';
+import 'package:math_matric/features/home/page/home_page.dart';
 import 'package:math_matric/features/papers/presentation/pages/papers_page.dart';
 
 class Routes {
