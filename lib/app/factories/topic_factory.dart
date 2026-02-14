@@ -26,7 +26,7 @@ class TopicFactory {
           builder: (ctx) =>
               StreakScreen()), //Lazy-loaded widgets in the builder
       SectionTab(title: "Scores", builder: (ctx) => StreakScreen())
-    ]),
+    ], tabType: TabType.progress),
 
     //Class Notes
     TabType.classNotes: TabModel(
@@ -36,7 +36,7 @@ class TopicFactory {
           builder: (ctx) => ClassNotesTips(),
         ),
         SectionTab(title: "Class Notes", builder: (ctx) => ClassNotesPage())
-      ],
+      ], tabType: TabType.classNotes,
     ),
 
     //Practice
@@ -50,7 +50,7 @@ class TopicFactory {
           title: "Practice Tests",
           builder: (ctx) => PracticePage(),
         ),
-      ],
+      ], tabType: TabType.practice,
     ),
 
     //Exams
@@ -72,7 +72,7 @@ class TopicFactory {
             paperType: ctx.paperType,
           ),
         ),
-      ],
+      ], tabType: TabType.exam,
     ),
   };
 

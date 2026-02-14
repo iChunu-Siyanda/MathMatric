@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:math_matric/app/factories/topic_factory.dart';
 import 'package:math_matric/features/auth/presentation/navigation/auth_firebase.dart';
 import 'package:math_matric/features/auth/presentation/page/login_page.dart';
 import 'package:math_matric/features/papers/data/local/exam_paper_data.dart';
@@ -8,6 +9,7 @@ import 'package:math_matric/features/papers/data/respositories/exam_repository_i
 import 'package:math_matric/features/papers/data/respositories/papers_respository_impl.dart';
 import 'package:math_matric/features/papers/domain/entities/exam_page_arguments.dart';
 import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
+import 'package:math_matric/features/papers/domain/entities/section_type_arguments.dart';
 import 'package:math_matric/features/papers/domain/usercases/get_exam_paper_data.dart';
 import 'package:math_matric/features/papers/domain/usercases/get_paper_data.dart';
 import 'package:math_matric/features/papers/presentation/bloc/exam/exam_bloc.dart';
@@ -15,6 +17,7 @@ import 'package:math_matric/features/papers/presentation/bloc/paper/papers_bloc.
 import 'package:math_matric/features/papers/presentation/pages/exam/exam_paper_page.dart';
 import 'package:math_matric/features/home/page/home_page.dart';
 import 'package:math_matric/features/papers/presentation/pages/papers_page.dart';
+import 'package:math_matric/features/papers/presentation/pages/section_type.dart';
 
 class Routes {
   static const String initial = '/';
@@ -22,10 +25,15 @@ class Routes {
   static const String home = '/home';
   static const String paperTypePage = '/paperTypePage';
   static const String examPage = 'examPage';
+  static const String sectionPage = "sectionPage";
 }
 
 class AppRouter {
   static Route onGenerateRoute(RouteSettings settings) {
+    final localExamDataSource = ExamPaperData();
+    final repository = ExamPaperRepositoryImpl(localExamDataSource);
+    final getExamPaperData = GetExamPaperData(repository);
+
     switch (settings.name) {
       case Routes.initial:
         return MaterialPageRoute(builder: (_) => const AuthFirebase());
@@ -52,9 +60,6 @@ class AppRouter {
 
       case Routes.examPage:
         final args = settings.arguments as ExamPageArguments;
-        final localExamDataSource = ExamPaperData();
-        final repository = ExamPaperRepositoryImpl(localExamDataSource);
-        final getExamPaperData = GetExamPaperData(repository);
         return MaterialPageRoute(
           builder: (_) => BlocProvider(
             create: (_) => ExamBloc(getExamPaperData),
@@ -65,6 +70,32 @@ class AppRouter {
             ),
           ),
         );
+
+      case Routes.sectionPage:
+        final args = settings.arguments as SectionTypeArguments;
+
+        if (args.tabType == TabType.exam) {
+          debugPrint("args.tabType = ${args.tabType}");
+          return MaterialPageRoute(
+            builder: (_) => BlocProvider(
+              create: (_) => ExamBloc(getExamPaperData),
+              child: SectionType(
+                pageTitle: args.pageTitle,
+                sectionContext: args.sectionContext,
+                //tabType: args.tabType,
+                tabs: args.tabs,
+              ),
+            ),
+          );
+        } else {
+          return MaterialPageRoute(
+              builder: (_) => SectionType(
+                    pageTitle: args.pageTitle,
+                    sectionContext: args.sectionContext,
+                    //tabType: args.tabType,
+                    tabs: args.tabs,
+                  ));
+        }
 
       default:
         return MaterialPageRoute(

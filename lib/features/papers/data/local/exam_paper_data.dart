@@ -42,7 +42,7 @@ class ExamPaperData {
             assetPath:
                 "papers/paper_1/exams/memos/november/p1_nov_2024_memo.pdf",
             isMemo: true,
-            id: 'november_p1_2024',
+            id: 'november_p1_2024_memo',
             parentPaperId: 'november_p1_2024',
           ),
         ],

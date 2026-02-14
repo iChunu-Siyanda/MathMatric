@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:math_matric/features/papers/data/local/exam_paper_data.dart';
-import 'package:math_matric/features/papers/data/respositories/exam_repository_impl.dart';
-import 'package:math_matric/features/papers/domain/usercases/get_exam_paper_data.dart';
-import 'package:math_matric/features/papers/presentation/bloc/exam/exam_bloc.dart';
+//import 'package:math_matric/app/factories/topic_factory.dart';
 import 'package:math_matric/app/navigation/section_context_modal.dart';
 import 'package:math_matric/app/navigation/section_tab_entities.dart';
 
 class SectionType extends StatefulWidget {
   final String pageTitle;
+  //final TabType tabType;
   final List<SectionTab> tabs;
   final SectionContext sectionContext;
 
   const SectionType({
     super.key,
     required this.pageTitle,
+    //required this.tabType,
     required this.tabs,
     required this.sectionContext,
   });
@@ -45,10 +43,6 @@ class _SectionTypeState extends State<SectionType>
 
   @override
   Widget build(BuildContext context) {
-    final localExamDataSource = ExamPaperData();
-    final repository = ExamPaperRepositoryImpl(localExamDataSource);
-    final getExamPaperData = GetExamPaperData(repository);
-
     return Scaffold(
       body: NestedScrollView(
         headerSliverBuilder: (_, innerBox) => [
@@ -68,13 +62,11 @@ class _SectionTypeState extends State<SectionType>
           ),
         ],
 
-        body: BlocProvider(
-          create: (_) => ExamBloc(getExamPaperData),
-          child: TabBarView(
+        body: TabBarView(
             controller: _tabController,
             children: widget.tabs.map((t) => t.builder(widget.sectionContext)).toList(),
           ),
-        ),
+        
       ),
     );
   }
