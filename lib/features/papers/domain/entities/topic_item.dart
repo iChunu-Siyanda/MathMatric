@@ -8,6 +8,7 @@ class TopicItem {
   final Color color;
   final IconData icon; 
   final TabModel tab;
+  final String ? paperId;
 
   const TopicItem({
     required this.title,
@@ -15,6 +16,7 @@ class TopicItem {
     required this.color,
     required this.icon,
     required this.tab, 
-    required this.pageTitle
+    required this.pageTitle,
+    this.paperId
   });
 }

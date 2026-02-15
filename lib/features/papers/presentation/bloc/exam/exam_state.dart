@@ -17,7 +17,7 @@ class ExamPaperLoading extends ExamState{
 
 //Exam papers are loaded. Browsing state
 class ExamPaperLoaded extends ExamState{
-  final Map<ExamSession, List<ExamPaper>> examPapers;
+  final Map<ExamSession, Map<String,List<ExamPaper>>> examPapers;
 
   const ExamPaperLoaded(this.examPapers);
 }

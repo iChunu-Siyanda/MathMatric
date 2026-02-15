@@ -77,6 +77,7 @@ class _TopicsSliverListState extends State<TopicsSliverList>
             (context, index) {
               final item = widget.content.section!.topics[index];
               final anima = _itemInterval(index);
+              //debugPrint("items=$item, paperType= ${widget.paperType}");
 
               return AnimatedBuilder(
                 animation: anima,
@@ -97,7 +98,7 @@ class _TopicsSliverListState extends State<TopicsSliverList>
                             sectionContext: SectionContext(
                                 paper: widget.content,
                                 topic: item,
-                                paperType: widget.paperType), 
+                                paperType: widget.paperType),
                             tabType: item.tab.tabType));
                   },
                 ),

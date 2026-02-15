@@ -9,12 +9,12 @@ class ExamPaperRepositoryImpl implements ExamPaperRepository {
   ExamPaperRepositoryImpl(this.localExamDataSource);
 
   @override
-  Future<Map<ExamSession, List<ExamPaper>>> getExamPaper1() async {
+  Future<Map<ExamSession, Map<String,List<ExamPaper>>>> getExamPaper1() async {
     return ExamPaperData().getExamItems(PaperType.paper1);
   }
   
   @override
-  Future<Map<ExamSession, List<ExamPaper>>> getExamPaper2() async{
+  Future<Map<ExamSession, Map<String,List<ExamPaper>>>> getExamPaper2() async{
     return ExamPaperData().getExamItems(PaperType.paper2);
   }
 }

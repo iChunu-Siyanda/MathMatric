@@ -77,6 +77,7 @@ class TileTopicsP1Data{
   static final marchTests = TopicFactory.yearRange(
     title: "March",
     years: years,
+    month: "march",
     tabType: TabType.exam,
     colorPicker: colorPicker,
     iconPicker: iconPicker,
@@ -87,6 +88,7 @@ class TileTopicsP1Data{
   static final juneExams = TopicFactory.yearRange(
     title: "June",
     years: years,
+    month: "june",
     tabType: TabType.exam,
     colorPicker: colorPicker,
     iconPicker: iconPicker,
@@ -97,6 +99,7 @@ class TileTopicsP1Data{
   static final prelimExams = TopicFactory.yearRange(
     title: "Prelims",
     years: years,
+    month: "prelim",
     tabType: TabType.exam,
     colorPicker: colorPicker,
     iconPicker: iconPicker,
@@ -107,6 +110,7 @@ class TileTopicsP1Data{
   static final novemberExams = TopicFactory.yearRange(
     title: "November",
     years: years,
+    month: "november",
     tabType: TabType.exam,
     colorPicker: colorPicker,
     iconPicker: iconPicker,
@@ -117,6 +121,7 @@ class TileTopicsP1Data{
   static final iebExams = TopicFactory.yearRange(
     title: "IEB",
     years: years,
+    month: "ieb",
     tabType: TabType.exam,
     colorPicker: colorPicker,
     iconPicker: iconPicker,

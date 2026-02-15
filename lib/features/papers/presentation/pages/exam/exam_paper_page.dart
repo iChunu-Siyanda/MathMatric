@@ -1,26 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:math_matric/features/papers/domain/entities/exam_paper.dart';
-import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
+import 'package:math_matric/app/navigation/section_context_modal.dart';
 import 'package:math_matric/features/papers/domain/entities/exam_page_mode.dart.dart';
+import 'package:math_matric/features/papers/domain/entities/exam_paper.dart';
 import 'package:math_matric/features/papers/presentation/bloc/exam/exam_bloc.dart';
 import 'package:math_matric/features/papers/presentation/bloc/exam/exam_event.dart';
 import 'package:math_matric/features/papers/presentation/bloc/exam/exam_state.dart';
-import 'package:math_matric/app/navigation/section_context_modal.dart';
 import 'package:math_matric/features/papers/presentation/widget/main/exam_paper_viewer.dart';
 
 class ExamPaperPage extends StatefulWidget {
   final SectionContext contextData;
   final ExamPageMode mode;
-  final PaperType paperType;
-
+  final String? paperId;
   const ExamPaperPage({
     super.key,
     required this.contextData,
     required this.mode,
-    required this.paperType,
+    this.paperId,
   });
-
   @override
   State<ExamPaperPage> createState() => _ExamPaperPageState();
 }
@@ -32,6 +29,7 @@ class _ExamPaperPageState extends State<ExamPaperPage>
 
   final Set<ExamPaper> _savedPapers = {};
 
+  //Convenience getter to know if this page represents the main exam paper or the memo tab.
   bool get isPaper => widget.mode == ExamPageMode.paper;
 
   @override
@@ -52,7 +50,12 @@ class _ExamPaperPageState extends State<ExamPaperPage>
       _controller.forward();
     });
 
-    context.read<ExamBloc>().add(ExamPaperRequested(widget.paperType));
+    context.read<ExamBloc>().add(
+          ExamPaperFocusRequested(
+            widget.paperId!,
+            widget.contextData.paperType,
+          ),
+        );
   }
 
   @override
@@ -61,15 +64,14 @@ class _ExamPaperPageState extends State<ExamPaperPage>
     super.dispose();
   }
 
-  void _openPdf(ExamPaper paper) {
+  // Opens the selected PDF.
+  void _openPdf(ExamPaper document) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => ExamPaperViewer(
-          title: isPaper ? paper.title : "${paper.title} – Memo",
-          pdfAssetPath: isPaper
-              ? paper.assetPath
-              : paper.assetPath, //memoAssetPath
+          title: document.title,
+          pdfAssetPath: document.assetPath,
         ),
       ),
     );
@@ -77,49 +79,39 @@ class _ExamPaperPageState extends State<ExamPaperPage>
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ExamBloc, ExamState>(builder: (context, state){
-      if (state is ExamPaperLoading) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      }
+    return BlocBuilder<ExamBloc, ExamState>(
+      builder: (context, state) {
+        if (state is ExamPaperLoading) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
 
-      if (state is ExamPaperLoaded) {
-        final examPapers = state.examPapers;
+        if (state is ExamPaperFocusLoaded) {
+          final ExamPaper selectedDocument = isPaper ? state.paper : state.memo;
 
-        return FadeTransition(
-          opacity: _fadeAnim,
-          child: ListView(
-            padding: const EdgeInsets.all(16),
-            children: examPapers.entries
-                .expand(
-                  (entry) => [
-                    _sessionHeader(entry.key.name),
-                    const SizedBox(height: 12),
-                    ...entry.value.map(_documentCard),
-                    const SizedBox(height: 24),
-                  ],
-                )
-                .toList(),
-          ),
-        );
-      }
+          return FadeTransition(
+            opacity: _fadeAnim,
+            child: _documentCard(selectedDocument),
+          );
+        }
 
-      if (state is ExamPaperError) {
-        return Center(child: Text(state.message));
-      }
+        if (state is ExamPaperError) {
+          return Center(child: Text(state.message));
+        }
 
-      return const SizedBox.shrink();
-    });
+        return const SizedBox.shrink();
+      },
+    );
   }
 
-  Widget _documentCard(ExamPaper paper) {
-    final isSaved = _savedPapers.contains(paper);
+  Widget _documentCard(ExamPaper document) {
+    final isSaved = _savedPapers.contains(document);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: GestureDetector(
-        onTap: () => _openPdf(paper),
+        onTap: () => _openPdf(document),
         child: Container(
           height: isPaper ? 320 : 300,
           decoration: BoxDecoration(
@@ -145,9 +137,11 @@ class _ExamPaperPageState extends State<ExamPaperPage>
                     fit: BoxFit.cover,
                   ),
                 ),
-                if (isPaper) _saveButton(paper, isSaved),
+
+                if (isPaper) _saveButton(document, isSaved),
+
                 _bottomGradient(),
-                _titleAndButton(paper),
+                _titleAndButton(document),
               ],
             ),
           ),
@@ -156,14 +150,16 @@ class _ExamPaperPageState extends State<ExamPaperPage>
     );
   }
 
-  Widget _saveButton(ExamPaper paper, bool isSaved) {
+  Widget _saveButton(ExamPaper document, bool isSaved) {
     return Positioned(
       top: 12,
       right: 12,
       child: GestureDetector(
         onTap: () {
           setState(() {
-            isSaved ? _savedPapers.remove(paper) : _savedPapers.add(paper);
+            isSaved
+                ? _savedPapers.remove(document)
+                : _savedPapers.add(document);
           });
         },
         child: Container(
@@ -202,7 +198,7 @@ class _ExamPaperPageState extends State<ExamPaperPage>
     );
   }
 
-  Widget _titleAndButton(ExamPaper paper) {
+  Widget _titleAndButton(ExamPaper document) {
     return Positioned(
       bottom: 18,
       left: 16,
@@ -211,7 +207,7 @@ class _ExamPaperPageState extends State<ExamPaperPage>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            isPaper ? paper.title : "${paper.title} – Memo",
+            document.title,
             style: const TextStyle(
               color: Colors.white,
               fontSize: 18,
@@ -236,17 +232,6 @@ class _ExamPaperPageState extends State<ExamPaperPage>
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _sessionHeader(String title) {
-    return Text(
-      title.toUpperCase(),
-      style: const TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.w800,
-        letterSpacing: 1.2,
       ),
     );
   }

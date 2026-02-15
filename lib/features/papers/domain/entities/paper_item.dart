@@ -13,10 +13,12 @@ class PaperItem {
 class Section {
   final String title;
   final List<dynamic> topics;
+  final String ? paperId;
 
   const Section({
     required this.title,
     required this.topics,
+    this.paperId,
   });
 }
 

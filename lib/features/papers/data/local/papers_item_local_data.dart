@@ -1,4 +1,4 @@
-import 'package:math_matric/features/papers/data/local/tile_topics_p1_data.dart';
+import 'package:math_matric/features/papers/data/model/tile_topics_p1_data.dart';
 import 'package:math_matric/features/papers/domain/entities/paper_item.dart';
 import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
 
@@ -52,7 +52,7 @@ class PaperTileLocalData {
         PaperItem(
           title: "IEB",
           brief: "IEB Examinations",
-          section: Section(title: TileTopicsP1Data.examIebTitle, topics: TileTopicsP1Data.iebExams),
+          section: Section(title: TileTopicsP1Data.examIebTitle, topics: TileTopicsP1Data.iebExams,),
         ),
       ];
 

@@ -8,7 +8,7 @@ class GetExamPaperData {
 
   GetExamPaperData(this.repository);
 
-  Future<Map<ExamSession, List<ExamPaper>>> call(PaperType type){
+  Future<Map<ExamSession, Map<String,List<ExamPaper>>>> call(PaperType type){
     if(type == PaperType.paper1){
       return repository.getExamPaper1();
     } else {

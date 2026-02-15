@@ -10,6 +10,6 @@ class SectionContext {
   const SectionContext({
     required this.paper,
     required this.topic,
-    required this.paperType
+    required this.paperType,
   });
 }

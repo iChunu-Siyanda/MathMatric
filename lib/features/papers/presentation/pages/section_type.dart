@@ -5,14 +5,12 @@ import 'package:math_matric/app/navigation/section_tab_entities.dart';
 
 class SectionType extends StatefulWidget {
   final String pageTitle;
-  //final TabType tabType;
   final List<SectionTab> tabs;
   final SectionContext sectionContext;
 
   const SectionType({
     super.key,
     required this.pageTitle,
-    //required this.tabType,
     required this.tabs,
     required this.sectionContext,
   });
@@ -35,11 +33,11 @@ class _SectionTypeState extends State<SectionType>
     );
   }
 
-  // @override
-  // void dispose() {
-  //   _tabController.dispose();
-  //   super.dispose();
-  // }
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

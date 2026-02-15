@@ -66,7 +66,7 @@ class AppRouter {
             child: ExamPaperPage(
               contextData: args.contextData,
               mode: args.mode,
-              paperType: args.paperType,
+              paperId: args.paperId,
             ),
           ),
         );
@@ -75,14 +75,14 @@ class AppRouter {
         final args = settings.arguments as SectionTypeArguments;
 
         if (args.tabType == TabType.exam) {
-          debugPrint("args.tabType = ${args.tabType}");
+          debugPrint(
+              "args.tabType = ${args.tabType}, sectionContext = ${args.sectionContext}, tabs: ${args.tabs}, pageTitle: ${args.pageTitle}, getExamPaperDara: $getExamPaperData");
           return MaterialPageRoute(
             builder: (_) => BlocProvider(
               create: (_) => ExamBloc(getExamPaperData),
               child: SectionType(
                 pageTitle: args.pageTitle,
                 sectionContext: args.sectionContext,
-                //tabType: args.tabType,
                 tabs: args.tabs,
               ),
             ),
@@ -92,7 +92,6 @@ class AppRouter {
               builder: (_) => SectionType(
                     pageTitle: args.pageTitle,
                     sectionContext: args.sectionContext,
-                    //tabType: args.tabType,
                     tabs: args.tabs,
                   ));
         }

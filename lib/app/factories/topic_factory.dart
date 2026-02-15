@@ -36,7 +36,8 @@ class TopicFactory {
           builder: (ctx) => ClassNotesTips(),
         ),
         SectionTab(title: "Class Notes", builder: (ctx) => ClassNotesPage())
-      ], tabType: TabType.classNotes,
+      ],
+      tabType: TabType.classNotes,
     ),
 
     //Practice
@@ -50,29 +51,38 @@ class TopicFactory {
           title: "Practice Tests",
           builder: (ctx) => PracticePage(),
         ),
-      ], tabType: TabType.practice,
+      ],
+      tabType: TabType.practice,
     ),
 
     //Exams
     TabType.exam: TabModel(
       tabs: [
         SectionTab(
-          title: "Questions",
-          builder: (ctx) => ExamPaperPage(
-            contextData: ctx,
-            mode: ExamPageMode.paper,
-            paperType: ctx.paperType,
-          ),
-        ),
+            title: "Questions",
+            examMode: ExamPageMode.paper,
+            builder: (ctx) {
+              if (ctx.topic.paperId == null) {
+                debugPrint("DEBUG: paperId is null for topic: ${ctx.topic}");
+                return const Center(child: Text("Error: Paper ID missing"));
+              }
+              return ExamPaperPage(
+                contextData: ctx,
+                mode: ExamPageMode.paper,
+                paperId: ctx.topic.paperId!,
+              );
+            }),
         SectionTab(
           title: "Memo",
+          examMode: ExamPageMode.memo,
           builder: (ctx) => ExamPaperPage(
             contextData: ctx,
             mode: ExamPageMode.memo,
-            paperType: ctx.paperType,
+            paperId: ctx.topic.paperId!,
           ),
         ),
-      ], tabType: TabType.exam,
+      ],
+      tabType: TabType.exam,
     ),
   };
 
@@ -82,12 +92,14 @@ class TopicFactory {
     required TabType tabType,
     required Color Function(int index) colorPicker,
     required IconData Function(int index) iconPicker,
+    required String month,
   }) {
     return List.generate(years.length, (i) {
       final y = years[i];
       return TopicItem(
         title: "$y",
         subtitle: "Grade 12 · Paper 1",
+        paperId: "${month.toLowerCase()}_p1_$y",
         color: colorPicker(i),
         icon: iconPicker(i),
         pageTitle: title,

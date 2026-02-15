@@ -13,8 +13,9 @@ class ExamPaperRequested extends ExamEvent {
 //specific exam (Paper + Memo tabs)
 class ExamPaperFocusRequested extends ExamEvent {
   final String paperId;
+  final PaperType paperType;
 
-  const ExamPaperFocusRequested(this.paperId);
+  const ExamPaperFocusRequested(this.paperId,this.paperType);
 }
 
 // Reset when leaving page
