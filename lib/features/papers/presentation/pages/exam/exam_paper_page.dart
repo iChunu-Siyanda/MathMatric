@@ -90,9 +90,12 @@ class _ExamPaperPageState extends State<ExamPaperPage>
         if (state is ExamPaperFocusLoaded) {
           final ExamPaper selectedDocument = isPaper ? state.paper : state.memo;
 
-          return FadeTransition(
-            opacity: _fadeAnim,
-            child: _documentCard(selectedDocument),
+          return SingleChildScrollView(
+            padding: EdgeInsets.symmetric(vertical: 16),
+            child: FadeTransition(
+              opacity: _fadeAnim,
+              child: _documentCard(selectedDocument),
+            ),
           );
         }
 
@@ -107,13 +110,15 @@ class _ExamPaperPageState extends State<ExamPaperPage>
 
   Widget _documentCard(ExamPaper document) {
     final isSaved = _savedPapers.contains(document);
+    //final double  screenWidth = MediaQuery.sizeOf(context).width;
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: GestureDetector(
-        onTap: () => _openPdf(document),
+    return GestureDetector(
+      onTap: () => _openPdf(document),
+      child: FractionallySizedBox(
+        widthFactor: 0.9,
         child: Container(
-          height: isPaper ? 320 : 300,
+          height: isPaper ? 350 : 320,
+          //width: screenWidth,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
@@ -137,9 +142,9 @@ class _ExamPaperPageState extends State<ExamPaperPage>
                     fit: BoxFit.cover,
                   ),
                 ),
-
+        
                 if (isPaper) _saveButton(document, isSaved),
-
+        
                 _bottomGradient(),
                 _titleAndButton(document),
               ],

@@ -79,6 +79,8 @@ class _PapersPageState extends State<PapersPage> {
                     childAspectRatio: 0.75,
                   ),
                   itemBuilder: (context, index, animation) {
+                    if (index >= 8) return const SizedBox.shrink();
+
                     if (index == 0) {
                       return PaperTile.streak(
                         streakData: StreakData.streakData,

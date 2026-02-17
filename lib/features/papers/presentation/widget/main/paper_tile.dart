@@ -86,23 +86,26 @@ class PaperTile extends StatelessWidget {
                   borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                 ),
                 builder: (context) {
-                  return DraggableScrollableSheet(
-                    initialChildSize: 0.90, // starts at 90% of screen height
-                    maxChildSize: 0.95, // max height
-                    minChildSize: 0.50,
-                    expand: false,
-                    builder: (context, scrollController) {
-                      return Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        child: CustomScrollView(
-                          controller: scrollController,
-                          slivers: _buildSlivers(context, scrollController),
-                        ),
-                      );
-                    },
+                  return FractionallySizedBox(
+                    widthFactor: 0.95,
+                    child: DraggableScrollableSheet(
+                      initialChildSize: 0.90, // starts at 90% of screen height
+                      maxChildSize: 0.95, // max height
+                      minChildSize: 0.50,
+                      expand: false,
+                      builder: (context, scrollController) {
+                        return Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          child: CustomScrollView(
+                            controller: scrollController,
+                            slivers: _buildSlivers(context, scrollController),
+                          ),
+                        );
+                      },
+                    ),
                   );
                 },
               );

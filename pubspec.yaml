@@ -14,6 +14,7 @@ dependencies:
   pdfx: ^2.9.2
   flutter_bloc: ^9.1.1
   bloc: ^9.2.0
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:
