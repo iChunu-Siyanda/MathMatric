@@ -19,3 +19,5 @@ class PracticeTopic {
     required this.color,
   });
 }
+
+//PracticeTopic has the static data of each practice section.

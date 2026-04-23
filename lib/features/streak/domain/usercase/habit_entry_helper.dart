@@ -1,9 +1,9 @@
 //“Does this day count as a study day?”
 import 'package:math_matric/features/streak/domain/entities/activities.dart';
-import 'package:math_matric/features/streak/domain/entities/habit_entry_model.dart';
+import 'package:math_matric/features/streak/domain/entities/habit_entry.dart';
 
 bool isValidStudyDay(HabitEntry entry) {
-  final hasEnoughTime = entry.studyMinutes >= 20;
+  final hasEnoughTime = entry.studyMinutes >= 15;
 
   final hasMeaningfulActivity = entry.activities.contains(StudyActivity.practice) ||
       entry.activities.contains(StudyActivity.pastPapers);
@@ -11,17 +11,23 @@ bool isValidStudyDay(HabitEntry entry) {
   return hasEnoughTime || hasMeaningfulActivity;
 }
 
-//Streaks break if dates are not normalized. So use:
+//Streaks break if dates are not normalized.
 DateTime normalizeDate(DateTime date) {
   return DateTime(date.year, date.month, date.day);
 }
 
-//Convert entries to a date look up. Use a map for O(1):
+// Convert entries to a date look up. Use a map for O(1).
+// mapEntriesByDate(List<HabitEntry> entries) emits:
+// {
+//   DateTime(2023, 10, 25): HabitEntry(date: ..., activity: 'practicePaper', minutes:...,),
+//   DateTime(2023, 10, 24): HabitEntry(date: ..., activity: 'examPaper', minutes:...,),
+// }
+
 Map<DateTime, HabitEntry> mapEntriesByDate(List<HabitEntry> entries) {
   return {
     for (final entry in entries) normalizeDate(entry.date): entry,
   };
-} //missing date = not studied
+} 
 
 //Calculation of current streak
 int calculateCurrentStreak(

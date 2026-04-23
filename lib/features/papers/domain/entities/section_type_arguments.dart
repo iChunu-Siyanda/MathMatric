@@ -4,6 +4,7 @@ import 'package:math_matric/app/navigation/section_tab_entities.dart';
 
 class SectionTypeArguments {
   final String pageTitle;
+  final String ? topicId;
   final TabType tabType;
   final List<SectionTab> tabs;
   final SectionContext sectionContext;
@@ -12,6 +13,7 @@ class SectionTypeArguments {
     required this.pageTitle,
     required this.tabType,
     required this.tabs,
-    required this.sectionContext
+    required this.sectionContext,
+    this.topicId,
   });
 }

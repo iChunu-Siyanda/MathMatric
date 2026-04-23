@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'app/app.dart';
 import 'app/bloc_observer.dart';
 import 'firebase_options.dart';
@@ -13,9 +14,11 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  final prefs = await SharedPreferences.getInstance();
+
   Bloc.observer = AppBlocObserver();
 
-  runApp(const MathMatricApp());
+  runApp(MathMatricApp(prefs: prefs,));
 }
 
 //UI → Bloc → PaperRepository (abstract) → PaperRepositoryImpl (data) → DataSource

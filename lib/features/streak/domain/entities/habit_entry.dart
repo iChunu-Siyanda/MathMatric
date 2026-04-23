@@ -1,5 +1,3 @@
-
-
 import 'package:math_matric/features/streak/domain/entities/activities.dart';
 
 class HabitEntry {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:math_matric/features/streak/domain/usercase/habit_entry_helper.dart';
-import 'package:math_matric/features/streak/domain/entities/habit_entry_model.dart';
+import 'package:math_matric/features/streak/domain/entities/habit_entry.dart';
 import 'day_tile.dart';
 
 class CalendarTileGrid extends StatelessWidget {

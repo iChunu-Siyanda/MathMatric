@@ -17,7 +17,7 @@ class LocalUserProgressRepository implements UserProgressRepository {
     required String levelId,
     required int xpEarned,
   }) async {
-    final completed = await getCompletedLevels(topicId);
+    final completed = List<String>.from(await getCompletedLevels(topicId)); // List<String>.from(arr) creates a modifiable list of arr
 
     if (!completed.contains(levelId)) {
       completed.add(levelId);

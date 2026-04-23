@@ -6,18 +6,25 @@ import 'package:math_matric/features/auth/presentation/page/login_page.dart';
 import 'package:math_matric/features/papers/data/local/exam_paper_data.dart';
 import 'package:math_matric/features/papers/data/local/papers_item_local_data.dart';
 import 'package:math_matric/features/papers/data/respositories/exam_repository_impl.dart';
+import 'package:math_matric/features/papers/data/respositories/local_practice_repository.dart';
+import 'package:math_matric/features/papers/data/respositories/local_user_progress_impl.dart';
 import 'package:math_matric/features/papers/data/respositories/papers_respository_impl.dart';
 import 'package:math_matric/features/papers/domain/entities/exam_page_arguments.dart';
 import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
 import 'package:math_matric/features/papers/domain/entities/section_type_arguments.dart';
 import 'package:math_matric/features/papers/domain/usercases/get_exam_paper_data.dart';
 import 'package:math_matric/features/papers/domain/usercases/get_paper_data.dart';
+import 'package:math_matric/features/papers/domain/usercases/load_practice_topic.dart';
 import 'package:math_matric/features/papers/presentation/bloc/exam/exam_bloc.dart';
 import 'package:math_matric/features/papers/presentation/bloc/paper/papers_bloc.dart';
+import 'package:math_matric/features/papers/presentation/bloc/practice/practice_bloc.dart';
+import 'package:math_matric/features/papers/presentation/bloc/practice/practice_event.dart';
 import 'package:math_matric/features/papers/presentation/pages/exam/exam_paper_page.dart';
 import 'package:math_matric/features/home/page/home_page.dart';
 import 'package:math_matric/features/papers/presentation/pages/papers_page.dart';
 import 'package:math_matric/features/papers/presentation/pages/section_type.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:recase/recase.dart';
 
 class Routes {
   static const String initial = '/';
@@ -29,7 +36,8 @@ class Routes {
 }
 
 class AppRouter {
-  static Route onGenerateRoute(RouteSettings settings) {
+  static Route<dynamic> onGenerateRoute(
+      RouteSettings settings, SharedPreferences prefs) {
     final localExamDataSource = ExamPaperData();
     final repository = ExamPaperRepositoryImpl(localExamDataSource);
     final getExamPaperData = GetExamPaperData(repository);
@@ -80,6 +88,39 @@ class AppRouter {
           return MaterialPageRoute(
             builder: (_) => BlocProvider(
               create: (_) => ExamBloc(getExamPaperData),
+              child: SectionType(
+                pageTitle: args.pageTitle,
+                sectionContext: args.sectionContext,
+                tabs: args.tabs,
+              ),
+            ),
+          );
+        } else if (args.tabType == TabType.practice) {
+          String toSnakeCase(String? input) {
+            if (input == null) return '';
+            final step1 = input.replaceAllMapped(
+              RegExp(r'([a-z0-9])([A-Z])'),
+              (m) => '${m[1]}_${m[2]}',
+            );
+
+            final step2 = step1.replaceAll(RegExp(r'[\s\-]+'), '_');
+
+            return step2.toLowerCase();
+          }
+
+          String topicID = toSnakeCase(args.topicId);
+
+          final getPracticeRepository = LocalPracticeRepository();
+          final getProgressRepository = LocalUserProgressRepository(prefs);
+          final practiceData = LoadPracticeTopicUseCase(
+              practiceRepository: getPracticeRepository,
+              progressRepository: getProgressRepository);
+          debugPrint(
+              "args.tabType = ${args.tabType}, TopicId = $topicID, tabs: ${args.tabs}, pageTitle: ${args.pageTitle}, PracticeData: $practiceData");
+          return MaterialPageRoute(
+            builder: (_) => BlocProvider(
+              create: (_) => PracticeBloc(loadPractice: practiceData)
+                ..add(PracticeLoadTopic(topicID)),
               child: SectionType(
                 pageTitle: args.pageTitle,
                 sectionContext: args.sectionContext,

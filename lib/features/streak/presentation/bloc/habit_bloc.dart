@@ -2,8 +2,8 @@ import 'package:bloc/bloc.dart';
 import 'package:math_matric/features/streak/presentation/bloc/habit_event.dart';
 import 'package:math_matric/features/streak/presentation/bloc/habit_state.dart';
 import 'package:math_matric/features/streak/domain/usercase/habit_entry_helper.dart';
-import 'package:math_matric/features/streak/domain/entities/habit_entry_model.dart';
-import 'package:math_matric/features/streak/data/models/habit_summary.dart';
+import 'package:math_matric/features/streak/domain/entities/habit_entry.dart';
+import 'package:math_matric/features/streak/domain/entities/habit_summary.dart';
 
 class HabitBloc extends Bloc<HabitEvent, HabitState> {
   HabitBloc() : super(HabitState.initial()) {

@@ -95,6 +95,7 @@ class _TopicsSliverListState extends State<TopicsSliverList>
                         arguments: SectionTypeArguments(
                             pageTitle: item.pageTitle,
                             tabs: item.tab.tabs,
+                            topicId: item.topicId,
                             sectionContext: SectionContext(
                                 paper: widget.content,
                                 topic: item,

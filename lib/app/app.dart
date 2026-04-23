@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'router.dart';
 
 class MathMatricApp extends StatelessWidget {
-  const MathMatricApp({super.key});
+  final SharedPreferences prefs;
+  const MathMatricApp({super.key, required this.prefs});
 
   @override
   Widget build(BuildContext context) {
@@ -10,8 +12,7 @@ class MathMatricApp extends StatelessWidget {
       title: 'MathMatric',
       debugShowCheckedModeBanner: false,
 
-      // Navigation
-      onGenerateRoute: AppRouter.onGenerateRoute,
+      onGenerateRoute: (settings) => AppRouter.onGenerateRoute(settings,prefs),
       initialRoute: Routes.initial,
 
       theme: ThemeData(
@@ -19,6 +20,4 @@ class MathMatricApp extends StatelessWidget {
       ),
     );
   }
-}
-
-//This answers what kind of app is this?
+}  

@@ -45,7 +45,7 @@ class TopicFactory {
       tabs: [
         SectionTab(
           title: "Quiz",
-          builder: (ctx) => QuizzesPage(),
+          builder: (ctx) => QuizzesPage(topicId: ctx.topic.topicId!,),
         ),
         SectionTab(
           title: "Practice Tests",
@@ -118,11 +118,12 @@ class TopicFactory {
     return List.generate(names.length, (i) {
       return TopicItem(
         title: names[i],
+        topicId: names[i],
         subtitle: "Grade 12 · Paper 1",
         color: colorPicker(i),
         icon: iconPicker(i),
         pageTitle: title,
-        tab: tabSets[tabType]!,
+        tab: tabSets[tabType]!, 
       );
     });
   }

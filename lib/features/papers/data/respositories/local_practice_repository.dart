@@ -11,7 +11,7 @@ class LocalPracticeRepository implements PracticeRepository {
   }
 
   @override
-  Future<PracticeTopic> getTopicById(String topicId) async {
+  Future<PracticeTopic> getPracticeTopicById(String topicId) async {
     return mockTopics.firstWhere((t) => t.id == topicId);
   }
 

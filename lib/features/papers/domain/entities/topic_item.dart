@@ -9,6 +9,7 @@ class TopicItem {
   final IconData icon; 
   final TabModel tab;
   final String ? paperId;
+  final String ? topicId;
 
   const TopicItem({
     required this.title,
@@ -17,6 +18,7 @@ class TopicItem {
     required this.icon,
     required this.tab, 
     required this.pageTitle,
-    this.paperId
+    this.paperId,
+    this.topicId,
   });
 }

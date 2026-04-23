@@ -1,4 +1,4 @@
-import 'package:math_matric/features/streak/domain/entities/habit_entry_model.dart';
+import 'package:math_matric/features/streak/domain/entities/habit_entry.dart';
 
 abstract class HabitEvent {
   const HabitEvent();
@@ -11,7 +11,6 @@ class HabitEntryLogged extends HabitEvent {
   const HabitEntryLogged(this.entry);
 }
 
-//lets us inject initial data.
 class HabitEntriesLoaded extends HabitEvent {
   final List<HabitEntry> entries;
 

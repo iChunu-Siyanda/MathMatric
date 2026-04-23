@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:math_matric/features/streak/domain/entities/habit_entry_model.dart';
+import 'package:math_matric/features/streak/domain/entities/habit_entry.dart';
 import 'package:math_matric/features/streak/presentation/widgets/section_header.dart';
 import 'package:math_matric/features/streak/presentation/widgets/calender_grid.dart';
 import 'package:math_matric/features/streak/presentation/widgets/weekday_header.dart';

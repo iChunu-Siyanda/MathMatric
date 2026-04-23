@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:math_matric/features/papers/presentation/widget/supporting/streak_card.dart';
-import 'package:math_matric/features/streak/domain/entities/streak_variant_modal.dart';
+import 'package:math_matric/app/navigation/streak_variant_entity.dart';
 import 'package:math_matric/features/streak/presentation/bloc/habit_bloc.dart';
 import 'package:math_matric/features/streak/presentation/pages/streak_screen.dart';
 

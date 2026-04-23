@@ -27,8 +27,8 @@ final mockLevels = [
     progress: 0.0,
   ),
   PracticeLevel(
-    id: 'number_sequences_level1',
-    topicId: 'number_sequences',
+    id: 'number_patterns_level1',
+    topicId: 'number_patterns',
     title: 'Arithmetic Sequences',
     subtitle: 'Finding the nth term',
    // icon: Icons.format_list_numbered_rounded,

@@ -51,3 +51,5 @@ class PracticeLevel {
     );
   }
 }
+
+//copyWith allows to update details without breaking immutability laws.

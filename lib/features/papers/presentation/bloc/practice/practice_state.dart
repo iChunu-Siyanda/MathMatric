@@ -1,32 +1,21 @@
-import 'package:math_matric/features/papers/domain/entities/pactice_level.dart';
-import 'package:math_matric/features/papers/domain/entities/practice_topic.dart';
+import 'package:math_matric/features/papers/domain/usercases/practice_topic_data.dart';
 
 abstract class PracticeState {
-    const PracticeState();
+  const PracticeState();
 }
 
 class PracticeInitial extends PracticeState {
-    const PracticeInitial();
+  const PracticeInitial();
 }
 
 class PracticeLoading extends PracticeState {
-    const PracticeLoading();
+  const PracticeLoading();
 }
 
 class PracticeLoaded extends PracticeState {
-  final PracticeTopic practiceTopic;
-  final List<PracticeLevel> levels;
-  final int earnedXp;
-  final int totalXp;
-  final double progress; // 0.0 → 1.0
+  final PracticeTopicData data;
 
-  PracticeLoaded({
-    required this.practiceTopic,
-    required this.levels,
-    required this.earnedXp,
-    required this.totalXp,
-    required this.progress, 
-  });
+  PracticeLoaded(this.data);
 }
 
 class PracticeError extends PracticeState {
