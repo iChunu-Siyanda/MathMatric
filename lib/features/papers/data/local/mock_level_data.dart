@@ -11,7 +11,7 @@ final mockLevels = [
     color: Colors.deepPurple,
     xpReward: 20,
     isCompleted: false,
-    isUnlocked: true,
+    isUnlocked: false,
     progress: 0.0,
   ),
   PracticeLevel(
@@ -23,7 +23,7 @@ final mockLevels = [
     color: Colors.deepPurple,
     xpReward: 30,
     isCompleted: false,
-    isUnlocked: false,
+    isUnlocked: true,
     progress: 0.0,
   ),
   PracticeLevel(

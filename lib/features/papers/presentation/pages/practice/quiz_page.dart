@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:math_matric/features/papers/data/local/quiz_brain.dart';
-
-QuizBrain quizBrain = QuizBrain();
+import 'package:math_matric/features/papers/data/local/quiz_data_source.dart';
+import 'package:math_matric/features/papers/domain/entities/SubjectTopicQuiz.dart';
+import 'package:math_matric/features/papers/domain/entities/quiz_question.dart';
 
 class QuizPage extends StatefulWidget {
   const QuizPage({super.key, required this.topic});
 
-  final SubjectTopic topic;
+  final Map<SubjectTopic, List<QuizQuestion>> topic;
 
   @override
   State<QuizPage> createState() => _QuizPageState();
@@ -17,18 +17,57 @@ class _QuizPageState extends State<QuizPage> {
   int score = 0;
   List<int> userAnswers = [];
 
-  void nextQuestion() {
+  void nextQuestion(SubjectTopic subjectTopic) {
+    if (questionNumberIndices[subjectTopic]! < QuizDataSource.questionBanksP1[subjectTopic]!.length - 1) {
+      questionNumberIndices[subjectTopic] = questionNumberIndices[subjectTopic]! + 1;
+    }
+  }
+
+  QuizQuestion getQuestionText(SubjectTopic subjectTopic) {
+    return QuizDataSource.questionBanksP1[subjectTopic]![questionNumberIndices[subjectTopic]!];
+  }
+
+  List<String> getOptions(SubjectTopic subjectTopic) {
+    return getQuestionText(subjectTopic).options;
+  }
+
+  int getCorrectAnswerIndex(SubjectTopic subjectTopic) {
+    return getQuestionText(subjectTopic).correctAnswerIndex;
+  }
+
+  QuizQuestion getQuestionByIndex(int index, SubjectTopic subjectTopic) {
+    return QuizDataSource.questionBanksP1[subjectTopic]![index];
+  }
+
+  int getQuestionNumber(SubjectTopic subjectTopic) {
+    return questionNumberIndices[subjectTopic]!;
+  }
+
+  int getTotalQuestions(SubjectTopic subjectTopic) {
+    return QuizDataSource.questionBanksP1[subjectTopic]!.length;
+  }
+
+  bool isFinished(SubjectTopic subjectTopic) {
+    return questionNumberIndices[subjectTopic]! >= QuizDataSource.questionBanksP1[subjectTopic]!.length - 1;
+  }
+
+  void reset(SubjectTopic subjectTopic) {
+    questionNumberIndices[subjectTopic] = 0;
+  }
+
+
+  void nextQuestionText() {
     if (selectedIndex == -1) return;
     userAnswers.add(selectedIndex);
-    if (selectedIndex == quizBrain.getCorrectAnswerIndex(widget.topic)) {
+    if (selectedIndex == getCorrectAnswerIndex(widget.topic.keys.first)) {
       score++;
     }
 
     setState(() {
-      if (quizBrain.isFinished(widget.topic)) {
+      if (isFinished(widget.topic.entries.first.key)) {
         showResults();
       } else {
-        quizBrain.nextQuestion(widget.topic);
+       nextQuestion(widget.topic.entries.first.key);
         selectedIndex = -1;
       }
     });
@@ -53,7 +92,7 @@ class _QuizPageState extends State<QuizPage> {
                 children: [
                   /// Header
                   Text(
-                    "Final Score: $score / ${quizBrain.getTotalQuestions(widget.topic)}",
+                    "Final Score: $score / $getTotalQuestions(widget.topic.entries.first.key)",
                     style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -67,9 +106,9 @@ class _QuizPageState extends State<QuizPage> {
                   Expanded(
                     child: ListView.builder(
                       controller: controller,
-                      itemCount: quizBrain.getTotalQuestions(widget.topic),
+                      itemCount: getTotalQuestions(widget.topic.entries.first.key),
                       itemBuilder: (context, index) {
-                        final question = quizBrain.getQuestionByIndex(index, widget.topic);
+                        final question = getQuestionByIndex(index, widget.topic.entries.first.key);
                         final options = question.options;
                         final correctIndex = question.correctAnswerIndex;
                         final userIndex = userAnswers[index];
@@ -151,24 +190,39 @@ class _QuizPageState extends State<QuizPage> {
                     ),
                   ),
 
-                  /// Retry Button
+                  /// Retry Button & Back to Quizzes Page Button
                   SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        setState(() {
-                          quizBrain.reset(widget.topic);
-                          score = 0;
-                          selectedIndex = -1;
-                          userAnswers.clear();
-                        });
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                      ),
-                      child: const Text("Retry", style: TextStyle(fontSize: 16, color: Colors.white)),
+                    child: Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            setState(() {
+                              reset(widget.topic.entries.first.key);
+                              score = 0;
+                              selectedIndex = -1;
+                              userAnswers.clear();
+                            });
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                          ),
+                          child: const Text("Retry", style: TextStyle(fontSize: 16, color: Colors.white)),
+                        ),
+                        const SizedBox(width: 10),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.grey,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                          ),
+                          child: const Text("Back to Quizzes", style: TextStyle(fontSize: 16, color: Colors.white)),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -182,9 +236,9 @@ class _QuizPageState extends State<QuizPage> {
 
   @override
   Widget build(BuildContext context) {
-    final question = quizBrain.getQuestionText(widget.topic).questionText;
-    final options = quizBrain.getOptions(widget.topic);
-    final totalQuestions = quizBrain.getTotalQuestions(widget.topic);
+    final question = getQuestionText(widget.topic.entries.first.key).questionText;
+    final options = getOptions(widget.topic.entries.first.key);
+    final totalQuestions = getTotalQuestions(widget.topic.entries.first.key);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FB),
@@ -196,7 +250,7 @@ class _QuizPageState extends State<QuizPage> {
             children: [
               /// Progress
               LinearProgressIndicator(
-                value: (quizBrain.getQuestionNumber(widget.topic) + 1) / totalQuestions,
+                value: (questionNumberIndices[widget.topic.entries.first.key]! + 1) / totalQuestions,
                 backgroundColor: Colors.grey.shade300,
                 color: Colors.blue,
                 minHeight: 6,
@@ -206,7 +260,7 @@ class _QuizPageState extends State<QuizPage> {
 
               /// Question
               Text(
-                "Question ${quizBrain.getQuestionNumber(widget.topic) + 1}",
+                "Question ${questionNumberIndices[widget.topic.entries.first.key]! + 1}",
                 style: const TextStyle(fontSize: 16, color: Colors.black54),
               ),
 
@@ -304,7 +358,7 @@ class _QuizPageState extends State<QuizPage> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: nextQuestion,
+                  onPressed: nextQuestionText,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
                     padding: const EdgeInsets.symmetric(vertical: 18),

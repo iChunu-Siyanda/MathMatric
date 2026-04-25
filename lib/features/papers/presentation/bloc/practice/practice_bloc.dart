@@ -32,7 +32,7 @@ class PracticeBloc extends Bloc<PracticeEvent, PracticeState> {
     }
   }
 
-  //When user completes the quiz -> completes level
+  //When user completes the quiz it completes level
   Future<void> _onCompleteLevel(
     CompleteLevel event,
     Emitter<PracticeState> emit,

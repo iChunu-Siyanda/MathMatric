@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:math_matric/features/papers/presentation/bloc/practice/practice_bloc.dart';
 import 'package:math_matric/features/papers/presentation/bloc/practice/practice_event.dart';
 import 'package:math_matric/features/papers/presentation/bloc/practice/practice_state.dart';
+import 'package:math_matric/features/papers/presentation/pages/practice/quiz_page.dart';
 import 'package:math_matric/features/papers/presentation/widget/main/practice_level_tile.dart';
 import 'package:math_matric/features/papers/presentation/widget/main/quizzes_header.dart';
 
@@ -19,10 +20,24 @@ class _QuizzesPageState extends State<QuizzesPage>
   @override
   bool get wantKeepAlive => true;
 
+  String toSnakeCase(String? input) {
+    if (input == null) return '';
+    final step1 = input.replaceAllMapped(
+      RegExp(r'([a-z0-9])([A-Z])'),
+      (m) => '${m[1]}_${m[2]}',
+    );
+
+    final step2 = step1.replaceAll(RegExp(r'[\s\-]+'), '_');
+
+    return step2.toLowerCase();
+  }
+
+  String get topicIdToSnakeCase => toSnakeCase(widget.topicId); 
+
   @override
   void initState() {
     super.initState();
-    context.read<PracticeBloc>().add(PracticeLoadTopic(widget.topicId.replaceAll('','_').toLowerCase()));
+    context.read<PracticeBloc>().add(PracticeLoadTopic(topicIdToSnakeCase));
   }
 
   @override
@@ -48,7 +63,11 @@ class _QuizzesPageState extends State<QuizzesPage>
                   (context, index) {
                     return PracticeLevelTile(
                       level: state.data.levels[index],
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) {
+                          return QuizPage(topic:state.data.subjectData);//Include SubjectTopic in Practice Bloc and pass it here to QuizPage.
+                        }));  
+                      },
                     );
                   },
                   childCount: state.data.levels.length,

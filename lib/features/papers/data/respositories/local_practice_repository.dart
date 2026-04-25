@@ -1,6 +1,9 @@
 import 'package:math_matric/features/papers/data/local/mock_level_data.dart';
 import 'package:math_matric/features/papers/data/local/mock_topic_data.dart';
+import 'package:math_matric/features/papers/data/local/quiz_data_source.dart';
 import 'package:math_matric/features/papers/domain/entities/pactice_level.dart';
+import 'package:math_matric/features/papers/domain/entities/quiz_question.dart';
+import 'package:math_matric/features/papers/domain/entities/SubjectTopicQuiz.dart';
 import 'package:math_matric/features/papers/domain/respositories/practice_respository.dart';
 import 'package:math_matric/features/papers/domain/entities/practice_topic.dart';
 
@@ -17,8 +20,13 @@ class LocalPracticeRepository implements PracticeRepository {
 
   @override
   Future<List<PracticeLevel>> getLevelsForTopic(String topicId) async {
-    return mockLevels
-        .where((level) => level.topicId == topicId)
-        .toList();
+    return mockLevels.where((level) => level.topicId == topicId).toList();
+  }
+
+  @override
+  Future<Map<SubjectTopic, List<QuizQuestion>>> getQuizQuestionsForLevel(SubjectTopic subject, String levelId) async {
+    final questions = QuizDataSource.questionBanksP1[subject] ?? [];
+    final filtered = questions.where((q) => q.levelId == levelId).toList();
+    return {subject: filtered};
   }
 }
