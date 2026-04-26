@@ -1,20 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:math_matric/features/papers/presentation/widget/main/practice_card.dart';
 
-class PracticePage extends StatefulWidget {
-  const PracticePage({super.key});
+class PracticePage extends StatelessWidget {
+  final List<Map<String, String>> practiceQuestions = [
+    {
+      "image": "assets/images/trig_img.jpg",
+      "memo": "Step 1: Expand the brackets...\nStep 2: Simplify..."
+    },
+    {
+      "image": "assets/images/summation.jpg",
+      "memo": "Use factorization..."
+    },
+  ];
 
-  @override
-  State<PracticePage> createState() => _PracticePageState();
-}
+  PracticePage({super.key});
 
-class _PracticePageState extends State<PracticePage> {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        "Question Paper: practice",
-        textAlign: TextAlign.center,
-        style: const TextStyle(fontSize: 20),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Practice - Algebra"),
+      ),
+      body: ListView.builder(
+        itemCount: practiceQuestions.length,
+        itemBuilder: (context, index) {
+          final question = practiceQuestions[index];
+
+          return PracticeCard(
+            key: ValueKey(index), // IMPORTANT for stability
+            imageUrl: question["image"]!,
+            memoText: question["memo"]!,
+          );
+        },
       ),
     );
   }
