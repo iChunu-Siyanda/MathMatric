@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:math_matric/features/papers/presentation/widget/supporting/streak_card.dart';
-import 'package:math_matric/app/navigation/streak_variant_entity.dart';
 import 'package:math_matric/features/streak/presentation/bloc/habit_bloc.dart';
 import 'package:math_matric/features/streak/presentation/pages/streak_screen.dart';
 
 class StreakSliver extends StatelessWidget {
-  final StreakContent content;
-
-  const StreakSliver({super.key, required this.content});
+  const StreakSliver({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final habitState = context.watch<HabitBloc>().state;
     return SliverFillRemaining(
       hasScrollBody: false,
       child: Padding(
@@ -19,27 +17,15 @@ class StreakSliver extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _Header(title: content.topicTitle),
+            _Header(title: "Your Streak"),
             StreakCard(
-              current: content.currentStreak,
-              best: content.bestStreak,
+              current: habitState.currentStreak,
+              best: habitState.longestStreak,
               onTapStreak: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (BuildContext context) => BlocProvider(
-                      create: (_) => HabitBloc() ,
-                      child: StreakScreen()), 
-                  ),
-                );
-              },
-              onTapScore: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => BlocProvider(
-                      create: (BuildContext context) => HabitBloc(),
-                      child: StreakScreen()),
+                    builder: (_) => StreakScreen(),
                   ),
                 );
               },

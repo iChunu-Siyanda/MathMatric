@@ -32,7 +32,7 @@ class StreakScreen extends StatelessWidget {
                 // Calendar timeline
                 StreakTimelineSliver(entries: entries),
 
-                // Pattern analysis (we will make this data-driven next)
+                // Pattern analysis and insights
                 const StreakPatternSliver(),
 
                 // Insight card

@@ -6,7 +6,6 @@ import 'package:math_matric/features/papers/presentation/bloc/paper/papers_event
 import 'package:math_matric/features/papers/presentation/bloc/paper/papers_state.dart';
 import 'package:math_matric/features/papers/presentation/widget/main/paper_tile.dart';
 import 'package:math_matric/features/papers/presentation/widget/main/grid_insertion_controller.dart';
-import 'package:math_matric/features/streak/data/local/streak_data.dart';
 
 class PapersPage extends StatefulWidget {
   final PaperType paperType;
@@ -83,7 +82,6 @@ class _PapersPageState extends State<PapersPage> {
 
                     if (index == 0) {
                       return PaperTile.streak(
-                        streakData: StreakData.streakData,
                         animation: animation,
                         data: items.first,
                         paperType: widget.paperType,

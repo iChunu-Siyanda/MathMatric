@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
 import 'package:math_matric/features/papers/presentation/widget/supporting/paper_card.dart';
-import 'package:math_matric/features/papers/presentation/widget/supporting/streak_sliver.dart';
+import 'package:math_matric/features/papers/presentation/widget/main/streak_sliver.dart';
 import 'package:math_matric/features/papers/domain/entities/paper_item.dart';
 import 'package:math_matric/features/papers/presentation/pages/topics_sliver_list.dart';
 import 'package:math_matric/app/navigation/streak_variant_entity.dart';
@@ -9,7 +9,6 @@ import 'package:math_matric/app/navigation/streak_variant_entity.dart';
 //data.topics
 class PaperTile extends StatelessWidget {
   final SheetVariant variant;
-  final StreakContent? streakData;
   final PaperItem data;
   final PaperType paperType;
   final Animation<double> animation;
@@ -17,18 +16,16 @@ class PaperTile extends StatelessWidget {
   const PaperTile._(
       {super.key,
       required this.data,
-      this.streakData,
       required this.paperType,
       required this.animation,
-      required this.variant})
+      required this.variant,})
       : assert(
-          variant != SheetVariant.streak || streakData != null,
+          variant != SheetVariant.streak,
           'streakData must be provided for SheetVariant.streak',
         );
 
   factory PaperTile.streak({
     required PaperItem data,
-    required StreakContent streakData,
     required Animation<double> animation,
     required PaperType paperType,
     Key? key,
@@ -37,7 +34,6 @@ class PaperTile extends StatelessWidget {
       key: key,
       variant: SheetVariant.streak,
       data: data,
-      streakData: streakData,
       animation: animation,
       paperType: paperType,
     );
@@ -123,9 +119,7 @@ class PaperTile extends StatelessWidget {
       case SheetVariant.streak:
         return [
           _SheetGrabHandle(),
-          StreakSliver(
-            content: streakData!,
-          ),
+          StreakSliver(),
         ];
 
       case SheetVariant.topics:

@@ -4,14 +4,12 @@ class StreakCard extends StatelessWidget {
   final int current;
   final int best;
   final VoidCallback onTapStreak;
-  final VoidCallback onTapScore;
 
   const StreakCard({
     super.key, 
     required this.current,
     required this.best,
     required this.onTapStreak,
-    required this.onTapScore,
   });
 
   @override
@@ -59,7 +57,6 @@ class StreakCard extends StatelessWidget {
                 const Spacer(),
                 _ActionButton(label: 'View streak', onTap: onTapStreak),
                 const SizedBox(width: 12),
-                _ActionButton(label: 'Scores', onTap: onTapScore),
               ],
             ),
           ],

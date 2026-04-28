@@ -1,3 +1,23 @@
+Widget Tree in the Application:
+lib
+ |
+ |--app
+ |   |-app.dart
+ |   |-bloc_observer.dart
+ |   |-router.dart
+ |   |-factories
+ | 
+ |
+ |--features
+     |- Auth
+     |- Drawer
+     |- Home
+     |- Papers
+     |- Streak
+          
+
+Flow of Data in the Application:
+
 UI (Widgets)
 │
 ├── PaperTile → uses PaperItem
@@ -9,3 +29,4 @@ UI (Widgets)
 └── Repository
     ├── getPaperStructure() → PaperItem
     └── getExamPapers() → List<ExamPaper>
+
