@@ -12,95 +12,84 @@ class ExamPaperPage extends StatefulWidget {
   final SectionContext contextData;
   final ExamPageMode mode;
   final String? paperId;
+
   const ExamPaperPage({
     super.key,
     required this.contextData,
     required this.mode,
     this.paperId,
   });
+
   @override
   State<ExamPaperPage> createState() => _ExamPaperPageState();
 }
 
-class _ExamPaperPageState extends State<ExamPaperPage>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-  late final Animation<double> _fadeAnim;
-
+class _ExamPaperPageState extends State<ExamPaperPage> {
   final Set<ExamPaper> _savedPapers = {};
 
-  //Convenience getter to know if this page represents the main exam paper or the memo tab.
   bool get isPaper => widget.mode == ExamPageMode.paper;
 
   @override
   void initState() {
     super.initState();
 
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 600),
-    );
-
-    _fadeAnim = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOut,
-    );
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _controller.forward();
-    });
-
     context.read<ExamBloc>().add(
-          ExamPaperFocusRequested(
-            widget.paperId!,
-            widget.contextData.paperType,
-          ),
+          ExamPaperRequested(widget.contextData.paperType, widget.contextData.session, widget.contextData.year),
         );
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  List<String> buildPages(String assetPath, int pageCount) {
+    final basePath = widget.mode == ExamPageMode.paper
+        ? "assets/papers/paper_1/exams/papers"
+        : "assets/papers/paper_1/exams/memos";
+    return List.generate(
+      pageCount,
+      (index) => "$basePath/$assetPath/p${index + 1}.webp",
+    );
   }
 
-  // Opens the selected PDF.
   void _openPdf(ExamPaper document) {
+    final pages = buildPages(document.assetPath, document.pageCount);
+
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => ExamPaperViewer(
           title: document.title,
-          pdfAssetPath: document.assetPath,
+          pageAssets: pages,
         ),
       ),
     );
   }
 
+  // ---------------- BUILD ----------------
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ExamBloc, ExamState>(
       builder: (context, state) {
         if (state is ExamPaperLoading) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-
-        if (state is ExamPaperFocusLoaded) {
-          final ExamPaper selectedDocument = isPaper ? state.paper : state.memo;
-
-          return SingleChildScrollView(
-            padding: EdgeInsets.symmetric(vertical: 16),
-            child: FadeTransition(
-              opacity: _fadeAnim,
-              child: _documentCard(selectedDocument),
-            ),
-          );
+          return const Center(child: CircularProgressIndicator());
         }
 
         if (state is ExamPaperError) {
           return Center(child: Text(state.message));
+        }
+
+        if (state is ExamPaperListLoaded) {
+          final filteredSections = state.sections.map((key, papers) {
+            final filtered = papers.where((p) {
+              return isPaper ? !p.isMemo : p.isMemo;
+            }).toList();
+
+            return MapEntry(key, filtered);
+          });
+
+          return ListView(
+            children: filteredSections.entries
+                .where((entry) => entry.value.isNotEmpty)
+                .map((entry) => _section(entry.key, entry.value))
+                .toList(),
+          );
         }
 
         return const SizedBox.shrink();
@@ -108,135 +97,80 @@ class _ExamPaperPageState extends State<ExamPaperPage>
     );
   }
 
-  Widget _documentCard(ExamPaper document) {
-    final isSaved = _savedPapers.contains(document);
-    //final double  screenWidth = MediaQuery.sizeOf(context).width;
-
-    return GestureDetector(
-      onTap: () => _openPdf(document),
-      child: FractionallySizedBox(
-        widthFactor: 0.9,
-        child: Container(
-          height: isPaper ? 350 : 320,
-          //width: screenWidth,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                blurRadius: 18,
-                spreadRadius: -4,
-                offset: const Offset(0, 8),
-                color: Colors.black.withValues(alpha: 0.18),
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  child: Image.asset(
-                    isPaper
-                        ? "assets/images/trig_img.jpg"
-                        : "assets/images/calculus.jpg",
-                    fit: BoxFit.cover,
-                  ),
-                ),
-        
-                if (isPaper) _saveButton(document, isSaved),
-        
-                _bottomGradient(),
-                _titleAndButton(document),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _saveButton(ExamPaper document, bool isSaved) {
-    return Positioned(
-      top: 12,
-      right: 12,
-      child: GestureDetector(
-        onTap: () {
-          setState(() {
-            isSaved
-                ? _savedPapers.remove(document)
-                : _savedPapers.add(document);
-          });
-        },
-        child: Container(
-          padding: const EdgeInsets.all(6),
-          decoration: BoxDecoration(
-            color: Colors.black.withValues(alpha: 0.35),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            isSaved ? Icons.favorite : Icons.favorite_outline,
-            color: isSaved ? Colors.redAccent : Colors.white,
-            size: 26,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _bottomGradient() {
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: Container(
-        height: 110,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Colors.black.withValues(alpha: 0.0),
-              Colors.black.withValues(alpha: 0.45),
-              Colors.black.withValues(alpha: 0.85),
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _titleAndButton(ExamPaper document) {
-    return Positioned(
-      bottom: 18,
-      left: 16,
-      right: 16,
+  // ---------------- Section ----------------
+  Widget _section(String title, List<ExamPaper> papers) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            document.title,
+            title,
             style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.w800,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: Colors.black87,
             ),
           ),
           const SizedBox(height: 10),
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.95),
-              borderRadius: BorderRadius.circular(14),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: papers.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+              childAspectRatio: 2.6,
             ),
-            alignment: Alignment.center,
-            child: Text(
-              isPaper ? "View Paper" : "View Memo",
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w700,
-                color: Colors.black87,
-              ),
-            ),
+            itemBuilder: (_, index) => _examTile(papers[index]),
           ),
         ],
+      ),
+    );
+  }
+
+  // ---------------- Tile ----------------
+  Widget _examTile(ExamPaper paper) {
+    final isSaved = _savedPapers.contains(paper);
+    return GestureDetector(
+      onTap: () => _openPdf(paper),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey.shade300),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                paper.title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  isSaved
+                      ? _savedPapers.remove(paper)
+                      : _savedPapers.add(paper);
+                });
+              },
+              child: Icon(
+                isSaved ? Icons.favorite : Icons.favorite_border,
+                color: isSaved ? Colors.redAccent : Colors.grey,
+                size: 20,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:math_matric/app/router.dart';
+import 'package:math_matric/features/papers/data/local/exam_paper_data.dart';
+import 'package:math_matric/features/papers/data/model/tile_topics_p1_data.dart';
 import 'package:math_matric/features/papers/domain/entities/paper_item.dart';
 import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
 import 'package:math_matric/features/papers/domain/entities/section_type_arguments.dart';
@@ -77,7 +79,9 @@ class _TopicsSliverListState extends State<TopicsSliverList>
             (context, index) {
               final item = widget.content.section!.topics[index];
               final anima = _itemInterval(index);
-              //debugPrint("items=$item, paperType= ${widget.paperType}");
+              final years = TileTopicsP1Data.years;
+              final y = years[index % years.length];
+              debugPrint("TopicsSliverList - items=${item.pageTitle}, paperType= ${widget.paperType}");
 
               return AnimatedBuilder(
                 animation: anima,
@@ -98,9 +102,11 @@ class _TopicsSliverListState extends State<TopicsSliverList>
                             topicId: item.topicId,
                             sectionContext: SectionContext(
                                 paper: widget.content,
+                                session: ExamSession.values.byName(item.pageTitle.toString().toLowerCase()),
                                 topic: item,
-                                paperType: widget.paperType),
-                            tabType: item.tab.tabType));
+                                paperType: widget.paperType,
+                                year: y),
+                            tabType: item.tab.tabType,),);
                   },
                 ),
               );

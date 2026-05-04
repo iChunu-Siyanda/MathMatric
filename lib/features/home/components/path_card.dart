@@ -65,6 +65,7 @@ class _PathCardBody extends StatelessWidget {
           Image.asset(
             imgPath,
             fit: BoxFit.cover,
+            cacheWidth: 1000,
           ),
 
           //Darkening layer for readability

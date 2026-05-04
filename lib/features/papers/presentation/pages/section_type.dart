@@ -38,9 +38,11 @@ class _SectionTypeState extends State<SectionType>
     _tabController.dispose();
     super.dispose();
   }
-
+  
   @override
   Widget build(BuildContext context) {
+    debugPrint("Building SectionType with sectionContext: ${widget.sectionContext}, Year:${widget.sectionContext.year}, paperType: ${widget.sectionContext.paperType}, tabs: ${widget.tabs.length}, pageTitle: ${widget.pageTitle}");       
+
     return Scaffold(
       body: NestedScrollView(
         headerSliverBuilder: (_, innerBox) => [

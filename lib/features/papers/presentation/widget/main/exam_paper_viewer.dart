@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:pdfx/pdfx.dart';
 
 class ExamPaperViewer extends StatefulWidget {
-  final String pdfAssetPath;
+  final List<String> pageAssets;
   final String title;
 
   const ExamPaperViewer({
     super.key,
-    required this.pdfAssetPath,
+    required this.pageAssets,
     required this.title,
   });
 
@@ -16,47 +15,42 @@ class ExamPaperViewer extends StatefulWidget {
 }
 
 class _ExamPaperViewerState extends State<ExamPaperViewer> {
-  late PdfControllerPinch _pdfController;
+  final ScrollController _scrollController = ScrollController();
+
   int _currentPage = 1;
-  int _totalPages = 1;
 
   @override
   void initState() {
     super.initState();
-    _pdfController = PdfControllerPinch(
-      document: PdfDocument.openAsset(widget.pdfAssetPath),
-      initialPage: 1,
-    );
 
-    // Load total pages
-    _pdfController.document.then((doc) {
-      //Never call setState without checking mounted
-      //If you call setState after any async operation, always check mounted first
-      if (!mounted) return; 
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+
+    final double offset = _scrollController.offset;
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final int page = (offset / screenHeight).floor() + 1;
+
+    if (page != _currentPage && page > 0) {
       setState(() {
-        _totalPages = doc.pagesCount;
+        _currentPage = page;
       });
-    });
-
-    _pdfController.addListener(() {
-      final newPage = _pdfController.page;
-      if (!mounted) return;
-      if (newPage != _currentPage) {
-        setState(() {
-          _currentPage = newPage;
-        });
-      }
-    });
+    }
   }
 
   @override
   void dispose() {
-    _pdfController.dispose();
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final pages = widget.pageAssets;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -77,20 +71,26 @@ class _ExamPaperViewerState extends State<ExamPaperViewer> {
       ),
       body: Stack(
         children: [
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: PdfViewPinch(
-                  controller: _pdfController,
-                  scrollDirection: Axis.vertical,
+          PageView.builder(
+            controller: PageController(),
+            itemCount: pages.length,
+            onPageChanged: (index) {
+              setState(() {
+                _currentPage = index + 1;
+              });
+            },
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Image.asset(
+                  pages[index],
+                  fit: BoxFit.contain,
                 ),
-              ),
-            ),
+              );
+            },
           ),
 
-          // Scroll position info
+          // Page indicator
           Positioned(
             bottom: 16,
             left: 0,
@@ -102,12 +102,15 @@ class _ExamPaperViewerState extends State<ExamPaperViewer> {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.black54,
+                  color: Colors.black87,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  '$_currentPage / $_totalPages',
-                  style: const TextStyle(color: Colors.white),
+                  '$_currentPage / ${pages.length}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ),

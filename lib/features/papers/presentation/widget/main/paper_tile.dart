@@ -18,11 +18,11 @@ class PaperTile extends StatelessWidget {
       required this.data,
       required this.paperType,
       required this.animation,
-      required this.variant,})
-      : assert(
-          variant != SheetVariant.streak,
-          'streakData must be provided for SheetVariant.streak',
-        );
+      required this.variant,});
+      // : assert(
+      //     variant != SheetVariant.streak,
+      //     'streakData must be provided for SheetVariant.streak',
+      //   );
 
   factory PaperTile.streak({
     required PaperItem data,

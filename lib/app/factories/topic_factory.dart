@@ -69,7 +69,7 @@ class TopicFactory {
               return ExamPaperPage(
                 contextData: ctx,
                 mode: ExamPageMode.paper,
-                paperId: ctx.topic.paperId!,
+                paperId: ctx.topic.paperId!, 
               );
             }),
         SectionTab(
@@ -78,7 +78,7 @@ class TopicFactory {
           builder: (ctx) => ExamPaperPage(
             contextData: ctx,
             mode: ExamPageMode.memo,
-            paperId: ctx.topic.paperId!,
+            paperId: ctx.topic.paperId!, 
           ),
         ),
       ],

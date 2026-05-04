@@ -4,7 +4,6 @@ import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
 import 'package:math_matric/features/drawer/math_matric_drawer.dart';
 import 'package:math_matric/features/home/components/auto_sliding_carousel.dart';
 import 'package:math_matric/features/home/components/continue_studying_card.dart';
-import 'package:math_matric/features/home/components/discussions_card.dart';
 import 'package:math_matric/features/home/components/path_card.dart';
 
 
@@ -46,7 +45,7 @@ class _HomePageState extends State<HomePage> {
           SliverToBoxAdapter(
             child: ContinueStudyingCard(
               topic: "Functions",
-              backgroundImg: "assets/images/summation.jpg",
+              backgroundImg: "assets/images/summation.webp",
               progress: 0.45,
               onTap: () {},
             ),
@@ -60,7 +59,7 @@ class _HomePageState extends State<HomePage> {
                 PathCard(
                   title: "Paper 1",
                   subtitle: "Algebra • Functions",
-                  imgPath: "assets/images/steps_img.jpg",
+                  imgPath: "assets/images/steps_img.webp",
                   progress: 0.6,
                   gradient: [
                     Colors.black.withValues(alpha: 0.05),
@@ -74,7 +73,7 @@ class _HomePageState extends State<HomePage> {
                 PathCard(
                   title: "Paper 2",
                   subtitle: "Geometry • Trig",
-                  imgPath: "assets/images/globe_img.jpg",
+                  imgPath: "assets/images/globe_img.webp",
                   progress: 0.3,
                   gradient: [
                     Colors.black.withValues(alpha: 0.05),
@@ -88,7 +87,7 @@ class _HomePageState extends State<HomePage> {
           ),
 
           //Discussions Card
-          SliverToBoxAdapter(child: DiscussionsCard(onTap: () {}, backgroundImg: "assets/images/hands_img.jpg",)),
+          //SliverToBoxAdapter(child: DiscussionsCard(onTap: () {}, backgroundImg: "assets/images/hands_img.webp",)),
         ],
       ),
 

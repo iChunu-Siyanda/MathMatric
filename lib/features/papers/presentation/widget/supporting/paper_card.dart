@@ -23,7 +23,7 @@ class PaperCard extends StatelessWidget {
           // ---- Background Image ----
           Positioned.fill(
             child: Image.asset(
-              "assets/images/algebra.jpg",
+              "assets/images/algebra.webp",
               fit: BoxFit.cover,
             ),
           ),

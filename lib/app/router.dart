@@ -80,7 +80,6 @@ class AppRouter {
 
       case Routes.sectionPage:
         final args = settings.arguments as SectionTypeArguments;
-
         if (args.tabType == TabType.exam) {
           debugPrint(
               "args.tabType = ${args.tabType}, sectionContext = ${args.sectionContext}, tabs: ${args.tabs}, pageTitle: ${args.pageTitle}, getExamPaperDara: $getExamPaperData");
@@ -139,7 +138,7 @@ class AppRouter {
       default:
         return MaterialPageRoute(
           builder: (_) => const Scaffold(
-            body: Center(child: Text('Route not found')),
+            body: Center(child: Text('Page/route not found')),
           ),
         );
     }

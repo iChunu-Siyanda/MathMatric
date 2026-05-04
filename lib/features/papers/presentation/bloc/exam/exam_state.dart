@@ -1,4 +1,3 @@
-import 'package:math_matric/features/papers/data/local/exam_paper_data.dart';
 import 'package:math_matric/features/papers/domain/entities/exam_paper.dart';
 
 abstract class ExamState {
@@ -16,22 +15,26 @@ class ExamPaperLoading extends ExamState{
 }
 
 //Exam papers are loaded. Browsing state
-class ExamPaperLoaded extends ExamState{
-  final Map<ExamSession, Map<String,List<ExamPaper>>> examPapers;
+class ExamPaperListLoaded extends ExamState {
+  final Map<String, List<ExamPaper>> sections;
 
-  const ExamPaperLoaded(this.examPapers);
+  const ExamPaperListLoaded(this.sections);
 }
 
 //Focus state, getting specific papers
-class ExamPaperFocusLoaded extends ExamState {
-  final ExamPaper paper;
-  final ExamPaper memo;
+// class ExamPaperFocusLoaded extends ExamState {
+//   final ExamPaper paper;
+//   final ExamPaper memo;
+//   final List<ExamPaper> allPapers;  
+//   final List<ExamPaper> allMemos;
 
-  ExamPaperFocusLoaded({
-    required this.paper,
-    required this.memo,
-  });
-}
+//   ExamPaperFocusLoaded({
+//     required this.paper,
+//     required this.memo,
+//     required this.allPapers,
+//     required this.allMemos,
+//   });
+// }
 
 //Error state missing any data
 class ExamPaperError extends ExamState {
