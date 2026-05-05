@@ -6,7 +6,7 @@ import 'package:math_matric/features/papers/domain/entities/exam_paper.dart';
 import 'package:math_matric/features/papers/presentation/bloc/exam/exam_bloc.dart';
 import 'package:math_matric/features/papers/presentation/bloc/exam/exam_event.dart';
 import 'package:math_matric/features/papers/presentation/bloc/exam/exam_state.dart';
-import 'package:math_matric/features/papers/presentation/widget/main/exam_paper_viewer.dart';
+import 'package:math_matric/features/papers/presentation/pages/exam/exam_paper_viewer.dart';
 
 class ExamPaperPage extends StatefulWidget {
   final SectionContext contextData;

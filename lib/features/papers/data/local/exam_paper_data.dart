@@ -3,9 +3,10 @@ import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
 
 //Enums are much better than strings, they are safe(compile-time safety).
 enum ExamSession {
+  march,
   june,
   november,
-  iebNovember,
+  ieb,
   prelim,
 }
 
@@ -19,8 +20,32 @@ class ExamPaperData {
     }
   }
 
+  // March only has provincial papers, June has both national and provincial papers, November has only national papers, IEB November has only national papers, Prelim has only provincial papers. 
+
   Map<ExamSession, Map<String, List<ExamPaper>>> _getExamPaper(String type) => {
         ExamSession.june: {
+          "march_${type}_2024": [
+            ExamPaper(//PROVINCIAL
+                title: "${type.toUpperCase()} March 2024",
+                assetPath: "march/2023_kzn", //assets/papers/paper_1/exams/papers/
+                id: 'march_${type}_2023_prov',
+                isNational: false,
+                pageCount: 8, 
+                session: ExamSession.march, 
+                year: 2024),    
+            ExamPaper(//PROVINCIAL MEMO
+              title: "${type.toUpperCase()} March 2024 Memo",
+              assetPath:
+                  "march/2023_kzn", //assets/papers/paper_1/exams/memos/
+              id: 'march_${type}_2023_memo_prov',
+              isMemo: true,
+              parentPaperId: 'march_${type}_2023_prov', // Same as id of question paper.
+              isNational: false,
+              pageCount: 8,
+              session: ExamSession.march,
+              year: 2024,
+            ),
+          ],
           "june_${type}_2024": [
             ExamPaper( //NATIONAL
                 title: "${type.toUpperCase()} June 2024",
@@ -135,7 +160,7 @@ class ExamPaperData {
             ),
           ]
         },
-        ExamSession.iebNovember: {
+        ExamSession.ieb: {
           "ieb_${type}_2024": [
             ExamPaper(
                 title: "${type.toUpperCase()} IEB November 2024",
@@ -144,7 +169,7 @@ class ExamPaperData {
                 id: 'nov_ieb_${type}_2024_nat',
                 isNational: true,
                 pageCount: 22,
-                session: ExamSession.iebNovember,
+                session: ExamSession.ieb,
                 year: 2024),
             ExamPaper(
               title: "${type.toUpperCase()} IEB November 2024",
@@ -155,7 +180,7 @@ class ExamPaperData {
               parentPaperId: 'nov_ieb_${type}_2024',
               isNational: true,
               pageCount: 22,
-              session: ExamSession.iebNovember,
+              session: ExamSession.ieb,
               year: 2024,
             ),
           ]
