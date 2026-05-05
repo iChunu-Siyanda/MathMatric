@@ -11,10 +11,12 @@ dependencies:
     sdk: flutter
   firebase_core: ^4.2.1
   firebase_auth: ^6.1.2
-  pdfx: ^2.9.2
   flutter_bloc: ^9.1.1
   bloc: ^9.2.0
   shared_preferences: ^2.2.2
+  hydrated_bloc: ^11.0.0
+  path_provider: ^2.1.0
+  equatable: ^2.0.5
 
 dev_dependencies:
   flutter_test:
@@ -27,3 +29,10 @@ flutter:
   assets:
     - assets/images/
     - assets/papers/
+    - assets/icons/
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icons/icon.png"
+  min_sdk_android: 21 

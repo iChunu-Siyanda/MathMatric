@@ -20,7 +20,7 @@ import 'package:math_matric/features/papers/presentation/bloc/paper/papers_bloc.
 import 'package:math_matric/features/papers/presentation/bloc/practice/practice_bloc.dart';
 import 'package:math_matric/features/papers/presentation/bloc/practice/practice_event.dart';
 import 'package:math_matric/features/papers/presentation/pages/exam/exam_paper_page.dart';
-import 'package:math_matric/features/home/page/home_page.dart';
+import 'package:math_matric/features/home/presentation/page/home_page.dart';
 import 'package:math_matric/features/papers/presentation/pages/papers_page.dart';
 import 'package:math_matric/features/papers/presentation/pages/section_type.dart';
 import 'package:shared_preferences/shared_preferences.dart';

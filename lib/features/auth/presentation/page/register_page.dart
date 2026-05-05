@@ -53,7 +53,7 @@ class _RegisterPageState extends State<RegisterPage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset('assets/images/x.png', height: 64),
+            Image.asset('assets/images/MathMatricLogoTrans.webp', height: 64),
 
             const SizedBox(height: 24),
 

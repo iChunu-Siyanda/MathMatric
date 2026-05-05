@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:math_matric/features/home/domain/entities/last_studied.dart';
+import 'package:math_matric/features/home/presentation/bloc/study_history_bloc.dart';
+import 'package:math_matric/features/home/presentation/bloc/study_history_event.dart';
 
 class ExamPaperViewer extends StatefulWidget {
   final List<String> pageAssets;
@@ -26,6 +30,23 @@ class _ExamPaperViewerState extends State<ExamPaperViewer> {
   @override
   void initState() {
     super.initState();
+
+    // Wrap it in addPostFrameCallback to ensure the Bloc is accessible
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<StudyHistoryBloc>().add(
+            TopicAccessed(
+              LastStudied(
+                title: widget.title,
+                assets: widget.pageAssets,
+                backgroundImg:
+                    widget.pageAssets.first, // Use first page as thumbnail
+                progress: 0.1, // Initial progress
+                lastPage: 1,
+              ),
+            ),
+          );
+    });
+
     _pageController = PageController();
     _scrollController = ScrollController();
     _scrollController.addListener(_onScroll);
@@ -33,15 +54,34 @@ class _ExamPaperViewerState extends State<ExamPaperViewer> {
 
   void _onScroll() {
     if (!isListView || !_scrollController.hasClients) return;
-    
+
     // Logic to update page counter based on vertical scroll position
     final double offset = _scrollController.offset;
-    final double itemHeight = MediaQuery.of(context).size.height * 0.8; // Estimate height
+    final double itemHeight =
+        MediaQuery.of(context).size.height * 0.8; // Estimate height
     final int page = (offset / itemHeight).round() + 1;
 
     if (page != _currentPage && page > 0 && page <= widget.pageAssets.length) {
       setState(() => _currentPage = page);
     }
+
+    _syncProgressToBloc(page);
+  }
+
+  void _syncProgressToBloc(int page) {
+    final double progress = page / widget.pageAssets.length;
+    context.read<StudyHistoryBloc>().add(
+          TopicAccessed(
+            LastStudied(
+              title: widget.title,
+              assets: widget.pageAssets,
+              backgroundImg:
+                  widget.pageAssets.first, // Use first image as card cover
+              progress: progress,
+              lastPage: page,
+            ),
+          ),
+        );
   }
 
   @override
@@ -65,7 +105,10 @@ class _ExamPaperViewerState extends State<ExamPaperViewer> {
           children: [
             Text(
               widget.title,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
+              style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87),
             ),
             Text(
               isListView ? "Scroll View" : "Book View",
@@ -104,12 +147,13 @@ class _ExamPaperViewerState extends State<ExamPaperViewer> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha:0.7),
+                color: Colors.black.withValues(alpha: 0.7),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
                 '$_currentPage / ${pages.length}',
-                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold),
               ),
             ),
           ),
@@ -123,7 +167,11 @@ class _ExamPaperViewerState extends State<ExamPaperViewer> {
     return PageView.builder(
       controller: _pageController,
       itemCount: pages.length,
-      onPageChanged: (index) => setState(() => _currentPage = index + 1),
+      onPageChanged: (index) {
+        int pageNumber = index + 1;
+        setState(() => _currentPage = pageNumber);
+        _syncProgressToBloc(pageNumber);
+      },
       itemBuilder: (context, index) => _imageWrapper(pages[index]),
     );
   }
@@ -144,7 +192,8 @@ class _ExamPaperViewerState extends State<ExamPaperViewer> {
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8),
-        child: InteractiveViewer( // UPGRADE: Allows users to pinch-zoom into the exam paper
+        child: InteractiveViewer(
+          // UPGRADE: Allows users to pinch-zoom into the exam paper
           minScale: 1.0,
           maxScale: 4.0,
           child: Image.asset(

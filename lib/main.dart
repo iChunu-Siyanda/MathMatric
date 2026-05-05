@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'app/app.dart';
 import 'app/bloc_observer.dart';
 import 'firebase_options.dart';
-
 import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
@@ -18,7 +18,15 @@ void main() async {
 
   Bloc.observer = AppBlocObserver();
 
-  runApp(MathMatricApp(prefs: prefs,));
+  HydratedBloc.storage = await HydratedStorage.build(
+    storageDirectory: HydratedStorageDirectory(
+      (await getApplicationDocumentsDirectory()).path,
+    ),
+  );
+
+  runApp(MathMatricApp(
+    prefs: prefs,
+  ));
 }
 
 //UI → Bloc → PaperRepository (abstract) → PaperRepositoryImpl (data) → DataSource
