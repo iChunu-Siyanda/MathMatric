@@ -49,8 +49,8 @@ class _LoginPageState extends State<LoginPage> {
             /// LOGO
             Center(
               child: Image.asset(
-                'assets/images/MathMatricLogoTrans.webp',
-                height: 64,
+                'assets/images/MathMatricLogoTrans.png',
+                height: 80,
               ),
             ),
 

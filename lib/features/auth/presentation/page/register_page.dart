@@ -53,10 +53,9 @@ class _RegisterPageState extends State<RegisterPage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset('assets/images/MathMatricLogoTrans.webp', height: 64),
+            Image.asset('assets/images/MathMatricLogoTrans.png', height: 80),
 
             const SizedBox(height: 24),
-
             Text(
               "Create Account",
               style: TextStyle(

@@ -19,6 +19,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   @override
+  void initState() {
+    super.initState();
+    context.read<StudyHistoryBloc>();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -71,11 +77,16 @@ class _HomePageState extends State<HomePage> {
                         child: SizedBox(
                           width: MediaQuery.of(context).size.width * 0.8,
                           child: ContinueStudyingCard(
+                            margin: EdgeInsets.zero,
                             topic: topic.title,
                             backgroundImg: topic.backgroundImg,
                             progress: topic.progress,
                             onTap: () {
-                              // Navigate to viewer
+                              Navigator.pushNamed(context, Routes.examPaperViewer,
+                                  arguments: {
+                                    "title": topic.title,
+                                    "pageAssets": topic.assets,
+                                  });
                             },
                           ),
                         ),
@@ -95,7 +106,7 @@ class _HomePageState extends State<HomePage> {
                 PathCard(
                   title: "Paper 1",
                   subtitle: "Algebra • Functions",
-                  imgPath: "assets/images/steps_img.webp",
+                  imgPath: "assets/images/summation.webp",
                   progress: 0.6,
                   gradient: [
                     Colors.black.withValues(alpha: 0.05),
@@ -110,7 +121,7 @@ class _HomePageState extends State<HomePage> {
                 PathCard(
                   title: "Paper 2",
                   subtitle: "Geometry • Trig",
-                  imgPath: "assets/images/globe_img.webp",
+                  imgPath: "assets/images/calc.webp",
                   progress: 0.3,
                   gradient: [
                     Colors.black.withValues(alpha: 0.05),

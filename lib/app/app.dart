@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:math_matric/features/home/presentation/bloc/study_history_bloc.dart';
 import 'package:math_matric/features/streak/presentation/bloc/habit_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'router.dart';
@@ -10,8 +11,11 @@ class MathMatricApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => HabitBloc(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => HabitBloc()),
+        BlocProvider(create: (context) => StudyHistoryBloc()),
+      ],
       child: MaterialApp(
         title: 'MathMatric',
         debugShowCheckedModeBanner: false,

@@ -14,6 +14,9 @@ class StudyHistoryBloc extends HydratedBloc<StudyHistoryEvent, StudyHistoryState
     });
   }
 
+  @override
+  String get storagePrefix => 'StudyHistory';
+
   // Called when app starts to restore state
   @override
   StudyHistoryState? fromJson(Map<String, dynamic> json) {

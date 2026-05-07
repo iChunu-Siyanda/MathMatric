@@ -21,6 +21,7 @@ import 'package:math_matric/features/papers/presentation/bloc/practice/practice_
 import 'package:math_matric/features/papers/presentation/bloc/practice/practice_event.dart';
 import 'package:math_matric/features/papers/presentation/pages/exam/exam_paper_page.dart';
 import 'package:math_matric/features/home/presentation/page/home_page.dart';
+import 'package:math_matric/features/papers/presentation/pages/exam/exam_paper_viewer.dart';
 import 'package:math_matric/features/papers/presentation/pages/papers_page.dart';
 import 'package:math_matric/features/papers/presentation/pages/section_type.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,6 +33,7 @@ class Routes {
   static const String paperTypePage = '/paperTypePage';
   static const String examPage = 'examPage';
   static const String sectionPage = "sectionPage";
+  static const String examPaperViewer = "examPaperViewer";
 }
 
 class AppRouter {
@@ -77,6 +79,15 @@ class AppRouter {
             ),
           ),
         );
+
+      case Routes.examPaperViewer:
+        final args = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+          builder: (_) => ExamPaperViewer(
+            title: args["title"],
+            pageAssets: List<String>.from(args["pageAssets"]),
+          ),
+        );  
 
       case Routes.sectionPage:
         final args = settings.arguments as SectionTypeArguments;

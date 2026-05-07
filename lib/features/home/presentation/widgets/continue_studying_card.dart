@@ -6,13 +6,15 @@ class ContinueStudyingCard extends StatelessWidget {
   final double progress; // 0 → 100%
   final VoidCallback onTap;
   final String? backgroundImg;
+  final EdgeInsets margin;
 
   const ContinueStudyingCard({
     super.key,
     required this.topic,
     required this.progress,
     required this.onTap,
-    this.backgroundImg,
+    this.backgroundImg, 
+    this.margin = const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
   });
 
   @override
@@ -27,7 +29,7 @@ class ContinueStudyingCard extends StatelessWidget {
 
     return AnimatedBaseCard(
       height: 200,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      margin: margin,
       onTap: onTap,
       child: Stack(children: [
         if (backgroundImg != null)

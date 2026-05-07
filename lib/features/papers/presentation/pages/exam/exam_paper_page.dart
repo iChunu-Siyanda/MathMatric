@@ -40,8 +40,8 @@ class _ExamPaperPageState extends State<ExamPaperPage> {
 
   List<String> buildPages(String assetPath, int pageCount) {
     final basePath = widget.mode == ExamPageMode.paper
-        ? "assets/papers/paper_1/exams/papers"
-        : "assets/papers/paper_1/exams/memos";
+        ? "papers/paper_1/exams/papers"
+        : "papers/paper_1/exams/memos";
     return List.generate(
       pageCount,
       (index) => "$basePath/$assetPath/p${index + 1}.webp",

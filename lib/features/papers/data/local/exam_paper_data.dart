@@ -7,7 +7,7 @@ enum ExamSession {
   june,
   november,
   ieb,
-  prelim,
+  prelims,
 }
 
 class ExamPaperData {
@@ -23,7 +23,7 @@ class ExamPaperData {
   // March only has provincial papers, June has both national and provincial papers, November has only national papers, IEB November has only national papers, Prelim has only provincial papers. 
 
   Map<ExamSession, Map<String, List<ExamPaper>>> _getExamPaper(String type) => {
-        ExamSession.june: {
+        ExamSession.march: {
           "march_${type}_2024": [
             ExamPaper(//PROVINCIAL
                 title: "${type.toUpperCase()} March 2024",
@@ -89,7 +89,7 @@ class ExamPaperData {
             ),
           ]
         },
-        ExamSession.prelim: {
+        ExamSession.prelims: {
           "prelim_${type}_2025": [
             ExamPaper(
                 title: "${type.toUpperCase()} Prelim 2025",
@@ -98,7 +98,7 @@ class ExamPaperData {
                 id: 'prelim_${type}_2025',
                 isNational: false,
                 pageCount: 13,
-                session: ExamSession.prelim,
+                session: ExamSession.prelims,
                 year: 2025),
             ExamPaper(
               title: "${type.toUpperCase()} Prelim 2025 Memo",
@@ -109,7 +109,7 @@ class ExamPaperData {
               parentPaperId: 'prelim_${type}_2025',
               isNational: false,
               pageCount: 13,
-              session: ExamSession.prelim,
+              session: ExamSession.prelims,
               year: 2025,
             ),
           ]
