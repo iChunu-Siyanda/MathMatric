@@ -4,6 +4,7 @@ import 'package:math_matric/app/router.dart';
 import 'package:math_matric/features/home/presentation/bloc/study_history_bloc.dart';
 import 'package:math_matric/features/home/presentation/bloc/study_history_state.dart';
 import 'package:math_matric/features/home/presentation/widgets/featured_topic_card.dart';
+import 'package:math_matric/features/home/presentation/widgets/home_section_header.dart';
 import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
 import 'package:math_matric/features/drawer/math_matric_drawer.dart';
 import 'package:math_matric/features/home/presentation/widgets/auto_sliding_carousel.dart';
@@ -35,7 +36,7 @@ class _HomePageState extends State<HomePage> {
           SliverAppBar(
             backgroundColor: colorScheme.primary,
             //leading: Icon(Icons.menu, color: colorScheme.onPrimary),
-            expandedHeight: 200,
+            expandedHeight: 100,
             pinned: true,
             floating: false,
             flexibleSpace: FlexibleSpaceBar(
@@ -48,9 +49,20 @@ class _HomePageState extends State<HomePage> {
           ),
 
           // Smart Coach carousel placeholder
+          SliverToBoxAdapter(
+            child: HomeSectionHeader(
+              title: "Smart Coach",
+              onSeeAll: () {},
+            ),
+          ),
           AutoSlidingCarousel(),
 
           // Hero card
+          SliverToBoxAdapter(
+            child: HomeSectionHeader(
+              title: "Continue Studying",
+            ),
+          ),
           SliverToBoxAdapter(
             child: BlocBuilder<StudyHistoryBloc, StudyHistoryState>(
               builder: (context, state) {
@@ -82,7 +94,8 @@ class _HomePageState extends State<HomePage> {
                             backgroundImg: topic.backgroundImg,
                             progress: topic.progress,
                             onTap: () {
-                              Navigator.pushNamed(context, Routes.examPaperViewer,
+                              Navigator.pushNamed(
+                                  context, Routes.examPaperViewer,
                                   arguments: {
                                     "title": topic.title,
                                     "pageAssets": topic.assets,
@@ -95,6 +108,14 @@ class _HomePageState extends State<HomePage> {
                   ),
                 );
               },
+            ),
+          ),
+
+          // Papers
+          SliverToBoxAdapter(
+            child: HomeSectionHeader(
+              title: "Papers",
+              onSeeAll: () {},
             ),
           ),
 

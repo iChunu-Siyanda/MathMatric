@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:math_matric/features/home/presentation/widgets/smart_carousel_card.dart';
 
 class AutoSlidingCarousel extends StatefulWidget {
   const AutoSlidingCarousel({super.key});
@@ -15,11 +16,9 @@ class _AutoSlidingCarouselState extends State<AutoSlidingCarousel> {
   bool _isPaused = false;
 
   //loop setup
-  final int _originalItemCount = 5;
-  late final int _totalItemCount;
-  late final int _loopStartIndex;
-
-  int _currentIndex = 0;
+  final int _originalItemCount = 4;
+  int _currentIndex = 1000;
+  late final bool _isAnimating;
 
   static const _autoSlideDuration = Duration(seconds: 5);
   static const _animationDuration = Duration(milliseconds: 600);
@@ -28,15 +27,11 @@ class _AutoSlidingCarouselState extends State<AutoSlidingCarousel> {
   void initState() {
     super.initState();
 
-    // Duplicate items before and after
-    _totalItemCount = _originalItemCount * 3;
-    _loopStartIndex = _originalItemCount;
-
-    _currentIndex = _loopStartIndex;
-
-    // Jump to middle set after first frame
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _instantJump(_currentIndex);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _controller.animateToItem(
+        _currentIndex,
+        duration: Duration.zero,
+      );
     });
 
     _startAutoSlide();
@@ -45,8 +40,8 @@ class _AutoSlidingCarouselState extends State<AutoSlidingCarousel> {
   void _startAutoSlide() {
     _timer?.cancel();
     _timer = Timer.periodic(_autoSlideDuration, (_) async {
-      if (_isPaused) return;
-
+      if (_isPaused || _isAnimating || !mounted) return;
+      _isAnimating = true;
       _currentIndex++;
 
       await _controller.animateToItem(
@@ -54,31 +49,10 @@ class _AutoSlidingCarouselState extends State<AutoSlidingCarousel> {
         duration: _animationDuration,
         curve: Curves.easeInOutCubic,
       );
+      if (!mounted) return;
 
-      _handleLoopBoundary();
+      _isAnimating = false;
     });
-  }
-
-  Future<void> _instantJump(int index) async {
-    await _controller.animateToItem(
-      index,
-      duration: const Duration(milliseconds: 1),
-      curve: Curves.linear,
-    );
-  }
-
-  // recentering
-  void _handleLoopBoundary() {
-    final leftBoundary = _originalItemCount;
-    final rightBoundary = _originalItemCount * 2;
-
-    if (_currentIndex >= rightBoundary) {
-      _currentIndex = leftBoundary;
-      _instantJump(_currentIndex);
-    } else if (_currentIndex < leftBoundary) {
-      _currentIndex = rightBoundary - 1;
-      _instantJump(_currentIndex);
-    }
   }
 
   void _pause() => _isPaused = true;
@@ -92,11 +66,11 @@ class _AutoSlidingCarouselState extends State<AutoSlidingCarousel> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-
     return SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10,),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 10,
+        ),
         child: MouseRegion(
           onEnter: (_) => _pause(),
           onExit: (_) => _resume(),
@@ -108,53 +82,19 @@ class _AutoSlidingCarouselState extends State<AutoSlidingCarousel> {
             onPanEnd: (_) => _resume(),
             onPanCancel: _resume,
             child: SizedBox(
-              height: 170,
+              height: 190,
               child: CarouselView.weighted(
                 controller: _controller,
-                flexWeights: const [3, 1],
-                shrinkExtent: 50,
+                flexWeights: const [7, 1],
+                shrinkExtent: 100,
                 itemSnapping: true,
-                children: List.generate(_totalItemCount, (index) {
+                children: List.generate(20000, (index) {
                   final realIndex = index % _originalItemCount;
-                  return _CarouselCard(index: realIndex, colors: colors);
+                  return SmartCarouselCard(
+                      typeIndex: realIndex);
                 }),
               ),
             ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _CarouselCard extends StatelessWidget {
-  final int index;
-  final ColorScheme colors;
-
-  const _CarouselCard({required this.index, required this.colors});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 6),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [colors.primary, colors.primaryContainer],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha:.18), blurRadius: 6, offset: const Offset(0, 4)),
-        ],
-      ),
-      child: Center(
-        child: Text(
-          'Card ${index + 1}',
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
           ),
         ),
       ),

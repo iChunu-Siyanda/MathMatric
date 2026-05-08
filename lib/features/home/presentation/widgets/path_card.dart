@@ -22,7 +22,7 @@ class PathCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedBaseCard(
-      height: 200,
+      height: 180,
       onTap: onTap,
       margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
       child: _PathCardBody(
@@ -111,7 +111,7 @@ class _PathCardBody extends StatelessWidget {
 
                 const Spacer(),
 
-                /// Progress bar
+                // Progress bar
                 ClipRRect(
                   borderRadius: BorderRadius.circular(6),
                   child: LinearProgressIndicator(

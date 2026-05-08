@@ -13,22 +13,23 @@ class ContinueStudyingCard extends StatelessWidget {
     required this.topic,
     required this.progress,
     required this.onTap,
-    this.backgroundImg, 
+    this.backgroundImg,
     this.margin = const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
   });
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
     final gradientColors = backgroundImg != null
         ? [
-            Colors.black.withValues(alpha: 0.15),
-            Colors.black.withValues(alpha: 0.3),
+            Colors.black.withValues(alpha: 0.05),
+            Colors.black.withValues(alpha: 0.65),
           ]
         : [colors.primary, colors.primaryContainer];
 
     return AnimatedBaseCard(
-      height: 200,
+      height: 180,
       margin: margin,
       onTap: onTap,
       child: Stack(children: [
@@ -68,15 +69,21 @@ class ContinueStudyingCard extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              LinearProgressIndicator(
-                value: progress,
-                backgroundColor: Colors.white24,
-                valueColor: const AlwaysStoppedAnimation(Colors.white),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: LinearProgressIndicator(
+                  value: progress,
+                  minHeight: 8,
+                  backgroundColor: Colors.white24,
+                  valueColor: const AlwaysStoppedAnimation(Colors.white),
+                ),
               ),
               const SizedBox(height: 8),
               Text(
                 "${(progress * 100).toInt()}% complete",
-                style: const TextStyle(color: Colors.white),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: Colors.white70,
+                ),
               ),
             ],
           ),
