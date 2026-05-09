@@ -7,6 +7,7 @@ import 'package:math_matric/features/papers/presentation/bloc/exam/exam_bloc.dar
 import 'package:math_matric/features/papers/presentation/bloc/exam/exam_event.dart';
 import 'package:math_matric/features/papers/presentation/bloc/exam/exam_state.dart';
 import 'package:math_matric/features/papers/presentation/pages/exam/exam_paper_viewer.dart';
+import 'package:math_matric/features/papers/presentation/widget/main/exam_tile.dart';
 
 class ExamPaperPage extends StatefulWidget {
   final SectionContext contextData;
@@ -59,6 +60,18 @@ class _ExamPaperPageState extends State<ExamPaperPage> {
           pageAssets: pages,
         ),
       ),
+    );
+  }
+
+   Animation<double> _itemInterval(int index) {
+    final start = (index * _staggerMs) / _controller.duration!.inMilliseconds;
+    final end = ((index * _staggerMs) + (_staggerMs + 150)) /
+        _controller.duration!.inMilliseconds;
+
+    return CurvedAnimation(
+      parent: _controller,
+      curve:
+          Interval(start.clamp(0, 1), end.clamp(0, 1), curve: Curves.easeOut),
     );
   }
 
@@ -123,54 +136,30 @@ class _ExamPaperPageState extends State<ExamPaperPage> {
               crossAxisSpacing: 10,
               childAspectRatio: 2.6,
             ),
-            itemBuilder: (_, index) => _examTile(papers[index]),
+            itemBuilder: (_, index) => ExamTile(papers[index]),
           ),
-        ],
-      ),
-    );
-  }
 
-  // ---------------- Tile ----------------
-  Widget _examTile(ExamPaper paper) {
-    final isSaved = _savedPapers.contains(paper);
-    return GestureDetector(
-      onTap: () => _openPdf(paper),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey.shade300),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                paper.title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
+                  SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (context, index) {
+              final anima = _itemInterval(index);
+
+              return AnimatedBuilder(
+                animation: anima,
+                builder: (_, child) => Opacity(
+                  opacity: anima.value,
+                  child: Transform.translate(
+                    offset: Offset(0, (1 - anima.value) * 18),
+                    child: child,
+                  ),
                 ),
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  isSaved
-                      ? _savedPapers.remove(paper)
-                      : _savedPapers.add(paper);
-                });
-              },
-              child: Icon(
-                isSaved ? Icons.favorite : Icons.favorite_border,
-                color: isSaved ? Colors.redAccent : Colors.grey,
-                size: 20,
-              ),
-            ),
-          ],
+                child: ExamTile(papers[index]),
+              );
+            },
+            childCount: papers.length,
+          ),
         ),
+        ],
       ),
     );
   }
