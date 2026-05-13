@@ -4,7 +4,7 @@ import 'package:math_matric/features/papers/presentation/widget/supporting/paper
 import 'package:math_matric/features/papers/presentation/widget/main/streak_sliver.dart';
 import 'package:math_matric/features/papers/domain/entities/paper_item.dart';
 import 'package:math_matric/features/papers/presentation/pages/topics_sliver_list.dart';
-import 'package:math_matric/app/navigation/streak_variant_entity.dart';
+import 'package:math_matric/shared/navigation/streak_variant_entity.dart';
 
 //data.topics
 class PaperTile extends StatelessWidget {

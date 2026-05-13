@@ -1,5 +1,5 @@
 import 'package:math_matric/features/papers/domain/entities/exam_page_mode.dart.dart';
-import 'package:math_matric/app/navigation/section_context_modal.dart';
+import 'package:math_matric/shared/navigation/section_context_modal.dart';
 
 class ExamPageArguments {
   final String paperId;

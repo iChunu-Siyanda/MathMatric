@@ -18,7 +18,7 @@ class _AutoSlidingCarouselState extends State<AutoSlidingCarousel> {
   //loop setup
   final int _originalItemCount = 4;
   int _currentIndex = 1000;
-  late final bool _isAnimating;
+  late bool _isAnimating;
 
   static const _autoSlideDuration = Duration(seconds: 5);
   static const _animationDuration = Duration(milliseconds: 600);
@@ -30,9 +30,11 @@ class _AutoSlidingCarouselState extends State<AutoSlidingCarousel> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _controller.animateToItem(
         _currentIndex,
-        duration: Duration.zero,
+        duration: const Duration(milliseconds: 300),
       );
     });
+
+    _isAnimating = false;
 
     _startAutoSlide();
   }

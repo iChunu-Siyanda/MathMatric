@@ -17,6 +17,7 @@ dependencies:
   hydrated_bloc: ^11.0.0
   path_provider: ^2.1.0
   equatable: ^2.0.5
+  sliver_tools: ^0.2.12
 
 dev_dependencies:
   flutter_test:

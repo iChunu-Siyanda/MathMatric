@@ -1,113 +1,136 @@
 import 'package:flutter/material.dart';
+import 'package:math_matric/features/papers/domain/entities/exam_page_mode.dart.dart';
 import 'package:math_matric/features/papers/domain/entities/exam_paper.dart';
+import 'package:math_matric/features/papers/presentation/pages/exam/exam_paper_viewer.dart';
 
-class ExamTile extends StatelessWidget{
+class ExamTile extends StatefulWidget {
   final ExamPaper paper;
-  const ExamTile({super.key, required this.paper});
+  final ExamPageMode paperMode;
+  final Set<ExamPaper> savedPapers;
+  final VoidCallback? onBookmarkToggle; // Added callback to ensure state refreshes safely
+
+  const ExamTile({
+    super.key,
+    required this.paper,
+    required this.savedPapers,
+    required this.paperMode,
+    this.onBookmarkToggle,
+  });
 
   @override
+  State<ExamTile> createState() => _ExamTileState();
+}
+
+class _ExamTileState extends State<ExamTile> {
+  @override
   Widget build(BuildContext context) {
-  final isSaved = _savedPapers.contains(paper);
-  
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
-    child: ClipRRect(
-      borderRadius: BorderRadius.circular(16),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            // Multi-layered gradient for realistic glass shine
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Colors.white.withValues(alpha: 0.12),
-                Colors.white.withValues(alpha: 0.04),
-              ],
-            ),
-            // Micro-border to simulate glass thickness
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.2),
-              width: 1.5,
-            ),
-            // Soft glow instead of a harsh shadow
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.03),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-              ),
-            ],
+    final isSaved = widget.savedPapers.contains(widget.paper);
+
+    List<String> buildPages(String assetPath, int pageCount) {
+      final basePath = widget.paperMode == ExamPageMode.paper
+          ? "papers/paper_1/exams/papers"
+          : "papers/paper_1/exams/memos";
+      return List.generate(
+        pageCount,
+        (index) => "$basePath/$assetPath/p${index + 1}.webp",
+      );
+    }
+
+    void openPdf(ExamPaper document) {
+      final pages = buildPages(document.assetPath, document.pageCount);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ExamPaperViewer(
+            title: document.title,
+            pageAssets: pages,
           ),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(16),
-              onTap: () => _openPdf(paper),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    // Premium Document Visual Anchor
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Icon(
-                        Icons.description_outlined,
-                        color: Colors.white.withValues(alpha: 0.9),
-                        size: 22,
+        ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+      child: Container(
+        // Explicitly forced layout heights prevent parental layout constraints from crushing the tile
+        constraints: const BoxConstraints(minHeight: 72),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: const Color(0xFF673AB7).withValues(alpha: 0.15),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: () => openPdf(widget.paper),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF673AB7).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.description_outlined,
+                      color: Color(0xFF673AB7),
+                      size: 22,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Text(
+                      widget.paper.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF1C1B1F), // Standard dark onyx material text
                       ),
                     ),
-                    const SizedBox(width: 14),
-                    // Paper Title Section
-                    Expanded(
-                      child: Text(
-                        paper.title,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white.withValues(alpha: 0.95),
-                          letterSpacing: 0.2,
-                        ),
-                      ),
+                  ),
+                  const SizedBox(width: 14),
+                  IconButton(
+                    iconSize: 22,
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    icon: Icon(
+                      isSaved ? Icons.bookmark : Icons.bookmark_border_outlined,
+                      color: isSaved ? const Color(0xFFFFB300) : const Color(0xFF757575),
                     ),
-                    const SizedBox(width: 14),
-                    // Action Button with Ripple Effect
-                    IconButton(
-                      iconSize: 22,
-                      splashRadius: 22,
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                      icon: AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 200),
-                        child: Icon(
-                          isSaved ? Icons.bookmark : Icons.bookmark_border_outlined,
-                          key: ValueKey<bool>(isSaved),
-                          color: isSaved ? const Color(0xFFFFB300) : Colors.white.withValues(alpha: 0.4),
-                        ),
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          isSaved ? _savedPapers.remove(paper) : _savedPapers.add(paper);
-                        });
-                      },
-                    ),
-                  ],
-                ),
+                    onPressed: () {
+                      setState(() {
+                        if (isSaved) {
+                          widget.savedPapers.remove(widget.paper);
+                        } else {
+                          widget.savedPapers.add(widget.paper);
+                        }
+                      });
+                      if (widget.onBookmarkToggle != null) {
+                        widget.onBookmarkToggle!();
+                      }
+                    },
+                  ),
+                ],
               ),
             ),
           ),
         ),
       ),
-    ),
-  );
-};
-
+    );
+  }
 }

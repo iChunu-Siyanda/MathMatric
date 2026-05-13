@@ -6,7 +6,7 @@ import 'package:math_matric/features/papers/domain/entities/paper_item.dart';
 import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
 import 'package:math_matric/features/papers/domain/entities/section_type_arguments.dart';
 import 'package:math_matric/features/papers/presentation/widget/main/topic_list_tile.dart';
-import 'package:math_matric/app/navigation/section_context_modal.dart';
+import 'package:math_matric/shared/navigation/section_context_modal.dart';
 
 //data topic list
 class TopicsSliverList extends StatefulWidget {
@@ -81,7 +81,7 @@ class _TopicsSliverListState extends State<TopicsSliverList>
               final anima = _itemInterval(index);
               final years = TileTopicsP1Data.years;
               final y = years[index % years.length];
-              debugPrint("TopicsSliverList - items=${item.pageTitle}, paperType= ${widget.paperType}");
+              //debugPrint("TopicsSliverList - items=${item.pageTitle}, paperType= ${widget.paperType}");
 
               return AnimatedBuilder(
                 animation: anima,

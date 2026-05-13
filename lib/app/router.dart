@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:math_matric/app/factories/topic_factory.dart';
+import 'package:math_matric/shared/factories/topic_factory.dart';
 import 'package:math_matric/features/auth/presentation/navigation/auth_firebase.dart';
 import 'package:math_matric/features/auth/presentation/page/login_page.dart';
 import 'package:math_matric/features/papers/data/local/exam_paper_data.dart';
