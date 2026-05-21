@@ -12,7 +12,7 @@ final mockTopics = [
     totalXp: 20,
   ),
   PracticeTopic(
-    id: 'number_patterns',
+    id: 'numberPatterns',
     title: 'Number Patterns',
     description: 'Arithmetic and geometric sequences.',
     color: Colors.orange, 

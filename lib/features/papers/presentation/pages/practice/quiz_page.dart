@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:math_matric/features/papers/data/local/quiz_data_source.dart';
-import 'package:math_matric/features/papers/domain/entities/SubjectTopicQuiz.dart';
+import 'package:math_matric/features/papers/domain/entities/subject_topic_quiz.dart';
 import 'package:math_matric/features/papers/domain/entities/quiz_question.dart';
 
 class QuizPage extends StatefulWidget {

@@ -1,7 +1,7 @@
 import 'package:math_matric/features/papers/domain/entities/pactice_level.dart';
 import 'package:math_matric/features/papers/domain/entities/practice_topic.dart';
 import 'package:math_matric/features/papers/domain/entities/quiz_question.dart';
-import 'package:math_matric/features/papers/domain/entities/SubjectTopicQuiz.dart'; 
+import 'package:math_matric/features/papers/domain/entities/subject_topic_quiz.dart'; 
 
 abstract class PracticeRepository {
   Future<List<PracticeTopic>> getPracticeTopics();

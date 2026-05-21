@@ -1,5 +1,5 @@
-import 'package:math_matric/features/papers/data/local/exam_paper_data.dart';
 import 'package:math_matric/features/papers/domain/entities/exam_paper.dart';
+import 'package:math_matric/features/papers/domain/entities/exam_session.dart';
 import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
 import 'package:math_matric/features/papers/domain/respositories/exam_paper_respository.dart';
 

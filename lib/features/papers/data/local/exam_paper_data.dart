@@ -1,14 +1,6 @@
 import 'package:math_matric/features/papers/domain/entities/exam_paper.dart';
+import 'package:math_matric/features/papers/domain/entities/exam_session.dart';
 import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
-
-//Enums are much better than strings, they are safe(compile-time safety).
-enum ExamSession {
-  march,
-  june,
-  november,
-  ieb,
-  prelims,
-}
 
 class ExamPaperData {
   Map<ExamSession, Map<String, List<ExamPaper>>> getExamItems(PaperType type) {

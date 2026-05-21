@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:math_matric/shared/factories/topic_factory.dart';
+import 'package:math_matric/shared/navigation/tab_type.dart';
 
 class TileTopicsP1Data{
   static const years = [2024, 2023, 2022, 2021, 2020, 2019];
@@ -67,7 +68,7 @@ class TileTopicsP1Data{
       "Financial Maths",
       "Probabilty",
     ],
-    tabType: TabType.practice,
+    tabType: TabType.practicePapers,
     colorPicker: colorPicker,
     iconPicker: iconPicker,
   );

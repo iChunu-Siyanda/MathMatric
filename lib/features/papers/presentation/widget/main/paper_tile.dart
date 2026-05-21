@@ -114,43 +114,44 @@ class PaperTile extends StatelessWidget {
   }
 
   List<Widget> _buildSlivers(
-      BuildContext context, ScrollController scrollController) {
-    switch (variant) {
-      case SheetVariant.streak:
-        return [
-          _SheetGrabHandle(),
-          StreakSliver(),
-        ];
+    BuildContext context, ScrollController scrollController) {
+      //debugPrint("PaperTile - _buildSlivers: enum = ${data.section!.topics[1].tab.tabType.toString()}, paperType = $paperType");
+      switch (variant) {
+        case SheetVariant.streak:
+          return [
+            _SheetGrabHandle(),
+            StreakSliver(),
+          ];
 
-      case SheetVariant.topics:
-        return [
-          _SheetGrabHandle(),
-          TopicsSliverList(
-            content: data,
-            scrollController: scrollController,
-            listTopicTitle: data.section!.title,
-            paperType: paperType, 
-          ),
-        ];
+        case SheetVariant.topics:
+          return [
+            _SheetGrabHandle(),
+            TopicsSliverList(
+              content: data,
+              scrollController: scrollController,
+              listTopicTitle: data.section!.title,
+              paperType: paperType, 
+            ),
+          ];
+      }
     }
   }
-}
 
-class _SheetGrabHandle extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: Center(
-        child: Container(
-          margin: const EdgeInsets.symmetric(vertical: 12),
-          height: 5,
-          width: 48,
-          decoration: BoxDecoration(
-            color: Colors.grey.shade300,
-            borderRadius: BorderRadius.circular(8),
+  class _SheetGrabHandle extends StatelessWidget {
+    @override
+    Widget build(BuildContext context) {
+      return SliverToBoxAdapter(
+        child: Center(
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 12),
+            height: 5,
+            width: 48,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade300,
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
         ),
-      ),
-    );
+      );
+    }
   }
-}

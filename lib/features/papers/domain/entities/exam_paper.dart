@@ -1,4 +1,4 @@
-import 'package:math_matric/features/papers/data/local/exam_paper_data.dart';
+import 'package:math_matric/features/papers/domain/entities/exam_session.dart';
 
 class ExamPaper {
   final String id;
@@ -8,7 +8,7 @@ class ExamPaper {
   final bool isMemo;
   final bool isNational;
   final int pageCount;
-  final ExamSession session; // 👈 ADD
+  final ExamSession session; 
   final int year;
 
   ExamPaper({

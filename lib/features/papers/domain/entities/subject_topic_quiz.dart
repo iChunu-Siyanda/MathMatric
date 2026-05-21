@@ -1,6 +1,6 @@
-enum SubjectTopic {
+enum SubjectTopic{
   algebra,
-  number_patterns,
+  numberPatterns,
   functions,
   calculus,
   finance,

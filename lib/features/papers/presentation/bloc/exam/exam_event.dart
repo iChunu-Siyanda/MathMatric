@@ -1,4 +1,4 @@
-import 'package:math_matric/features/papers/data/local/exam_paper_data.dart';
+import 'package:math_matric/features/papers/domain/entities/exam_session.dart';
 import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
 
 abstract class ExamEvent {

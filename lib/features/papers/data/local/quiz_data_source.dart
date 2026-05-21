@@ -1,9 +1,9 @@
-import 'package:math_matric/features/papers/domain/entities/SubjectTopicQuiz.dart';
+import 'package:math_matric/features/papers/domain/entities/subject_topic_quiz.dart';
 import 'package:math_matric/features/papers/domain/entities/quiz_question.dart';
 
 final Map<SubjectTopic, int> questionNumberIndices = {
   SubjectTopic.algebra: 0,
-  SubjectTopic.number_patterns: 0,
+  SubjectTopic.numberPatterns: 0,
   SubjectTopic.functions: 0,
   SubjectTopic.calculus: 0,
   SubjectTopic.finance: 0,
@@ -26,7 +26,7 @@ class QuizDataSource {
         levelId: 'algebra_level1',
       ),
     ],
-    SubjectTopic.number_patterns: [
+    SubjectTopic.numberPatterns: [
       QuizQuestion(
         questionText: 'Next number: 2,4,6?',
         options: ['8', '10', '12', '14'],

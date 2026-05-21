@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:math_matric/shared/factories/topic_factory.dart';
+import 'package:math_matric/shared/navigation/tab_type.dart';
 
 class TileTopicsP2Data{
   static const years = [2024, 2023, 2022, 2021, 2020, 2019];
@@ -63,7 +64,7 @@ class TileTopicsP2Data{
       "Trigonometry",
       "Euclidean Geometry",
     ],
-    tabType: TabType.practice,
+    tabType: TabType.practicePapers,
     colorPicker: colorPicker,
     iconPicker: iconPicker,
   );

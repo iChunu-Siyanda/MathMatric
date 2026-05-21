@@ -9,13 +9,7 @@ import 'package:math_matric/features/papers/presentation/pages/exam/exam_paper_p
 import 'package:math_matric/features/streak/presentation/pages/streak_screen.dart';
 import 'package:math_matric/features/papers/presentation/pages/practice/practice_page.dart';
 import 'package:math_matric/features/papers/presentation/pages/practice/quizzes_page.dart';
-
-enum TabType {
-  progress,
-  classNotes,
-  practice,
-  exam,
-}
+import 'package:math_matric/shared/navigation/tab_type.dart';
 
 class TopicFactory {
   static Map<TabType, TabModel> tabSets = {
@@ -41,7 +35,7 @@ class TopicFactory {
     ),
 
     //Practice
-    TabType.practice: TabModel(
+    TabType.practicePapers: TabModel(
       tabs: [
         SectionTab(
           title: "Quiz",
@@ -52,7 +46,7 @@ class TopicFactory {
           builder: (ctx) => PracticePage(),
         ),
       ],
-      tabType: TabType.practice,
+      tabType: TabType.practicePapers,
     ),
 
     //Exams

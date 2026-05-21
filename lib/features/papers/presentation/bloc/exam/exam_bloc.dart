@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:math_matric/features/papers/data/local/exam_paper_data.dart';
 import 'package:math_matric/features/papers/domain/entities/exam_paper.dart';
+import 'package:math_matric/features/papers/domain/entities/exam_session.dart';
 import 'package:math_matric/features/papers/domain/usercases/get_exam_paper_data.dart';
 import 'package:math_matric/features/papers/presentation/bloc/exam/exam_event.dart';
 import 'package:math_matric/features/papers/presentation/bloc/exam/exam_state.dart';

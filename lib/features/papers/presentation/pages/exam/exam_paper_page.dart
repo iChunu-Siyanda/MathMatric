@@ -37,7 +37,7 @@ class _ExamPaperPageState extends State<ExamPaperPage> with SingleTickerProvider
 
     context.read<ExamBloc>().add(
           ExamPaperRequested(widget.contextData.paperType,
-              widget.contextData.session, widget.contextData.year),
+              widget.contextData.session!, widget.contextData.year),
         );
 
     _controller = AnimationController(

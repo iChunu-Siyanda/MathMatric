@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:math_matric/shared/factories/topic_factory.dart';
 import 'package:math_matric/features/auth/presentation/navigation/auth_firebase.dart';
 import 'package:math_matric/features/auth/presentation/page/login_page.dart';
 import 'package:math_matric/features/papers/data/local/exam_paper_data.dart';
@@ -24,6 +23,7 @@ import 'package:math_matric/features/home/presentation/page/home_page.dart';
 import 'package:math_matric/features/papers/presentation/pages/exam/exam_paper_viewer.dart';
 import 'package:math_matric/features/papers/presentation/pages/papers_page.dart';
 import 'package:math_matric/features/papers/presentation/pages/section_type.dart';
+import 'package:math_matric/shared/navigation/tab_type.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Routes {
@@ -91,6 +91,44 @@ class AppRouter {
 
       case Routes.sectionPage:
         final args = settings.arguments as SectionTypeArguments;
+        String toCamelCase(String? input) {
+            if (input == null || input.isEmpty) return '';
+
+            // Step 1: Split camelCase boundaries and replace spaces/hyphens/underscores with spaces
+            // This unifies all formats into a space-separated string
+            final splitBoundaries = input.replaceAllMapped(
+              RegExp(r'([a-z0-9])([A-Z])'),
+              (m) => '${m[1]} ${m[2]}',
+            );
+            
+            // Replace hyphens, underscores, and multiple spaces with a single space
+            final cleanString = splitBoundaries.replaceAll(RegExp(r'[\s\-_]+'), ' ');
+
+            // Step 2: Split into individual words
+            final words = cleanString.trim().split(' ');
+            if (words.isEmpty) return '';
+
+            // Step 3: Lowercase the first word, uppercase the rest
+            final buffer = StringBuffer(words[0].toLowerCase());
+            
+            for (var i = 1; i < words.length; i++) {
+              final word = words[i];
+              if (word.isNotEmpty) {
+
+                buffer.write(word[0].toUpperCase() + word.substring(1).toLowerCase());
+              }
+            }
+
+            return buffer.toString();
+          }
+        TabType toTabType(String input) {
+          final camelCase = toCamelCase(input);
+          return TabType.values.firstWhere(
+            (t) => toCamelCase(t.toString()) == camelCase,
+            orElse: () => throw ArgumentError('No matching TabType for input: $input'),
+          );
+        }
+
         if (args.tabType == TabType.exam) {
           debugPrint(
               "args.tabType = ${args.tabType}, sectionContext = ${args.sectionContext}, tabs: ${args.tabs}, pageTitle: ${args.pageTitle}, getExamPaperDara: $getExamPaperData");
@@ -104,20 +142,8 @@ class AppRouter {
               ),
             ),
           );
-        } else if (args.tabType == TabType.practice) {
-          String toSnakeCase(String? input) {
-            if (input == null) return '';
-            final step1 = input.replaceAllMapped(
-              RegExp(r'([a-z0-9])([A-Z])'),
-              (m) => '${m[1]}_${m[2]}',
-            );
-
-            final step2 = step1.replaceAll(RegExp(r'[\s\-]+'), '_');
-
-            return step2.toLowerCase();
-          }
-
-          String topicID = toSnakeCase(args.topicId);
+        } else if (toTabType(args.tabType.toString()) == TabType.practicePapers) {
+          String topicID = toCamelCase(args.topicId);
 
           final getPracticeRepository = LocalPracticeRepository();
           final getProgressRepository = LocalUserProgressRepository(prefs);
@@ -137,7 +163,20 @@ class AppRouter {
               ),
             ),
           );
-        } else {
+        } 
+        else if (toTabType(args.tabType.toString()) == TabType.classNotes) {
+          String topicID = toCamelCase(args.topicId);
+          debugPrint(
+              "args.tabType = ${args.tabType}, TopicId = $topicID, tabs: ${args.tabs}, pageTitle: ${args.pageTitle}");
+          return MaterialPageRoute(
+            builder: (_) => SectionType(
+              pageTitle: args.pageTitle,
+              sectionContext: args.sectionContext,
+              tabs: args.tabs,
+            ),
+          );
+        }
+        else {
           return MaterialPageRoute(
               builder: (_) => SectionType(
                     pageTitle: args.pageTitle,

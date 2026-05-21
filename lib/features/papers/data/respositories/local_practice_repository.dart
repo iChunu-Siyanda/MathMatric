@@ -3,7 +3,7 @@ import 'package:math_matric/features/papers/data/local/mock_topic_data.dart';
 import 'package:math_matric/features/papers/data/local/quiz_data_source.dart';
 import 'package:math_matric/features/papers/domain/entities/pactice_level.dart';
 import 'package:math_matric/features/papers/domain/entities/quiz_question.dart';
-import 'package:math_matric/features/papers/domain/entities/SubjectTopicQuiz.dart';
+import 'package:math_matric/features/papers/domain/entities/subject_topic_quiz.dart';
 import 'package:math_matric/features/papers/domain/respositories/practice_respository.dart';
 import 'package:math_matric/features/papers/domain/entities/practice_topic.dart';
 
