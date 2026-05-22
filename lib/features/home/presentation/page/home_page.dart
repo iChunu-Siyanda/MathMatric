@@ -115,7 +115,6 @@ class _HomePageState extends State<HomePage> {
           SliverToBoxAdapter(
             child: HomeSectionHeader(
               title: "Papers",
-              onSeeAll: () {},
             ),
           ),
 

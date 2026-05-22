@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:math_matric/features/papers/data/local/quiz_data_source.dart';
 import 'package:math_matric/features/papers/domain/entities/subject_topic_quiz.dart';
 import 'package:math_matric/features/papers/domain/entities/quiz_question.dart';
+import 'package:math_matric/features/papers/presentation/pages/practice/quiz_results.dart';
 
 class QuizPage extends StatefulWidget {
   const QuizPage({super.key, required this.topic});
@@ -15,7 +16,17 @@ class QuizPage extends StatefulWidget {
 class _QuizPageState extends State<QuizPage> {
   int selectedIndex = -1;
   int score = 0;
+  int totalScore = 0;
   List<int> userAnswers = [];
+
+  // Helper variable to keep build code clean
+  late final SubjectTopic currentTopic;
+
+  @override
+  void initState() {
+    super.initState();
+    currentTopic = widget.topic.keys.first;
+  }
 
   void nextQuestion(SubjectTopic subjectTopic) {
     if (questionNumberIndices[subjectTopic]! < QuizDataSource.questionBanksP1[subjectTopic]!.length - 1) {
@@ -55,318 +66,233 @@ class _QuizPageState extends State<QuizPage> {
     questionNumberIndices[subjectTopic] = 0;
   }
 
-
   void nextQuestionText() {
     if (selectedIndex == -1) return;
     userAnswers.add(selectedIndex);
-    if (selectedIndex == getCorrectAnswerIndex(widget.topic.keys.first)) {
+    if (selectedIndex == getCorrectAnswerIndex(currentTopic)) {
       score++;
     }
 
+    totalScore += getQuestionText(currentTopic).scoreValue;
+
     setState(() {
-      if (isFinished(widget.topic.entries.first.key)) {
-        showResults();
+      if (isFinished(currentTopic)) {
+        showQuizResults();
       } else {
-       nextQuestion(widget.topic.entries.first.key);
+        nextQuestion(currentTopic);
         selectedIndex = -1;
       }
     });
   }
 
-  void showResults() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-      ),
-      builder: (_) {
-        return DraggableScrollableSheet(
-          expand: false,
-          initialChildSize: 0.9,
-          builder: (_, controller) {
-            return Container(
-              padding: const EdgeInsets.all(20),
-              color: const Color(0xFFF5F7FB),
-              child: Column(
-                children: [
-                  /// Header
-                  Text(
-                    "Final Score: $score / $getTotalQuestions(widget.topic.entries.first.key)",
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue,
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  /// Scrollable Memo
-                  Expanded(
-                    child: ListView.builder(
-                      controller: controller,
-                      itemCount: getTotalQuestions(widget.topic.entries.first.key),
-                      itemBuilder: (context, index) {
-                        final question = getQuestionByIndex(index, widget.topic.entries.first.key);
-                        final options = question.options;
-                        final correctIndex = question.correctAnswerIndex;
-                        final userIndex = userAnswers[index];
-
-                        bool isCorrect = userIndex == correctIndex;
-
-                        return Container(
-                          margin: const EdgeInsets.only(bottom: 20),
-                          padding: const EdgeInsets.all(15),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: isCorrect ? Colors.green : Colors.red,
-                              width: 2,
-                            ),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              /// Question
-                              Text(
-                                "Q${index + 1}: ${question.questionText}",
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-
-                              const SizedBox(height: 10),
-
-                              /// Options List
-                              ...List.generate(options.length, (i) {
-                                bool isUser = i == userIndex;
-                                bool isAnswer = i == correctIndex;
-
-                                Color? bgColor;
-
-                                if (isAnswer) {
-                                  bgColor = Colors.green.shade100;
-                                } else if (isUser && !isCorrect) {
-                                  bgColor = Colors.red.shade100;
-                                }
-
-                                return Container(
-                                  margin: const EdgeInsets.only(bottom: 8),
-                                  padding: const EdgeInsets.all(12),
-                                  decoration: BoxDecoration(
-                                    color: bgColor ?? Colors.grey.shade100,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        String.fromCharCode(65 + i),
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 10),
-                                      Expanded(child: Text(options[i])),
-                                      if (isAnswer)
-                                        const Icon(
-                                          Icons.check,
-                                          color: Colors.green,
-                                        ),
-                                      if (isUser && !isCorrect)
-                                        const Icon(
-                                          Icons.close,
-                                          color: Colors.red,
-                                        ),
-                                    ],
-                                  ),
-                                );
-                              }),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-
-                  /// Retry Button & Back to Quizzes Page Button
-                  SizedBox(
-                    width: double.infinity,
-                    child: Row(
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            setState(() {
-                              reset(widget.topic.entries.first.key);
-                              score = 0;
-                              selectedIndex = -1;
-                              userAnswers.clear();
-                            });
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                          ),
-                          child: const Text("Retry", style: TextStyle(fontSize: 16, color: Colors.white)),
-                        ),
-                        const SizedBox(width: 10),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.grey,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                          ),
-                          child: const Text("Back to Quizzes", style: TextStyle(fontSize: 16, color: Colors.white)),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
+  void showQuizResults() {
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+      return QuizResults(
+        score: score,
+        totalScore: totalScore,
+        getTotalQuestions: getTotalQuestions,
+        getQuestionByIndex: getQuestionByIndex,
+        topic: currentTopic,
+        savedTopic: widget.topic,
+        userAnswers: userAnswers,
+        selectedIndex: selectedIndex,
+        reset: reset,
+      );
+    }));
   }
 
   @override
   Widget build(BuildContext context) {
-    final question = getQuestionText(widget.topic.entries.first.key).questionText;
-    final options = getOptions(widget.topic.entries.first.key);
-    final totalQuestions = getTotalQuestions(widget.topic.entries.first.key);
+    final question = getQuestionText(currentTopic).questionText;
+    final options = getOptions(currentTopic);
+    final totalQuestions = getTotalQuestions(currentTopic);
+    final currentQuestionNum = questionNumberIndices[currentTopic]! + 1;
+    final isOptionSelected = selectedIndex != -1;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FB),
+      backgroundColor: const Color(0xFFF8FAFC),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// Progress
-              LinearProgressIndicator(
-                value: (questionNumberIndices[widget.topic.entries.first.key]! + 1) / totalQuestions,
-                backgroundColor: Colors.grey.shade300,
-                color: Colors.blue,
-                minHeight: 6,
+              /// Top Action Bar (Back button + Progress tracking text)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black87, size: 20),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      "$currentQuestionNum / $totalQuestions",
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ),
+                ],
               ),
+              const SizedBox(height: 15),
 
-              const SizedBox(height: 30),
-
-              /// Question
-              Text(
-                "Question ${questionNumberIndices[widget.topic.entries.first.key]! + 1}",
-                style: const TextStyle(fontSize: 16, color: Colors.black54),
+              /// Visual Progress Bar
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: LinearProgressIndicator(
+                  value: currentQuestionNum / totalQuestions,
+                  backgroundColor: Colors.grey.shade200,
+                  color: Colors.blue,
+                  minHeight: 8,
+                ),
               ),
+              const SizedBox(height: 25),
 
-              const SizedBox(height: 10),
+              /// Scrollable Content Area (Prevents Layout Overflow)
+              Expanded(
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      /// Question Number Tag
+                      Text(
+                        "QUESTION $currentQuestionNum",
+                        style: TextStyle(
+                          fontSize: 13, 
+                          fontWeight: FontWeight.bold, 
+                          color: Colors.grey.shade500,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
 
-              Text(
-                question,
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black,
+                      /// Question Body Text
+                      Text(
+                        question,
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF1E293B),
+                          height: 1.4,
+                        ),
+                      ),
+                      const SizedBox(height: 25),
+
+                      /// Animated Interactive Options
+                      ...List.generate(options.length, (index) {
+                        bool isSelected = selectedIndex == index;
+
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedIndex = index;
+                            });
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            curve: Curves.easeInOut,
+                            margin: const EdgeInsets.only(bottom: 16),
+                            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                            decoration: BoxDecoration(
+                              color: isSelected ? Colors.blue.withValues(alpha: 0.08) : Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: isSelected ? Colors.blue : Colors.grey.shade200,
+                                width: isSelected ? 2 : 1,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.02),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 4),
+                                )
+                              ],
+                            ),
+                            child: Row(
+                              children: [
+                                /// Container Index Bubble (A, B, C, D)
+                                AnimatedContainer(
+                                  duration: const Duration(milliseconds: 200),
+                                  width: 32,
+                                  height: 32,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: isSelected ? Colors.blue : Colors.grey.shade100,
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      String.fromCharCode(65 + index),
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: isSelected ? Colors.white : Colors.black54,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+
+                                /// Option Text
+                                Expanded(
+                                  child: Text(
+                                    options[index],
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                                      color: isSelected ? Colors.blue.shade900 : const Color(0xFF334155),
+                                    ),
+                                  ),
+                                ),
+
+                                /// Custom Check indicator
+                                Icon(
+                                  isSelected ? Icons.check_circle : Icons.radio_button_off,
+                                  color: isSelected ? Colors.blue : Colors.grey.shade400,
+                                  size: 22,
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }),
+                    ],
+                  ),
                 ),
               ),
 
-              const SizedBox(height: 30),
+              const SizedBox(height: 16),
 
-              /// Options
-              ...List.generate(options.length, (index) {
-                bool isSelected = selectedIndex == index;
-
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      selectedIndex = index;
-                    });
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.only(bottom: 15),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 18,
-                      horizontal: 20,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isSelected ? Colors.blue.shade100 : Colors.white,
-                      borderRadius: BorderRadius.circular(50),
-                      border: Border.all(
-                        color: isSelected ? Colors.blue : Colors.grey.shade300,
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        /// A B C D Label
-                        Text(
-                          String.fromCharCode(65 + index), // A, B, C, D
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: isSelected ? Colors.blue : Colors.black54,
-                          ),
-                        ),
-
-                        const SizedBox(width: 15),
-
-                        /// Option Text
-                        Expanded(
-                          child: Text(
-                            options[index],
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                        ),
-
-                        /// Radio Dot
-                        Container(
-                          width: 22,
-                          height: 22,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: isSelected ? Colors.blue : Colors.grey,
-                              width: 2,
-                            ),
-                          ),
-                          child: isSelected
-                              ? Center(
-                                  child: Container(
-                                    width: 10,
-                                    height: 10,
-                                    decoration: const BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.blueAccent,
-                                    ),
-                                  ),
-                                )
-                              : null,
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }),
-
-              const Spacer(),
-
-              /// Next Button
+              /// Pinned Next Action Button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: nextQuestionText,
+                  onPressed: isOptionSelected ? nextQuestionText : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
+                    disabledBackgroundColor: Colors.grey.shade300,
                     padding: const EdgeInsets.symmetric(vertical: 18),
+                    elevation: isOptionSelected ? 3 : 0,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
+                      borderRadius: BorderRadius.circular(16),
                     ),
                   ),
-                  child: const Text("Next", style: TextStyle(fontSize: 16, color: Colors.white)),
+                  child: Text(
+                    "Next Question", 
+                    style: TextStyle(
+                      fontSize: 16, 
+                      fontWeight: FontWeight.bold,
+                      color: isOptionSelected ? Colors.white : Colors.black26,
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -374,5 +300,4 @@ class _QuizPageState extends State<QuizPage> {
         ),
       ),
     );
-  }
-}
+  }}
