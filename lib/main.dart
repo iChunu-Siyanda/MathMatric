@@ -7,13 +7,19 @@ import 'app/app.dart';
 import 'app/bloc_observer.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  
+  try{
+    await dotenv.load(fileName: ".env");
+    await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+    );
+  }catch (e){
+    debugPrint("Error initializing Firebase & dot_env: $e");
+  }
 
   final prefs = await SharedPreferences.getInstance();
 
