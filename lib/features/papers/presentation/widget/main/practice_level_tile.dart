@@ -31,16 +31,15 @@ class _PracticeLevelTileState extends State<PracticeLevelTile> {
         level.isUnlocked ? Colors.grey : Colors.red;
 
     return Opacity(
-      opacity: level.isUnlocked ? 0.6 : 1,
+      opacity: level.isUnlocked ? 1 : 0.6,
       child: GestureDetector(
-        onTapDown: level.isUnlocked ? _onTapDown : null,
+        onTapDown: level.isUnlocked ? null : _onTapDown,
         onTapUp: level.isUnlocked
-            ? null
-            : (d) {
+            ? (d) {
                 _onTapUp(d);
                 widget.onTap();
-              },
-        onTapCancel: level.isUnlocked ? _onCancel:null,
+              }: null,
+        onTapCancel: level.isUnlocked ? null : _onCancel,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),

@@ -64,8 +64,13 @@ class _QuizzesPageState extends State<QuizzesPage>
                     return PracticeLevelTile(
                       level: state.data.levels[index],
                       onTap: () {
+                        final practiceBloc = context.read<PracticeBloc>();
+                        final level = state.data.levels[index];
                         Navigator.push(context, MaterialPageRoute(builder: (context) {
-                          return QuizPage(topic:state.data.subjectData);//Include SubjectTopic in Practice Bloc and pass it here to QuizPage.
+                          return BlocProvider.value(
+                            value: practiceBloc,
+                            child: QuizPage(topic: state.data.subjectData, topicId: widget.topicId, xpEarned: state.data.earnedXp, levelId: level.topicId,),
+                          );
                         }));  
                       },
                     );

@@ -1,5 +1,5 @@
 import 'package:math_matric/features/papers/domain/entities/subject_topic_quiz.dart';
-import 'package:math_matric/features/papers/domain/usercases/practice_topic_data.dart';
+import 'package:math_matric/features/papers/domain/entities/practice_topic_data.dart';
 import 'package:math_matric/features/papers/domain/entities/pactice_level.dart';
 import 'package:math_matric/features/papers/domain/respositories/practice_respository.dart';
 import 'package:math_matric/features/papers/domain/respositories/user_progress_repository.dart';
@@ -17,11 +17,11 @@ class LoadPracticeTopicUseCase {
     final topic = await practiceRepository.getPracticeTopicById(topicId);
     final levels = await practiceRepository.getLevelsForTopic(topicId);
     final completed = await progressRepository.getCompletedLevels(topicId);
+    final enrichedLevels = _computeUnlocks(levels, completed);
     final earnedXp = await progressRepository.getEarnedXp(topicId);
     final subjectTopic = SubjectTopic.values.firstWhere((e) => e.name == topicId); // Convert topicId to SubjectTopic enum
     final quizQuestions = await practiceRepository.getQuizQuestionsForLevel(subjectTopic, levels.first.id); 
-    final enrichedLevels = _computeUnlocks(levels, completed);
-
+    
     final totalXp =
         levels.fold(0, (sum, el) => sum + el.xpReward); //el as in element, 0 is the 1st element.
 

@@ -11,6 +11,7 @@ import 'package:math_matric/features/papers/data/respositories/papers_respositor
 import 'package:math_matric/features/papers/domain/entities/exam_page_arguments.dart';
 import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
 import 'package:math_matric/features/papers/domain/entities/section_type_arguments.dart';
+import 'package:math_matric/features/papers/domain/usercases/complete_level_usecase.dart';
 import 'package:math_matric/features/papers/domain/usercases/get_exam_paper_data.dart';
 import 'package:math_matric/features/papers/domain/usercases/get_paper_data.dart';
 import 'package:math_matric/features/papers/domain/usercases/load_practice_topic.dart';
@@ -154,7 +155,10 @@ class AppRouter {
               "args.tabType = ${args.tabType}, TopicId = $topicID, tabs: ${args.tabs}, pageTitle: ${args.pageTitle}, PracticeData: $practiceData");
           return MaterialPageRoute(
             builder: (_) => BlocProvider(
-              create: (_) => PracticeBloc(loadPractice: practiceData)
+              create: (_) => PracticeBloc(
+                loadPractice: 
+                practiceData, completeLevel: CompleteLevelUseCase(progressRepository: getProgressRepository),
+                )
                 ..add(PracticeLoadTopic(topicID)),
               child: SectionType(
                 pageTitle: args.pageTitle,

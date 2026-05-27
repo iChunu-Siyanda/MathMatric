@@ -1,16 +1,17 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:math_matric/features/papers/domain/usercases/complete_level_usecase.dart';
 import 'package:math_matric/features/papers/domain/usercases/load_practice_topic.dart';
 import 'practice_event.dart';
 import 'practice_state.dart';
 
 class PracticeBloc extends Bloc<PracticeEvent, PracticeState> {
   final LoadPracticeTopicUseCase loadPractice;
-  //final String topicId;
+  final CompleteLevelUseCase completeLevel;
 
   PracticeBloc({
     required this.loadPractice,
-   // required this.topicId,
+    required this.completeLevel,
   }) : super(const PracticeInitial()) {
     on<PracticeLoadTopic>(_onLoadTopic);
     on<CompleteLevel>(_onCompleteLevel);
@@ -39,7 +40,7 @@ class PracticeBloc extends Bloc<PracticeEvent, PracticeState> {
   ) async {
     try {
       // Persist progress locally
-      await loadPractice.progressRepository.markLevelCompleted(
+      await completeLevel(
         topicId: event.topicId.toLowerCase(),
         levelId: event.levelId,
         xpEarned: event.xpEarned,

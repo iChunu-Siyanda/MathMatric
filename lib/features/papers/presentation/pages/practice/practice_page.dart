@@ -4,11 +4,11 @@ import 'package:math_matric/features/papers/presentation/widget/main/practice_ca
 class PracticePage extends StatelessWidget {
   final List<Map<String, String>> practiceQuestions = [
     {
-      "image": "assets/images/trig_img.jpg",
+      "image": "assets/images/func.webp",
       "memo": "Step 1: Expand the brackets...\nStep 2: Simplify..."
     },
     {
-      "image": "assets/images/summation.jpg",
+      "image": "assets/images/summation.webp",
       "memo": "Use factorization..."
     },
   ];

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:math_matric/features/papers/domain/entities/quiz_question.dart';
 import 'package:math_matric/features/papers/domain/entities/subject_topic_quiz.dart';
-import 'package:math_matric/features/papers/presentation/pages/practice/quiz_page.dart';
+import 'package:math_matric/features/papers/presentation/widget/main/back_to_quizzes_btn.dart';
+import 'package:math_matric/features/papers/presentation/widget/main/retry_quiz_btn.dart';
 
 class QuizResults extends StatefulWidget {
   final int score;
@@ -13,6 +14,9 @@ class QuizResults extends StatefulWidget {
   final SubjectTopic topic;
   final List<int> userAnswers;
   final Map<SubjectTopic, List<QuizQuestion>> savedTopic;
+  final String topicId;
+  final int xpEarned;
+  final String levelId;
 
   const QuizResults({
     super.key,
@@ -25,6 +29,9 @@ class QuizResults extends StatefulWidget {
     required this.selectedIndex,
     required this.reset,
     required this.savedTopic,
+    required this.topicId,
+    required this.xpEarned,
+    required this.levelId,
   });
 
   @override
@@ -231,41 +238,11 @@ class _QuizResultsState extends State<QuizResults> {
             Row(
               children: [
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      widget.reset(widget.topic);
-                      widget.userAnswers.clear();
-                    
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => QuizPage(
-                            topic: widget.savedTopic, // Passing the expected map structure back to your QuizPage instance
-                          ),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                    ),
-                    child: const Text("Retry Quiz", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
-                  ),
+                  child: RetryQuizBtn(widget: widget, topicId: widget.topicId, xpEarned: widget.xpEarned, levelId: widget.levelId),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: OutlinedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: Colors.grey.shade300),
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                    ),
-                    child: Text("Back to Quizzes", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey.shade700)),
-                  ),
+                  child: BackToQuizzesBtn(widget: widget),
                 ),
               ],
             ),
@@ -275,3 +252,5 @@ class _QuizResultsState extends State<QuizResults> {
     );
   }
 }
+
+

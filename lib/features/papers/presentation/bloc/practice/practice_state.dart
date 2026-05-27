@@ -1,4 +1,4 @@
-import 'package:math_matric/features/papers/domain/usercases/practice_topic_data.dart';
+import 'package:math_matric/features/papers/domain/entities/practice_topic_data.dart';
 
 abstract class PracticeState {
   const PracticeState();

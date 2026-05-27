@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:math_matric/features/papers/data/local/quiz_data_source.dart';
 import 'package:math_matric/features/papers/domain/entities/subject_topic_quiz.dart';
 import 'package:math_matric/features/papers/domain/entities/quiz_question.dart';
+import 'package:math_matric/features/papers/presentation/bloc/practice/practice_bloc.dart';
+import 'package:math_matric/features/papers/presentation/bloc/practice/practice_event.dart';
 import 'package:math_matric/features/papers/presentation/pages/practice/quiz_results.dart';
 
 class QuizPage extends StatefulWidget {
-  const QuizPage({super.key, required this.topic});
+  const QuizPage({super.key, required this.topic, required this.topicId, required this.xpEarned, required this.levelId});
 
   final Map<SubjectTopic, List<QuizQuestion>> topic;
+  final String topicId;
+  final int xpEarned;
+  final String levelId;
 
   @override
   State<QuizPage> createState() => _QuizPageState();
@@ -64,6 +70,8 @@ class _QuizPageState extends State<QuizPage> {
 
   void reset(SubjectTopic subjectTopic) {
     questionNumberIndices[subjectTopic] = 0;
+    userAnswers.clear();
+    score = 0;
   }
 
   void nextQuestionText() {
@@ -78,6 +86,9 @@ class _QuizPageState extends State<QuizPage> {
     setState(() {
       if (isFinished(currentTopic)) {
         showQuizResults();
+        context.read<PracticeBloc>().add(
+          CompleteLevel(topicId: widget.topicId, levelId: widget.levelId, xpEarned: widget.xpEarned),
+        );
       } else {
         nextQuestion(currentTopic);
         selectedIndex = -1;
@@ -97,6 +108,9 @@ class _QuizPageState extends State<QuizPage> {
         userAnswers: userAnswers,
         selectedIndex: selectedIndex,
         reset: reset,
+        topicId: widget.topicId,
+        xpEarned: widget.xpEarned,
+        levelId: widget.levelId,
       );
     }));
   }
