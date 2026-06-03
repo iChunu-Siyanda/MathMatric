@@ -7,5 +7,5 @@ abstract class PracticeRepository {
   Future<List<PracticeTopic>> getPracticeTopics();
   Future<PracticeTopic> getPracticeTopicById(String topicId);
   Future<List<PracticeLevel>> getLevelsForTopic(String topicId);
-  Future<Map<SubjectTopic, List<QuizQuestion>>> getQuizQuestionsForLevel(SubjectTopic subject, String levelId);
+  Future<List<QuizQuestion>> getQuizQuestionsForLevel(SubjectTopic subject, String levelId);
 }

@@ -4,7 +4,7 @@ class QuizzesHeader extends StatelessWidget {
   final String title;
   final String subtitle;
   final double progress; // 0.0 → 1.0
-  final int xpEarned;
+  final int totalXpEarned;
   final int totalXp;
   final Color accentColor;
 
@@ -13,7 +13,7 @@ class QuizzesHeader extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.progress,
-    required this.xpEarned,
+    required this.totalXpEarned,
     required this.totalXp,
     required this.accentColor,
   });
@@ -73,7 +73,7 @@ class QuizzesHeader extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      "$xpEarned / $totalXp XP",
+                      "$totalXpEarned/ $totalXp XP",
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         color: accentColor,

@@ -24,9 +24,10 @@ class LocalPracticeRepository implements PracticeRepository {
   }
 
   @override
-  Future<Map<SubjectTopic, List<QuizQuestion>>> getQuizQuestionsForLevel(SubjectTopic subject, String levelId) async {
+  Future<List<QuizQuestion>> getQuizQuestionsForLevel(SubjectTopic subject, String levelId) async {
     final questions = QuizDataSource.questionBanksP1[subject] ?? [];
-    final filtered = questions.where((q) => q.levelId == levelId).toList();
-    return {subject: filtered};
+    
+    // 2. Return the filtered list directly!
+    return questions.where((q) => q.levelId == levelId).toList();
   }
 }

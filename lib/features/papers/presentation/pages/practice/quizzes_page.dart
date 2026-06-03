@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:math_matric/features/papers/domain/entities/subject_topic_quiz.dart';
 import 'package:math_matric/features/papers/presentation/bloc/practice/practice_bloc.dart';
 import 'package:math_matric/features/papers/presentation/bloc/practice/practice_event.dart';
 import 'package:math_matric/features/papers/presentation/bloc/practice/practice_state.dart';
+import 'package:math_matric/features/papers/presentation/bloc/quiz/quiz_bloc.dart';
+import 'package:math_matric/features/papers/presentation/bloc/quiz/quiz_event.dart';
 import 'package:math_matric/features/papers/presentation/pages/practice/quiz_page.dart';
 import 'package:math_matric/features/papers/presentation/widget/main/practice_level_tile.dart';
 import 'package:math_matric/features/papers/presentation/widget/main/quizzes_header.dart';
@@ -46,6 +49,7 @@ class _QuizzesPageState extends State<QuizzesPage>
     return BlocBuilder<PracticeBloc, PracticeState>(
       builder: (context, state) {
         if (state is PracticeLoaded) {
+          debugPrint("BLOC REBUILD -> XP Earned: ${state.data.earnedXp} / ${state.data.totalXp}");
           return CustomScrollView(
             slivers: [
               SliverToBoxAdapter(
@@ -53,7 +57,7 @@ class _QuizzesPageState extends State<QuizzesPage>
                   title: state.data.practiceTopic.title,
                   subtitle: state.data.practiceTopic.description,
                   progress: state.data.progress,
-                  xpEarned: state.data.earnedXp,
+                  totalXpEarned: state.data.earnedXp,
                   totalXp: state.data.totalXp,
                   accentColor: state.data.practiceTopic.color,
                 ),
@@ -61,17 +65,31 @@ class _QuizzesPageState extends State<QuizzesPage>
               SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
+                    final String currentTopicId = state.data.practiceTopic.id;
                     return PracticeLevelTile(
                       level: state.data.levels[index],
+                      progressScore: state.data.levels[index].progress, 
                       onTap: () {
-                        final practiceBloc = context.read<PracticeBloc>();
                         final level = state.data.levels[index];
-                        Navigator.push(context, MaterialPageRoute(builder: (context) {
-                          return BlocProvider.value(
-                            value: practiceBloc,
-                            child: QuizPage(topic: state.data.subjectData, topicId: widget.topicId, xpEarned: state.data.earnedXp, levelId: level.topicId,),
+                        if (level.isUnlocked) {
+                          final targetSubjectTopic = SubjectTopic.values.firstWhere(
+                            (e) => e.name == currentTopicId,
                           );
-                        }));  
+                          final practiceBloc = context.read<PracticeBloc>();
+                          final quizBloc = context.read<QuizBloc>()..add(StartQuizEvent(level.levelId, targetSubjectTopic));
+
+                          Navigator.push(context, 
+                            MaterialPageRoute(
+                              builder: (_) => MultiBlocProvider(
+                                providers: [
+                                  BlocProvider.value(value: practiceBloc),
+                                  BlocProvider.value(value: quizBloc),
+                                ],
+                                child: QuizPage(topicId: topicIdToSnakeCase, xpEarned: state.data.earnedXp, levelId: level.levelId,),
+                              ),
+                            ),
+                          );
+                        }  
                       },
                     );
                   },
@@ -80,6 +98,10 @@ class _QuizzesPageState extends State<QuizzesPage>
               ),
             ],
           );
+        }
+
+        if (state is PracticeError) {
+          return Center(child: Text(state.message));
         }
 
         return const Center(child: CircularProgressIndicator());

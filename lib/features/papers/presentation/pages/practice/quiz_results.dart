@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:math_matric/features/papers/domain/entities/quiz_question.dart';
 import 'package:math_matric/features/papers/domain/entities/subject_topic_quiz.dart';
 import 'package:math_matric/features/papers/presentation/widget/main/back_to_quizzes_btn.dart';
 import 'package:math_matric/features/papers/presentation/widget/main/retry_quiz_btn.dart';
@@ -13,7 +12,6 @@ class QuizResults extends StatefulWidget {
   final Function reset;
   final SubjectTopic topic;
   final List<int> userAnswers;
-  final Map<SubjectTopic, List<QuizQuestion>> savedTopic;
   final String topicId;
   final int xpEarned;
   final String levelId;
@@ -28,7 +26,6 @@ class QuizResults extends StatefulWidget {
     required this.userAnswers,
     required this.selectedIndex,
     required this.reset,
-    required this.savedTopic,
     required this.topicId,
     required this.xpEarned,
     required this.levelId,
@@ -238,7 +235,7 @@ class _QuizResultsState extends State<QuizResults> {
             Row(
               children: [
                 Expanded(
-                  child: RetryQuizBtn(widget: widget, topicId: widget.topicId, xpEarned: widget.xpEarned, levelId: widget.levelId),
+                  child: RetryQuizBtn(topic: widget.topic, topicId: widget.topicId, xpEarned: widget.xpEarned, levelId: widget.levelId),
                 ),
                 const SizedBox(width: 12),
                 Expanded(

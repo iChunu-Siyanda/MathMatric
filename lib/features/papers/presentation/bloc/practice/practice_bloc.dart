@@ -28,7 +28,9 @@ class PracticeBloc extends Bloc<PracticeEvent, PracticeState> {
       final topicData = await loadPractice(event.topicId.toLowerCase());
       debugPrint("From PracticeBloc, topicId: ${event.topicId}");
       emit(PracticeLoaded(topicData));
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint("_onLoadTopic BLOC ERROR: $e");
+      debugPrint("STACK TRACE:\n$stackTrace");
       emit(PracticeError('PracticeLoadTopic Message: ${e.toString()}'));
     }
   }
@@ -41,7 +43,7 @@ class PracticeBloc extends Bloc<PracticeEvent, PracticeState> {
     try {
       // Persist progress locally
       await completeLevel(
-        topicId: event.topicId.toLowerCase(),
+        topicId: event.topicId,
         levelId: event.levelId,
         xpEarned: event.xpEarned,
       );

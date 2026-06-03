@@ -3,7 +3,7 @@ import 'package:math_matric/features/papers/domain/entities/pactice_level.dart';
 
 final mockLevels = [
   PracticeLevel(
-    id: 'algebra_level1',
+    levelId: 'algebra_level1',
     topicId: 'algebra',
     title: 'Linear Equations',
     subtitle: 'Simple one-variable linear equations',
@@ -15,7 +15,7 @@ final mockLevels = [
     progress: 0.0,
   ),
   PracticeLevel(
-    id: 'algebra_level2',
+    levelId: 'algebra_level2',
     topicId: 'algebra',
     title: 'Quadratic Equations',
     subtitle: 'Factorization and formula method',
@@ -27,7 +27,7 @@ final mockLevels = [
     progress: 0.0,
   ),
   PracticeLevel(
-    id: 'number_patterns_level1',
+    levelId: 'number_patterns_level1',
     topicId: 'numberPatterns',
     title: 'Arithmetic Sequences',
     subtitle: 'Finding the nth term',

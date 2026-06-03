@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 class PracticeLevel {
-  final String id;
+  final String levelId;
   final String topicId;
   final String title;
   final String subtitle;
@@ -13,7 +13,7 @@ class PracticeLevel {
   final double progress;
 
   PracticeLevel({
-    required this.id,
+    required this.levelId,
     required this.topicId,
     required this.title,
     required this.subtitle,
@@ -26,7 +26,7 @@ class PracticeLevel {
   });
 
   PracticeLevel copyWith({
-    String? id,
+    String? levelId ,
     String? topicId,
     String? title,
     String? subtitle,
@@ -38,7 +38,7 @@ class PracticeLevel {
     double? progress,
   }) {
     return PracticeLevel(
-      id: id ?? this.id,
+      levelId: levelId ?? this.levelId,
       topicId: topicId ?? this.topicId,
       title: title ?? this.title,
       subtitle: subtitle ?? this.subtitle,

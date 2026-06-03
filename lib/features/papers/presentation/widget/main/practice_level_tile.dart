@@ -4,11 +4,13 @@ import 'package:math_matric/features/papers/domain/entities/pactice_level.dart';
 class PracticeLevelTile extends StatefulWidget {
   final PracticeLevel level;
   final VoidCallback onTap;
+  final double progressScore;
 
   const PracticeLevelTile({
     super.key,
     required this.level,
     required this.onTap,
+    required this.progressScore,
   });
 
   @override
@@ -138,24 +140,35 @@ class _PracticeLevelTileState extends State<PracticeLevelTile> {
                     ),
 
                     // XP BADGE
-                    if (level.isUnlocked)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color:
-                              effectiveColor.withValues(alpha: 0.12),
-                          borderRadius:
-                              BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          "+${level.xpReward} XP",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: effectiveColor,
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Stack(
+                        alignment: Alignment.center, // Keeps the text perfectly centered over the progress bar
+                        children: [
+                          // 1. The Progress Indicator Background Layer
+                          Positioned.fill(
+                            child: LinearProgressIndicator(
+                              value: widget.progressScore, 
+                              backgroundColor: Colors.grey.withValues(alpha: 0.12), // Default grey background
+                              valueColor: const AlwaysStoppedAnimation<Color>(Colors.deepPurple), // The fill color
+                            ),
                           ),
-                        ),
+
+                          // 2. The Text Content Layer
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            child: Text(
+                              "+${level.xpReward} XP",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                // Pro-tip: If the bar is half-filled, make sure the text color contrasts nicely!
+                                color: widget.progressScore == 0 ? effectiveColor:Colors.white, 
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
+                    )
                   ],
                 ),
 
@@ -165,12 +178,13 @@ class _PracticeLevelTileState extends State<PracticeLevelTile> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: LinearProgressIndicator(
-                    value: 0,
+                    value: widget.progressScore,
                     minHeight: 6,
                     backgroundColor:
                         Colors.grey.withValues(alpha: 0.15),
                     valueColor:
-                        AlwaysStoppedAnimation(effectiveColor),
+                      const AlwaysStoppedAnimation(Colors.deepPurple),
+                      //AlwaysStoppedAnimation(effectiveColor),
                   ),
                 ),
               ],

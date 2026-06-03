@@ -1,33 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:math_matric/features/papers/domain/entities/subject_topic_quiz.dart';
+import 'package:math_matric/features/papers/domain/usercases/load_quiz_questions_use_case.dart';
+import 'package:math_matric/features/papers/presentation/bloc/quiz/quiz_bloc.dart';
+import 'package:math_matric/features/papers/presentation/bloc/quiz/quiz_event.dart';
 import 'package:math_matric/features/papers/presentation/pages/practice/quiz_page.dart';
-import 'package:math_matric/features/papers/presentation/pages/practice/quiz_results.dart';
 
 class RetryQuizBtn extends StatelessWidget {
+  final SubjectTopic topic;
+  final String topicId;
+  final int xpEarned;
+  final String levelId;
+
   const RetryQuizBtn({
     super.key,
-    required this.widget,
+    required this.topic,
     required this.topicId,
     required this.xpEarned,
     required this.levelId,
   });
 
-  final QuizResults widget;
-  final String topicId;
-  final int xpEarned;
-  final String levelId;
-
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        widget.reset(widget.topic);
-        widget.userAnswers.clear();
-      
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => QuizPage(
-              topic: widget.savedTopic, topicId: widget.topicId, xpEarned: widget.xpEarned, levelId: widget.levelId, // Passing the expected map structure back to your QuizPage instance
+            builder: (context) => BlocProvider(
+              create: (context) => QuizBloc(
+                context.read<LoadQuizQuestionsUseCase>(),
+              )..add(StartQuizEvent(levelId,topic)), // 2. Immediately fire start event
+              
+              child: QuizPage(
+                topicId: topicId,
+                xpEarned: xpEarned,
+                levelId: levelId,
+              ),
             ),
           ),
         );
@@ -37,7 +46,10 @@ class RetryQuizBtn extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
-      child: const Text("Retry Quiz", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+      child: const Text(
+        "Retry Quiz",
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+      ),
     );
   }
 }

@@ -95,6 +95,7 @@ class _TopicsSliverListState extends State<TopicsSliverList>
                 child: TopicListTile(
                   item: item,
                   onTap: () {
+                    debugPrint("TopicListTile - topicId: ${item.topicId}");
                     Navigator.pushNamed(context, Routes.sectionPage,
                         arguments: SectionTypeArguments(
                             pageTitle: item.pageTitle,

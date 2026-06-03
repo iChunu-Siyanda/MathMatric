@@ -8,4 +8,5 @@ abstract class UserProgressRepository {
   });
 
   Future<int> getEarnedXp(String topicId);
+  Future<int> getLevelXp(String levelId);
 }

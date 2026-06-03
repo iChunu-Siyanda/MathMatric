@@ -18,6 +18,6 @@ final mockTopics = [
     color: Colors.orange, 
     order: 2, 
     totalLevels: 5, 
-    totalXp: 13,
+    totalXp: 20,
   ),
 ];
