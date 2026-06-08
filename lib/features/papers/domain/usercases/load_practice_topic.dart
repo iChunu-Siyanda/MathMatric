@@ -1,7 +1,7 @@
 import 'package:math_matric/features/papers/domain/entities/practice_topic_data.dart';
 import 'package:math_matric/features/papers/domain/entities/pactice_level.dart';
-import 'package:math_matric/features/papers/domain/respositories/practice_respository.dart';
-import 'package:math_matric/features/papers/domain/respositories/user_progress_repository.dart';
+import 'package:math_matric/features/papers/domain/repositories/practice_respository.dart';
+import 'package:math_matric/features/papers/domain/repositories/user_progress_repository.dart';
 
 class LoadPracticeTopicUseCase {
   final PracticeRepository practiceRepository;

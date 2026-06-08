@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:math_matric/features/papers/data/local/quiz_data_source.dart';
+import 'package:math_matric/features/papers/data/respositories/quiz_questions_repository_impl.dart';
 import 'package:math_matric/features/papers/domain/entities/subject_topic_quiz.dart';
+import 'package:math_matric/features/papers/domain/usercases/load_quiz_questions_use_case.dart';
 import 'package:math_matric/features/papers/presentation/bloc/practice/practice_bloc.dart';
 import 'package:math_matric/features/papers/presentation/bloc/practice/practice_event.dart';
 import 'package:math_matric/features/papers/presentation/bloc/practice/practice_state.dart';
@@ -37,6 +40,24 @@ class _QuizzesPageState extends State<QuizzesPage>
 
   String get topicIdToSnakeCase => toSnakeCase(widget.topicId); 
 
+  String toCamelCase(String input) {
+    // Split the string by spaces or underscores
+    final words = input.trim().split(RegExp(r'[\s_]+'));
+    if (words.isEmpty) return '';
+
+    // Keep the first word entirely lowercase
+    String result = words[0].toLowerCase();
+
+    // Capitalize the first letter of all subsequent words
+    for (int i = 1; i < words.length; i++) {
+      if (words[i].isNotEmpty) {
+        result += words[i][0].toUpperCase() + words[i].substring(1).toLowerCase();
+      }
+    }
+
+    return result;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -71,21 +92,30 @@ class _QuizzesPageState extends State<QuizzesPage>
                       progressScore: state.data.levels[index].progress, 
                       onTap: () {
                         final level = state.data.levels[index];
+
                         if (level.isUnlocked) {
-                          final targetSubjectTopic = SubjectTopic.values.firstWhere(
-                            (e) => e.name == currentTopicId,
+                          final targetSubjectTopic = SubjectTopic.values.firstWhere((e){
+                              final cleanEnumName = e.name.toLowerCase().replaceAll('_', '');
+                              final cleanTopicId = currentTopicId.toLowerCase().replaceAll('_', '');
+                              return cleanEnumName == cleanTopicId;
+                            },
+                            orElse: () => throw Exception("Could not find matching SubjectTopic enum value for ID: $currentTopicId"),
                           );
                           final practiceBloc = context.read<PracticeBloc>();
-                          final quizBloc = context.read<QuizBloc>()..add(StartQuizEvent(level.levelId, targetSubjectTopic));
+                          final localDataSource = QuizDataSource();
+                          final quizRepository = QuizQuestionsRepositoryImpl(localDataSource);
+                          final getQuizQuestions = LoadQuizQuestionsUseCase(quizRepository);
 
                           Navigator.push(context, 
                             MaterialPageRoute(
                               builder: (_) => MultiBlocProvider(
                                 providers: [
                                   BlocProvider.value(value: practiceBloc),
-                                  BlocProvider.value(value: quizBloc),
+                                  BlocProvider(
+                                    create: (context) => QuizBloc(getQuizQuestions)..add(StartQuizEvent(level.levelId, targetSubjectTopic)),
+                                  ),
                                 ],
-                                child: QuizPage(topicId: topicIdToSnakeCase, xpEarned: state.data.earnedXp, levelId: level.levelId,),
+                                child: QuizPage(topicId: toCamelCase(widget.topicId), xpEarned: state.data.earnedXp, levelId: level.levelId,),
                               ),
                             ),
                           );

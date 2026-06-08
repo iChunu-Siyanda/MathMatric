@@ -26,7 +26,6 @@ class QuizQuestionsLoaded extends QuizState {
   QuizQuestion get currentQuestion => questions[currentIndex];
   bool get isLastQuestion => currentIndex == questions.length - 1;
 
-  // A copyWith method makes updating fields a breeze inside your BLoC
   QuizQuestionsLoaded copyWith({
     List<QuizQuestion>? questions,
     int? currentIndex,

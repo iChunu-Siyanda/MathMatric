@@ -30,7 +30,6 @@ class QuizPage extends StatelessWidget {
         child: BlocListener<QuizBloc, QuizState>(
           listener: (context, state) {
             if (state is QuizFinished) {
-              //Log long-term progress using the PracticeBloc
               context.read<PracticeBloc>().add(
                     CompleteLevel(
                       topicId: topicId,
@@ -39,26 +38,51 @@ class QuizPage extends StatelessWidget {
                     ),
                   );
 
-              // 2. Direct user to the results presentation page
+              final practiceBloc = context.read<PracticeBloc>();
+              final quizBloc = context.read<QuizBloc>();    
+
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => QuizResults(
-                    score: state.score,
-                    totalScore: state.totalScore,
-                    getTotalQuestions: (_) => state.questions.length,
-                    getQuestionByIndex: (index, _) => state.questions[index],
-                    topic: currentTopic,
-                    userAnswers: state.userAnswers,
-                    selectedIndex: state.selectedIndex,
-                    reset: (topic) {
-                      context.read<QuizBloc>().add(
-                            StartQuizEvent(levelId, topic),
-                          );
-                    },
-                    topicId: topicId,
-                    xpEarned: xpEarned,
-                    levelId: levelId,
+                  builder: (context) => MultiBlocProvider(
+                    providers: [
+                      BlocProvider.value(value: practiceBloc),
+                      BlocProvider.value(value: quizBloc),
+                    ],
+                    child: QuizResults(
+                      score: state.score,
+                      totalScore: state.totalScore,
+                      getTotalQuestions: (_) => state.questions.length,
+                      getQuestionByIndex: (index, _) => state.questions[index],
+                      topic: currentTopic,
+                      userAnswers: state.userAnswers,
+                      selectedIndex: state.selectedIndex,
+                      reset: (topic) {
+                        quizBloc.add(StartQuizEvent(levelId, topic),);
+                        // CRITICAL: Since pushReplacement destroyed QuizPage, 
+                        // you must push a new QuizPage back onto the stack here.
+
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => MultiBlocProvider(
+                              providers: [
+                                BlocProvider.value(value: practiceBloc),
+                                BlocProvider.value(value: quizBloc),
+                              ],
+                              child: QuizPage(
+                                topicId: topicId,
+                                xpEarned: xpEarned,
+                                levelId: levelId,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      topicId: topicId,
+                      xpEarned: xpEarned,
+                      levelId: levelId,
+                    ),
                   ),
                 ),
               );

@@ -1,6 +1,6 @@
 import 'package:math_matric/features/papers/domain/entities/paper_item.dart';
 import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
-import 'package:math_matric/features/papers/domain/respositories/papers_respository.dart';
+import 'package:math_matric/features/papers/domain/repositories/papers_respository.dart';
 
 class GetPaperData {
   final PapersTileRepository repository;

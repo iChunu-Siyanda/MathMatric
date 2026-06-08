@@ -11,7 +11,6 @@ class StartQuizEvent extends QuizEvent {
   StartQuizEvent(this.levelId, this.subjectTopic);
 }
 
-//Triggers when the user taps an A, B, C, or D options.
 class SelectOptionEvent extends QuizEvent {
   final int index;
   SelectOptionEvent({required this.index});

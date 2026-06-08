@@ -1,5 +1,5 @@
 // features/papers/domain/usecases/complete_level_use_case.dart
-import 'package:math_matric/features/papers/domain/respositories/user_progress_repository.dart';
+import 'package:math_matric/features/papers/domain/repositories/user_progress_repository.dart';
 
 class CompleteLevelUseCase {
   final UserProgressRepository progressRepository;

@@ -1,7 +1,7 @@
 import 'package:math_matric/features/papers/domain/entities/exam_paper.dart';
 import 'package:math_matric/features/papers/domain/entities/exam_session.dart';
 import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
-import 'package:math_matric/features/papers/domain/respositories/exam_paper_respository.dart';
+import 'package:math_matric/features/papers/domain/repositories/exam_paper_respository.dart';
 
 class GetExamPaperData {
   final ExamPaperRepository repository;

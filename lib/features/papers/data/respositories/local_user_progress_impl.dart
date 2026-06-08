@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:math_matric/features/papers/domain/respositories/user_progress_repository.dart';
+import 'package:math_matric/features/papers/domain/repositories/user_progress_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalUserProgressRepository implements UserProgressRepository {

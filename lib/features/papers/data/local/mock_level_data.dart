@@ -4,7 +4,7 @@ import 'package:math_matric/features/papers/domain/entities/pactice_level.dart';
 final mockLevels = [
   PracticeLevel(
     levelId: 'algebra_level1',
-    topicId: 'algebra',
+    topicId: 'algebra', //must be equal to mockTopics.id
     title: 'Linear Equations',
     subtitle: 'Simple one-variable linear equations',
     //icon: Icons.calculate_rounded,
