@@ -5,7 +5,7 @@ import 'package:math_matric/features/home/presentation/bloc/study_history_bloc.d
 import 'package:math_matric/features/home/presentation/bloc/study_history_state.dart';
 import 'package:math_matric/features/home/presentation/widgets/featured_topic_card.dart';
 import 'package:math_matric/features/home/presentation/widgets/home_section_header.dart';
-import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
+import 'package:math_matric/features/papers/papers/domain/entities/paper_type.dart';
 import 'package:math_matric/features/drawer/math_matric_drawer.dart';
 import 'package:math_matric/features/home/presentation/widgets/auto_sliding_carousel.dart';
 import 'package:math_matric/features/home/presentation/widgets/continue_studying_card.dart';

@@ -2,29 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:math_matric/features/auth/presentation/navigation/auth_firebase.dart';
 import 'package:math_matric/features/auth/presentation/page/login_page.dart';
-import 'package:math_matric/features/papers/data/local/exam_paper_data.dart';
-import 'package:math_matric/features/papers/data/local/papers_item_local_data.dart';
-import 'package:math_matric/features/papers/data/respositories/exam_repository_impl.dart';
-import 'package:math_matric/features/papers/data/respositories/local_practice_repository.dart';
-import 'package:math_matric/features/papers/data/respositories/local_user_progress_impl.dart';
-import 'package:math_matric/features/papers/data/respositories/papers_respository_impl.dart';
-import 'package:math_matric/features/papers/domain/entities/exam_page_arguments.dart';
-import 'package:math_matric/features/papers/domain/entities/paper_type.dart';
-import 'package:math_matric/features/papers/domain/entities/section_type_arguments.dart';
-import 'package:math_matric/features/papers/domain/usercases/complete_level_usecase.dart';
-import 'package:math_matric/features/papers/domain/usercases/get_exam_paper_data.dart';
-import 'package:math_matric/features/papers/domain/usercases/get_paper_data.dart';
-import 'package:math_matric/features/papers/domain/usercases/load_practice_topic.dart';
-import 'package:math_matric/features/papers/presentation/bloc/exam/exam_bloc.dart';
-import 'package:math_matric/features/papers/presentation/bloc/paper/papers_bloc.dart';
-import 'package:math_matric/features/papers/presentation/bloc/practice/practice_bloc.dart';
-import 'package:math_matric/features/papers/presentation/bloc/practice/practice_event.dart';
-import 'package:math_matric/features/papers/presentation/pages/exam/exam_paper_page.dart';
+import 'package:math_matric/features/papers/exam/data/local/exam_paper_data.dart';
+import 'package:math_matric/features/papers/papers/data/local/papers_item_local_data.dart';
+import 'package:math_matric/features/papers/exam/data/repositories/exam_repository_impl.dart';
+import 'package:math_matric/features/papers/practice/data/repositories/local_practice_repository.dart';
+import 'package:math_matric/features/papers/userProgress/data/repositories/local_user_progress_impl.dart';
+import 'package:math_matric/features/papers/papers/data/repositories/papers_respository_impl.dart';
+import 'package:math_matric/features/papers/exam/domain/entities/exam_page_arguments.dart';
+import 'package:math_matric/features/papers/papers/domain/entities/paper_type.dart';
+import 'package:math_matric/features/papers/papers/domain/entities/section_type_arguments.dart';
+import 'package:math_matric/features/papers/practice/domain/usecases/complete_level_usecase.dart';
+import 'package:math_matric/features/papers/exam/domain/usercases/get_exam_paper_data.dart';
+import 'package:math_matric/features/papers/papers/domain/usecases/get_paper_data.dart';
+import 'package:math_matric/features/papers/practice/domain/usecases/load_practice_topic.dart';
+import 'package:math_matric/features/papers/exam/presentation/bloc/exam_bloc.dart';
+import 'package:math_matric/features/papers/papers/presentation/bloc/papers_bloc.dart';
+import 'package:math_matric/features/papers/practice/presentation/bloc/practice_bloc.dart';
+import 'package:math_matric/features/papers/practice/presentation/bloc/practice_event.dart';
+import 'package:math_matric/features/papers/exam/presentation/pages/exam_paper_page.dart';
 import 'package:math_matric/features/home/presentation/page/home_page.dart';
-import 'package:math_matric/features/papers/presentation/pages/exam/exam_paper_viewer.dart';
-import 'package:math_matric/features/papers/presentation/pages/papers_page.dart';
-import 'package:math_matric/features/papers/presentation/pages/section_type.dart';
-import 'package:math_matric/shared/navigation/tab_type.dart';
+import 'package:math_matric/features/papers/exam/presentation/pages/exam_paper_viewer.dart';
+import 'package:math_matric/features/papers/papers/presentation/pages/papers_page.dart';
+import 'package:math_matric/features/papers/papers/presentation/pages/section_type.dart';
+import 'package:math_matric/shared/entities/tab_type.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Routes {
@@ -39,7 +39,9 @@ class Routes {
 
 class AppRouter {
   static Route<dynamic> onGenerateRoute(
-      RouteSettings settings, SharedPreferences prefs) {
+    RouteSettings settings, 
+    SharedPreferences prefs,
+  ) {
     final localExamDataSource = ExamPaperData();
     final repository = ExamPaperRepositoryImpl(localExamDataSource);
     final getExamPaperData = GetExamPaperData(repository);
@@ -52,13 +54,10 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const LoginPage());
 
       case Routes.home:
-        return MaterialPageRoute(
-          builder: (_) => const HomePage(),
-        );
+        return MaterialPageRoute(builder: (_) => const HomePage(),);
 
       case Routes.paperTypePage:
         final paperType = settings.arguments as PaperType;
-        //Create data source -> creater respository -> usercase
         final localDataSource = PaperTileLocalData(); //data source
         final repository = PapersRepositoryImpl(localDataSource); //respository
         final getPaperData = GetPaperData(repository); //usercase
@@ -198,14 +197,3 @@ class AppRouter {
     }
   }
 }
-
-//Use Navigator.pushNamed(context, Routes.papers), throughout the app.
-// Navigator.pushNamed(
-//   context,
-//   Routes.examPage,
-//   arguments: ExamPageArguments(
-//     paperType: PaperType.paper1,
-//     mode: ExamPageMode.paper,
-//     contextData: contextData,
-//   ),
-// );

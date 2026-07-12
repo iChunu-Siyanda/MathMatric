@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:math_matric/features/papers/domain/entities/exam_page_mode.dart.dart';
-import 'package:math_matric/shared/navigation/section_tab_entities.dart';
-import 'package:math_matric/shared/navigation/tab_entities.dart';
-import 'package:math_matric/features/papers/domain/entities/topic_item.dart';
-import 'package:math_matric/features/papers/presentation/pages/class_notes/class_notes_page.dart';
-import 'package:math_matric/features/papers/presentation/pages/class_notes/class_notes_tips.dart';
-import 'package:math_matric/features/papers/presentation/pages/exam/exam_paper_page.dart';
+import 'package:math_matric/features/papers/exam/domain/entities/exam_page_mode.dart.dart';
+import 'package:math_matric/shared/entities/section_tab_entities.dart';
+import 'package:math_matric/shared/entities/tab_entities.dart';
+import 'package:math_matric/features/papers/papers/domain/entities/topic_item.dart';
+import 'package:math_matric/features/papers/classnotes/presentation/pages/class_notes_page.dart';
+import 'package:math_matric/features/papers/classnotes/presentation/pages/class_notes_tips.dart';
+import 'package:math_matric/features/papers/exam/presentation/pages/exam_paper_page.dart';
 import 'package:math_matric/features/streak/presentation/pages/streak_screen.dart';
-import 'package:math_matric/features/papers/presentation/pages/practice/practice_page.dart';
-import 'package:math_matric/features/papers/presentation/pages/practice/quizzes_page.dart';
-import 'package:math_matric/shared/navigation/tab_type.dart';
+import 'package:math_matric/features/papers/practice/presentation/pages/practice_page.dart';
+import 'package:math_matric/features/papers/practice/presentation/pages/quizzes_page.dart';
+import 'package:math_matric/shared/entities/tab_type.dart';
 
 class TopicFactory {
   static Map<TabType, TabModel> tabSets = {
