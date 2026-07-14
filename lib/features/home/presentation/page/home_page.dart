@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:math_matric/app/router.dart';
 import 'package:math_matric/features/home/presentation/bloc/study_history_bloc.dart';
 import 'package:math_matric/features/home/presentation/bloc/study_history_state.dart';
 import 'package:math_matric/features/home/presentation/widgets/featured_topic_card.dart';
@@ -10,6 +9,7 @@ import 'package:math_matric/features/drawer/math_matric_drawer.dart';
 import 'package:math_matric/features/home/presentation/widgets/auto_sliding_carousel.dart';
 import 'package:math_matric/features/home/presentation/widgets/continue_studying_card.dart';
 import 'package:math_matric/features/home/presentation/widgets/path_card.dart';
+import 'package:math_matric/shared/app_routes/routes.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

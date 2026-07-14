@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:math_matric/features/papers/exam/data/local/exam_paper_data.dart';
 import 'package:math_matric/features/papers/exam/data/repositories/exam_repository_impl.dart';
+import 'package:math_matric/features/papers/exam/domain/repositories/exam_paper_respository.dart';
 import 'package:math_matric/features/papers/exam/domain/usercases/get_exam_paper_data.dart';
 import 'package:math_matric/features/papers/exam/presentation/bloc/exam_bloc.dart';
 
@@ -13,7 +14,7 @@ void registerExamsModule () {
   );
 
   //final repository = ExamPaperRepositoryImpl(localExamDataSource);
-  getIt.registerLazySingleton(
+  getIt.registerLazySingleton<ExamPaperRepository>(
     () => ExamPaperRepositoryImpl(getIt(),),
   );
 

@@ -23,7 +23,6 @@ class _PapersPageState extends State<PapersPage> {
   @override
   void initState() {
     super.initState();
-    // Tell Bloc to load the correct paper
     context.read<PapersBloc>().add(LoadPaperRequested(widget.paperType));
   }
 
