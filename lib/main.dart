@@ -24,7 +24,7 @@ void main() async {
 
   final prefs = await SharedPreferences.getInstance();
 
-  await setupLocator();
+  await setupLocator(prefs);
 
   Bloc.observer = AppBlocObserver();
 
@@ -36,9 +36,7 @@ void main() async {
           ),
   );
 
-  runApp(MathMatricApp(
-    prefs: prefs,
-  ));
+  runApp(MathMatricApp());
 }
 
 //UI → Bloc → PaperRepository (abstract) → PaperRepositoryImpl (data) → DataSource

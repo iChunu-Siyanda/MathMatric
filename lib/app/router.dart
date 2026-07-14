@@ -2,19 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:math_matric/features/auth/presentation/navigation/auth_firebase.dart';
 import 'package:math_matric/features/auth/presentation/page/login_page.dart';
-import 'package:math_matric/features/papers/exam/data/local/exam_paper_data.dart';
-import 'package:math_matric/features/papers/papers/data/local/papers_item_local_data.dart';
-import 'package:math_matric/features/papers/exam/data/repositories/exam_repository_impl.dart';
-import 'package:math_matric/features/papers/practice/data/repositories/local_practice_repository.dart';
-import 'package:math_matric/features/papers/userProgress/data/repositories/local_user_progress_impl.dart';
-import 'package:math_matric/features/papers/papers/data/repositories/papers_respository_impl.dart';
 import 'package:math_matric/features/papers/exam/domain/entities/exam_page_arguments.dart';
 import 'package:math_matric/features/papers/papers/domain/entities/paper_type.dart';
 import 'package:math_matric/features/papers/papers/domain/entities/section_type_arguments.dart';
-import 'package:math_matric/features/papers/practice/domain/usecases/complete_level_usecase.dart';
-import 'package:math_matric/features/papers/exam/domain/usercases/get_exam_paper_data.dart';
-import 'package:math_matric/features/papers/papers/domain/usecases/get_paper_data.dart';
-import 'package:math_matric/features/papers/practice/domain/usecases/load_practice_topic.dart';
 import 'package:math_matric/features/papers/exam/presentation/bloc/exam_bloc.dart';
 import 'package:math_matric/features/papers/papers/presentation/bloc/papers_bloc.dart';
 import 'package:math_matric/features/papers/practice/presentation/bloc/practice_bloc.dart';
@@ -25,7 +15,7 @@ import 'package:math_matric/features/papers/exam/presentation/pages/exam_paper_v
 import 'package:math_matric/features/papers/papers/presentation/pages/papers_page.dart';
 import 'package:math_matric/features/papers/papers/presentation/pages/section_type.dart';
 import 'package:math_matric/shared/entities/tab_type.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:math_matric/shared/registrations/register_exams_module.dart';
 
 class Routes {
   static const String initial = '/';
@@ -40,12 +30,7 @@ class Routes {
 class AppRouter {
   static Route<dynamic> onGenerateRoute(
     RouteSettings settings, 
-    SharedPreferences prefs,
   ) {
-    final localExamDataSource = ExamPaperData();
-    final repository = ExamPaperRepositoryImpl(localExamDataSource);
-    final getExamPaperData = GetExamPaperData(repository);
-
     switch (settings.name) {
       case Routes.initial:
         return MaterialPageRoute(builder: (_) => const AuthFirebase());
@@ -57,13 +42,10 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const HomePage(),);
 
       case Routes.paperTypePage:
-        final paperType = settings.arguments as PaperType;
-        final localDataSource = PaperTileLocalData(); //data source
-        final repository = PapersRepositoryImpl(localDataSource); //respository
-        final getPaperData = GetPaperData(repository); //usercase
+        final paperType = settings.arguments as PaperType; //usercase
         return MaterialPageRoute(
             builder: (_) => BlocProvider(
-                  create: (_) => PapersBloc(getPaperData),
+                  create: (_) => getIt<PapersBloc>(),
                   child: PapersPage(paperType: paperType),
                 ));
 
@@ -71,7 +53,7 @@ class AppRouter {
         final args = settings.arguments as ExamPageArguments;
         return MaterialPageRoute(
           builder: (_) => BlocProvider(
-            create: (_) => ExamBloc(getExamPaperData),
+            create: (_) => getIt<ExamBloc>(),
             child: ExamPaperPage(
               contextData: args.contextData,
               mode: args.mode,
@@ -131,10 +113,10 @@ class AppRouter {
 
         if (args.tabType == TabType.exam) {
           debugPrint(
-              "args.tabType = ${args.tabType}, sectionContext = ${args.sectionContext}, tabs: ${args.tabs}, pageTitle: ${args.pageTitle}, getExamPaperDara: $getExamPaperData");
+              "args.tabType = ${args.tabType}, sectionContext = ${args.sectionContext}, tabs: ${args.tabs}, pageTitle: ${args.pageTitle},");
           return MaterialPageRoute(
             builder: (_) => BlocProvider(
-              create: (_) => ExamBloc(getExamPaperData),
+              create: (_) => getIt<ExamBloc>(),
               child: SectionType(
                 pageTitle: args.pageTitle,
                 sectionContext: args.sectionContext,
@@ -144,21 +126,10 @@ class AppRouter {
           );
         } else if (toTabType(args.tabType.toString()) == TabType.practicePapers) {
           String topicID = toCamelCase(args.topicId);
-
-          final getPracticeRepository = LocalPracticeRepository();
-          final getProgressRepository = LocalUserProgressRepository(prefs);
-          final practiceData = LoadPracticeTopicUseCase(
-              practiceRepository: getPracticeRepository,
-              progressRepository: getProgressRepository);
-          debugPrint(
-              "args.tabType = ${args.tabType}, TopicId = $topicID, tabs: ${args.tabs}, pageTitle: ${args.pageTitle}, PracticeData: $practiceData");
+          debugPrint( "args.tabType = ${args.tabType}, TopicId = $topicID, tabs: ${args.tabs}, pageTitle: ${args.pageTitle}");
           return MaterialPageRoute(
             builder: (_) => BlocProvider(
-              create: (_) => PracticeBloc(
-                loadPractice: 
-                practiceData, completeLevel: CompleteLevelUseCase(progressRepository: getProgressRepository),
-                )
-                ..add(PracticeLoadTopic(topicID)),
+              create: (_) => getIt<PracticeBloc>()..add(PracticeLoadTopic(topicID)),
               child: SectionType(
                 pageTitle: args.pageTitle,
                 sectionContext: args.sectionContext,
