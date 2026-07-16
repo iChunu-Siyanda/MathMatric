@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:math_matric/features/papers/practice/data/local/mock_level_data.dart';
 import 'package:math_matric/features/papers/practice/data/local/mock_topic_data.dart';
-import 'package:math_matric/features/papers/practice/domain/entities/pactice_level.dart';
+import 'package:math_matric/features/papers/practice/domain/entities/practice_level.dart';
 import 'package:math_matric/features/papers/practice/domain/repositories/practice_respository.dart';
 import 'package:math_matric/features/papers/practice/domain/entities/practice_topic.dart';
 

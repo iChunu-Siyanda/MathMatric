@@ -6,7 +6,9 @@ import 'package:math_matric/features/papers/quiz/presentation/bloc/quiz_state.da
 class QuizBloc extends Bloc<QuizEvent, QuizState> {
   final LoadQuizQuestionsUseCase loadQuizQuestionsUseCase;
 
-  QuizBloc(this.loadQuizQuestionsUseCase) : super(QuizInitial()) {
+  QuizBloc(
+    this.loadQuizQuestionsUseCase,
+  ) : super(QuizInitial()) {
     on<StartQuizEvent>(_onStartQuiz);
     on<SelectOptionEvent>(_onSelectOption);
     on<SubmitAnswerEvent>(_onSubmitAnswer);

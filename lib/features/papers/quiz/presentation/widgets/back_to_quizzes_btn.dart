@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:math_matric/features/papers/practice/presentation/pages/quiz_results.dart';
+import 'package:math_matric/features/papers/quiz/presentation/pages/quiz_results.dart';
 
 class BackToQuizzesBtn extends StatelessWidget {
   const BackToQuizzesBtn({
@@ -14,7 +14,7 @@ class BackToQuizzesBtn extends StatelessWidget {
     return OutlinedButton(
       onPressed: () {
         widget.reset(widget.topic);
-        Navigator.pop(context);
+        //Navigator.pop(context);
       },
       style: OutlinedButton.styleFrom(
         side: BorderSide(color: Colors.grey.shade300),

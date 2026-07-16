@@ -1,5 +1,5 @@
 import 'package:math_matric/features/papers/practice/domain/entities/practice_topic_data.dart';
-import 'package:math_matric/features/papers/practice/domain/entities/pactice_level.dart';
+import 'package:math_matric/features/papers/practice/domain/entities/practice_level.dart';
 import 'package:math_matric/features/papers/practice/domain/repositories/practice_respository.dart';
 import 'package:math_matric/features/papers/exam/domain/repositories/user_progress_repository.dart';
 

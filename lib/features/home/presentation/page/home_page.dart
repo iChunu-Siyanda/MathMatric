@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:math_matric/features/home/presentation/bloc/study_history_bloc.dart';
 import 'package:math_matric/features/home/presentation/bloc/study_history_state.dart';
 import 'package:math_matric/features/home/presentation/widgets/featured_topic_card.dart';
@@ -94,12 +95,13 @@ class _HomePageState extends State<HomePage> {
                             backgroundImg: topic.backgroundImg,
                             progress: topic.progress,
                             onTap: () {
-                              Navigator.pushNamed(
-                                  context, Routes.examPaperViewer,
-                                  arguments: {
-                                    "title": topic.title,
-                                    "pageAssets": topic.assets,
-                                  });
+                              context.push(
+                                Routes.examPaperViewer,
+                                extra: {
+                                  "title": topic.title,
+                                  "pageAssets": topic.assets,
+                                },
+                              );
                             },
                           ),
                         ),
@@ -134,8 +136,10 @@ class _HomePageState extends State<HomePage> {
                   ],
                   //gradient: [Colors.blue, Colors.indigo],
                   onTap: () {
-                    Navigator.pushNamed(context, Routes.paperTypePage,
-                        arguments: PaperType.paper1);
+                    context.push(
+                      Routes.paperTypePage,
+                      extra: PaperType.paper1
+                    );
                   },
                 ),
                 PathCard(

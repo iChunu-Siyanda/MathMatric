@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:math_matric/features/papers/exam/domain/entities/exam_page_mode.dart.dart';
 import 'package:math_matric/features/papers/exam/domain/entities/exam_paper.dart';
-import 'package:math_matric/features/papers/exam/presentation/pages/exam_paper_viewer.dart';
+import 'package:math_matric/shared/app_routes/routes.dart';
 
 class ExamTile extends StatefulWidget {
   final ExamPaper paper;
@@ -38,14 +39,13 @@ class _ExamTileState extends State<ExamTile> {
 
     void openPdf(ExamPaper document) {
       final pages = buildPages(document.assetPath, document.pageCount);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => ExamPaperViewer(
-            title: document.title,
-            pageAssets: pages,
-          ),
-        ),
+      
+      context.push(
+        Routes.examPaperViewer,
+        extra: {
+          'title': document.title,
+          'pageAssets': pages,
+        },
       );
     }
 

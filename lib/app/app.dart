@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:math_matric/features/home/presentation/bloc/study_history_bloc.dart';
 import 'package:math_matric/features/streak/presentation/bloc/habit_bloc.dart';
-import 'package:math_matric/shared/app_routes/routes.dart';
-import 'router.dart';
+import '../shared/app_routes/router.dart';
 
 class MathMatricApp extends StatelessWidget {
   const MathMatricApp({super.key});
@@ -15,13 +14,10 @@ class MathMatricApp extends StatelessWidget {
         BlocProvider(create: (context) => HabitBloc()),
         BlocProvider(create: (context) => StudyHistoryBloc()),
       ],
-      child: MaterialApp(
+      child: MaterialApp.router(
         title: 'MathMatric',
         debugShowCheckedModeBanner: false,
-      
-        onGenerateRoute: (settings) => AppRouter.onGenerateRoute(settings,),
-        initialRoute: Routes.initial,
-
+        routerConfig: AppRouter.router,
         theme: ThemeData(
           useMaterial3: true,
         ),

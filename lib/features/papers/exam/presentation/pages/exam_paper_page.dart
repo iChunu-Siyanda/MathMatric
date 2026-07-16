@@ -36,9 +36,9 @@ class _ExamPaperPageState extends State<ExamPaperPage> with SingleTickerProvider
     super.initState();
 
     context.read<ExamBloc>().add(
-          ExamPaperRequested(widget.contextData.paperType,
-              widget.contextData.session!, widget.contextData.year),
-        );
+      ExamPaperRequested(widget.contextData.paperType,
+      widget.contextData.session!, widget.contextData.year),
+    );
 
     _controller = AnimationController(
       vsync: this,
@@ -66,7 +66,6 @@ class _ExamPaperPageState extends State<ExamPaperPage> with SingleTickerProvider
     );
   }
 
-  // ---------------- BUILD ----------------
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
@@ -109,7 +108,6 @@ class _ExamPaperPageState extends State<ExamPaperPage> with SingleTickerProvider
     );
   }
 
-// ---------------- Section ----------------
   Widget _section(String title, List<ExamPaper> papers) {
     return MultiSliver(
       children: [

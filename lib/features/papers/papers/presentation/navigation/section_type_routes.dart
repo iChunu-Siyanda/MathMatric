@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:math_matric/features/papers/exam/presentation/bloc/exam_bloc.dart';
 import 'package:math_matric/features/papers/papers/domain/entities/section_type_arguments.dart';
 import 'package:math_matric/features/papers/papers/presentation/pages/section_type.dart';
 import 'package:math_matric/features/papers/practice/presentation/bloc/practice_bloc.dart';
 import 'package:math_matric/features/papers/practice/presentation/bloc/practice_event.dart';
+import 'package:math_matric/shared/app_routes/routes.dart';
 import 'package:math_matric/shared/entities/tab_type.dart';
 import 'package:math_matric/shared/registrations/register_exams_module.dart';
 
@@ -34,63 +36,64 @@ class SectionPageRoutes {
     return buffer.toString();
   }
 
-  // Generates the specific Route based on the TabType
-  static Route<dynamic> sectionPageRoute(RouteSettings settings) {
-    final args = settings.arguments as SectionTypeArguments;
+  
+  static final routes = <RouteBase>[
+    GoRoute(
+      path: Routes.sectionPage,
+      builder: (context, state) {
+        final args = state.extra as SectionTypeArguments;
 
-    final Widget page = switch (args.tabType) {
-      TabType.exam => () {
-          debugPrint(
-            "args.tabType = ${args.tabType}, sectionContext = ${args.sectionContext}, tabs: ${args.tabs}, pageTitle: ${args.pageTitle}",
-          );
-          return BlocProvider(
-            create: (_) => getIt<ExamBloc>(),
-            child: SectionType(
+        final Widget page = switch (args.tabType) {
+          TabType.exam => () {
+              debugPrint(
+                "args.tabType = ${args.tabType}, sectionContext = ${args.sectionContext}, tabs: ${args.tabs}, pageTitle: ${args.pageTitle}",
+              );
+              return BlocProvider(
+                create: (_) => getIt<ExamBloc>(),
+                child: SectionType(
+                  pageTitle: args.pageTitle,
+                  sectionContext: args.sectionContext,
+                  tabs: args.tabs,
+                ),
+              );
+            }(),
+
+          TabType.practicePapers => () {
+              final topicID = _toCamelCase(args.topicId);
+              debugPrint(
+                "args.tabType = ${args.tabType}, TopicId = $topicID, tabs: ${args.tabs}, pageTitle: ${args.pageTitle}",
+              );
+              return BlocProvider(
+                create: (_) => getIt<PracticeBloc>()..add(PracticeLoadTopic(topicID)),
+                child: SectionType(
+                  pageTitle: args.pageTitle,
+                  sectionContext: args.sectionContext,
+                  tabs: args.tabs,
+                ),
+              );
+            }(),
+
+          TabType.classNotes => () {
+              final topicID = _toCamelCase(args.topicId);
+              debugPrint(
+                "args.tabType = ${args.tabType}, TopicId = $topicID, tabs: ${args.tabs}, pageTitle: ${args.pageTitle}",
+              );
+              return SectionType(
+                pageTitle: args.pageTitle,
+                sectionContext: args.sectionContext,
+                tabs: args.tabs,
+              );
+            }(),
+
+          _ => SectionType(
               pageTitle: args.pageTitle,
               sectionContext: args.sectionContext,
               tabs: args.tabs,
             ),
-          );
-        }(),
+        };
 
-      TabType.practicePapers => () {
-          final topicID = _toCamelCase(args.topicId);
-          debugPrint(
-            "args.tabType = ${args.tabType}, TopicId = $topicID, tabs: ${args.tabs}, pageTitle: ${args.pageTitle}",
-          );
-          return BlocProvider(
-            create: (_) => getIt<PracticeBloc>()..add(PracticeLoadTopic(topicID)),
-            child: SectionType(
-              pageTitle: args.pageTitle,
-              sectionContext: args.sectionContext,
-              tabs: args.tabs,
-            ),
-          );
-        }(),
-
-      TabType.classNotes => () {
-          final topicID = _toCamelCase(args.topicId);
-          debugPrint(
-            "args.tabType = ${args.tabType}, TopicId = $topicID, tabs: ${args.tabs}, pageTitle: ${args.pageTitle}",
-          );
-          return SectionType(
-            pageTitle: args.pageTitle,
-            sectionContext: args.sectionContext,
-            tabs: args.tabs,
-          );
-        }(),
-
-      // If there are other TabTypes that don't match, they fall back to a basic SectionType
-      _ => SectionType(
-          pageTitle: args.pageTitle,
-          sectionContext: args.sectionContext,
-          tabs: args.tabs,
-        ),
-    };
-
-    return MaterialPageRoute(
-      settings: settings,
-      builder: (_) => page,
-    );
-  }
+        return page;
+      },
+    ),
+  ];
 }

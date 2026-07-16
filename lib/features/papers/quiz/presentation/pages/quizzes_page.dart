@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:math_matric/features/papers/quiz/data/local/quiz_data_source.dart';
-import 'package:math_matric/features/papers/quiz/data/repositories/quiz_questions_repository_impl.dart';
-import 'package:math_matric/features/papers/papers/domain/entities/subject_topic_quiz.dart';
-import 'package:math_matric/features/papers/quiz/domain/usecases/load_quiz_questions_use_case.dart';
+import 'package:go_router/go_router.dart';
 import 'package:math_matric/features/papers/practice/presentation/bloc/practice_bloc.dart';
 import 'package:math_matric/features/papers/practice/presentation/bloc/practice_event.dart';
 import 'package:math_matric/features/papers/practice/presentation/bloc/practice_state.dart';
-import 'package:math_matric/features/papers/quiz/presentation/bloc/quiz_bloc.dart';
-import 'package:math_matric/features/papers/quiz/presentation/bloc/quiz_event.dart';
-import 'package:math_matric/features/papers/practice/presentation/pages/quiz_page.dart';
+import 'package:math_matric/features/papers/quiz/domain/entities/quiz_page_params.dart';
 import 'package:math_matric/features/papers/practice/presentation/widgets/practice_level_tile.dart';
 import 'package:math_matric/features/papers/quiz/presentation/widgets/quizzes_header.dart';
+import 'package:math_matric/shared/app_routes/routes.dart';
 
 class QuizzesPage extends StatefulWidget {
   final String topicId;
@@ -94,29 +90,13 @@ class _QuizzesPageState extends State<QuizzesPage>
                         final level = state.data.levels[index];
 
                         if (level.isUnlocked) {
-                          final targetSubjectTopic = SubjectTopic.values.firstWhere((e){
-                              final cleanEnumName = e.name.toLowerCase().replaceAll('_', '');
-                              final cleanTopicId = currentTopicId.toLowerCase().replaceAll('_', '');
-                              return cleanEnumName == cleanTopicId;
-                            },
-                            orElse: () => throw Exception("Could not find matching SubjectTopic enum value for ID: $currentTopicId"),
-                          );
-                          final practiceBloc = context.read<PracticeBloc>();
-                          final localDataSource = QuizDataSource();
-                          final quizRepository = QuizQuestionsRepositoryImpl(localDataSource);
-                          final getQuizQuestions = LoadQuizQuestionsUseCase(quizRepository);
-
-                          Navigator.push(context, 
-                            MaterialPageRoute(
-                              builder: (_) => MultiBlocProvider(
-                                providers: [
-                                  BlocProvider.value(value: practiceBloc),
-                                  BlocProvider(
-                                    create: (context) => QuizBloc(getQuizQuestions)..add(StartQuizEvent(level.levelId, targetSubjectTopic)),
-                                  ),
-                                ],
-                                child: QuizPage(topicId: toCamelCase(widget.topicId), xpEarned: state.data.earnedXp, levelId: level.levelId,),
-                              ),
+                          context.push(
+                            Routes.quizPage,
+                            extra: QuizPageParams(
+                              topicId: toCamelCase(widget.topicId), 
+                              xp: state.data.earnedXp, 
+                              levelId: level.levelId, 
+                              currentTopicId: currentTopicId,
                             ),
                           );
                         }  

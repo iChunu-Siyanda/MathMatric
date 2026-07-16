@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:math_matric/features/home/domain/entities/last_studied.dart';
 import 'package:math_matric/features/home/presentation/bloc/study_history_bloc.dart';
 import 'package:math_matric/features/home/presentation/bloc/study_history_event.dart';
@@ -38,8 +39,7 @@ class _ExamPaperViewerState extends State<ExamPaperViewer> {
               LastStudied(
                 title: widget.title,
                 assets: widget.pageAssets,
-                backgroundImg:
-                    widget.pageAssets.first, // Use first page as thumbnail
+                backgroundImg: widget.pageAssets.first, // Use first page as thumbnail
                 progress: 0.1, // Initial progress
                 lastPage: 1,
               ),
@@ -118,7 +118,7 @@ class _ExamPaperViewerState extends State<ExamPaperViewer> {
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black87),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => context.pop(),
         ),
         actions: [
           // THE TOGGLE BUTTON

@@ -8,7 +8,7 @@ import 'package:math_matric/features/papers/classnotes/presentation/pages/class_
 import 'package:math_matric/features/papers/exam/presentation/pages/exam_paper_page.dart';
 import 'package:math_matric/features/streak/presentation/pages/streak_screen.dart';
 import 'package:math_matric/features/papers/practice/presentation/pages/practice_page.dart';
-import 'package:math_matric/features/papers/practice/presentation/pages/quizzes_page.dart';
+import 'package:math_matric/features/papers/quiz/presentation/pages/quizzes_page.dart';
 import 'package:math_matric/shared/entities/tab_type.dart';
 
 class TopicFactory {

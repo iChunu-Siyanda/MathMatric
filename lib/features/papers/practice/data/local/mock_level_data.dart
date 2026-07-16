@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:math_matric/features/papers/practice/domain/entities/pactice_level.dart';
+import 'package:math_matric/features/papers/practice/domain/entities/practice_level.dart';
 
 final mockLevels = [
   PracticeLevel(

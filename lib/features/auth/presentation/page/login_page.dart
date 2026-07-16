@@ -1,9 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:math_matric/features/auth/presentation/widgets/auth_background.dart';
 import 'package:math_matric/features/auth/presentation/widgets/my_button.dart';
 import 'package:math_matric/features/auth/presentation/widgets/my_text_field.dart';
-import 'forgot_password_page.dart';
+import 'package:math_matric/shared/app_routes/routes.dart';
 
 class LoginPage extends StatefulWidget {
   final void Function()? onRegisterTap;
@@ -103,12 +104,7 @@ class _LoginPageState extends State<LoginPage> {
               alignment: Alignment.centerRight,
               child: GestureDetector(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const ForgotPasswordPage(),
-                    ),
-                  );
+                  context.push(Routes.forgotPassword);
                 },
                 child: const Text(
                   "Forgot password?",

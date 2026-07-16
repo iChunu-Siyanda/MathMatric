@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:math_matric/features/papers/papers/data/model/tile_topics_p1_data.dart';
 import 'package:math_matric/features/papers/exam/domain/entities/exam_session.dart';
 import 'package:math_matric/features/papers/papers/domain/entities/paper_item.dart';
@@ -57,8 +58,7 @@ class _TopicsSliverListState extends State<TopicsSliverList>
 
     return CurvedAnimation(
       parent: _controller,
-      curve:
-          Interval(start.clamp(0, 1), end.clamp(0, 1), curve: Curves.easeOut),
+      curve: Interval(start.clamp(0, 1), end.clamp(0, 1), curve: Curves.easeOut),
     );
   }
 
@@ -96,18 +96,21 @@ class _TopicsSliverListState extends State<TopicsSliverList>
                   item: item,
                   onTap: () {
                     debugPrint("TopicListTile - topicId: ${item.topicId}");
-                    Navigator.pushNamed(context, Routes.sectionPage,
-                        arguments: SectionTypeArguments(
-                            pageTitle: item.pageTitle,
-                            tabs: item.tab.tabs,
-                            topicId: item.topicId,
-                            sectionContext: SectionContext(
-                                paper: widget.content,
-                                session: session,
-                                topic: item,
-                                paperType: widget.paperType,
-                                year: y),
-                            tabType: item.tab.tabType,));
+                    context.push(
+                      Routes.sectionPage,
+                      extra: SectionTypeArguments(
+                        pageTitle: item.pageTitle,
+                        tabs: item.tab.tabs,
+                        topicId: item.topicId,
+                        sectionContext: SectionContext(
+                            paper: widget.content,
+                            session: session,
+                            topic: item,
+                            paperType: widget.paperType,
+                            year: y),
+                        tabType: item.tab.tabType,
+                      ),
+                    );
                   },
                 ),
               );

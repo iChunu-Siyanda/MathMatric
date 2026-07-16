@@ -6,7 +6,7 @@ import 'package:math_matric/features/papers/practice/presentation/bloc/practice_
 import 'package:math_matric/features/papers/quiz/presentation/bloc/quiz_bloc.dart';
 import 'package:math_matric/features/papers/quiz/presentation/bloc/quiz_event.dart';
 import 'package:math_matric/features/papers/quiz/presentation/bloc/quiz_state.dart';
-import 'package:math_matric/features/papers/practice/presentation/pages/quiz_results.dart';
+import 'package:math_matric/features/papers/quiz/presentation/pages/quiz_results.dart';
 
 class QuizPage extends StatelessWidget {
   final String topicId;

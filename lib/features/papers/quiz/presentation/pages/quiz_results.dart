@@ -56,7 +56,7 @@ class _QuizResultsState extends State<QuizResults> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            /// Beautiful Header Score Dashboard
+            //Header Score Dashboard
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(24),
@@ -122,7 +122,7 @@ class _QuizResultsState extends State<QuizResults> {
             ),
             const SizedBox(height: 12),
       
-            /// Scrollable Memo
+            //Scrollable Memo
             Expanded(
               child: ListView.builder(
                 controller: controller,
@@ -131,7 +131,9 @@ class _QuizResultsState extends State<QuizResults> {
                   final question = widget.getQuestionByIndex(index, widget.topic);
                   final options = question.options;
                   final correctIndex = question.correctAnswerIndex;
-                  final userIndex = widget.userAnswers[index];
+                  final int? userIndex = index < widget.userAnswers.length 
+                                        ? widget.userAnswers[index] 
+                                        : null;
       
                   bool isCorrect = userIndex == correctIndex;
       
@@ -231,11 +233,16 @@ class _QuizResultsState extends State<QuizResults> {
             ),
             const SizedBox(height: 10),
       
-            /// Properly Scaled Action Control Strip
+            // Properly Scaled Action Control Strip
             Row(
               children: [
                 Expanded(
-                  child: RetryQuizBtn(topic: widget.topic, topicId: widget.topicId, xpEarned: widget.xpEarned, levelId: widget.levelId),
+                  child: RetryQuizBtn(
+                    topic: widget.topic, 
+                    topicId: widget.topicId, 
+                    xpEarned: widget.xpEarned, 
+                    levelId: widget.levelId,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -249,5 +256,3 @@ class _QuizResultsState extends State<QuizResults> {
     );
   }
 }
-
-

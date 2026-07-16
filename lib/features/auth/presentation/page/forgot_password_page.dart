@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:math_matric/features/auth/presentation/widgets/auth_background.dart';
 import 'package:math_matric/features/auth/presentation/widgets/my_button.dart';
 import 'package:math_matric/features/auth/presentation/widgets/my_text_field.dart';
@@ -83,7 +84,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             const SizedBox(height: 20),
 
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => context.pop(context),
               child: const Text(
                 "Back to login",
                 style: TextStyle(color: Color(0xFF1B6EF3)),
