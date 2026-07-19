@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:math_matric/features/papers/quiz/presentation/pages/quiz_results.dart';
 
 class BackToQuizzesBtn extends StatelessWidget {
   const BackToQuizzesBtn({
     super.key,
-    required this.widget,
+    required this.reset,
   });
 
-  final QuizResults widget;
+  final void Function() reset;
 
   @override
   Widget build(BuildContext context) {
     return OutlinedButton(
-      onPressed: () {
-        widget.reset(widget.topic);
-        //Navigator.pop(context);
-      },
+      onPressed: reset,
       style: OutlinedButton.styleFrom(
         side: BorderSide(color: Colors.grey.shade300),
         padding: const EdgeInsets.symmetric(vertical: 16),

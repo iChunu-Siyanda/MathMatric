@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:math_matric/features/papers/papers/domain/entities/subject_topic_quiz.dart';
 import 'package:math_matric/features/papers/practice/presentation/bloc/practice_bloc.dart';
 import 'package:math_matric/features/papers/practice/presentation/bloc/practice_event.dart';
+import 'package:math_matric/features/papers/quiz/domain/entities/quiz_results_params.dart';
 import 'package:math_matric/features/papers/quiz/presentation/bloc/quiz_bloc.dart';
-import 'package:math_matric/features/papers/quiz/presentation/bloc/quiz_event.dart';
 import 'package:math_matric/features/papers/quiz/presentation/bloc/quiz_state.dart';
-import 'package:math_matric/features/papers/quiz/presentation/pages/quiz_results.dart';
+import 'package:math_matric/features/papers/quiz/presentation/widgets/quiz_content_area.dart';
+import 'package:math_matric/features/papers/quiz/presentation/widgets/quiz_next_btn.dart';
+import 'package:math_matric/features/papers/quiz/presentation/widgets/quiz_page_back_btn.dart';
+import 'package:math_matric/features/papers/quiz/presentation/widgets/visual_progress_bar.dart';
+import 'package:math_matric/shared/app_routes/routes.dart';
 
 class QuizPage extends StatelessWidget {
   final String topicId;
@@ -38,54 +43,23 @@ class QuizPage extends StatelessWidget {
                     ),
                   );
 
-              final practiceBloc = context.read<PracticeBloc>();
-              final quizBloc = context.read<QuizBloc>();    
-
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MultiBlocProvider(
-                    providers: [
-                      BlocProvider.value(value: practiceBloc),
-                      BlocProvider.value(value: quizBloc),
-                    ],
-                    child: QuizResults(
-                      score: state.score,
-                      totalScore: state.totalScore,
-                      getTotalQuestions: (_) => state.questions.length,
-                      getQuestionByIndex: (index, _) => state.questions[index],
-                      topic: currentTopic,
-                      userAnswers: state.userAnswers,
-                      selectedIndex: state.selectedIndex,
-                      reset: (topic) {
-                        quizBloc.add(StartQuizEvent(levelId, topic),);
-                        // CRITICAL: Since pushReplacement destroyed QuizPage, 
-                        // you must push a new QuizPage back onto the stack here.
-
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => MultiBlocProvider(
-                              providers: [
-                                BlocProvider.value(value: practiceBloc),
-                                BlocProvider.value(value: quizBloc),
-                              ],
-                              child: QuizPage(
-                                topicId: topicId,
-                                xpEarned: xpEarned,
-                                levelId: levelId,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                      topicId: topicId,
-                      xpEarned: xpEarned,
-                      levelId: levelId,
-                    ),
-                  ),
+              context.go(
+                Routes.quizResults,
+                extra: QuizResultsParams(
+                  quizBloc: context.read<QuizBloc>(),
+                  practiceBloc: context.read<PracticeBloc>(), 
+                  score: state.score, 
+                  totalScore: state.totalScore, 
+                  selectedIndex: state.selectedIndex, 
+                  getTotalQuestions: (_) => state.questions.length, 
+                  getQuestionByIndex: (index, _) => state.questions[index],  
+                  userAnswers: state.userAnswers, 
+                  topicId: topicId, 
+                  xpEarned: xpEarned, 
+                  levelId: levelId,
+                  topic: currentTopic, 
                 ),
-              );
+              ); 
             }
           },
           child: Padding(
@@ -107,182 +81,33 @@ class QuizPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Top Action Bar (Back button + Progress tracking text)
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black87, size: 20),
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: Colors.blue.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              "$currentQuestionNum / $totalQuestions",
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.blue,
-                              ),
-                            ),
-                          ),
-                        ],
+                      QuizPageBackBtn(
+                        currentQuestionNum: currentQuestionNum, 
+                        totalQuestions: totalQuestions,
                       ),
                       const SizedBox(height: 15),
 
-                      /// Visual Progress Bar
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: LinearProgressIndicator(
-                          value: currentQuestionNum / totalQuestions,
-                          backgroundColor: Colors.grey.shade200,
-                          color: Colors.blue,
-                          minHeight: 8,
-                        ),
+                      // Visual Progress Bar
+                      VisualProgressBar(
+                        currentQuestionNum: currentQuestionNum, 
+                        totalQuestions: totalQuestions,
                       ),
                       const SizedBox(height: 25),
 
-                      /// Scrollable Content Area (Prevents Layout Overflow)
+                      // Scrollable Content Area (Prevents Layout Overflow)
                       Expanded(
-                        child: SingleChildScrollView(
-                          physics: const BouncingScrollPhysics(),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              /// Question Number Tag
-                              Text(
-                                "QUESTION $currentQuestionNum",
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey.shade500,
-                                  letterSpacing: 1.2,
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-
-                              /// Question Body Text
-                              Text(
-                                question,
-                                style: const TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w700,
-                                  color: Color(0xFF1E293B),
-                                  height: 1.4,
-                                ),
-                              ),
-                              const SizedBox(height: 25),
-
-                              /// Animated Interactive Options
-                              ...List.generate(options.length, (index) {
-                                bool isSelected = state.selectedIndex == index;
-
-                                return GestureDetector(
-                                  onTap: () {
-                                    context.read<QuizBloc>().add(
-                                          SelectOptionEvent(index: index),
-                                        );
-                                  },
-                                  child: AnimatedContainer(
-                                    duration: const Duration(milliseconds: 200),
-                                    curve: Curves.easeInOut,
-                                    margin: const EdgeInsets.only(bottom: 16),
-                                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-                                    decoration: BoxDecoration(
-                                      color: isSelected ? Colors.blue.withValues(alpha: 0.08) : Colors.white,
-                                      borderRadius: BorderRadius.circular(16),
-                                      border: Border.all(
-                                        color: isSelected ? Colors.blue : Colors.grey.shade200,
-                                        width: isSelected ? 2 : 1,
-                                      ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withValues(alpha: 0.02),
-                                          blurRadius: 8,
-                                          offset: const Offset(0, 4),
-                                        )
-                                      ],
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        /// Container Index Bubble (A, B, C, D)
-                                        AnimatedContainer(
-                                          duration: const Duration(milliseconds: 200),
-                                          width: 32,
-                                          height: 32,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: isSelected ? Colors.blue : Colors.grey.shade100,
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              String.fromCharCode(65 + index),
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                                color: isSelected ? Colors.white : Colors.black54,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 16),
-
-                                        /// Option Text
-                                        Expanded(
-                                          child: Text(
-                                            options[index],
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                                              color: isSelected ? Colors.blue.shade900 : const Color(0xFF334155),
-                                            ),
-                                          ),
-                                        ),
-
-                                        /// Custom Check indicator
-                                        Icon(
-                                          isSelected ? Icons.check_circle : Icons.radio_button_off,
-                                          color: isSelected ? Colors.blue : Colors.grey.shade400,
-                                          size: 22,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              }),
-                            ],
-                          ),
+                        child: QuizContentArea(
+                          currentQuestionNum: currentQuestionNum, 
+                          question: question, 
+                          options: options, 
+                          selectedIndex: state.selectedIndex,
                         ),
                       ),
                       const SizedBox(height: 16),
 
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: isOptionSelected
-                              ? () => context.read<QuizBloc>().add(SubmitAnswerEvent())
-                              : null,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                            disabledBackgroundColor: Colors.grey.shade300,
-                            padding: const EdgeInsets.symmetric(vertical: 18),
-                            elevation: isOptionSelected ? 3 : 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                          ),
-                          child: Text(
-                            state.isLastQuestion ? "Finish Quiz" : "Next Question",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: isOptionSelected ? Colors.white : Colors.black26,
-                            ),
-                          ),
-                        ),
+                      QuizNextBtn(
+                        isOptionSelected: isOptionSelected, 
+                        isLastQuestion: state.isLastQuestion,
                       ),
                     ],
                   );

@@ -14,4 +14,5 @@ class Routes {
   static const String examPaperViewer = "/examPaperViewer";
 
   static const String quizPage = '/quizPage';
+  static const String quizResults = '/quizResults';
 }

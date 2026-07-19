@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:math_matric/features/papers/papers/domain/entities/subject_topic_quiz.dart';
+import 'package:math_matric/features/papers/practice/presentation/bloc/practice_bloc.dart';
+import 'package:math_matric/features/papers/quiz/domain/entities/quiz_page_params.dart';
+import 'package:math_matric/features/papers/quiz/presentation/bloc/quiz_bloc.dart';
+import 'package:math_matric/features/papers/quiz/presentation/bloc/quiz_event.dart';
 import 'package:math_matric/features/papers/quiz/presentation/widgets/back_to_quizzes_btn.dart';
 import 'package:math_matric/features/papers/quiz/presentation/widgets/retry_quiz_btn.dart';
+import 'package:math_matric/shared/app_routes/routes.dart';
 
 class QuizResults extends StatefulWidget {
   final int score;
@@ -9,7 +16,6 @@ class QuizResults extends StatefulWidget {
   final int selectedIndex;
   final Function getTotalQuestions;
   final Function getQuestionByIndex;
-  final Function reset;
   final SubjectTopic topic;
   final List<int> userAnswers;
   final String topicId;
@@ -25,7 +31,6 @@ class QuizResults extends StatefulWidget {
     required this.topic,
     required this.userAnswers,
     required this.selectedIndex,
-    required this.reset,
     required this.topicId,
     required this.xpEarned,
     required this.levelId,
@@ -246,7 +251,32 @@ class _QuizResultsState extends State<QuizResults> {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: BackToQuizzesBtn(widget: widget),
+                  child: BackToQuizzesBtn(
+                    reset: () {
+                      final quizBloc = context.read<QuizBloc>();
+                      final practiceBloc = context.read<PracticeBloc>();
+
+                      quizBloc.add(
+                        StartQuizEvent(
+                          widget.levelId,
+                          widget.topic,
+                        ),
+                      );
+
+                      context.go(
+                        Routes.quizPage,
+                        extra: QuizPageParams(
+                          topicId: widget.topicId,
+                          xp: widget.xpEarned,
+                          levelId: widget.levelId,
+                          quizBloc: quizBloc,
+                          practiceBloc: practiceBloc,
+                          currentTopicId: widget.topicId,
+                          targetSubjectTopic: widget.topic,
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ],
             ),

@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:math_matric/features/papers/papers/domain/entities/subject_topic_quiz.dart';
 import 'package:math_matric/features/papers/practice/presentation/bloc/practice_bloc.dart';
 import 'package:math_matric/features/papers/practice/presentation/bloc/practice_event.dart';
 import 'package:math_matric/features/papers/practice/presentation/bloc/practice_state.dart';
 import 'package:math_matric/features/papers/quiz/domain/entities/quiz_page_params.dart';
 import 'package:math_matric/features/papers/practice/presentation/widgets/practice_level_tile.dart';
+import 'package:math_matric/features/papers/quiz/presentation/bloc/quiz_bloc.dart';
+import 'package:math_matric/features/papers/quiz/presentation/bloc/quiz_event.dart';
 import 'package:math_matric/features/papers/quiz/presentation/widgets/quizzes_header.dart';
 import 'package:math_matric/shared/app_routes/routes.dart';
+import 'package:math_matric/shared/registrations/register_exams_module.dart';
 
 class QuizzesPage extends StatefulWidget {
   final String topicId;
@@ -89,6 +93,14 @@ class _QuizzesPageState extends State<QuizzesPage>
                       onTap: () {
                         final level = state.data.levels[index];
 
+                        SubjectTopic targetSubjectTopic = SubjectTopic.values.firstWhere((e){
+                            final cleanEnumName = e.name.toLowerCase().replaceAll('_', '');
+                            final cleanTopicId = currentTopicId.toLowerCase().replaceAll('_', '');
+                            return cleanEnumName == cleanTopicId;
+                          },
+                          orElse: () => throw Exception("Could not find matching SubjectTopic enum value for ID: $currentTopicId"),
+                        );
+
                         if (level.isUnlocked) {
                           context.push(
                             Routes.quizPage,
@@ -96,7 +108,10 @@ class _QuizzesPageState extends State<QuizzesPage>
                               topicId: toCamelCase(widget.topicId), 
                               xp: state.data.earnedXp, 
                               levelId: level.levelId, 
-                              currentTopicId: currentTopicId,
+                              currentTopicId: currentTopicId, 
+                              quizBloc: getIt<QuizBloc>()..add(StartQuizEvent(level.levelId, targetSubjectTopic)), 
+                              practiceBloc: getIt<PracticeBloc>(), 
+                              targetSubjectTopic: targetSubjectTopic,
                             ),
                           );
                         }  
