@@ -1,4 +1,3 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:math_matric/features/papers/quiz/domain/entities/quiz_page_params.dart';
 import 'package:math_matric/features/papers/quiz/domain/entities/quiz_results_params.dart';
@@ -15,20 +14,10 @@ class QuizRoutes {
       builder: (context, state) {
         final args = state.extra as QuizPageParams;
 
-        return MultiBlocProvider(
-          providers: [
-            BlocProvider.value(
-              value: args.practiceBloc,
-            ),
-            BlocProvider.value(
-              value: args.quizBloc,
-            ),
-          ],
-          child: QuizPage(
-            topicId: args.topicId,
-            xpEarned: args.xp,
-            levelId: args.levelId,
-          ),
+        return QuizPage(
+          topicId: args.topicId,
+          xpEarned: args.xp,
+          levelId: args.levelId,
         );
       },
     ),

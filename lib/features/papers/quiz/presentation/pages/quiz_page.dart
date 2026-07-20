@@ -43,11 +43,9 @@ class QuizPage extends StatelessWidget {
                     ),
                   );
 
-              context.go(
+              context.pushReplacement(
                 Routes.quizResults,
                 extra: QuizResultsParams(
-                  quizBloc: context.read<QuizBloc>(),
-                  practiceBloc: context.read<PracticeBloc>(), 
                   score: state.score, 
                   totalScore: state.totalScore, 
                   selectedIndex: state.selectedIndex, 

@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:math_matric/features/papers/papers/domain/entities/subject_topic_quiz.dart';
-import 'package:math_matric/features/papers/practice/presentation/bloc/practice_bloc.dart';
-import 'package:math_matric/features/papers/quiz/domain/entities/quiz_page_params.dart';
-import 'package:math_matric/features/papers/quiz/presentation/bloc/quiz_bloc.dart';
-import 'package:math_matric/features/papers/quiz/presentation/bloc/quiz_event.dart';
 import 'package:math_matric/features/papers/quiz/presentation/widgets/back_to_quizzes_btn.dart';
+import 'package:math_matric/features/papers/quiz/presentation/widgets/quiz_header_score.dart';
 import 'package:math_matric/features/papers/quiz/presentation/widgets/retry_quiz_btn.dart';
-import 'package:math_matric/shared/app_routes/routes.dart';
 
 class QuizResults extends StatefulWidget {
   final int score;
@@ -62,55 +57,7 @@ class _QuizResultsState extends State<QuizResults> {
         child: Column(
           children: [
             //Header Score Dashboard
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Colors.blue, Colors.blueAccent],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.blue.withValues(alpha: 0.3),
-                    blurRadius: 15,
-                    offset: const Offset(0, 8),
-                  )
-                ],
-              ),
-              child: Column(
-                children: [
-                  Text(
-                    "${accuracy.toStringAsFixed(0)}% Accuracy",
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white70,
-                      letterSpacing: 1.5,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    "${widget.score} / $totalQuestions",
-                    style: TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.w900,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    "Total Points: ${widget.totalScore}",
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white70,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            QuizHeaderScore(accuracy: accuracy, widget: widget, totalQuestions: totalQuestions),
       
             const SizedBox(height: 24),
             
@@ -246,35 +193,15 @@ class _QuizResultsState extends State<QuizResults> {
                     topic: widget.topic, 
                     topicId: widget.topicId, 
                     xpEarned: widget.xpEarned, 
-                    levelId: widget.levelId,
+                    levelId: widget.levelId, 
+                    targetSubjectTopic: widget.topic,
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: BackToQuizzesBtn(
                     reset: () {
-                      final quizBloc = context.read<QuizBloc>();
-                      final practiceBloc = context.read<PracticeBloc>();
-
-                      quizBloc.add(
-                        StartQuizEvent(
-                          widget.levelId,
-                          widget.topic,
-                        ),
-                      );
-
-                      context.go(
-                        Routes.quizPage,
-                        extra: QuizPageParams(
-                          topicId: widget.topicId,
-                          xp: widget.xpEarned,
-                          levelId: widget.levelId,
-                          quizBloc: quizBloc,
-                          practiceBloc: practiceBloc,
-                          currentTopicId: widget.topicId,
-                          targetSubjectTopic: widget.topic,
-                        ),
-                      );
+                      context.pop();
                     },
                   ),
                 ),

@@ -11,7 +11,6 @@ import 'package:math_matric/features/papers/quiz/presentation/bloc/quiz_bloc.dar
 import 'package:math_matric/features/papers/quiz/presentation/bloc/quiz_event.dart';
 import 'package:math_matric/features/papers/quiz/presentation/widgets/quizzes_header.dart';
 import 'package:math_matric/shared/app_routes/routes.dart';
-import 'package:math_matric/shared/registrations/register_exams_module.dart';
 
 class QuizzesPage extends StatefulWidget {
   final String topicId;
@@ -109,8 +108,8 @@ class _QuizzesPageState extends State<QuizzesPage>
                               xp: state.data.earnedXp, 
                               levelId: level.levelId, 
                               currentTopicId: currentTopicId, 
-                              quizBloc: getIt<QuizBloc>()..add(StartQuizEvent(level.levelId, targetSubjectTopic)), 
-                              practiceBloc: getIt<PracticeBloc>(), 
+                              quizBloc: context.read<QuizBloc>()..add(StartQuizEvent(level.levelId, targetSubjectTopic)), 
+                              practiceBloc: context.read<PracticeBloc>(), 
                               targetSubjectTopic: targetSubjectTopic,
                             ),
                           );

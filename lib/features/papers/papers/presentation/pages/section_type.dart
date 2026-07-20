@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-//import 'package:math_matric/app/factories/topic_factory.dart';
 import 'package:math_matric/shared/entities/section_context_modal.dart';
 import 'package:math_matric/shared/entities/section_tab_entities.dart';
 
@@ -41,7 +40,7 @@ class _SectionTypeState extends State<SectionType>
   
   @override
   Widget build(BuildContext context) {
-    debugPrint("Building SectionType with sectionContext: ${widget.sectionContext}, Year:${widget.sectionContext.year}, paperType: ${widget.sectionContext.paperType}, tabs: ${widget.tabs.length}, pageTitle: ${widget.pageTitle}");       
+    //debugPrint("Building SectionType with sectionContext: ${widget.sectionContext}, Year:${widget.sectionContext.year}, paperType: ${widget.sectionContext.paperType}, tabs: ${widget.tabs.length}, pageTitle: ${widget.pageTitle}");       
 
     return Scaffold(
       body: NestedScrollView(

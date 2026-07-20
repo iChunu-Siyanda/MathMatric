@@ -1,9 +1,6 @@
 import 'package:math_matric/features/auth/presentation/navigation/auth_routes.dart';
 import 'package:math_matric/features/home/presentation/navigation/home_routes.dart';
-import 'package:math_matric/features/papers/exam/presentation/navigation/exam_routes.dart';
-import 'package:math_matric/features/papers/papers/presentation/navigation/paper_type_routes.dart';
-import 'package:math_matric/features/papers/papers/presentation/navigation/section_type_routes.dart';
-import 'package:math_matric/features/papers/quiz/presentation/navigation/quiz_routes.dart';
+import 'package:math_matric/shared/app_routes/practice_shell.dart';
 import 'package:math_matric/shared/app_routes/routes.dart';
 import 'package:go_router/go_router.dart';
 
@@ -15,13 +12,7 @@ class AppRouter {
 
       ...HomeRoutes.routess,
 
-      ...PaperTypeRoutes.routes,
-
-      ...SectionPageRoutes.routes,
-
-      ...ExamRoutes.routes,
-
-      ...QuizRoutes.routes,
+      PracticeShell.route,
     ],
   );
 }

@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:math_matric/features/papers/exam/presentation/bloc/exam_bloc.dart';
 import 'package:math_matric/features/papers/papers/domain/entities/section_type_arguments.dart';
 import 'package:math_matric/features/papers/papers/presentation/pages/section_type.dart';
-import 'package:math_matric/features/papers/practice/presentation/bloc/practice_bloc.dart';
-import 'package:math_matric/features/papers/practice/presentation/bloc/practice_event.dart';
 import 'package:math_matric/shared/app_routes/routes.dart';
 import 'package:math_matric/shared/entities/tab_type.dart';
 import 'package:math_matric/shared/registrations/register_exams_module.dart';
@@ -63,13 +61,10 @@ class SectionPageRoutes {
               debugPrint(
                 "args.tabType = ${args.tabType}, TopicId = $topicID, tabs: ${args.tabs}, pageTitle: ${args.pageTitle}",
               );
-              return BlocProvider(
-                create: (_) => getIt<PracticeBloc>()..add(PracticeLoadTopic(topicID)),
-                child: SectionType(
-                  pageTitle: args.pageTitle,
-                  sectionContext: args.sectionContext,
-                  tabs: args.tabs,
-                ),
+              return SectionType(
+                pageTitle: args.pageTitle,
+                sectionContext: args.sectionContext,
+                tabs: args.tabs,
               );
             }(),
 

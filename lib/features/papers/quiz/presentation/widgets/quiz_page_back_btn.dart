@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class QuizPageBackBtn extends StatelessWidget {
   const QuizPageBackBtn({
@@ -17,7 +18,7 @@ class QuizPageBackBtn extends StatelessWidget {
       children: [
         IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black87, size: 20),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => context.pop(),
         ),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
