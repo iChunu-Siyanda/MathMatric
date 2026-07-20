@@ -36,7 +36,7 @@ void main() async {
           ),
   );
 
-  runApp(MathMatricApp());
+  runApp(MathMatricApp(),);
 }
 
 //UI → Bloc → PaperRepository (abstract) → PaperRepositoryImpl (data) → DataSource
