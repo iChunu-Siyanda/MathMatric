@@ -82,6 +82,7 @@ class _QuizzesPageState extends State<QuizzesPage>
                   accentColor: state.data.practiceTopic.color,
                 ),
               ),
+              
               SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {

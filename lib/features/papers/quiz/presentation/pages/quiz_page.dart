@@ -36,12 +36,23 @@ class QuizPage extends StatelessWidget {
           listener: (context, state) {
             if (state is QuizFinished) {
               context.read<PracticeBloc>().add(
-                    CompleteLevel(
-                      topicId: topicId,
-                      levelId: levelId,
-                      xpEarned: state.xpEarned,
-                    ),
-                  );
+                CompleteLevel(
+                  topicId: topicId,
+                  levelId: levelId,
+                  xpEarned: state.xpEarned,
+                ),
+              );
+
+              // debugPrint("Questions Length: ${state.questions.length}");
+              // debugPrint("Answers Length: ${state.userAnswers.length}");
+
+              // debugPrint("Answers: ${state.userAnswers}");
+              // for (int i = 0; i < state.questions.length; i++) {
+              //   debugPrint(
+              //     "Q$i: correct=${state.questions[i].correctAnswerIndex}, "
+              //     "user=${state.userAnswers[i]}",
+              //   );
+              // }    
 
               context.pushReplacement(
                 Routes.quizResults,
@@ -102,7 +113,8 @@ class QuizPage extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 16),
-
+                      
+                      //Quiz next & submit btn
                       QuizNextBtn(
                         isOptionSelected: isOptionSelected, 
                         isLastQuestion: state.isLastQuestion,

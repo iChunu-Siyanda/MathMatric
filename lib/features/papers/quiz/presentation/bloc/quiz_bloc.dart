@@ -17,7 +17,6 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
   Future<void> _onStartQuiz(StartQuizEvent event, Emitter<QuizState> emit) async {
     emit(QuizLoading());
     try {
-      // Use case handles fetching from the repository, NOT the UI querying QuizDataSource
       final questions = await loadQuizQuestionsUseCase(
         subjectTopic: event.subjectTopic, 
         levelId: event.levelId,
@@ -28,21 +27,29 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
     }
   }
 
-  void _onSelectOption(SelectOptionEvent event, Emitter<QuizState> emit) {
+  void _onSelectOption(
+    SelectOptionEvent event, 
+    Emitter<QuizState> emit,
+  ) {
     if (state is QuizQuestionsLoaded) {
       final currentState = state as QuizQuestionsLoaded;
       emit(currentState.copyWith(selectedIndex: event.index));
     }
   }
 
-  void _onSubmitAnswer(SubmitAnswerEvent event, Emitter<QuizState> emit) {
+  void _onSubmitAnswer(
+    SubmitAnswerEvent event, 
+    Emitter<QuizState> emit,
+  ) {
     if (state is QuizQuestionsLoaded) {
       final currentState = state as QuizQuestionsLoaded;
       
-      // Don't advance if no answer was selected\
       if (currentState.selectedIndex == -1) return;
 
       final currentQuestion = currentState.currentQuestion;
+
+      //Append userAnswers
+      final updatedAnswers = List<int>.from(currentState.userAnswers)..add(currentState.selectedIndex);
       
       // Calculate updated score metrics
       int nextScore = currentState.score;
@@ -52,19 +59,19 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
 
       int nextTotalScore = currentState.totalScore + currentQuestion.scoreValue;
 
-      // Inside your QuizBloc's _onSubmitAnswer handler:
+      // Inside QuizBloc's _onSubmitAnswer handler:
       if (currentState.isLastQuestion) {
         final int calculatedXp = nextScore * 10;
         
         // Create the final tracking history list
-        final finalAnswers = List<int>.from(currentState.userAnswers)..add(currentState.selectedIndex);
+        //final finalAnswers = List<int>.from(currentState.userAnswers)..add(currentState.selectedIndex);
 
           emit(QuizFinished(
             score: nextScore,
             totalScore: nextTotalScore,
             xpEarned: calculatedXp,
             questions: currentState.questions,
-            userAnswers: finalAnswers,
+            userAnswers: updatedAnswers,
             selectedIndex: currentState.selectedIndex,
           ));
         } else {
@@ -72,6 +79,7 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
           currentIndex: currentState.currentIndex + 1,
           score: nextScore,
           totalScore: nextTotalScore,
+          userAnswers: updatedAnswers,
           selectedIndex: -1, 
         ));
       }

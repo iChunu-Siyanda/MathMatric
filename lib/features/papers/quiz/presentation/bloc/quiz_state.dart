@@ -22,7 +22,6 @@ class QuizQuestionsLoaded extends QuizState {
     this.userAnswers = const [],
   });
 
-  // Helper getters on the state make UI incredibly clean
   QuizQuestion get currentQuestion => questions[currentIndex];
   bool get isLastQuestion => currentIndex == questions.length - 1;
 

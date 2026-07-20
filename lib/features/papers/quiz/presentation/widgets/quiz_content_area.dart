@@ -80,7 +80,7 @@ class QuizContentArea extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    /// Container Index Bubble (A, B, C, D)
+                    // Container Index Bubble (A, B, C, D)
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
                       width: 32,
