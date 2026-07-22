@@ -1,0 +1,4 @@
+enum StudyMode {
+  practice,
+  classnotes,
+}

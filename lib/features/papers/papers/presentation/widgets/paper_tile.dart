@@ -1,59 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:math_matric/features/papers/papers/domain/entities/paper_type.dart';
 import 'package:math_matric/features/papers/papers/presentation/widgets/paper_card.dart';
-import 'package:math_matric/features/papers/papers/presentation/widgets/streak_sliver.dart';
 import 'package:math_matric/features/papers/papers/domain/entities/paper_item.dart';
 import 'package:math_matric/features/papers/papers/presentation/pages/topics_sliver_list.dart';
-import 'package:math_matric/shared/entities/streak_variant_entity.dart';
 import 'package:math_matric/theme/app_colours.dart';
 
-//data.topics
 class PaperTile extends StatelessWidget {
-  final SheetVariant variant;
   final PaperItem data;
   final PaperType paperType;
   final Animation<double> animation;
 
-  const PaperTile._(
-      {super.key,
-      required this.data,
-      required this.paperType,
-      required this.animation,
-      required this.variant,});
-      // : assert(
-      //     variant != SheetVariant.streak,
-      //     'streakData must be provided for SheetVariant.streak',
-      //   );
-
-  factory PaperTile.streak({
-    required PaperItem data,
-    required Animation<double> animation,
-    required PaperType paperType,
-    Key? key,
-  }) {
-    return PaperTile._(
-      key: key,
-      variant: SheetVariant.streak,
-      data: data,
-      animation: animation,
-      paperType: paperType,
-    );
-  }
-
-  factory PaperTile.topics({
-    required PaperItem data,
-    required Animation<double> animation,
-    required PaperType paperType,
-    Key? key,
-  }) {
-    return PaperTile._(
-      key: key,
-      variant: SheetVariant.topics,
-      data: data,
-      animation: animation,
-      paperType: paperType,
-    );
-  }
+  const PaperTile({
+    super.key, 
+    required this.data, 
+    required this.paperType, 
+    required this.animation,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -115,9 +77,11 @@ class PaperTile extends StatelessWidget {
                               controller: scrollController,
                               physics: const BouncingScrollPhysics(),
                               slivers: [
-                                ..._buildSlivers(
-                                  context,
-                                  scrollController,
+                                TopicsSliverList(
+                                  content: data,
+                                  scrollController: scrollController,
+                                  listTopicTitle: data.section!.title,
+                                  paperType: paperType, 
                                 ),
                               ],
                             ),
@@ -129,52 +93,10 @@ class PaperTile extends StatelessWidget {
                 },
               );
             },
-            child: PaperCard(data: data),
+            child: PaperCard(data: data, title: data.title,),
           ),
         ),
       ),
     );
- }
-
-  List<Widget> _buildSlivers(
-    BuildContext context, ScrollController scrollController) {
-      //debugPrint("PaperTile - _buildSlivers: enum = ${data.section!.topics[1].tab.tabType.toString()}, paperType = $paperType");
-      switch (variant) {
-        case SheetVariant.streak:
-          return [
-            //_SheetGrabHandle(),
-            StreakSliver(),
-          ];
-
-        case SheetVariant.topics:
-          return [
-            //_SheetGrabHandle(),
-            TopicsSliverList(
-              content: data,
-              scrollController: scrollController,
-              listTopicTitle: data.section!.title,
-              paperType: paperType, 
-            ),
-          ];
-      }
-    }
   }
-
-  // class _SheetGrabHandle extends StatelessWidget {
-  //   @override
-  //   Widget build(BuildContext context) {
-  //     return SliverToBoxAdapter(
-  //       child: Center(
-  //         child: Container(
-  //           margin: const EdgeInsets.symmetric(vertical: 12),
-  //           height: 5,
-  //           width: 48,
-  //           decoration: BoxDecoration(
-  //             color: Colors.grey.shade300,
-  //             borderRadius: BorderRadius.circular(8),
-  //           ),
-  //         ),
-  //       ),
-  //     );
-  //   }
-  // }
+}
