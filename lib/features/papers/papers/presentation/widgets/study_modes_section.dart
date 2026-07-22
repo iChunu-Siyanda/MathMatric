@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:math_matric/features/papers/papers/domain/entities/study_mode.dart';
-import 'package:math_matric/features/papers/papers/presentation/widgets/study_mode_card.dart';
+import 'package:math_matric/features/papers/papers/presentation/widgets/study_section_card.dart';
+import 'package:math_matric/features/papers/papers/presentation/widgets/verticle_study_mode_tile.dart';
 import 'package:math_matric/theme/app_colours.dart';
 
 class StudyModesSection extends StatelessWidget {
@@ -35,40 +36,60 @@ class StudyModesSection extends StatelessWidget {
                 final isWide = constraints.maxWidth >= 600;
 
                 if (isWide) {
-                  return  Row(
+                  return Row(
                     children: [
                       Expanded(
-                        child: StudyModeCard(
-                          mode: StudyMode.practice, 
-                          onTap: () {},
+                        child: SizedBox(
+                          height: 240, // Height tuned for vertical tiles
+                          child: VerticalStudyModeTile(
+                            mode: StudyMode.practice,
+                            onTap: () {
+                              // Navigate to practice
+                            },
+                          ),
                         ),
                       ),
-                      SizedBox(width: 12),
+                      const SizedBox(width: 14),
                       Expanded(
-                        child: StudyModeCard(
-                          mode: StudyMode.classnotes, 
-                          onTap: () {  },
+                        child: SizedBox(
+                          height: 240,
+                          child: VerticalStudyModeTile(
+                            mode: StudyMode.classnotes,
+                            onTap: () {
+                              // Navigate to notes
+                            },
+                          ),
                         ),
                       ),
                     ],
                   );
                 }
 
+                // Narrow View / Mobile Fallback (Stacked Slim Cards)
                 return Column(
                   children: [
-                    StudyModeCard(
-                      mode: StudyMode.practice, 
-                      onTap: () {  },
+                    StudySectionCard(
+                      title: StudyMode.practice.title,
+                      description: StudyMode.practice.description,
+                      stats: StudyMode.practice.stats,
+                      image: StudyMode.practice.imageAsset,
+                      buttonText: StudyMode.practice.buttonText,
+                      onTap: () {},
                     ),
-                    SizedBox(height: 12),
-                    StudyModeCard(
-                      mode: StudyMode.classnotes, 
-                      onTap: () {  },
+                    const SizedBox(height: 12),
+                    StudySectionCard(
+                      title: StudyMode.classnotes.title,
+                      description: StudyMode.classnotes.description,
+                      stats: StudyMode.classnotes.stats,
+                      image: StudyMode.classnotes.imageAsset,
+                      buttonText: StudyMode.classnotes.buttonText,
+                      onTap: () {},
                     ),
                   ],
                 );
               },
             ),
+
           ],
         ),
       ),
