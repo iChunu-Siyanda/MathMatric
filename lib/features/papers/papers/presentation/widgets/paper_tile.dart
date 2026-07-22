@@ -5,6 +5,7 @@ import 'package:math_matric/features/papers/papers/presentation/widgets/streak_s
 import 'package:math_matric/features/papers/papers/domain/entities/paper_item.dart';
 import 'package:math_matric/features/papers/papers/presentation/pages/topics_sliver_list.dart';
 import 'package:math_matric/shared/entities/streak_variant_entity.dart';
+import 'package:math_matric/theme/app_colours.dart';
 
 //data.topics
 class PaperTile extends StatelessWidget {
@@ -73,31 +74,53 @@ class PaperTile extends StatelessWidget {
         child: SlideTransition(
           position: slide,
           child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
             onTap: () {
               showModalBottomSheet(
                 context: context,
-                isScrollControlled: true, // Allows full-screen height
-                backgroundColor: Colors.white,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                ),
+                isScrollControlled: true,
+                useSafeArea: true,
+                backgroundColor: Colors.transparent,
+                barrierColor: AppColours.textPrimary.withAlpha(90),
                 builder: (context) {
                   return FractionallySizedBox(
-                    widthFactor: 0.95,
+                    widthFactor: 0.98,
                     child: DraggableScrollableSheet(
-                      initialChildSize: 0.90, // starts at 90% of screen height
-                      maxChildSize: 0.95, // max height
+                      initialChildSize: 0.90,
                       minChildSize: 0.50,
+                      maxChildSize: 0.96,
                       expand: false,
-                      builder: (context, scrollController) {
+                      snap: true,
+                      snapSizes: const [
+                        0.50,
+                        0.90,
+                        0.96,
+                      ],
+                      builder: (
+                        context,
+                        scrollController,
+                      ) {
                         return Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
+                          decoration: const BoxDecoration(
+                            color: AppColours.background,
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(28),
+                            ),
                           ),
-                          child: CustomScrollView(
-                            controller: scrollController,
-                            slivers: _buildSlivers(context, scrollController),
+                          child: ClipRRect(
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(28),
+                            ),
+                            child: CustomScrollView(
+                              controller: scrollController,
+                              physics: const BouncingScrollPhysics(),
+                              slivers: [
+                                ..._buildSlivers(
+                                  context,
+                                  scrollController,
+                                ),
+                              ],
+                            ),
                           ),
                         );
                       },
@@ -111,7 +134,7 @@ class PaperTile extends StatelessWidget {
         ),
       ),
     );
-  }
+ }
 
   List<Widget> _buildSlivers(
     BuildContext context, ScrollController scrollController) {
@@ -119,13 +142,13 @@ class PaperTile extends StatelessWidget {
       switch (variant) {
         case SheetVariant.streak:
           return [
-            _SheetGrabHandle(),
+            //_SheetGrabHandle(),
             StreakSliver(),
           ];
 
         case SheetVariant.topics:
           return [
-            _SheetGrabHandle(),
+            //_SheetGrabHandle(),
             TopicsSliverList(
               content: data,
               scrollController: scrollController,
@@ -137,21 +160,21 @@ class PaperTile extends StatelessWidget {
     }
   }
 
-  class _SheetGrabHandle extends StatelessWidget {
-    @override
-    Widget build(BuildContext context) {
-      return SliverToBoxAdapter(
-        child: Center(
-          child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 12),
-            height: 5,
-            width: 48,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade300,
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-        ),
-      );
-    }
-  }
+  // class _SheetGrabHandle extends StatelessWidget {
+  //   @override
+  //   Widget build(BuildContext context) {
+  //     return SliverToBoxAdapter(
+  //       child: Center(
+  //         child: Container(
+  //           margin: const EdgeInsets.symmetric(vertical: 12),
+  //           height: 5,
+  //           width: 48,
+  //           decoration: BoxDecoration(
+  //             color: Colors.grey.shade300,
+  //             borderRadius: BorderRadius.circular(8),
+  //           ),
+  //         ),
+  //       ),
+  //     );
+  //   }
+  // }

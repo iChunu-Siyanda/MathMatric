@@ -40,19 +40,19 @@ class AppColours {
     neonCoral,
   ];
 
-  /// Signature vibrant gradient for primary badges, streak meters, & top headers
+  // Signature vibrant gradient for primary badges, streak meters, & top headers
   static const Gradient mathMatricGradient = LinearGradient(
     colors: mathMatricGradientColors,
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
-  /// Ultra-soft ambient gradient for quiz result cards and hero background banners
+  //Ultra-soft ambient gradient for quiz result cards and hero background banners
   static const Gradient softHeaderGradient = LinearGradient(
     colors: [
+      Color(0xFFE0F2FE),
       Color(0xFFEFF6FF),
       Color(0xFFF5F3FF),
-      Color(0xFFFFF1F2),
     ],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,

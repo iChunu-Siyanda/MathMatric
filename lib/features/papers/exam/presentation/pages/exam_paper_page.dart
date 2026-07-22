@@ -7,6 +7,7 @@ import 'package:math_matric/features/papers/exam/presentation/bloc/exam_bloc.dar
 import 'package:math_matric/features/papers/exam/presentation/bloc/exam_event.dart';
 import 'package:math_matric/features/papers/exam/presentation/bloc/exam_state.dart';
 import 'package:math_matric/features/papers/exam/presentation/widgets/exam_tile.dart';
+import 'package:math_matric/theme/app_colours.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 class ExamPaperPage extends StatefulWidget {
@@ -111,53 +112,60 @@ class _ExamPaperPageState extends State<ExamPaperPage> with SingleTickerProvider
   Widget _section(String title, List<ExamPaper> papers) {
     return MultiSliver(
       children: [
-        // Section Title with padding
+        // Section Header Title
         SliverToBoxAdapter(
           child: Padding(
-            padding:
-                const EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 10),
+            padding: const EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: 16,
+              bottom: 8,
+            ),
             child: Text(
               title,
               style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: Colors.black87,
+                fontSize: 15,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.3,
+                color: AppColours.textPrimary,
               ),
             ),
           ),
         ),
-        // Scrollable List items
-        SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              final anima = _itemInterval(index);
-        
-              return AnimatedBuilder(
-                animation: anima,
-                builder: (_, child) => Opacity(
-                  opacity: anima.value,
-                  child: Transform.translate(
-                    offset: Offset(0, (1 - anima.value) * 18),
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          bottom: 10), // Replaces vertical gap
-                      child: child,
+        // Scrollable Animated List Items
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          sliver: SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                final anima = _itemInterval(index);
+
+                return AnimatedBuilder(
+                  animation: anima,
+                  builder: (_, child) => Opacity(
+                    opacity: anima.value,
+                    child: Transform.translate(
+                      offset: Offset(0, (1 - anima.value) * 18),
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: child,
+                      ),
                     ),
                   ),
-                ),
-                child: ExamTile(
-                  paper: papers[index],
-                  savedPapers: savedPapers,
-                  paperMode: widget.mode,
-                  onBookmarkToggle: (){
-                    setState(() {
-                      //...
-                    });
-                  },
-                ),
-              );
-            },
-            childCount: papers.length,
+                  child: ExamTile(
+                    paper: papers[index],
+                    savedPapers: savedPapers,
+                    paperMode: widget.mode,
+                    onBookmarkToggle: () {
+                      setState(() {
+                        // ... bookmark logic ...
+                      });
+                    },
+                  ),
+                );
+              },
+              childCount: papers.length,
+            ),
           ),
         ),
       ],

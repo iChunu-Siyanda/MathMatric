@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:math_matric/features/papers/papers/presentation/widgets/action_card_button.dart';
+import 'package:math_matric/features/papers/papers/presentation/widgets/mini_card_stat.dart';
+import 'package:math_matric/features/papers/papers/presentation/widgets/streak_card_header.dart';
+import 'package:math_matric/features/papers/papers/presentation/widgets/streak_card_number.dart';
+import 'package:math_matric/theme/app_colours.dart';
 
 class StreakCard extends StatelessWidget {
   final int current;
@@ -6,7 +11,7 @@ class StreakCard extends StatelessWidget {
   final VoidCallback onTapStreak;
 
   const StreakCard({
-    super.key, 
+    super.key,
     required this.current,
     required this.best,
     required this.onTapStreak,
@@ -14,94 +19,109 @@ class StreakCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(28),
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF111827), Color(0xFF1F2937)],
+    final bool hasStreak = current > 0;
+    final bool isPersonalBest = current > 0 && current >= best;
+
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(24),
+      child: InkWell(
+        onTap: onTapStreak,
+        borderRadius: BorderRadius.circular(24),
+        child: Ink(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24),
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFFE0F2FE),
+                Color(0xFFEFF6FF),
+                Color(0xFFF5F3FF),
+              ],
+            ),
+            border: Border.all(
+              color: AppColours.primaryAccent.withAlpha(45),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: AppColours.primaryAccent.withAlpha(22),
+                blurRadius: 24,
+                offset: const Offset(0, 10),
+              ),
+            ],
           ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Column(
-              children: [
-                const Text(
-                  'Current Streak',
-                  style: TextStyle(color: Colors.white70, fontSize: 20),
-                ),
-                const SizedBox(height: 30),
-                Text(
-                  '$current',
-                  style: const TextStyle(
-                    fontSize: 80,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+          child: Stack(
+            children: [
+              // Decorative ambient glow
+              Positioned(
+                top: -70,
+                right: -45,
+                child: Container(
+                  width: 180,
+                  height: 180,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColours.cobaltBlue.withAlpha(20),
                   ),
                 ),
-                const Text(
-                  'Days',
-                  style: TextStyle(color: Colors.white54, fontSize: 15),
+              ),
+
+              Positioned(
+                bottom: -80,
+                left: -60,
+                child: Container(
+                  width: 180,
+                  height: 180,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColours.secondaryAccent.withAlpha(14),
+                  ),
                 ),
-              ],
-            ),
-            Row(
-              children: [
-                _MiniStat(label: 'Best streak', value: '$best days'),
-                const Spacer(),
-                _ActionButton(label: 'View streak', onTap: onTapStreak),
-                const SizedBox(width: 12),
-              ],
-            ),
-          ],
+              ),
+
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    StreakCardHeader(
+                      current: current,
+                      isPersonalBest: isPersonalBest,
+                    ),
+
+                    const SizedBox(height: 18),
+
+                    StreakCardNumber(
+                      current: current,
+                      hasStreak: hasStreak,
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        MiniCardStat(
+                          label: 'Best streak',
+                          value: '$best days',
+                        ),
+
+                        const Spacer(),
+
+                        ActionCardButton(
+                          label: 'View streak',
+                          onTap: onTapStreak,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
-  }
-}
-
-class _MiniStat extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const _MiniStat({required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: const TextStyle(color: Colors.white54)),
-        const SizedBox(height: 4),
-        Text(value, style: const TextStyle(color: Colors.white)),
-      ],
-    );
-  }
-}
-
-class _ActionButton extends StatelessWidget {
-  final String label;
-  final VoidCallback onTap;
-
-  const _ActionButton({required this.label, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: .12),
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Text(label, style: const TextStyle(color: Colors.white)),
       ),
     );
   }

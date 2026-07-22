@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:math_matric/features/papers/papers/presentation/widgets/streak_card.dart';
+import 'package:math_matric/features/papers/papers/presentation/widgets/topic_streak_header.dart';
+import 'package:math_matric/features/papers/papers/presentation/widgets/topic_streak_message.dart';
 import 'package:math_matric/features/streak/presentation/bloc/habit_bloc.dart';
 import 'package:math_matric/features/streak/presentation/pages/streak_screen.dart';
 
@@ -10,45 +12,59 @@ class StreakSliver extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final habitState = context.watch<HabitBloc>().state;
-    return SliverFillRemaining(
-      hasScrollBody: false,
+
+    final currentStreak = habitState.currentStreak;
+    final longestStreak = habitState.longestStreak;
+
+    final bool isPersonalBest =
+        currentStreak > 0 && currentStreak >= longestStreak;
+
+    return SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+        padding: const EdgeInsets.fromLTRB(
+          20,
+          20,
+          20,
+          28,
+        ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _Header(title: "Your Streak"),
-            StreakCard(
-              current: habitState.currentStreak,
-              best: habitState.longestStreak,
-              onTapStreak: () {
+            TopicStreakHeader(
+              currentStreak: currentStreak,
+              isPersonalBest: isPersonalBest,
+              onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => StreakScreen(),
+                    builder: (_) => const StreakScreen(),
                   ),
                 );
               },
             ),
-            const SizedBox(height: 8),
+
+            const SizedBox(height: 14),
+
+            StreakCard(
+              current: currentStreak,
+              best: longestStreak,
+              onTapStreak: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const StreakScreen(),
+                  ),
+                );
+              },
+            ),
+
+            const SizedBox(height: 14),
+
+            TopicStreakMessage(
+              currentStreak: currentStreak,
+            ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _Header extends StatelessWidget {
-  final String title;
-  const _Header({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      title,
-      style: const TextStyle(
-        fontSize: 22,
-        fontWeight: FontWeight.w600,
       ),
     );
   }
