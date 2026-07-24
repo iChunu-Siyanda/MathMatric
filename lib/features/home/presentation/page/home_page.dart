@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:math_matric/features/home/presentation/bloc/study_history_bloc.dart';
 import 'package:math_matric/features/home/presentation/bloc/study_history_state.dart';
+import 'package:math_matric/features/home/presentation/widgets/continue_studying_section.dart';
 import 'package:math_matric/features/home/presentation/widgets/featured_topic_card.dart';
 import 'package:math_matric/features/home/presentation/widgets/header_icon_button.dart';
 import 'package:math_matric/features/home/presentation/widgets/home_section_header.dart';
@@ -11,7 +12,6 @@ import 'package:math_matric/features/home/presentation/widgets/quiz_alert_card.d
 import 'package:math_matric/features/home/presentation/widgets/streak_alert_card.dart';
 import 'package:math_matric/features/papers/papers/domain/entities/paper_type.dart';
 import 'package:math_matric/features/drawer/math_matric_drawer.dart';
-import 'package:math_matric/features/home/presentation/widgets/continue_studying_card.dart';
 import 'package:math_matric/features/home/presentation/widgets/path_card.dart';
 import 'package:math_matric/shared/app_routes/routes.dart';
 import 'package:math_matric/theme/app_colours.dart';
@@ -117,39 +117,16 @@ class _HomePageState extends State<HomePage> {
                     },
                   );
                 }
-                
-                //Scrolls horizontally, 
-                return SizedBox(
-                  height: 200, 
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: state.recentTopics.length,
-                    itemBuilder: (context, index) {
-                      final topic = state.recentTopics[index];
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 12),
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.8,
-                          child: ContinueStudyingCard(
-                            margin: EdgeInsets.zero,
-                            topic: topic.title,
-                            backgroundImg: topic.backgroundImg,
-                            progress: topic.progress,
-                            onTap: () {
-                              context.push(
-                                Routes.examPaperViewer,
-                                extra: {
-                                  "title": topic.title,
-                                  "pageAssets": topic.assets,
-                                },
-                              );
-                            },
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+
+                const double gap = 12.0;         // Space between cards
+                const double peekAmount = 48.0;  // Visible portion of the next card
+                const double outerPadding = 16.0; // Horizontal screen margins
+
+                return ContinueStudyingSection(
+                  outerPadding: outerPadding, 
+                  gap: gap, 
+                  peekAmount: peekAmount, 
+                  state: state,
                 );
               },
             ),
