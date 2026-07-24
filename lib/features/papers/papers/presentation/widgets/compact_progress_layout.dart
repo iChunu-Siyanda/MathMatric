@@ -36,6 +36,7 @@ class CompactProgressLayout extends StatelessWidget {
         const SizedBox(height: 20),
 
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
               child: ProgressStat(
@@ -45,8 +46,6 @@ class CompactProgressLayout extends StatelessWidget {
                 iconColor: AppColours.neonCoral,
               ),
             ),
-
-            const SizedBox(width: 12),
 
             Expanded(
               child: ProgressStat(

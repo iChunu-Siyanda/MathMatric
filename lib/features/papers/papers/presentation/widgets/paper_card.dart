@@ -44,6 +44,7 @@ class _PaperCardState extends State<PaperCard> {
           borderRadius: BorderRadius.circular(20),
           child: Stack(
             children: [
+              // Background Image
               Positioned.fill(
                 child: Image.asset(
                   'assets/images/algebra.webp',
@@ -51,6 +52,7 @@ class _PaperCardState extends State<PaperCard> {
                 ),
               ),
 
+              // Gradient Overlay
               Positioned.fill(
                 child: DecoratedBox(
                   decoration: BoxDecoration(
@@ -66,6 +68,7 @@ class _PaperCardState extends State<PaperCard> {
                 ),
               ),
 
+              // Interactive Hover Border
               Positioned.fill(
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 180),
@@ -81,6 +84,7 @@ class _PaperCardState extends State<PaperCard> {
                 ),
               ),
 
+              // Card Content
               Padding(
                 padding: const EdgeInsets.all(14),
                 child: Column(
@@ -96,26 +100,34 @@ class _PaperCardState extends State<PaperCard> {
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         color: AppColours.surface,
-                        fontSize: 17,
+                        fontSize: 16,
                         fontWeight: FontWeight.w800,
                         height: 1.1,
                       ),
                     ),
 
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 6),
 
-                    Text(
-                      widget.data.brief,
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: AppColours.surface.withAlpha(210),
-                        fontSize: 12,
-                        height: 1.35,
-                      ),
+                    // Soft hide brief on small square cards to avoid overflow
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        if (constraints.maxHeight < 120) {
+                          return const SizedBox.shrink();
+                        }
+                        return Text(
+                          widget.data.brief,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: AppColours.surface.withAlpha(210),
+                            fontSize: 11,
+                            height: 1.3,
+                          ),
+                        );
+                      },
                     ),
 
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 10),
 
                     Row(
                       children: [
@@ -132,8 +144,8 @@ class _PaperCardState extends State<PaperCard> {
 
                         AnimatedContainer(
                           duration: const Duration(milliseconds: 180),
-                          width: 32,
-                          height: 32,
+                          width: 30,
+                          height: 30,
                           decoration: BoxDecoration(
                             color: _hovered
                                 ? AppColours.primaryAccent
@@ -142,7 +154,7 @@ class _PaperCardState extends State<PaperCard> {
                           ),
                           child: const Icon(
                             Icons.arrow_forward_rounded,
-                            size: 16,
+                            size: 15,
                             color: AppColours.surface,
                           ),
                         ),

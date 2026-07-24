@@ -53,11 +53,7 @@ class PaperTile extends StatelessWidget {
                       maxChildSize: 0.96,
                       expand: false,
                       snap: true,
-                      snapSizes: const [
-                        0.50,
-                        0.90,
-                        0.96,
-                      ],
+                      snapSizes: const [0.50,0.90,0.96,],
                       builder: (
                         context,
                         scrollController,

@@ -5,10 +5,9 @@ import 'package:math_matric/features/papers/papers/domain/entities/progress_summ
 import 'package:math_matric/features/papers/papers/presentation/bloc/papers_bloc.dart';
 import 'package:math_matric/features/papers/papers/presentation/bloc/papers_event.dart';
 import 'package:math_matric/features/papers/papers/presentation/bloc/papers_state.dart';
-import 'package:math_matric/features/papers/papers/presentation/widgets/exam_grid.dart';
+import 'package:math_matric/features/papers/papers/presentation/widgets/papers_exam_grid.dart';
 import 'package:math_matric/features/papers/papers/presentation/widgets/exam_section_header.dart';
 import 'package:math_matric/features/papers/papers/presentation/widgets/my_progress_card.dart';
-import 'package:math_matric/features/papers/papers/presentation/widgets/grid_insertion_controller.dart';
 import 'package:math_matric/features/papers/papers/presentation/widgets/papers_header.dart';
 import 'package:math_matric/features/papers/papers/presentation/widgets/study_modes_section.dart';
 import 'package:math_matric/theme/app_colours.dart';
@@ -22,24 +21,13 @@ class PapersPage extends StatefulWidget {
 }
 
 class _PapersPageState extends State<PapersPage> {
-  final GlobalKey<SliverAnimatedGridState> _gridKey = GlobalKey();
-  GridInsertionController? _insertionController;
-
   @override
   void initState() {
     super.initState();
     context.read<PapersBloc>().add(LoadPaperRequested(widget.paperType));
   }
 
-  void _runGridAnimation(int itemCount) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _insertionController = GridInsertionController(
-        gridState: _gridKey.currentState!,
-        totalItems: itemCount,
-      );
-      _insertionController!.staggerInsert();
-    });
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -57,8 +45,6 @@ class _PapersPageState extends State<PapersPage> {
 
           if (state is PapersLoaded) {
             final items = state.paper;
-
-            _runGridAnimation(items.length);
 
             return CustomScrollView(
               slivers: [
@@ -81,9 +67,8 @@ class _PapersPageState extends State<PapersPage> {
 
                 const ExamSectionHeader(),
 
-                ExamGrid(
+                PapersExamGrid(
                   items: items,
-                  gridKey: _gridKey,
                   paperType: widget.paperType,
                 ),
               ],
