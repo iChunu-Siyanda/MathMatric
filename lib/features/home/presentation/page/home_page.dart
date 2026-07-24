@@ -161,47 +161,36 @@ class _HomePageState extends State<HomePage> {
               title: "Papers",
             ),
           ),
-
           SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            sliver: SliverGrid.count(
-              crossAxisCount: 2,
-              children: [
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            sliver: SliverGrid(
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 480, // Switches to 1 column below ~480px, 2-3 cols above
+                mainAxisExtent: 210,     // Gives enough vertical room without hardcoding card height
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+              ),
+              delegate: SliverChildListDelegate([
                 PathCard(
                   title: "Paper 1",
-                  subtitle: "Algebra • Functions",
+                  subtitle: "Algebra • Functions • Calculus",
                   imgPath: "assets/images/summation.webp",
-                  gradient: [
-                    Colors.black.withValues(alpha: 0.05),
-                    Colors.black.withValues(alpha: 0.65),
-                  ],
-                  //gradient: [Colors.blue, Colors.indigo],
                   onTap: () {
-                    context.push(
-                      Routes.paperTypePage,
-                      extra: PaperType.paper1
-                    );
+                    context.push(Routes.paperTypePage, extra: PaperType.paper1);
                   },
                 ),
                 PathCard(
                   title: "Paper 2",
-                  subtitle: "Geometry • Trig",
+                  subtitle: "Geometry • Trigonometry • Stats",
                   imgPath: "assets/images/calc.webp",
-                  gradient: [
-                    Colors.black.withValues(alpha: 0.05),
-                    Colors.black.withValues(alpha: 0.65),
-                  ],
-                  //gradient: [ Colors.teal,Colors.green,],
                   onTap: () {},
                 ),
-              ],
+              ]),
             ),
           ),
-
-          //Discussions Card
-          //SliverToBoxAdapter(child: DiscussionsCard(onTap: () {}, backgroundImg: "assets/images/hands_img.webp",)),
         ],
       ),
+
       drawer: MathMatricDrawer(
         streak: 8,
       ),

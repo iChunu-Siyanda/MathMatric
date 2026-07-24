@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class AnimatedBaseCard extends StatefulWidget {
   final Widget child;
   final VoidCallback onTap;
-  final double height;
+  final double? height; // Changed from 'required double height' to optional 'double?'
   final EdgeInsets margin;
   final BorderRadius borderRadius;
 
@@ -11,8 +11,8 @@ class AnimatedBaseCard extends StatefulWidget {
     super.key,
     required this.child,
     required this.onTap,
-    required this.height,
-    this.margin = const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+    this.height, // Optional height parameter
+    this.margin = EdgeInsets.zero, // Defaulting to zero avoids double-padding inside grids
     this.borderRadius = const BorderRadius.all(Radius.circular(20)),
   });
 
@@ -59,24 +59,24 @@ class _AnimatedBaseCardState extends State<AnimatedBaseCard>
           _up(up);
           widget.onTap();
         },
-        onTapCancel: _controller.reverse,
+        onTapCancel: () => _controller.reverse(),
         child: AnimatedBuilder(
           animation: _controller,
-          builder: (_, context) {
+          builder: (_, child) {
             return Transform.scale(
               scale: scale,
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 margin: widget.margin,
-                height: widget.height,
+                height: widget.height, // If null, stretches/expands to fit parent flex or grid
                 decoration: BoxDecoration(
                   borderRadius: widget.borderRadius,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha:_hover ? 0.18 : 0.08),
+                      color: Colors.black.withValues(alpha: _hover ? 0.18 : 0.08),
                       blurRadius: _hover ? 20 : 10,
                       offset: Offset(0, _hover ? 10 : 5),
-                    )
+                    ),
                   ],
                 ),
                 child: ClipRRect(

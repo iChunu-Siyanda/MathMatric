@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:math_matric/theme/app_colours.dart';
 
@@ -23,344 +24,205 @@ class StreakAlertCard extends StatefulWidget {
 }
 
 class _StreakAlertCardState extends State<StreakAlertCard> {
-  bool _hovered = false;
+  bool _isHovered = false;
+  bool _isPressed = false;
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final bool isMobileOrTablet =
+        screenWidth < 1024 ||
+        defaultTargetPlatform == TargetPlatform.iOS ||
+        defaultTargetPlatform == TargetPlatform.android;
+    final bool showActiveStyle = isMobileOrTablet || _isHovered || _isPressed;
     final milestone = _nextMilestone(widget.currentStreak);
     final previousMilestone = _previousMilestone(widget.currentStreak);
-
-    final daysToMilestone =
-        milestone - widget.currentStreak;
-
-    final milestoneRange =
-        milestone - previousMilestone;
-
-    final progressInMilestone =
-        widget.currentStreak - previousMilestone;
-
-    final milestoneProgress =
-        (progressInMilestone / milestoneRange)
-            .clamp(0.0, 1.0);
-
-    final message = _streakMessage(
-      widget.currentStreak,
-    );
-
-    final personalBestMessage =
-        _personalBestMessage(
-      widget.currentStreak,
-      widget.personalBest,
-    );
+    final message = _streakMessage(widget.currentStreak,);
 
     return MouseRegion(
       cursor: SystemMouseCursors.click,
-
       onEnter: (_) {
-        setState(() {
-          _hovered = true;
-        });
+        if (!isMobileOrTablet) setState(() => _isHovered = true);
       },
-
       onExit: (_) {
-        setState(() {
-          _hovered = false;
-        });
+        if (!isMobileOrTablet) setState(() => _isHovered = false);
       },
-
       child: GestureDetector(
         onTap: widget.onTap,
-
+        onTapDown: (_) => setState(() => _isPressed = true),
+        onTapUp: (_) => setState(() => _isPressed = false),
+        onTapCancel: () => setState(() => _isPressed = false),
         child: AnimatedContainer(
-          duration: const Duration(
-            milliseconds: 220,
-          ),
-
+          duration: const Duration(milliseconds: 200),
           curve: Curves.easeOutCubic,
-
           padding: const EdgeInsets.all(18),
-
           decoration: BoxDecoration(
             color: AppColours.surface,
-
             borderRadius: BorderRadius.circular(24),
-
             border: Border.all(
-              color: _hovered
-                  ? AppColours.neonCoral
-                      .withValues(alpha: 0.45)
-                  : AppColours.border
-                      .withValues(alpha: 0.7),
-
+              color: showActiveStyle
+                  ? AppColours.cobaltBlue.withValues(alpha: 0.45)
+                  : AppColours.border.withValues(alpha: 0.7),
               width: 1.5,
             ),
-
             boxShadow: [
               BoxShadow(
-                color: _hovered
-                    ? AppColours.neonCoral
-                        .withValues(alpha: 0.12)
-                    : Colors.black
-                        .withValues(alpha: 0.04),
-
-                blurRadius: _hovered
-                    ? 24
-                    : 12,
-
-                offset: Offset(
-                  0,
-                  _hovered ? 9 : 4,
-                ),
+                color: showActiveStyle
+                    ? AppColours.cobaltBlue.withValues(alpha: 0.15)
+                    : AppColours.ambientGlow.withValues(alpha: 0.05),
+                blurRadius: showActiveStyle ? 20 : 10,
+                offset: Offset(0, showActiveStyle ? 6 : 3),
               ),
             ],
           ),
-
           child: Column(
-            crossAxisAlignment:
-                CrossAxisAlignment.start,
-
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // =============================================================
               // HEADER
               // =============================================================
-
               Row(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
-
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start,
-
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
                           'YOUR MOMENTUM',
                           style: TextStyle(
-                            color:
-                                AppColours.textMuted,
-
+                            color: AppColours.cobaltBlue,
                             fontSize: 10,
-
-                            fontWeight:
-                                FontWeight.w800,
-
+                            fontWeight: FontWeight.w800,
                             letterSpacing: 1.1,
                           ),
                         ),
-
-                        const SizedBox(
-                          height: 6,
-                        ),
-
+                        const SizedBox(height: 6),
                         Text(
                           '${widget.userName}, $message',
                           maxLines: 2,
-
-                          overflow:
-                              TextOverflow.ellipsis,
-
+                          overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                            color:
-                                AppColours.textPrimary,
-
+                            color: AppColours.textPrimary,
                             fontSize: 19,
-
                             height: 1.15,
-
-                            fontWeight:
-                                FontWeight.w900,
-
+                            fontWeight: FontWeight.w900,
                             letterSpacing: -0.5,
                           ),
                         ),
-
-                        const SizedBox(
-                          height: 6,
-                        ),
-
+                        const SizedBox(height: 6),
                         Text(
                           '${widget.currentStreak} consecutive '
                           '${widget.currentStreak == 1 ? 'day' : 'days'} '
                           'of learning.',
                           style: const TextStyle(
-                            color:
-                                AppColours.textSecondary,
-
+                            color: AppColours.textSecondary,
                             fontSize: 13,
-
-                            fontWeight:
-                                FontWeight.w500,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
                     ),
                   ),
-
-                  const SizedBox(
-                    width: 12,
-                  ),
+                  const SizedBox(width: 12),
 
                   // =========================================================
                   // STREAK BADGE
                   // =========================================================
-
                   AnimatedContainer(
-                    duration: const Duration(
-                      milliseconds: 220,
-                    ),
-
+                    duration: const Duration(milliseconds: 200),
                     width: 48,
                     height: 48,
-
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        begin:
-                            Alignment.topLeft,
-
-                        end:
-                            Alignment.bottomRight,
-
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                         colors: [
-                          AppColours.neonCoral
-                              .withValues(
-                            alpha: _hovered
-                                ? 0.22
-                                : 0.13,
+                          AppColours.primaryAccent.withValues(
+                            alpha: showActiveStyle ? 0.22 : 0.12,
                           ),
-
-                          AppColours.neonCoral
-                              .withValues(
-                            alpha: _hovered
-                                ? 0.08
-                                : 0.04,
+                          const Color(0xFFE0F2FE).withValues(
+                            alpha: showActiveStyle ? 0.85 : 0.50,
                           ),
                         ],
                       ),
-
-                      borderRadius:
-                          BorderRadius.circular(
-                        16,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: AppColours.cobaltBlue.withValues(
+                          alpha: showActiveStyle ? 0.35 : 0.15,
+                        ),
+                        width: 1,
                       ),
                     ),
-
                     child: const Icon(
                       Icons.local_fire_department_rounded,
-
-                      color:
-                          AppColours.neonCoral,
-
+                      color: AppColours.cobaltBlue,
                       size: 27,
                     ),
                   ),
                 ],
               ),
 
-              const SizedBox(
-                height: 24,
-              ),
+              const SizedBox(height: 24),
 
               // =============================================================
               // STREAK JOURNEY
               // =============================================================
-
               _StreakJourney(
-                currentStreak:
-                    widget.currentStreak,
-
-                previousMilestone:
-                    previousMilestone,
-
-                nextMilestone:
-                    milestone,
+                currentStreak: widget.currentStreak,
+                previousMilestone: previousMilestone,
+                nextMilestone: milestone,
               ),
 
-              const SizedBox(
-                height: 22,
+              const SizedBox(height: 20),
+
+              // =============================================================
+              // FOOTER ACTION CALL
+              // =============================================================
+              Container(
+                height: 1,
+                color: AppColours.border.withValues(alpha: 0.6),
               ),
 
-              // =============================================================
-              // NEXT MILESTONE
-              // =============================================================
-
-              _MilestonePanel(
-                nextMilestone:
-                    milestone,
-
-                daysRemaining:
-                    daysToMilestone,
-
-                progress:
-                    milestoneProgress,
-
-                onTap:
-                    widget.onMilestoneTap,
-              ),
-
-              const SizedBox(
-                height: 16,
-              ),
-
-              // =============================================================
-              // PERSONAL BEST CONTEXT
-              // =============================================================
-
-              _PersonalBestMessage(
-                message:
-                    personalBestMessage,
-              ),
-
-              const SizedBox(
-                height: 20,
-              ),
-
-              // =============================================================
-              // ACTION FOOTER
-              // =============================================================
+              const SizedBox(height: 16),
 
               Row(
                 children: [
-                  Text(
-                    'Continue your journey',
-
+                  AnimatedDefaultTextStyle(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeOutCubic,
                     style: TextStyle(
-                      color: _hovered
-                          ? AppColours.neonCoral
+                      color: showActiveStyle
+                          ? AppColours.cobaltBlue
                           : AppColours.textPrimary,
-
                       fontSize: 13,
-
-                      fontWeight:
-                          FontWeight.w800,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.2,
                     ),
+                    child: const Text('Continue your journey'),
                   ),
-
                   const Spacer(),
-
                   AnimatedContainer(
-                    duration: const Duration(
-                      milliseconds: 220,
-                    ),
-
-                    curve:
-                        Curves.easeOutCubic,
-
-                    transform:
-                        Matrix4.translationValues(
-                      _hovered ? 5 : 0,
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeOutCubic,
+                    padding: const EdgeInsets.all(6),
+                    transform: Matrix4.translationValues(
+                      showActiveStyle ? 4 : 0,
                       0,
                       0,
                     ),
-
+                    decoration: BoxDecoration(
+                      color: showActiveStyle
+                          ? AppColours.cobaltBlue.withValues(alpha: 0.12)
+                          : AppColours.surfaceSecondary.withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                     child: Icon(
                       Icons.arrow_forward_rounded,
-
-                      size: 18,
-
-                      color: _hovered
-                          ? AppColours.neonCoral
-                          : AppColours.textPrimary,
+                      size: 16,
+                      color: showActiveStyle
+                          ? AppColours.cobaltBlue
+                          : AppColours.textSecondary,
                     ),
                   ),
                 ],
@@ -372,6 +234,35 @@ class _StreakAlertCardState extends State<StreakAlertCard> {
     );
   }
 }
+
+// =============================================================================
+// Animation Container
+// =============================================================================
+// final milestoneRange = milestone - previousMilestone;
+//     final progressInMilestone = widget.currentStreak - previousMilestone;
+    // final daysToMilestone = milestone - widget.currentStreak;
+    // final milestoneProgress = (progressInMilestone / milestoneRange).clamp(0.0, 1.0);
+    // final personalBestMessage =_personalBestMessage(widget.currentStreak,widget.personalBest,);
+
+              // =============================================================
+              // NEXT MILESTONE
+              // =============================================================
+
+              // _MilestonePanel(
+              //   nextMilestone:milestone,
+              //   daysRemaining:daysToMilestone,
+              //   progress:milestoneProgress,
+              //   onTap:widget.onMilestoneTap,
+              // ),
+
+              // const SizedBox(height: 16,),
+
+              // =============================================================
+              // PERSONAL BEST CONTEXT
+              // =============================================================
+
+              // _PersonalBestMessage(message:personalBestMessage,),
+              // const SizedBox(height: 20,),
 
 // =============================================================================
 // STREAK JOURNEY
@@ -390,31 +281,22 @@ class _StreakJourney extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final journeyDays =
-        _journeyDays(
+    final journeyDays = _journeyDays(
       currentStreak,
       previousMilestone,
       nextMilestone,
     );
-
     return Column(
-      crossAxisAlignment:
-          CrossAxisAlignment.start,
-
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
             const Text(
               'YOUR JOURNEY',
               style: TextStyle(
-                color:
-                    AppColours.textMuted,
-
+                color:AppColours.textMuted,
                 fontSize: 10,
-
-                fontWeight:
-                    FontWeight.w800,
-
+                fontWeight: FontWeight.w800,
                 letterSpacing: 1.0,
               ),
             ),
@@ -423,153 +305,93 @@ class _StreakJourney extends StatelessWidget {
 
             Text(
               '$currentStreak / $nextMilestone days',
-
               style: const TextStyle(
-                color:
-                    AppColours.textSecondary,
-
+                color:AppColours.textSecondary,
                 fontSize: 11,
-
-                fontWeight:
-                    FontWeight.w700,
+                fontWeight: FontWeight.w700,
               ),
             ),
           ],
         ),
 
-        const SizedBox(
-          height: 14,
-        ),
+        const SizedBox(height: 14,),
 
         SizedBox(
           height: 74,
-
           child: LayoutBuilder(
-            builder:
-                (
-                  context,
-                  constraints,
-                ) {
-                  return Stack(
-                    children: [
-                      // =====================================================
-                      // CONNECTING PATH
-                      // =====================================================
+            builder: (context,constraints,) {
+              return Stack(
+                children: [
+                  // =====================================================
+                  // CONNECTING PATH
+                  // =====================================================
 
-                      Positioned(
-                        left: 10,
-                        right: 10,
-                        top: 22,
+                  Positioned(
+                    left: 10,
+                    right: 10,
+                    top: 22,
+                    child: Row(
+                      children: List.generate(
+                        journeyDays.length - 1,
 
-                        child: Row(
-                          children: List.generate(
-                            journeyDays.length - 1,
+                        (index) {
+                          //final currentDay = journeyDays[index];
+                          final nextDay = journeyDays[index + 1];
+                          final completed = nextDay <= currentStreak;
+                          final isMilestoneSegment = nextDay == nextMilestone;
 
-                            (index) {
-                              //final currentDay = journeyDays[index];
-
-                              final nextDay = journeyDays[index + 1];
-
-                              final completed = nextDay <= currentStreak;
-
-                              final isMilestoneSegment = nextDay == nextMilestone;
-
-                              return Expanded(
-                                child: Container(
-                                  height: 3,
-
-                                  margin:
-                                      const EdgeInsets
-                                          .symmetric(
-                                    horizontal: 2,
-                                  ),
-
-                                  decoration:
-                                      BoxDecoration(
-                                    gradient:
-                                        completed
-                                            ? AppColours
-                                                .mathMatricGradient
-                                            : null,
-
-                                    color: completed
-                                        ? null
-                                        : AppColours
-                                            .border,
-
-                                    borderRadius:
-                                        BorderRadius
-                                            .circular(
-                                      10,
-                                    ),
-
-                                    boxShadow:
-                                        isMilestoneSegment
-                                            ? [
-                                                BoxShadow(
-                                                  color: AppColours
-                                                      .electricViolet
-                                                      .withValues(
-                                                    alpha:
-                                                        0.18,
-                                                  ),
-
-                                                  blurRadius:
-                                                      8,
-                                                ),
-                                              ]
-                                            : null,
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
+                          return Expanded(
+                            child: Container(
+                              height: 3,
+                              margin: const EdgeInsets.symmetric(horizontal: 2,),
+                              decoration: BoxDecoration(
+                                gradient: completed
+                                        ? AppColours.mathMatricGradient
+                                        : null,
+                                color: completed
+                                    ? null
+                                    : AppColours.border,
+                                borderRadius: BorderRadius.circular(10,),
+                                boxShadow: isMilestoneSegment
+                                  ? [
+                                      BoxShadow(
+                                        color: AppColours
+                                            .electricViolet
+                                            .withValues(alpha:0.18,),
+                                        blurRadius:8,
+                                      ),
+                                    ]
+                                  : null,
+                              ),
+                            ),
+                          );
+                        },
                       ),
+                    ),
+                  ),
 
-                      // =====================================================
-                      // JOURNEY NODES
-                      // =====================================================
+                  // =====================================================
+                  // JOURNEY NODES
+                  // =====================================================
 
-                      Row(
-                        mainAxisAlignment:
-                            MainAxisAlignment
-                                .spaceBetween,
+                  Row(
+                    mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                    children: journeyDays.map((day) {
+                      final completed = day <= currentStreak;
+                      final isCurrent = day == currentStreak;
+                      final isMilestone = day == nextMilestone;
 
-                        children:
-                            journeyDays.map(
-                          (day) {
-                            final completed =
-                                day <=
-                                    currentStreak;
-
-                            final isCurrent =
-                                day ==
-                                    currentStreak;
-
-                            final isMilestone =
-                                day ==
-                                    nextMilestone;
-
-                            return _JourneyNode(
-                              day:
-                                  day,
-
-                              completed:
-                                  completed,
-
-                              isCurrent:
-                                  isCurrent,
-
-                              isMilestone:
-                                  isMilestone,
-                            );
-                          },
-                        ).toList(),
-                      ),
-                    ],
-                  );
-                },
+                      return _JourneyNode(
+                        day:day,
+                        completed:completed,
+                        isCurrent:isCurrent,
+                        isMilestone:isMilestone,
+                      );
+                    },).toList(),
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ],
