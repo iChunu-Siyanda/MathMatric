@@ -1,16 +1,20 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:math_matric/features/home/presentation/bloc/study_history_bloc.dart';
 import 'package:math_matric/features/home/presentation/bloc/study_history_state.dart';
 import 'package:math_matric/features/home/presentation/widgets/featured_topic_card.dart';
+import 'package:math_matric/features/home/presentation/widgets/header_icon_button.dart';
 import 'package:math_matric/features/home/presentation/widgets/home_section_header.dart';
+import 'package:math_matric/features/home/presentation/widgets/quiz_alert_card.dart';
+import 'package:math_matric/features/home/presentation/widgets/streak_alert_card.dart';
 import 'package:math_matric/features/papers/papers/domain/entities/paper_type.dart';
 import 'package:math_matric/features/drawer/math_matric_drawer.dart';
-import 'package:math_matric/features/home/presentation/widgets/auto_sliding_carousel.dart';
 import 'package:math_matric/features/home/presentation/widgets/continue_studying_card.dart';
 import 'package:math_matric/features/home/presentation/widgets/path_card.dart';
 import 'package:math_matric/shared/app_routes/routes.dart';
+import 'package:math_matric/theme/app_colours.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -28,35 +32,72 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
+    final hasRecentQuiz = true;
     return Scaffold(
+      backgroundColor: AppColours.background,
       body: CustomScrollView(
         slivers: [
-          // Sliver AppBar
           SliverAppBar(
-            backgroundColor: colorScheme.primary,
-            //leading: Icon(Icons.menu, color: colorScheme.onPrimary),
-            expandedHeight: 100,
+            expandedHeight: 112,
             pinned: true,
-            floating: false,
-            flexibleSpace: FlexibleSpaceBar(
-              centerTitle: true,
-              title: Text(
-                "MathMatric",
-                style: TextStyle(color: colorScheme.onPrimary),
+            elevation: 0,
+            automaticallyImplyLeading: false, // Prevents Flutter from automatically showing a back button if routed
+            backgroundColor: AppColours.background.withValues(alpha: 0.85),
+            surfaceTintColor: Colors.transparent,
+
+            flexibleSpace: ClipRRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                child: FlexibleSpaceBar(
+                  centerTitle: false,
+                  titlePadding: const EdgeInsets.only(
+                    left: 20, // Reset to standard content edge alignment
+                    bottom: 14,
+                  ),
+                  expandedTitleScale: 1.3,
+                  title: const Text(
+                    'MathMatric',
+                    style: TextStyle(
+                      color: AppColours.textPrimary,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            actions: [
+              HeaderIconButton(
+                icon: Icons.notifications_none_rounded,
+                badgeCount: 2,
+                onTap: () {},
+              ),
+              HeaderIconButton(
+                icon: Icons.person_outline_rounded,
+                onTap: () {},
+              ),
+              const SizedBox(width: 12),
+            ],
+          ),
+
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+              child: Column(
+                children: [
+                  StreakAlertCard(onTap: () {  }, currentStreak: 1, personalBest: 35, userName: 'Siya',),
+
+                  if (hasRecentQuiz) ...[
+                    const SizedBox(height: 10),
+                    QuizAlertCard(),
+                  ],
+                ],
               ),
             ),
           ),
 
-          // Smart Coach carousel placeholder
-          SliverToBoxAdapter(
-            child: HomeSectionHeader(
-              title: "Smart Coach",
-              onSeeAll: () {},
-            ),
-          ),
-          AutoSlidingCarousel(),
 
           // Hero card
           SliverToBoxAdapter(
@@ -76,9 +117,10 @@ class _HomePageState extends State<HomePage> {
                     },
                   );
                 }
-
+                
+                //Scrolls horizontally, 
                 return SizedBox(
-                  height: 200, // Fixed height for carousel
+                  height: 200, 
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -129,7 +171,6 @@ class _HomePageState extends State<HomePage> {
                   title: "Paper 1",
                   subtitle: "Algebra • Functions",
                   imgPath: "assets/images/summation.webp",
-                  progress: 0.6,
                   gradient: [
                     Colors.black.withValues(alpha: 0.05),
                     Colors.black.withValues(alpha: 0.65),
@@ -146,7 +187,6 @@ class _HomePageState extends State<HomePage> {
                   title: "Paper 2",
                   subtitle: "Geometry • Trig",
                   imgPath: "assets/images/calc.webp",
-                  progress: 0.3,
                   gradient: [
                     Colors.black.withValues(alpha: 0.05),
                     Colors.black.withValues(alpha: 0.65),

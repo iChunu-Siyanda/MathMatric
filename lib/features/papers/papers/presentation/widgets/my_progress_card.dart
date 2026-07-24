@@ -26,7 +26,7 @@ class MyProgressCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color(0xFFE0F2FE),
+            Color.fromARGB(255, 182, 222, 249),
             Color(0xFFEFF6FF),
             Color(0xFFF5F3FF),
           ],

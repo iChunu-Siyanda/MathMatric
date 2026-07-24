@@ -21,22 +21,21 @@ class CompactProgressLayout extends StatelessWidget {
           progress: progress.progress,
         ),
 
-        const SizedBox(height: 12),
+        // const SizedBox(height: 12),
 
-        Text(
-          '${progress.completedTopics} of '
-          '${progress.totalTopics} topics completed',
-          style: const TextStyle(
-            color: AppColours.textSecondary,
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+        // Text(
+        //   '${progress.completedTopics} of '
+        //   '${progress.totalTopics} topics completed',
+        //   style: const TextStyle(
+        //     color: AppColours.textSecondary,
+        //     fontSize: 13,
+        //     fontWeight: FontWeight.w600,
+        //   ),
+        // ),
 
         const SizedBox(height: 20),
 
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
               child: ProgressStat(
