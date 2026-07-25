@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:math_matric/features/papers/papers/domain/entities/progress_summary.dart';
 import 'package:math_matric/features/papers/papers/presentation/widgets/progress_circle.dart';
 import 'package:math_matric/features/papers/papers/presentation/widgets/progress_stat.dart';
-import 'package:math_matric/theme/app_colours.dart';
+import 'package:math_matric/core/theme/app_colours.dart';
 
 class WideProgressLayout extends StatelessWidget {
   final ProgressSummary progress;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:math_matric/core/theme/app_colours.dart';
 import 'package:math_matric/features/papers/papers/domain/entities/subject_topic_quiz.dart';
 import 'package:math_matric/features/papers/practice/presentation/bloc/practice_bloc.dart';
 import 'package:math_matric/features/papers/practice/presentation/bloc/practice_event.dart';
@@ -79,7 +80,7 @@ class _QuizzesPageState extends State<QuizzesPage>
                   progress: state.data.progress,
                   totalXpEarned: state.data.earnedXp,
                   totalXp: state.data.totalXp,
-                  accentColor: state.data.practiceTopic.color,
+                  accentColor: AppColours.ambientGlow,
                 ),
               ),
               

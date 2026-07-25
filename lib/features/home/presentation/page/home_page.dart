@@ -11,7 +11,7 @@ import 'package:math_matric/features/home/presentation/widgets/streak_alert_card
 import 'package:math_matric/features/papers/papers/domain/entities/paper_type.dart';
 import 'package:math_matric/features/home/presentation/widgets/path_card.dart';
 import 'package:math_matric/shared/app_routes/routes.dart';
-import 'package:math_matric/theme/app_colours.dart';
+import 'package:math_matric/core/theme/app_colours.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

@@ -3,7 +3,7 @@ import 'package:math_matric/features/papers/papers/domain/entities/progress_summ
 import 'package:math_matric/features/papers/papers/presentation/widgets/compact_progress_layout.dart';
 import 'package:math_matric/features/papers/papers/presentation/widgets/view_buttn.dart';
 import 'package:math_matric/features/papers/papers/presentation/widgets/wide_progress_layout.dart';
-import 'package:math_matric/theme/app_colours.dart';
+import 'package:math_matric/core/theme/app_colours.dart';
 
 class MyProgressCard extends StatelessWidget {
   final ProgressSummary progress;

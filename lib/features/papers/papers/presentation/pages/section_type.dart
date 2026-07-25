@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:math_matric/shared/entities/section_context_modal.dart';
 import 'package:math_matric/shared/entities/section_tab_entities.dart';
-import 'package:math_matric/theme/app_colours.dart'; 
+import 'package:math_matric/core/theme/app_colours.dart'; 
 
 class SectionType extends StatefulWidget {
   final String pageTitle;

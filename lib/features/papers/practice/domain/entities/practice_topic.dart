@@ -1,23 +1,32 @@
-import 'dart:ui';
+//   PracticeTopic
+//        ▲
+//        │
+//    TopicModel
+//    ▲        ▲
+//    │        │
+// Firestore Drift
 
 class PracticeTopic {
   final String id;
+  final String subjectId;
+
   final String title;
   final String description;
-  final int order; // for sorting in UI
+
+  final int order;
   final int totalLevels;
   final int totalXp;
-  final Color color; 
+
+  final String colorHex;
 
   const PracticeTopic({
     required this.id,
+    required this.subjectId,
     required this.title,
     required this.description,
     required this.order,
     required this.totalLevels,
     required this.totalXp,
-    required this.color,
+    required this.colorHex,
   });
 }
-
-//PracticeTopic has the static data of each practice section.

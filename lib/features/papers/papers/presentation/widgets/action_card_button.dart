@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:math_matric/theme/app_colours.dart';
+import 'package:math_matric/core/theme/app_colours.dart';
 
 class ActionCardButton extends StatefulWidget {
   final String label;

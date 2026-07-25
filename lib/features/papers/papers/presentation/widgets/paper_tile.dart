@@ -3,7 +3,7 @@ import 'package:math_matric/features/papers/papers/domain/entities/paper_type.da
 import 'package:math_matric/features/papers/papers/presentation/widgets/paper_card.dart';
 import 'package:math_matric/features/papers/papers/domain/entities/paper_item.dart';
 import 'package:math_matric/features/papers/papers/presentation/pages/topics_sliver_list.dart';
-import 'package:math_matric/theme/app_colours.dart';
+import 'package:math_matric/core/theme/app_colours.dart';
 
 class PaperTile extends StatelessWidget {
   final PaperItem data;

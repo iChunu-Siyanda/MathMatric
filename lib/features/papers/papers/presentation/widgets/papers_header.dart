@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:math_matric/features/papers/papers/domain/entities/paper_type.dart';
-import 'package:math_matric/theme/app_colours.dart';
+import 'package:math_matric/core/theme/app_colours.dart';
 
 class PapersHeader extends StatelessWidget {
   final PaperType paperType;

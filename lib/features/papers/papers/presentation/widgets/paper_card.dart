@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:math_matric/features/papers/papers/domain/entities/paper_item.dart';
 import 'package:math_matric/shared/widgets/paper_badge.dart';
-import 'package:math_matric/theme/app_colours.dart';
+import 'package:math_matric/core/theme/app_colours.dart';
 
 class PaperCard extends StatefulWidget {
   const PaperCard({

@@ -10,7 +10,7 @@ import 'package:math_matric/features/papers/papers/presentation/widgets/exam_sec
 import 'package:math_matric/features/papers/papers/presentation/widgets/my_progress_card.dart';
 import 'package:math_matric/features/papers/papers/presentation/widgets/papers_header.dart';
 import 'package:math_matric/features/papers/papers/presentation/widgets/study_modes_section.dart';
-import 'package:math_matric/theme/app_colours.dart';
+import 'package:math_matric/core/theme/app_colours.dart';
 
 class PapersPage extends StatefulWidget {
   final PaperType paperType;

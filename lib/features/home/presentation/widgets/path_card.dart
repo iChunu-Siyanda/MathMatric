@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:math_matric/features/home/presentation/widgets/animated_base_card.dart';
 import 'package:math_matric/shared/widgets/paper_badge.dart';
-import 'package:math_matric/theme/app_colours.dart';
+import 'package:math_matric/core/theme/app_colours.dart';
 
 class PathCard extends StatelessWidget {
   final String title;

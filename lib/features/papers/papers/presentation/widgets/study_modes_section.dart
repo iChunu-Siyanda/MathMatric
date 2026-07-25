@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:math_matric/features/papers/papers/domain/entities/study_mode.dart';
 import 'package:math_matric/features/papers/papers/presentation/widgets/study_section_card.dart';
 import 'package:math_matric/features/papers/papers/presentation/widgets/verticle_study_mode_tile.dart';
-import 'package:math_matric/theme/app_colours.dart';
+import 'package:math_matric/core/theme/app_colours.dart';
 
 class StudyModesSection extends StatelessWidget {
   const StudyModesSection({super.key});

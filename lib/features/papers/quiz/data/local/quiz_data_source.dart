@@ -18,14 +18,16 @@ class QuizDataSource {
         options: ['x', '2x', 'x²', '2'],
         correctAnswerIndex: 1,
         levelId: 'algebra_level1', 
-        scoreValue: 1,
+        scoreValue: 1, 
+        id: '',
       ),
       QuizQuestion(
         questionText: 'What is the integral of 2x?',
         options: ['x²', '2x²', 'x² + C', '2x² + C'],
         correctAnswerIndex: 2,
         levelId: 'algebra_level1',
-        scoreValue: 1,
+        scoreValue: 1, 
+        id: '',
       ),
     ],
     SubjectTopic.numberPatterns: [
@@ -34,7 +36,8 @@ class QuizDataSource {
         options: ['8', '10', '12', '14'],
         correctAnswerIndex: 0,
         levelId: 'number_patterns_level1',
-        scoreValue: 1,
+        scoreValue: 1, 
+        id: '',
       ),
       QuizQuestion(
         questionText:
@@ -42,7 +45,8 @@ class QuizDataSource {
         options: ['2', '3', '4', '5'],
         correctAnswerIndex: 2,
         levelId: 'number_patterns_level1',
-        scoreValue: 1,
+        scoreValue: 1, 
+        id: '',
       ),
     ],
     SubjectTopic.functions: [
@@ -51,7 +55,8 @@ class QuizDataSource {
         options: ['5', '6', '7', '8'],
         correctAnswerIndex: 0,
         levelId: 'functions_level1',
-        scoreValue: 1,
+        scoreValue: 1, 
+        id: '',
       ),
       QuizQuestion(
         questionText: 'What is the inverse of the function f(x) = 2x - 3?',
@@ -63,7 +68,7 @@ class QuizDataSource {
         ],
         correctAnswerIndex: 0,
         levelId: 'functions_level1',
-        scoreValue: 1,
+        scoreValue: 1, id: '',
       ),
     ],
     SubjectTopic.calculus: [
@@ -72,14 +77,14 @@ class QuizDataSource {
         options: ['x²', '2x²', 'x² + C', '2x² + C'],
         correctAnswerIndex: 2,
         levelId: 'calculus_level1',
-        scoreValue: 1,
+        scoreValue: 1, id: '',
       ),
       QuizQuestion(
         questionText: 'What is the derivative of sin(x)?',
         options: ['cos(x)', '-cos(x)', 'sin(x)', '-sin(x)'],
         correctAnswerIndex: 0,
         levelId: 'calculus_level1',
-        scoreValue: 1,
+        scoreValue: 1, id: '',
       ),
     ],
     SubjectTopic.finance: [
@@ -88,7 +93,7 @@ class QuizDataSource {
         options: ['I = PRT', 'I = P + RT', 'I = P - RT', 'I = P × RT'],
         correctAnswerIndex: 0,
         levelId: 'finance_level1',
-        scoreValue: 1,
+        scoreValue: 1, id: '',
       ),
       QuizQuestion(
         questionText: 'What is the formula for compound interest?',
@@ -100,7 +105,7 @@ class QuizDataSource {
         ],
         correctAnswerIndex: 0,
         levelId: 'finance_level1',
-        scoreValue: 1,
+        scoreValue: 1, id: '',
       ),
     ],
     SubjectTopic.probability: [
@@ -109,15 +114,14 @@ class QuizDataSource {
         options: ['1/6', '1/2', '1/3', '1/4'],
         correctAnswerIndex: 0,
         levelId: 'probability_level1',
-        scoreValue: 1,
+        scoreValue: 1, id: '',
       ),
       QuizQuestion(
-        questionText:
-            'What is the probability of drawing an ace from a standard deck of cards?',
+        questionText:'What is the probability of drawing an ace from a standard deck of cards?',
         options: ['1/13', '1/52', '4/52', '1/4'],
         correctAnswerIndex: 0,
         levelId: 'probability_level1',
-        scoreValue: 1,
+        scoreValue: 1, id: '',
       ),
     ],
   };

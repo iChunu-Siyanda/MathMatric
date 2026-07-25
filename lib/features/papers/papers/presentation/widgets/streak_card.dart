@@ -3,7 +3,7 @@ import 'package:math_matric/features/papers/papers/presentation/widgets/action_c
 import 'package:math_matric/features/papers/papers/presentation/widgets/mini_card_stat.dart';
 import 'package:math_matric/features/papers/papers/presentation/widgets/streak_card_header.dart';
 import 'package:math_matric/features/papers/papers/presentation/widgets/streak_card_number.dart';
-import 'package:math_matric/theme/app_colours.dart';
+import 'package:math_matric/core/theme/app_colours.dart';
 
 class StreakCard extends StatelessWidget {
   final int current;

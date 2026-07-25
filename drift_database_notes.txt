@@ -1,0 +1,147 @@
+//YAML
+// dependencies:
+//   drift: ^2.29.0
+//   sqlite3_flutter_libs: ^0.5.39
+//   path_provider: ^2.1.5
+//   path: ^1.9.1
+// dev_dependencies:
+//   drift_dev: ^2.29.0
+//   build_runner: ^2.7.1
+
+
+//Creating A Table. (e.g.)
+// import 'package:drift/drift.dart';
+// class Topics extends Table {
+//   IntColumn get id => integer().autoIncrement()();
+//   TextColumn get topicId => text().unique()();
+//   TextColumn get subjectId => text()();
+//   TextColumn get title => text()();
+//   TextColumn get description => text()();
+//   IntColumn get order => integer()();
+//   IntColumn get totalLevels => integer()();
+//   IntColumn get totalXp => integer()();
+//   TextColumn get colorHex => text()();
+//   IntColumn get version => integer()();
+//   DateTimeColumn get updatedAt => dateTime()();
+// }
+
+
+//AppDatabase:
+// @DriftDatabase(
+//   tables: [
+//     Topics,
+//     Levels,
+//     Questions,
+//     ExamPapers,
+//     UserTopicProgress,
+//     UserLevelProgress,
+//   ],
+//   daos: [
+//     TopicDao,
+//     LevelDao,
+//     QuestionDao,
+//     ExamPaperDao,
+//     UserProgressDao,
+//   ],
+// )
+// class AppDatabase extends _$AppDatabase {
+//   AppDatabase() : super(_openConnection());
+//   @override
+//   int get schemaVersion => 1;
+// }
+
+
+//Register database in GetIt
+// final getIt = GetIt.instance;
+// Future<void> setupDependencies() async {
+//   getIt.registerLazySingleton<AppDatabase>(
+//     () => AppDatabase(),
+//   );
+// }
+
+
+//Create .g.dart
+Run: dart run build_runner build
+Builds: app_database.g.dart
+
+
+//DOA
+@DriftAccessor(tables: [Topics])
+class TopicDao extends DatabaseAccessor<AppDatabase>
+    with _$TopicDaoMixin {
+
+   TopicDao(super.db);
+
+   Future<List<Topic>> getAllTopics() {
+     return select(topics).get();
+   }
+
+//   Future<Topic?> getTopic(String topicId) {
+//     return (select(topics)
+//           ..where((t) => t.topicId.equals(topicId)))
+//         .getSingleOrNull();
+//   }
+
+//   Future<void> insertTopic(TopicsCompanion topic) {
+//     return into(topics).insert(topic);
+//   }
+
+//   Future<void> deleteTopic(String topicId) {
+//     return (delete(topics)
+//           ..where((t) => t.topicId.equals(topicId)))
+//         .go();
+//   }
+// }
+
+
+//The build commands, similar to migrate in Django
+dart run build_runner clean
+dart run build_runner build --delete-conflicting-outputs
+dart run build_runner build --delete-conflicting-outputs -v
+
+
+//Folder Architecture
+core/
+└── database/
+    ├── app_database.dart
+    │
+    ├── tables/
+    │   ├── topics.dart
+    │   ├── levels.dart
+    │   ├── questions.dart
+    │   ├── exam_papers.dart
+    │   ├── user_topic_progress.dart
+    │   └── user_level_progress.dart
+    │
+    └── dao/
+        ├── topic_dao.dart
+        ├── level_dao.dart
+        ├── question_dao.dart
+        ├── exam_paper_dao.dart
+        └── user_progress_dao.dart
+
+
+//Create the Local DataSource
+lib/
+└── features/
+    └── practice/
+        └── data/
+            └── datasources/
+                └── local/
+                    └── topic_local_datasource.dart
+
+                    abstract class TopicLocalDataSource {
+                      Future<List<Topic>> getAllTopics();
+
+                      Future<Topic?> getTopic(String topicId);
+
+                      Future<void> insertTopic(TopicsCompanion topic);
+
+                      Future<int> deleteTopic(String topicId);
+                    }
+                    
+                    Then create TopicLocalDataSourceImpl
+                    this time it return dao.getTopic instead of return repository.getTopic; 
+                    Since final TopicDao dao;
+                  
+

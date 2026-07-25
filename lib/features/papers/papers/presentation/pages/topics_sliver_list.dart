@@ -9,7 +9,7 @@ import 'package:math_matric/features/papers/papers/domain/entities/section_type_
 import 'package:math_matric/features/papers/papers/presentation/widgets/topic_list_tile.dart';
 import 'package:math_matric/shared/app_routes/routes.dart';
 import 'package:math_matric/shared/entities/section_context_modal.dart';
-import 'package:math_matric/theme/app_colours.dart';
+import 'package:math_matric/core/theme/app_colours.dart';
 
 class TopicsSliverList extends StatefulWidget {
   final ScrollController scrollController;

@@ -7,7 +7,7 @@ import 'package:math_matric/features/papers/exam/presentation/bloc/exam_bloc.dar
 import 'package:math_matric/features/papers/exam/presentation/bloc/exam_event.dart';
 import 'package:math_matric/features/papers/exam/presentation/bloc/exam_state.dart';
 import 'package:math_matric/features/papers/exam/presentation/widgets/exam_tile.dart';
-import 'package:math_matric/theme/app_colours.dart';
+import 'package:math_matric/core/theme/app_colours.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 class ExamPaperPage extends StatefulWidget {

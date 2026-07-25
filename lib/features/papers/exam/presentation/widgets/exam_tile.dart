@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:math_matric/features/papers/exam/domain/entities/exam_page_mode.dart.dart';
 import 'package:math_matric/features/papers/exam/domain/entities/exam_paper.dart';
 import 'package:math_matric/shared/app_routes/routes.dart';
-import 'package:math_matric/theme/app_colours.dart'; // Adjust import path if needed
+import 'package:math_matric/core/theme/app_colours.dart'; // Adjust import path if needed
 
 class ExamTile extends StatefulWidget {
   final ExamPaper paper;
