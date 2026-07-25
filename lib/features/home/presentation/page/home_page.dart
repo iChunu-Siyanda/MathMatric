@@ -11,7 +11,6 @@ import 'package:math_matric/features/home/presentation/widgets/home_section_head
 import 'package:math_matric/features/home/presentation/widgets/quiz_alert_card.dart';
 import 'package:math_matric/features/home/presentation/widgets/streak_alert_card.dart';
 import 'package:math_matric/features/papers/papers/domain/entities/paper_type.dart';
-import 'package:math_matric/features/drawer/math_matric_drawer.dart';
 import 'package:math_matric/features/home/presentation/widgets/path_card.dart';
 import 'package:math_matric/shared/app_routes/routes.dart';
 import 'package:math_matric/theme/app_colours.dart';
@@ -166,10 +165,6 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ],
-      ),
-
-      drawer: MathMatricDrawer(
-        streak: 8,
       ),
     );
   }

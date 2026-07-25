@@ -25,7 +25,7 @@ class ContinueStudyingSection extends StatelessWidget {
         final double availableWidth = constraints.maxWidth;
         final int totalItems = state.recentTopics.length;
     
-        // 2. Determine target full columns based on screen width
+        //Columns based on screen width
         int targetColumns;
         if (availableWidth < 420) {
           targetColumns = 1; // Standard Phone
@@ -37,11 +37,11 @@ class ContinueStudyingSection extends StatelessWidget {
           targetColumns = 4; // Desktop
         }
     
-        // 3. Determine if we actually need a peek or if items fit exact columns
+        //Determine if we actually need a peek or if items fit exact columns
         final int visibleColumns = totalItems < targetColumns ? totalItems : targetColumns;
         final bool showPeek = totalItems > visibleColumns;
     
-        // 4. Compute Card Width mathematically
+        //Compute Card Width mathematically
         double cardWidth;
         if (showPeek) {
           // Subtract outer padding, gaps, and the peek area from screen width
