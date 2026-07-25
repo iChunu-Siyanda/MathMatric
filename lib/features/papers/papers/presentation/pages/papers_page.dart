@@ -27,8 +27,6 @@ class _PapersPageState extends State<PapersPage> {
     context.read<PapersBloc>().add(LoadPaperRequested(widget.paperType));
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

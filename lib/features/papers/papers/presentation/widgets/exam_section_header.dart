@@ -8,12 +8,7 @@ class ExamSectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return const SliverToBoxAdapter(
       child: Padding(
-        padding: EdgeInsets.fromLTRB(
-          16,
-          24,
-          16,
-          12,
-        ),
+        padding: EdgeInsets.fromLTRB( 16,24,16,12,),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

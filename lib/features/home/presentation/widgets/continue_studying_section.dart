@@ -7,15 +7,9 @@ import 'package:math_matric/shared/app_routes/routes.dart';
 class ContinueStudyingSection extends StatelessWidget {
   const ContinueStudyingSection({
     super.key,
-    required this.outerPadding,
-    required this.gap,
-    required this.peekAmount,
     required this.state,
   });
 
-  final double outerPadding;
-  final double gap;
-  final double peekAmount;
   final StudyHistoryState state;
 
   @override
@@ -24,6 +18,9 @@ class ContinueStudyingSection extends StatelessWidget {
       builder: (context, constraints) {
         final double availableWidth = constraints.maxWidth;
         final int totalItems = state.recentTopics.length;
+        const double gap = 12.0;         // Space between cards
+        const double peekAmount = 48.0;  // Visible portion of the next card
+        const double outerPadding = 16.0; // Horizontal screen margins
     
         //Columns based on screen width
         int targetColumns;

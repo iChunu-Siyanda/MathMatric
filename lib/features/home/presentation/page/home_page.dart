@@ -5,10 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:math_matric/features/home/presentation/bloc/study_history_bloc.dart';
 import 'package:math_matric/features/home/presentation/bloc/study_history_state.dart';
 import 'package:math_matric/features/home/presentation/widgets/continue_studying_section.dart';
-import 'package:math_matric/features/home/presentation/widgets/featured_topic_card.dart';
 import 'package:math_matric/features/home/presentation/widgets/header_icon_button.dart';
 import 'package:math_matric/features/home/presentation/widgets/home_section_header.dart';
-import 'package:math_matric/features/home/presentation/widgets/quiz_alert_card.dart';
 import 'package:math_matric/features/home/presentation/widgets/streak_alert_card.dart';
 import 'package:math_matric/features/papers/papers/domain/entities/paper_type.dart';
 import 'package:math_matric/features/home/presentation/widgets/path_card.dart';
@@ -31,7 +29,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final hasRecentQuiz = true;
+    //final hasRecentQuiz = true;
     return Scaffold(
       backgroundColor: AppColours.background,
       body: CustomScrollView(
@@ -81,6 +79,7 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
 
+          //Streak Header
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
@@ -88,44 +87,37 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   StreakAlertCard(onTap: () {  }, currentStreak: 1, personalBest: 35, userName: 'Siya',),
 
-                  if (hasRecentQuiz) ...[
-                    const SizedBox(height: 10),
-                    QuizAlertCard(),
-                  ],
+                  // if (hasRecentQuiz) ...[
+                  //   const SizedBox(height: 10),
+                  //   QuizAlertCard(),
+                  // ],
                 ],
               ),
             ),
           ),
 
-
-          // Hero card
-          SliverToBoxAdapter(
-            child: HomeSectionHeader(
-              title: "Continue Studying",
-            ),
-          ),
+          // Continue Studying
           SliverToBoxAdapter(
             child: BlocBuilder<StudyHistoryBloc, StudyHistoryState>(
               builder: (context, state) {
                 if (state.recentTopics.isEmpty) {
-                  return FeaturedTopicCard(
-                    topic: "Calculus",
-                    backgroundImg: "assets/images/calc.webp",
-                    onTap: () {
-                      // Navigate to exam paper viewer
-                    },
-                  );
+                  // return FeaturedTopicCard(
+                  //   topic: "Calculus",
+                  //   backgroundImg: "assets/images/calc.webp",
+                  //   onTap: () {
+                  //     // Navigate to exam paper viewer
+                  //   },
+                  // );
+                  return SizedBox.shrink();
                 }
 
-                const double gap = 12.0;         // Space between cards
-                const double peekAmount = 48.0;  // Visible portion of the next card
-                const double outerPadding = 16.0; // Horizontal screen margins
-
-                return ContinueStudyingSection(
-                  outerPadding: outerPadding, 
-                  gap: gap, 
-                  peekAmount: peekAmount, 
-                  state: state,
+                return Column(
+                  children: [
+                    HomeSectionHeader(
+                      title: "Continue Studying",
+                    ),
+                    ContinueStudyingSection(state: state,),
+                  ],
                 );
               },
             ),
