@@ -51,6 +51,19 @@ class TopicModel extends PracticeTopic {
       colorHex: colorHex,
     );
   }
+  
+  factory TopicModel.fromEntity(PracticeTopic topic) {
+    return TopicModel(
+      id: topic.id, 
+      subjectId: topic.subjectId, 
+      title: topic.title, 
+      description: topic.description, 
+      order: topic.order, 
+      totalLevels: topic.totalLevels, 
+      totalXp: topic.totalXp, 
+      colorHex: topic.colorHex,
+    );
+  }
 
   factory TopicModel.fromDrift(Topic topic) {
     return TopicModel(
