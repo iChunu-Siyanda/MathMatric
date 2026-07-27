@@ -5,23 +5,23 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 import 'tables/topics.dart';
-import 'dao/topic_dao.dart';
+import 'tables/subjects.dart';
 
 part 'app_database.g.dart';
 
 @DriftDatabase(
   tables: [
     Topics,
+    Subjects,
   ],
-  daos: [ //DAO = Data Access Object
-    TopicDao,
-  ]
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
   int get schemaVersion => 1;
+
+  
 }
 
 LazyDatabase _openConnection() {

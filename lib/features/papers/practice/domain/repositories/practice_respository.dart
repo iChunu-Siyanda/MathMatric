@@ -6,3 +6,11 @@ abstract class PracticeRepository {
   Future<PracticeTopic> getPracticeTopicById(String topicId);
   Future<List<PracticeLevel>> getLevelsForTopic(String topicId);
 }
+
+abstract class TopicRepository {
+  Future<List<PracticeTopic>> getAllTopics();
+
+  Future<List<PracticeTopic>> getTopicsBySubject(String subjectId,);
+
+  Future<PracticeTopic?> getTopic(String topicId,);
+}

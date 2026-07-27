@@ -5,7 +5,11 @@ abstract class TopicLocalDataSource {
 
   Future<TopicModel?> getTopic(String topicId);
 
-  Future<void> insertTopic(TopicModel topic);
+  Future<List<TopicModel>> getTopicsBySubject(String subjectId,);
+
+  Future<void> saveTopics(List<TopicModel> topics);
+
+  Future<void> clearTopics();
 
   Future<int> deleteTopic(String topicId);
 }

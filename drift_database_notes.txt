@@ -26,6 +26,22 @@
 // }
 
 
+//Represents data you want to write/update to the database.
+//Drift automatically creates the Companion.
+TopicsCompanion.insert(
+  topicId: "algebra",
+  subjectId: "mathematics",
+  title: "Algebra",
+  description: "...",
+  order: 1,
+  totalLevels: 5,
+  totalXp: 100,
+  colorHex: "673AB7",
+  version: 1,
+  updatedAt: DateTime.now(),
+);
+
+
 //AppDatabase:
 // @DriftDatabase(
 //   tables: [
