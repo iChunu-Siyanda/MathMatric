@@ -10,7 +10,7 @@ class Questions extends Table {
   TextColumn get optionC => text()();
   TextColumn get optionD => text()();
 
-  TextColumn get correctAnswer => text()();
+  IntColumn get correctAnswerIndex => integer()();
   RealColumn get difficulty => real()();
   TextColumn get explanation => text()();
 
