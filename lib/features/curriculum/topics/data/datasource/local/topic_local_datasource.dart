@@ -1,4 +1,4 @@
-import 'package:math_matric/features/papers/practice/data/models/topic_model.dart';
+import 'package:math_matric/features/curriculum/topics/data/models/topic_model.dart';
 
 abstract class TopicLocalDataSource {
   Future<List<TopicModel>> getAllTopics();

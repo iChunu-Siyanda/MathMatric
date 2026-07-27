@@ -2,6 +2,13 @@ import 'package:drift/drift.dart';
 import 'package:math_matric/core/database/app_database.dart';
 
 extension TopicQueries on AppDatabase {
+  Future<bool> hasTopics() async {
+    final count = await (selectOnly(topics)
+          ..addColumns([topics.id.count()])).getSingle();
+
+    return count.read(topics.id.count())! > 0;
+  }
+
   Future<List<Topic>> getAllTopics() {
     return select(topics).get();
   }
@@ -21,6 +28,13 @@ extension TopicQueries on AppDatabase {
 
   Future<void> insertTopic(TopicsCompanion topic) {
     return into(topics).insert(topic);
+  }
+
+  Future<void> insertTopics(List<TopicsCompanion> topicList) {
+    return batch((batch) {
+        batch.insertAll(topics, topicList);
+      }
+    );
   }
 
   Future<void> updateTopic(Topic topic) {
