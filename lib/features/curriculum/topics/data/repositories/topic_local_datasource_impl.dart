@@ -34,9 +34,14 @@ class TopicLocalDataSourceImpl implements TopicLocalDataSource {
   Future<void> saveTopics(
     List<TopicModel> topics,
   ) async {
-    for (final topic in topics) {
-      await db.insertTopic(topic.toCompanion(version: 1, updatedAt: DateTime.now()),);
-    }
+    await db.insertTopics(
+      topics.map((t) => t.toCompanion(
+          version: 1,
+          updatedAt: DateTime.now(),
+        ),
+      )
+      .toList(),
+    );
   }
 
   @override
