@@ -19,9 +19,9 @@ class LevelsLocalDatasourceImpl implements LevelsLocalDatasource {
 
   @override
   Future<LevelsModel?> getLevel(
-    String LevelId,
+    String levelId,
   ) async {
-    final row = await db.getLevel(LevelId);
+    final row = await db.getLevel(levelId);
 
     if (row == null) return null;
 
@@ -62,8 +62,8 @@ class LevelsLocalDatasourceImpl implements LevelsLocalDatasource {
 
   @override
   Future<int> deleteLevel(
-    String LevelId,
+    String levelId,
   ) {
-    return db.deleteLevel(LevelId);
+    return db.deleteLevel(levelId);
   }
 }
