@@ -1,6 +1,5 @@
 import 'package:drift/drift.dart';
 import 'package:math_matric/core/database/app_database.dart';
-import 'package:math_matric/core/database/tables/exam_papers.dart';
 
 extension ExamPapersQueries on AppDatabase {
   Future<List<ExamPaper>> getAllExamPapers() {
