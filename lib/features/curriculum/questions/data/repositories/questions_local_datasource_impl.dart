@@ -29,4 +29,19 @@ class QuestionsLocalDatasourceImpl implements QuestionsLocalDatasource{
     final models = await db.getQuestionsByLevel(levelId);
     return models.map((m)=>QuestionsModel.fromDrift(m)).toList();
   }
+  
+  @override
+  Future<int> clearQuestions() {
+    return db.clearQuestions();
+  }
+  
+  @override
+  Future<void> saveQuestions(List<QuestionsModel> questions) async {
+    await db.insertQuestions(
+      questions.map(
+        (q) => q.toCompanion(1,DateTime.now()),
+      )
+      .toList(),
+    );
+  }
 }

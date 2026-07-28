@@ -42,7 +42,7 @@ extension SubjectQueries on AppDatabase{
   }
 
   //clear subject table
-  Future<void> clearSubject(){
+  Future<int> clearSubjects(){
     return delete(subjects).go(); 
   }
 }

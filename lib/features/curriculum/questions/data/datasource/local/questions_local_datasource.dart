@@ -5,4 +5,6 @@ abstract class QuestionsLocalDatasource {
   Future<QuestionsModel?> getQuestion(String questionId);
   Future<List<QuestionsModel>> getQuestionsByLevel(String levelId);
   Future<int> getQuestionCount(String levelId);
+  Future<void> saveQuestions(List<QuestionsModel> questions);
+  Future<int> clearQuestions();
 }

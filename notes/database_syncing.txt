@@ -1,0 +1,19 @@
+Curriculum (Downloaded from Firestore)
+These are synchronized from Firebase to Drift, and are essentially read-only:
+Subjects
+Topics
+Levels
+Questions
+Exam Papers
+DownloadedBundle
+
+
+User Data
+These are created on the device:
+UserTopicProgress
+UserLevelProgress
+StudySession
+QuestionAttempt
+
+
+
