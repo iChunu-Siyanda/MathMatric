@@ -11,7 +11,6 @@ import 'package:math_matric/core/database/tables/user_level_progress.dart';
 import 'package:math_matric/core/database/tables/user_topic_progress.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-
 import 'tables/topics.dart';
 import 'tables/subjects.dart';
 
@@ -35,9 +34,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
-
-  
+  int get schemaVersion => 1; 
 }
 
 LazyDatabase _openConnection() {
