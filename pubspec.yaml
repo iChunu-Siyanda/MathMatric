@@ -27,6 +27,8 @@ dependencies:
   path_provider: ^2.1.5
   path: ^1.9.1
   cloud_firestore: ^6.7.1
+  fl_chart: ^0.68.0
+  percent_indicator: ^4.2.3
 
 dev_dependencies:
   flutter_test:
