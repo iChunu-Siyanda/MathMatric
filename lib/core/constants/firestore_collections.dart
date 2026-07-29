@@ -4,6 +4,7 @@ class FirestoreCollections {
   static const levels = 'levels';
   static const questions = 'questions';
   static const examPapers = 'examPapers';
+  static const bundles = 'bundles';
 
   const FirestoreCollections._();
 }

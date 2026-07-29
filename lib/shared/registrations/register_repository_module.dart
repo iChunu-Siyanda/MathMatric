@@ -1,0 +1,87 @@
+import 'package:get_it/get_it.dart';
+import 'package:math_matric/features/curriculum/exams/data/repositories/exam_paper_local_repo_impl.dart';
+import 'package:math_matric/features/curriculum/exams/data/repositories/exam_paper_repository_impl.dart';
+import 'package:math_matric/features/curriculum/exams/domain/repositories/exam_paper_repository.dart';
+import 'package:math_matric/features/curriculum/levels/data/repositories/levels_local_datasoure.dart';
+import 'package:math_matric/features/curriculum/levels/data/repositories/levels_repository_imple.dart';
+import 'package:math_matric/features/curriculum/levels/domain/repositories/levels_repository.dart';
+import 'package:math_matric/features/curriculum/questions/data/repositories/questions_local_datasource_impl.dart';
+import 'package:math_matric/features/curriculum/questions/data/repositories/questions_repository_impl.dart';
+import 'package:math_matric/features/curriculum/questions/domain/repositories/questions_repository.dart';
+import 'package:math_matric/features/curriculum/subjects/data/repositories/subjects_local_datasource_impl.dart';
+import 'package:math_matric/features/curriculum/subjects/data/repositories/subjects_repository_impl.dart';
+import 'package:math_matric/features/curriculum/subjects/domain/repositories/subjects_repository.dart';
+import 'package:math_matric/features/curriculum/topics/data/repositories/topic_local_datasource_impl.dart';
+import 'package:math_matric/features/curriculum/topics/data/repositories/topic_repository_impl.dart';
+import 'package:math_matric/features/curriculum/topics/domain/repositories/topic_repository.dart';
+import 'package:math_matric/features/progress/questionattempts/data/datasource/local/questions_attempt_local_data_source.dart';
+import 'package:math_matric/features/progress/questionattempts/data/repositories/questions_attempts_repository.dart';
+import 'package:math_matric/features/progress/questionattempts/domain/repositories/question_atempts_repository.dart';
+import 'package:math_matric/features/progress/studysession/data/repositories/study_session_local_data_source_impl.dart';
+import 'package:math_matric/features/progress/studysession/data/repositories/study_session_repository_impl.dart';
+import 'package:math_matric/features/progress/studysession/domain/repositories/study_session_repository.dart';
+import 'package:math_matric/features/progress/userlevelprogress/data/repositories/user_level_progress_local_data_source_impl.dart';
+import 'package:math_matric/features/progress/userlevelprogress/data/repositories/user_level_progress_repository_impl.dart';
+import 'package:math_matric/features/progress/userlevelprogress/domain/repositories/user_level_progress_repository.dart';
+import 'package:math_matric/features/progress/usertopicprogress/data/datasource/local/user_topic_progress_local_data_source.dart';
+import 'package:math_matric/features/progress/usertopicprogress/data/repositories/user_topic_progress_repository_impl.dart';
+import 'package:math_matric/features/progress/usertopicprogress/domain/repositories/user_topic_progress_repository.dart';
+
+final getIt = GetIt.instance;
+
+void registerRepositoryModule() {
+
+  getIt.registerLazySingleton<SubjectsRepository>(
+    () => SubjectsRepositoryImpl(
+      getIt<SubjectsLocalDatasourceImpl>(),
+    ),
+  );
+
+  getIt.registerLazySingleton<TopicRepository>(
+    () => TopicRepositoryImpl(
+      getIt<TopicLocalDataSourceImpl>(),
+    ),
+  );
+
+  getIt.registerLazySingleton<QuestionsRepository>(
+    () => QuestionsRepositoryImpl(
+      getIt<QuestionsLocalDatasourceImpl>(),
+    ),
+  );
+
+  getIt.registerLazySingleton<LevelsRepository>(
+    () => LevelsRepositoryImpl(
+      getIt<LevelsLocalDatasourceImpl>(),
+    ),
+  );
+
+  getIt.registerLazySingleton<ExamPapersRepository>(
+    () => ExamPapersRepositoryImpl(
+      getIt<ExamPaperLocalDataSourceImpl>(),
+    ),
+  );
+
+  getIt.registerLazySingleton<QuestionAttemptRepository>(
+    () => QuestionAttemptRepositoryImpl(
+      getIt<QuestionAttemptLocalDataSource>(),
+    )
+  );
+
+  getIt.registerLazySingleton<StudySessionRepository>(
+    () => StudySessionRepositoryImpl(
+      getIt<StudySessionLocalDataSourceImpl>(),
+    ),
+  );
+
+  getIt.registerLazySingleton<UserLevelProgressRepository>(
+    () => UserLevelProgressRepositoryImpl(
+      getIt<UserLevelProgressLocalDataSourceImpl>(),
+    ),
+  );
+
+  getIt.registerLazySingleton<UserTopicProgressRepository>(
+    () => UserTopicProgressRepositoryImpl(
+      getIt<UserTopicProgressLocalDataSource>(),
+    ),
+  );
+}

@@ -73,40 +73,53 @@ class ContentSyncServiceImpl implements ContentSyncService {
 
   @override
   Stream<SyncProgress> synchronize() async* {
+    try{
+      yield const SyncProgress(
+        status: SyncStatus.checking,
+        progress: 0,
+        message: "Checking for updates...",
+      );
 
-    yield const SyncProgress(
-      status: SyncStatus.checking,
-      progress: 0,
-      message: "Checking...",
-    );
+      final bundle = await bundleRemote.downloadBundle(BundleIds.curriculum);
+      yield const SyncProgress(
+        status: SyncStatus.downloading,
+        progress: 0.3,
+        message: 'Downloading curriculum...',
+      );
 
-    final bundle = await bundleRemote.downloadBundle(BundleIds.curriculum);
+      yield const SyncProgress(
+        status: SyncStatus.saving,
+        progress: .60,
+        message: "Saving to device...",
+      );
 
-    yield const SyncProgress(
-      status: SyncStatus.saving,
-      progress: .60,
-      message: "Saving...",
-    );
+      await clearLocalContent();
+      await subjectLocal.saveSubjects(bundle.subjects);
+      await topicLocal.saveTopics(bundle.topics);
+      await levelLocal.saveLevels(bundle.levels);
+      await questionLocal.saveQuestions(bundle.questions);
+      await examPaperLocal.saveExamPapers(bundle.examPapers);
 
-    await clearLocalContent();
-    await subjectLocal.saveSubjects(bundle.subjects);
-    await topicLocal.saveTopics(bundle.topics);
-    await levelLocal.saveLevels(bundle.levels);
-    await questionLocal.saveQuestions(bundle.questions);
-    await examPaperLocal.saveExamPapers(bundle.examPapers);
+      await bundleLocal.saveBundle(
+        DownloadedBundleModel(
+          id: bundle.info.id,
+          version: bundle.info.version,
+          downloadedAt: DateTime.now(),
+        ),
+      );
 
-    await bundleLocal.saveBundle(
-      DownloadedBundleModel(
-        id: bundle.info.id,
-        version: bundle.info.version,
-        downloadedAt: DateTime.now(),
-      ),
-    );
+      yield const SyncProgress(
+        status: SyncStatus.completed,
+        progress: 1,
+        message: "Done. Curriculum installed.",
+      );
+    } catch (e) {
 
-    yield const SyncProgress(
-      status: SyncStatus.completed,
-      progress: 1,
-      message: "Done.",
-    );
+      yield SyncProgress(
+        status: SyncStatus.failed,
+        progress: 0.0,
+        message: e.toString(),
+      );
+    }
   }
 }

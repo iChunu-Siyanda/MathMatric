@@ -1,0 +1,10 @@
+bundles/
+    curriculum
+        id: "curriculum"
+        version: 1
+
+subjects/
+topics/
+levels/
+questions/
+examPapers/

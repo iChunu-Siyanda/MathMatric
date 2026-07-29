@@ -128,9 +128,7 @@ extension ExamPapersQueries on AppDatabase {
   Future<int> deleteExamPaper(
     String paperId,
   ) {
-    return (delete(examPapers)
-          ..where((p) => p.id.equals(paperId)))
-        .go();
+    return (delete(examPapers)..where((p) => p.id.equals(paperId))).go();
   }
 
   Future<int> clearExamPapers() {
@@ -139,7 +137,6 @@ extension ExamPapersQueries on AppDatabase {
 
   Future<bool> hasExamPapers() async {
     final papers = await getAllExamPapers();
-
     return papers.isNotEmpty;
   }
 }

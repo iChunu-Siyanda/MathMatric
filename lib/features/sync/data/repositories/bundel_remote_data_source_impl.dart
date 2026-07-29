@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:math_matric/core/constants/firestore_collections.dart';
 import 'package:math_matric/features/curriculum/exams/data/datasource/remote/exam_paper_remote_data_source.dart';
 import 'package:math_matric/features/curriculum/exams/data/models/exam_paper_model.dart';
 import 'package:math_matric/features/curriculum/levels/data/datasource/remote/levels_remote_data_source.dart';
@@ -35,7 +36,7 @@ class BundleRemoteDataSourceImpl implements BundleRemoteDataSource {
     String bundleId,
   ) async {
     final doc = await firestore
-        .collection("bundles")
+        .collection(FirestoreCollections.bundles)
         .doc(bundleId)
         .get();
 
@@ -51,7 +52,7 @@ class BundleRemoteDataSourceImpl implements BundleRemoteDataSource {
     final info = await getBundleInfo(bundleId,);
 
     if (info == null) {
-      throw Exception("Bundle does not exist.",);
+      throw Exception("Bundle $bundleId not found.",);
     }
 
     final results = await Future.wait([
