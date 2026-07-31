@@ -2,8 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:math_matric/core/theme/app_colours.dart';
+import 'package:math_matric/features/analytics/domain/entites/analytics_time_frame.dart';
+import 'package:math_matric/features/analytics/domain/services/analytics_loaded_topic_cards.dart';
 import 'package:math_matric/features/analytics/presentation/bloc/analytics_bloc.dart';
+import 'package:math_matric/features/analytics/presentation/bloc/analytics_event.dart';
 import 'package:math_matric/features/analytics/presentation/bloc/analytics_state.dart';
+import 'package:math_matric/features/analytics/domain/services/analytics_state_extension.dart';
+import 'package:math_matric/features/analytics/presentation/widgets/kpi_grid.dart';
+import 'package:math_matric/features/analytics/presentation/widgets/time_picker_frame.dart';
+import 'package:math_matric/features/analytics/presentation/widgets/topic_progress_list.dart';
 
 class AnalyticsPage extends StatefulWidget {
   const AnalyticsPage({super.key});
@@ -57,6 +64,48 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
             if (state is AnalyticsLoading) {
               return Center(
                 child: CircularProgressIndicator(),
+              );
+            }
+
+            if (state is AnalyticsError) {
+              return Center(child: Text(state.message),);
+            }
+
+            if (state is AnalyticsLoaded) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TimeframePicker(
+                    selectedIndex: _selectedTimeframe, 
+                    onChanged: (index){
+                      context.read<AnalyticsBloc>().add(
+                        ChangeAnalyticsTimeframe(AnalyticsTimeframe.values[index])
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 16),
+
+                  KpiGrid(
+                    totalEarnedXP: state.totalEarnedXP.toString(), 
+                    overallAccuracy: state.overallAccuracy.toStringAsFixed(1), 
+                    overallCompletionRate: state.overallCompletionRate.toStringAsFixed(1), 
+                    avgTime: state.avgTimePerQuestionSeconds.toStringAsFixed(1),
+                  ),
+                  const SizedBox(height: 24),
+
+                  const Text(
+                    'Topics',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColours.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 12,),
+
+                  TopicProgressList(topicCards: state.topicProgressCards,),
+                  const SizedBox(height: 24),
+                ],
               );
             }
 
