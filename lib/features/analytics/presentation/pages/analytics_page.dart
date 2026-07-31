@@ -8,6 +8,7 @@ import 'package:math_matric/features/analytics/presentation/bloc/analytics_bloc.
 import 'package:math_matric/features/analytics/presentation/bloc/analytics_event.dart';
 import 'package:math_matric/features/analytics/presentation/bloc/analytics_state.dart';
 import 'package:math_matric/features/analytics/domain/services/analytics_state_extension.dart';
+import 'package:math_matric/features/analytics/presentation/widgets/chart_card.dart';
 import 'package:math_matric/features/analytics/presentation/widgets/kpi_grid.dart';
 import 'package:math_matric/features/analytics/presentation/widgets/time_picker_frame.dart';
 import 'package:math_matric/features/analytics/presentation/widgets/topic_progress_list.dart';
@@ -84,6 +85,15 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                     },
                   ),
                   const SizedBox(height: 16),
+
+                  ChartCard(
+                    sessions: state.sessions, 
+                    isLineGraph: _showLineGraph, 
+                    onToggleGraph: (){setState(() {
+                      _showLineGraph = !_showLineGraph;
+                    });},
+                  ),
+                  const SizedBox(height: 16,),
 
                   KpiGrid(
                     totalEarnedXP: state.totalEarnedXP.toString(), 

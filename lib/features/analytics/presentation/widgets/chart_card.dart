@@ -4,12 +4,12 @@ import 'package:math_matric/core/theme/app_colours.dart';
 import 'package:math_matric/features/analytics/presentation/widgets/build_line_chart.dart';
 import 'package:math_matric/features/progress/studysession/domain/entities/study_session_entity.dart';
 
-class HeroChartCard extends StatelessWidget {
+class ChartCard extends StatelessWidget {
   final List<StudySessionEntity> sessions;
   final bool isLineGraph;
   final VoidCallback onToggleGraph;
 
-  const HeroChartCard({
+  const ChartCard({
     super.key, 
     required this.sessions,
     required this.isLineGraph,
