@@ -10,8 +10,11 @@ import 'package:math_matric/features/analytics/presentation/bloc/analytics_state
 import 'package:math_matric/features/analytics/domain/services/analytics_state_extension.dart';
 import 'package:math_matric/features/analytics/presentation/widgets/chart_card.dart';
 import 'package:math_matric/features/analytics/presentation/widgets/kpi_grid.dart';
+import 'package:math_matric/features/analytics/presentation/widgets/streak_header_card.dart';
 import 'package:math_matric/features/analytics/presentation/widgets/time_picker_frame.dart';
 import 'package:math_matric/features/analytics/presentation/widgets/topic_progress_list.dart';
+import 'package:math_matric/features/streak/presentation/bloc/habit_bloc.dart';
+import 'package:math_matric/features/streak/presentation/bloc/habit_state.dart';
 
 class AnalyticsPage extends StatefulWidget {
   const AnalyticsPage({super.key});
@@ -76,6 +79,17 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  BlocBuilder<HabitBloc, HabitState>(
+                    builder: (context, habitState) {
+                      return StreakHeaderCard(
+                        currentStreak: habitState.currentStreak,
+                        longestStreak: habitState.longestStreak,
+                        weeklyScore: habitState.weeklyProgressScore,
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 16),
+
                   TimeframePicker(
                     selectedIndex: _selectedTimeframe, 
                     onChanged: (index){

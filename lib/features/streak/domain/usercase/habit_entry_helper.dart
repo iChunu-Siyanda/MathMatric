@@ -37,8 +37,16 @@ int calculateCurrentStreak(
   final normalizedToday = normalizeDate(today ?? DateTime.now());
   final entryMap = mapEntriesByDate(entries);
 
+  // Check if today has a valid study entry
+  final todayEntry = entryMap[normalizedToday];
+  final hasStudiedToday = todayEntry != null && isValidStudyDay(todayEntry);
+
+  // If not studied today, start evaluating from yesterday
+  DateTime currentDay = hasStudiedToday 
+      ? normalizedToday 
+      : normalizedToday.subtract(const Duration(days: 1));
+
   int streak = 0;
-  DateTime currentDay = normalizedToday;
 
   while (true) {
     final entry = entryMap[currentDay];
