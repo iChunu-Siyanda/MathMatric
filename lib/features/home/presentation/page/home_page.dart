@@ -85,7 +85,12 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
               child: Column(
                 children: [
-                  StreakAlertCard(onTap: () {  }, currentStreak: 1, personalBest: 35, userName: 'Siya',),
+                  StreakAlertCard(
+                    onTap: () => context.push(Routes.analytics), 
+                    currentStreak: 12, 
+                    personalBest: 35, 
+                    userName: 'Siya',
+                  ),
 
                   // if (hasRecentQuiz) ...[
                   //   const SizedBox(height: 10),

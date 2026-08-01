@@ -1,3 +1,4 @@
+import 'package:math_matric/features/analytics/presentation/navigation/analytics_routes.dart';
 import 'package:math_matric/features/auth/presentation/navigation/auth_routes.dart';
 import 'package:math_matric/features/home/presentation/navigation/home_routes.dart';
 import 'package:math_matric/shared/app_routes/practice_shell.dart';
@@ -11,6 +12,8 @@ class AppRouter {
       ...AuthRoutes.routes,
 
       ...HomeRoutes.routess,
+
+      ...AnalyticsRoutes.routes,
 
       PracticeShell.route,
     ],

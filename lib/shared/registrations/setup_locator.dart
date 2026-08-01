@@ -1,3 +1,4 @@
+import 'package:math_matric/shared/registrations/register_analytics_streak_module.dart';
 import 'package:math_matric/shared/registrations/register_exams_module.dart';
 import 'package:math_matric/shared/registrations/register_papers_module.dart';
 import 'package:math_matric/shared/registrations/register_practice_module.dart';
@@ -10,6 +11,9 @@ Future<void> setupLocator(SharedPreferences prefs) async {
 
   //App Database
   //setupDependencies();
+
+  //Analytics & Streak
+  registerAnalyticsStreaakModule();
 
   //Exam
   registerExamsModule();
