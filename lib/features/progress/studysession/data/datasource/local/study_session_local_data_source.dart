@@ -3,6 +3,8 @@ import 'package:math_matric/features/progress/studysession/data/models/study_ses
 abstract class StudySessionLocalDataSource {
   Future<List<StudySessionModel>> getAllStudySessions();
 
+  Stream<List<StudySessionModel>> watchStudySessions();
+
   Future<StudySessionModel?> getStudySession(
     String sessionId,
   );

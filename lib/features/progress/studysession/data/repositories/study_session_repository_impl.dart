@@ -45,4 +45,10 @@ class StudySessionRepositoryImpl implements StudySessionRepository {
 
     return model?.toEntity();
   }
+  
+  @override
+  Stream<List<StudySessionEntity>> watchStudySessions() {
+    final model = local.watchStudySessions();
+    return model.map((rows) => rows.map((m) => m.toEntity()).toList());
+  }
 }

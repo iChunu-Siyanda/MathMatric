@@ -3751,6 +3751,11 @@ class $StudySessionTable extends StudySession
   late final GeneratedColumn<String> topicId = GeneratedColumn<String>(
       'topic_id', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  late final GeneratedColumnWithTypeConverter<StudyActivity, String> activity =
+      GeneratedColumn<String>('activity', aliasedName, false,
+              type: DriftSqlType.string, requiredDuringInsert: true)
+          .withConverter<StudyActivity>($StudySessionTable.$converteractivity);
   static const VerificationMeta _startedAtMeta =
       const VerificationMeta('startedAt');
   @override
@@ -3785,6 +3790,7 @@ class $StudySessionTable extends StudySession
   List<GeneratedColumn> get $columns => [
         id,
         topicId,
+        activity,
         startedAt,
         endedAt,
         questionsAnswered,
@@ -3859,6 +3865,9 @@ class $StudySessionTable extends StudySession
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       topicId: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}topic_id'])!,
+      activity: $StudySessionTable.$converteractivity.fromSql(attachedDatabase
+          .typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}activity'])!),
       startedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}started_at'])!,
       endedAt: attachedDatabase.typeMapping
@@ -3876,12 +3885,16 @@ class $StudySessionTable extends StudySession
   $StudySessionTable createAlias(String alias) {
     return $StudySessionTable(attachedDatabase, alias);
   }
+
+  static JsonTypeConverter2<StudyActivity, String, String> $converteractivity =
+      const EnumNameConverter<StudyActivity>(StudyActivity.values);
 }
 
 class StudySessionData extends DataClass
     implements Insertable<StudySessionData> {
   final String id;
   final String topicId;
+  final StudyActivity activity;
   final DateTime startedAt;
   final DateTime endedAt;
   final int questionsAnswered;
@@ -3890,6 +3903,7 @@ class StudySessionData extends DataClass
   const StudySessionData(
       {required this.id,
       required this.topicId,
+      required this.activity,
       required this.startedAt,
       required this.endedAt,
       required this.questionsAnswered,
@@ -3900,6 +3914,10 @@ class StudySessionData extends DataClass
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
     map['topic_id'] = Variable<String>(topicId);
+    {
+      map['activity'] = Variable<String>(
+          $StudySessionTable.$converteractivity.toSql(activity));
+    }
     map['started_at'] = Variable<DateTime>(startedAt);
     map['ended_at'] = Variable<DateTime>(endedAt);
     map['questions_answered'] = Variable<int>(questionsAnswered);
@@ -3912,6 +3930,7 @@ class StudySessionData extends DataClass
     return StudySessionCompanion(
       id: Value(id),
       topicId: Value(topicId),
+      activity: Value(activity),
       startedAt: Value(startedAt),
       endedAt: Value(endedAt),
       questionsAnswered: Value(questionsAnswered),
@@ -3926,6 +3945,8 @@ class StudySessionData extends DataClass
     return StudySessionData(
       id: serializer.fromJson<String>(json['id']),
       topicId: serializer.fromJson<String>(json['topicId']),
+      activity: $StudySessionTable.$converteractivity
+          .fromJson(serializer.fromJson<String>(json['activity'])),
       startedAt: serializer.fromJson<DateTime>(json['startedAt']),
       endedAt: serializer.fromJson<DateTime>(json['endedAt']),
       questionsAnswered: serializer.fromJson<int>(json['questionsAnswered']),
@@ -3939,6 +3960,8 @@ class StudySessionData extends DataClass
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
       'topicId': serializer.toJson<String>(topicId),
+      'activity': serializer.toJson<String>(
+          $StudySessionTable.$converteractivity.toJson(activity)),
       'startedAt': serializer.toJson<DateTime>(startedAt),
       'endedAt': serializer.toJson<DateTime>(endedAt),
       'questionsAnswered': serializer.toJson<int>(questionsAnswered),
@@ -3950,6 +3973,7 @@ class StudySessionData extends DataClass
   StudySessionData copyWith(
           {String? id,
           String? topicId,
+          StudyActivity? activity,
           DateTime? startedAt,
           DateTime? endedAt,
           int? questionsAnswered,
@@ -3958,6 +3982,7 @@ class StudySessionData extends DataClass
       StudySessionData(
         id: id ?? this.id,
         topicId: topicId ?? this.topicId,
+        activity: activity ?? this.activity,
         startedAt: startedAt ?? this.startedAt,
         endedAt: endedAt ?? this.endedAt,
         questionsAnswered: questionsAnswered ?? this.questionsAnswered,
@@ -3968,6 +3993,7 @@ class StudySessionData extends DataClass
     return StudySessionData(
       id: data.id.present ? data.id.value : this.id,
       topicId: data.topicId.present ? data.topicId.value : this.topicId,
+      activity: data.activity.present ? data.activity.value : this.activity,
       startedAt: data.startedAt.present ? data.startedAt.value : this.startedAt,
       endedAt: data.endedAt.present ? data.endedAt.value : this.endedAt,
       questionsAnswered: data.questionsAnswered.present
@@ -3985,6 +4011,7 @@ class StudySessionData extends DataClass
     return (StringBuffer('StudySessionData(')
           ..write('id: $id, ')
           ..write('topicId: $topicId, ')
+          ..write('activity: $activity, ')
           ..write('startedAt: $startedAt, ')
           ..write('endedAt: $endedAt, ')
           ..write('questionsAnswered: $questionsAnswered, ')
@@ -3995,7 +4022,7 @@ class StudySessionData extends DataClass
   }
 
   @override
-  int get hashCode => Object.hash(id, topicId, startedAt, endedAt,
+  int get hashCode => Object.hash(id, topicId, activity, startedAt, endedAt,
       questionsAnswered, correctAnswers, earnedXP);
   @override
   bool operator ==(Object other) =>
@@ -4003,6 +4030,7 @@ class StudySessionData extends DataClass
       (other is StudySessionData &&
           other.id == this.id &&
           other.topicId == this.topicId &&
+          other.activity == this.activity &&
           other.startedAt == this.startedAt &&
           other.endedAt == this.endedAt &&
           other.questionsAnswered == this.questionsAnswered &&
@@ -4013,6 +4041,7 @@ class StudySessionData extends DataClass
 class StudySessionCompanion extends UpdateCompanion<StudySessionData> {
   final Value<String> id;
   final Value<String> topicId;
+  final Value<StudyActivity> activity;
   final Value<DateTime> startedAt;
   final Value<DateTime> endedAt;
   final Value<int> questionsAnswered;
@@ -4022,6 +4051,7 @@ class StudySessionCompanion extends UpdateCompanion<StudySessionData> {
   const StudySessionCompanion({
     this.id = const Value.absent(),
     this.topicId = const Value.absent(),
+    this.activity = const Value.absent(),
     this.startedAt = const Value.absent(),
     this.endedAt = const Value.absent(),
     this.questionsAnswered = const Value.absent(),
@@ -4032,6 +4062,7 @@ class StudySessionCompanion extends UpdateCompanion<StudySessionData> {
   StudySessionCompanion.insert({
     required String id,
     required String topicId,
+    required StudyActivity activity,
     required DateTime startedAt,
     required DateTime endedAt,
     required int questionsAnswered,
@@ -4040,6 +4071,7 @@ class StudySessionCompanion extends UpdateCompanion<StudySessionData> {
     this.rowid = const Value.absent(),
   })  : id = Value(id),
         topicId = Value(topicId),
+        activity = Value(activity),
         startedAt = Value(startedAt),
         endedAt = Value(endedAt),
         questionsAnswered = Value(questionsAnswered),
@@ -4048,6 +4080,7 @@ class StudySessionCompanion extends UpdateCompanion<StudySessionData> {
   static Insertable<StudySessionData> custom({
     Expression<String>? id,
     Expression<String>? topicId,
+    Expression<String>? activity,
     Expression<DateTime>? startedAt,
     Expression<DateTime>? endedAt,
     Expression<int>? questionsAnswered,
@@ -4058,6 +4091,7 @@ class StudySessionCompanion extends UpdateCompanion<StudySessionData> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (topicId != null) 'topic_id': topicId,
+      if (activity != null) 'activity': activity,
       if (startedAt != null) 'started_at': startedAt,
       if (endedAt != null) 'ended_at': endedAt,
       if (questionsAnswered != null) 'questions_answered': questionsAnswered,
@@ -4070,6 +4104,7 @@ class StudySessionCompanion extends UpdateCompanion<StudySessionData> {
   StudySessionCompanion copyWith(
       {Value<String>? id,
       Value<String>? topicId,
+      Value<StudyActivity>? activity,
       Value<DateTime>? startedAt,
       Value<DateTime>? endedAt,
       Value<int>? questionsAnswered,
@@ -4079,6 +4114,7 @@ class StudySessionCompanion extends UpdateCompanion<StudySessionData> {
     return StudySessionCompanion(
       id: id ?? this.id,
       topicId: topicId ?? this.topicId,
+      activity: activity ?? this.activity,
       startedAt: startedAt ?? this.startedAt,
       endedAt: endedAt ?? this.endedAt,
       questionsAnswered: questionsAnswered ?? this.questionsAnswered,
@@ -4096,6 +4132,10 @@ class StudySessionCompanion extends UpdateCompanion<StudySessionData> {
     }
     if (topicId.present) {
       map['topic_id'] = Variable<String>(topicId.value);
+    }
+    if (activity.present) {
+      map['activity'] = Variable<String>(
+          $StudySessionTable.$converteractivity.toSql(activity.value));
     }
     if (startedAt.present) {
       map['started_at'] = Variable<DateTime>(startedAt.value);
@@ -4123,6 +4163,7 @@ class StudySessionCompanion extends UpdateCompanion<StudySessionData> {
     return (StringBuffer('StudySessionCompanion(')
           ..write('id: $id, ')
           ..write('topicId: $topicId, ')
+          ..write('activity: $activity, ')
           ..write('startedAt: $startedAt, ')
           ..write('endedAt: $endedAt, ')
           ..write('questionsAnswered: $questionsAnswered, ')
@@ -6213,6 +6254,7 @@ typedef $$StudySessionTableCreateCompanionBuilder = StudySessionCompanion
     Function({
   required String id,
   required String topicId,
+  required StudyActivity activity,
   required DateTime startedAt,
   required DateTime endedAt,
   required int questionsAnswered,
@@ -6224,6 +6266,7 @@ typedef $$StudySessionTableUpdateCompanionBuilder = StudySessionCompanion
     Function({
   Value<String> id,
   Value<String> topicId,
+  Value<StudyActivity> activity,
   Value<DateTime> startedAt,
   Value<DateTime> endedAt,
   Value<int> questionsAnswered,
@@ -6246,6 +6289,11 @@ class $$StudySessionTableFilterComposer
 
   ColumnFilters<String> get topicId => $composableBuilder(
       column: $table.topicId, builder: (column) => ColumnFilters(column));
+
+  ColumnWithTypeConverterFilters<StudyActivity, StudyActivity, String>
+      get activity => $composableBuilder(
+          column: $table.activity,
+          builder: (column) => ColumnWithTypeConverterFilters(column));
 
   ColumnFilters<DateTime> get startedAt => $composableBuilder(
       column: $table.startedAt, builder: (column) => ColumnFilters(column));
@@ -6280,6 +6328,9 @@ class $$StudySessionTableOrderingComposer
   ColumnOrderings<String> get topicId => $composableBuilder(
       column: $table.topicId, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get activity => $composableBuilder(
+      column: $table.activity, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<DateTime> get startedAt => $composableBuilder(
       column: $table.startedAt, builder: (column) => ColumnOrderings(column));
 
@@ -6312,6 +6363,9 @@ class $$StudySessionTableAnnotationComposer
 
   GeneratedColumn<String> get topicId =>
       $composableBuilder(column: $table.topicId, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<StudyActivity, String> get activity =>
+      $composableBuilder(column: $table.activity, builder: (column) => column);
 
   GeneratedColumn<DateTime> get startedAt =>
       $composableBuilder(column: $table.startedAt, builder: (column) => column);
@@ -6357,6 +6411,7 @@ class $$StudySessionTableTableManager extends RootTableManager<
           updateCompanionCallback: ({
             Value<String> id = const Value.absent(),
             Value<String> topicId = const Value.absent(),
+            Value<StudyActivity> activity = const Value.absent(),
             Value<DateTime> startedAt = const Value.absent(),
             Value<DateTime> endedAt = const Value.absent(),
             Value<int> questionsAnswered = const Value.absent(),
@@ -6367,6 +6422,7 @@ class $$StudySessionTableTableManager extends RootTableManager<
               StudySessionCompanion(
             id: id,
             topicId: topicId,
+            activity: activity,
             startedAt: startedAt,
             endedAt: endedAt,
             questionsAnswered: questionsAnswered,
@@ -6377,6 +6433,7 @@ class $$StudySessionTableTableManager extends RootTableManager<
           createCompanionCallback: ({
             required String id,
             required String topicId,
+            required StudyActivity activity,
             required DateTime startedAt,
             required DateTime endedAt,
             required int questionsAnswered,
@@ -6387,6 +6444,7 @@ class $$StudySessionTableTableManager extends RootTableManager<
               StudySessionCompanion.insert(
             id: id,
             topicId: topicId,
+            activity: activity,
             startedAt: startedAt,
             endedAt: endedAt,
             questionsAnswered: questionsAnswered,

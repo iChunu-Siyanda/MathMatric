@@ -16,17 +16,11 @@ class StreakSliver extends StatelessWidget {
     final currentStreak = habitState.currentStreak;
     final longestStreak = habitState.longestStreak;
 
-    final bool isPersonalBest =
-        currentStreak > 0 && currentStreak >= longestStreak;
+    final bool isPersonalBest = currentStreak > 0 && currentStreak >= longestStreak;
 
     return SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(
-          20,
-          20,
-          20,
-          28,
-        ),
+        padding: const EdgeInsets.fromLTRB(20,20,20,28,),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

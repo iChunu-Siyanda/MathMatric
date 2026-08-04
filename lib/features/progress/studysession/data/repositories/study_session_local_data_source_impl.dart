@@ -75,4 +75,10 @@ class StudySessionLocalDataSourceImpl implements StudySessionLocalDataSource {
       sessionId,
     );
   }
+  
+  @override
+  Stream<List<StudySessionModel>> watchStudySessions() {
+    final model = db.watchStudySessions(); 
+    return model.map((rows) => rows.map((m) => StudySessionModel.fromDrift(m)).toList());
+  }
 }

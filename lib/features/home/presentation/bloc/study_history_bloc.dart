@@ -6,7 +6,6 @@ import 'package:math_matric/features/home/presentation/bloc/study_history_state.
 class StudyHistoryBloc extends HydratedBloc<StudyHistoryEvent, StudyHistoryState> {
   StudyHistoryBloc() : super(const StudyHistoryState()) {
     on<TopicAccessed>((event, emit) {
-      // Logic: If topic exists, move to front. If new, add to front.
       List<LastStudied> updated = List.from(state.recentTopics);
       updated.removeWhere((t) => t.title == event.topic.title);
       updated.insert(0, event.topic);
@@ -17,7 +16,6 @@ class StudyHistoryBloc extends HydratedBloc<StudyHistoryEvent, StudyHistoryState
   @override
   String get storagePrefix => 'StudyHistory';
 
-  // Called when app starts to restore state
   @override
   StudyHistoryState? fromJson(Map<String, dynamic> json) {
     return StudyHistoryState(

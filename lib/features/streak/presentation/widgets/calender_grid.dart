@@ -32,7 +32,7 @@ class CalendarTileGrid extends StatelessWidget {
                 final entry = map[day];
 
                 return DayTile(
-                  studyMinutes: entry?.studyMinutes ?? 0,
+                  studyMinutes: entry?.totalStudyMinutes ?? 0,
                   isToday: day == today,
                 );
               }),

@@ -1,53 +1,47 @@
+import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:math_matric/features/streak/domain/repositories/habit_repository.dart';
 import 'package:math_matric/features/streak/presentation/bloc/habit_event.dart';
 import 'package:math_matric/features/streak/presentation/bloc/habit_state.dart';
-import 'package:math_matric/features/streak/domain/usercase/habit_entry_helper.dart';
-import 'package:math_matric/features/streak/domain/entities/habit_entry.dart';
 import 'package:math_matric/features/streak/domain/entities/habit_summary.dart';
 
 class HabitBloc extends Bloc<HabitEvent, HabitState> {
-  HabitBloc() : super(HabitState.initial()) {
-    on<HabitEntryLogged>(_onEntryLogged);
+  HabitBloc(
+    this._repository,
+  ) : super(const HabitInitial()) {
+    on<HabitStarted>(_onStarted);
+    on<HabitSummaryUpdated>(_onSummaryUpdated);
   }
 
-  void _onEntryLogged(HabitEntryLogged event, Emitter<HabitState> emit) {
-    // Normalize the entry date
-    final normalizedEntry = HabitEntry(
-      date: normalizeDate(event.entry.date),
-      studyMinutes: event.entry.studyMinutes,
-      activities: event.entry.activities,
+  final HabitRepository _repository;
+
+  StreamSubscription<HabitSummary>? _subscription;
+
+  Future<void> _onStarted(
+    HabitStarted event,
+    Emitter<HabitState> emit,
+  ) async {
+    emit(const HabitLoading());
+
+    await _subscription?.cancel();
+
+    _subscription = _repository.watchSummary().listen(
+      (summary) {
+        add(HabitSummaryUpdated(summary),);
+      },
     );
-
-    // Clone current entries
-    final updatedEntries = List<HabitEntry>.from(state.entries);
-
-    // Remove existing entry for same date if any
-    updatedEntries.removeWhere((e) => e.date == normalizedEntry.date);
-
-    // Add the new entry
-    updatedEntries.add(normalizedEntry);
-
-    // Emit updated state
-    // Pass event.entry.date as "today" so streak calculation matches the test
-    _emitUpdatedState(updatedEntries, emit, today: normalizedEntry.date);
   }
 
-  void _emitUpdatedState(
-    List<HabitEntry> entries,
-    Emitter<HabitState> emit, {
-    DateTime? today,
-  }) {
-    final normalizedToday = normalizeDate(today ?? DateTime.now());
+  void _onSummaryUpdated(
+    HabitSummaryUpdated event,
+    Emitter<HabitState> emit,
+  ) {
+    emit(HabitLoaded(event.summary));
+  }
 
-    final summary = HabitSummary(
-      currentStreak: calculateCurrentStreak(entries, today: normalizedToday),
-      longestStreak: calculateLongestStreak(entries),
-      weeklyProgressScore: calculateWeeklyProgressScore(
-        entries,
-        today: normalizedToday,
-      ),
-    );
-
-    emit(state.copyWith(entries: entries, summary: summary));
+  @override
+  Future<void> close() async {
+    await _subscription?.cancel();
+    return super.close();
   }
 }

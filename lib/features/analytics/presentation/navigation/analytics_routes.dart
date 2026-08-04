@@ -16,7 +16,7 @@ class AnalyticsRoutes {
         return MultiBlocProvider(
           providers: [
             BlocProvider(create: (_) => getIt<AnalyticsBloc>(),),
-            BlocProvider(create: (_) => getIt<HabitBloc>(),),
+            BlocProvider.value(value: context.read<HabitBloc>(),),
           ], 
           child: const AnalyticsPage(),
         );

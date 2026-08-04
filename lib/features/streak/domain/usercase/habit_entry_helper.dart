@@ -3,7 +3,7 @@ import 'package:math_matric/features/streak/domain/entities/activities.dart';
 import 'package:math_matric/features/streak/domain/entities/habit_entry.dart';
 
 bool isValidStudyDay(HabitEntry entry) {
-  final hasEnoughTime = entry.studyMinutes >= 15;
+  final hasEnoughTime = entry.totalStudyMinutes >= 15;
 
   final hasMeaningfulActivity = entry.activities.contains(StudyActivity.practice) ||
       entry.activities.contains(StudyActivity.pastPapers);

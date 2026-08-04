@@ -1,18 +1,15 @@
-import 'package:math_matric/features/streak/domain/entities/habit_entry.dart';
+import 'package:math_matric/features/streak/domain/entities/habit_summary.dart';
 
-abstract class HabitEvent {
+sealed class HabitEvent {
   const HabitEvent();
 }
 
-//Handles existing day and new check-in:
-class HabitEntryLogged extends HabitEvent {
-  final HabitEntry entry;
-
-  const HabitEntryLogged(this.entry);
+final class HabitStarted extends HabitEvent {
+  const HabitStarted();
 }
 
-class HabitEntriesLoaded extends HabitEvent {
-  final List<HabitEntry> entries;
+final class HabitSummaryUpdated extends HabitEvent {
+  const HabitSummaryUpdated(this.summary);
 
-  const HabitEntriesLoaded(this.entries);
+  final HabitSummary summary;
 }

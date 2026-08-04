@@ -81,11 +81,19 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                 children: [
                   BlocBuilder<HabitBloc, HabitState>(
                     builder: (context, habitState) {
-                      return StreakHeaderCard(
-                        currentStreak: habitState.currentStreak,
-                        longestStreak: habitState.longestStreak,
-                        weeklyScore: habitState.weeklyProgressScore,
-                      );
+                      return switch (habitState) {
+                        HabitLoaded() => StreakHeaderCard(
+                            currentStreak: habitState.currentStreak,
+                            longestStreak: habitState.longestStreak,
+                            weeklyScore: habitState.weeklyProgressScore,
+                          ),
+
+                        _ => const StreakHeaderCard(
+                            currentStreak: 0,
+                            longestStreak: 0,
+                            weeklyScore: 0,
+                          ),
+                      };
                     },
                   ),
                   const SizedBox(height: 16),

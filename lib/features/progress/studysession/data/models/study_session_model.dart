@@ -9,7 +9,8 @@ class StudySessionModel extends StudySessionEntity {
     required super.endedAt,
     required super.questionsAnswered,
     required super.correctAnswers,
-    required super.earnedXP,
+    required super.earnedXP, 
+    required super.activity,
   });
 
   factory StudySessionModel.fromFirestore(
@@ -26,7 +27,8 @@ class StudySessionModel extends StudySessionEntity {
       ),
       questionsAnswered: json['questionsAnswered'] as int,
       correctAnswers: json['correctAnswers'] as int,
-      earnedXP: json['earnedXP'] as int,
+      earnedXP: json['earnedXP'] as int, 
+      activity: json['activity'] ?? '',
     );
   }
 
@@ -34,6 +36,7 @@ class StudySessionModel extends StudySessionEntity {
     return {
       'id': id,
       'topicId': topicId,
+      'activity': activity,
       'startedAt': startedAt.toIso8601String(),
       'endedAt': endedAt.toIso8601String(),
       'questionsAnswered': questionsAnswered,
@@ -50,7 +53,8 @@ class StudySessionModel extends StudySessionEntity {
       endedAt: endedAt,
       questionsAnswered: questionsAnswered,
       correctAnswers: correctAnswers,
-      earnedXP: earnedXP,
+      earnedXP: earnedXP, 
+      activity: activity,
     );
   }
 
@@ -64,7 +68,8 @@ class StudySessionModel extends StudySessionEntity {
       endedAt: session.endedAt,
       questionsAnswered: session.questionsAnswered,
       correctAnswers: session.correctAnswers,
-      earnedXP: session.earnedXP,
+      earnedXP: session.earnedXP, 
+      activity: session.activity,
     );
   }
 
@@ -78,7 +83,8 @@ class StudySessionModel extends StudySessionEntity {
       endedAt: session.endedAt,
       questionsAnswered: session.questionsAnswered,
       correctAnswers: session.correctAnswers,
-      earnedXP: session.earnedXP,
+      earnedXP: session.earnedXP, 
+      activity: session.activity,
     );
   }
 
@@ -90,7 +96,8 @@ class StudySessionModel extends StudySessionEntity {
       endedAt: endedAt,
       questionsAnswered: questionsAnswered,
       correctAnswers: correctAnswers,
-      earnedXP: earnedXP,
+      earnedXP: earnedXP, 
+      activity: activity,
     );
   }
 }

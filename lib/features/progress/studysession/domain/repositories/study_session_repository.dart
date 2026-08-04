@@ -3,6 +3,8 @@ import 'package:math_matric/features/progress/studysession/domain/entities/study
 abstract class StudySessionRepository {
   Future<List<StudySessionEntity>> getAllStudySessions();
 
+  Stream<List<StudySessionEntity>> watchStudySessions();
+
   Future<StudySessionEntity?> getStudySession(
     String sessionId,
   );

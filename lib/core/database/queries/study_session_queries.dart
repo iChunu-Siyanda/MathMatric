@@ -1,7 +1,27 @@
 import 'package:drift/drift.dart';
 import 'package:math_matric/core/database/app_database.dart';
+import 'package:math_matric/features/streak/domain/entities/habit_entry.dart';
+import 'package:math_matric/features/streak/domain/mapper/habit_entry_mapper.dart';
 
 extension StudySessionQueries on AppDatabase {
+  Future<List<HabitEntry>> getHabitEntries() async {
+    final sessions = await (select(studySession)
+          ..orderBy([
+            (t) => OrderingTerm.asc(t.startedAt),
+          ]))
+        .get();
+
+    return HabitEntryMapper.fromStudySessions(sessions);
+  }
+
+  Stream<List<StudySessionData>> watchStudySessions() {
+    return (select(studySession)
+          ..orderBy([
+            (t) => OrderingTerm.desc(t.startedAt),
+          ]))
+        .watch();
+  }
+  
   Future<List<StudySessionData>> getAllStudySessions() {
     return (select(studySession)
           ..orderBy([

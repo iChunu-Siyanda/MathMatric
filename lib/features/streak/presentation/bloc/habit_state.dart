@@ -1,30 +1,29 @@
-//“What does the UI need to know right now?”
-import 'package:math_matric/features/streak/domain/entities/habit_entry.dart';
 import 'package:math_matric/features/streak/domain/entities/habit_summary.dart';
 
-class HabitState {
-  final List<HabitEntry> entries;
+sealed class HabitState {
+  const HabitState();
+}
+
+final class HabitInitial extends HabitState {
+  const HabitInitial();
+}
+
+final class HabitLoading extends HabitState {
+  const HabitLoading();
+}
+
+final class HabitLoaded extends HabitState {
   final HabitSummary summary;
 
-  const HabitState({required this.entries, required this.summary});
-
-  factory HabitState.initial() {
-    return HabitState(entries: const [], summary: HabitSummary.initial());
-  }
-
-  //copyWitn() creates a "modified clone" of your current HabitState, since it is immutable.
-  HabitState copyWith({
-    List<HabitEntry>? entries,
-    HabitSummary ? summary,
-    
-  }) {
-    return HabitState(
-      entries: entries ?? this.entries,
-      summary: summary ?? this.summary,
-    );
-  }
+  const HabitLoaded(this.summary);
   
   int get currentStreak => summary.currentStreak;
   int get longestStreak => summary.longestStreak;
   int get weeklyProgressScore => summary.weeklyProgressScore;
+}
+
+final class HabitFailure extends HabitState {
+  final Object error;
+
+  const HabitFailure(this.error);
 }
