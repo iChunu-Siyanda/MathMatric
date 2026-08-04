@@ -6,14 +6,14 @@ import 'package:math_matric/features/streak/presentation/bloc/habit_state.dart';
 import 'package:math_matric/features/streak/domain/entities/habit_summary.dart';
 
 class HabitBloc extends Bloc<HabitEvent, HabitState> {
+  final HabitRepository _repository;
+  
   HabitBloc(
     this._repository,
   ) : super(const HabitInitial()) {
     on<HabitStarted>(_onStarted);
     on<HabitSummaryUpdated>(_onSummaryUpdated);
   }
-
-  final HabitRepository _repository;
 
   StreamSubscription<HabitSummary>? _subscription;
 

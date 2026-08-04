@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:math_matric/features/analytics/presentation/pages/analytics_page.dart';
 import 'package:math_matric/features/papers/exam/domain/entities/exam_page_mode.dart.dart';
 import 'package:math_matric/shared/entities/section_tab_entities.dart';
 import 'package:math_matric/shared/entities/tab_entities.dart';
@@ -6,7 +7,6 @@ import 'package:math_matric/features/papers/papers/domain/entities/topic_item.da
 import 'package:math_matric/features/papers/classnotes/presentation/pages/class_notes_page.dart';
 import 'package:math_matric/features/papers/classnotes/presentation/pages/class_notes_tips.dart';
 import 'package:math_matric/features/papers/exam/presentation/pages/exam_paper_page.dart';
-import 'package:math_matric/features/streak/presentation/pages/streak_screen.dart';
 import 'package:math_matric/features/papers/practice/presentation/pages/practice_page.dart';
 import 'package:math_matric/features/papers/quiz/presentation/pages/quizzes_page.dart';
 import 'package:math_matric/shared/entities/tab_type.dart';
@@ -18,8 +18,8 @@ class TopicFactory {
       SectionTab(
           title: "Streak",
           builder: (ctx) =>
-              StreakScreen()), //Lazy-loaded widgets in the builder
-      SectionTab(title: "Scores", builder: (ctx) => StreakScreen())
+              AnalyticsPage()), //Lazy-loaded widgets in the builder
+      SectionTab(title: "Scores", builder: (ctx) => AnalyticsPage())
     ], tabType: TabType.progress),
 
     //Class Notes

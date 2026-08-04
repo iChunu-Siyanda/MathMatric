@@ -9,6 +9,7 @@ import 'package:math_matric/core/database/tables/questions.dart';
 import 'package:math_matric/core/database/tables/study_session.dart';
 import 'package:math_matric/core/database/tables/user_level_progress.dart';
 import 'package:math_matric/core/database/tables/user_topic_progress.dart';
+import 'package:math_matric/features/streak/domain/entities/activities.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'tables/topics.dart';

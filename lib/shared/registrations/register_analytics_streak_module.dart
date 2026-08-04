@@ -10,6 +10,6 @@ void registerAnalyticsStreaakModule() {
   );
 
   getIt.registerFactory(
-    () => HabitBloc(),
+    () => HabitBloc(getIt(),),
   );
 }

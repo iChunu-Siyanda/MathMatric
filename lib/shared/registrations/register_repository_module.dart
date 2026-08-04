@@ -26,6 +26,7 @@ import 'package:math_matric/features/progress/userlevelprogress/domain/repositor
 import 'package:math_matric/features/progress/usertopicprogress/data/datasource/local/user_topic_progress_local_data_source.dart';
 import 'package:math_matric/features/progress/usertopicprogress/data/repositories/user_topic_progress_repository_impl.dart';
 import 'package:math_matric/features/progress/usertopicprogress/domain/repositories/user_topic_progress_repository.dart';
+import 'package:math_matric/features/streak/domain/repositories/habit_repository.dart';
 
 final getIt = GetIt.instance;
 
@@ -83,5 +84,9 @@ void registerRepositoryModule() {
     () => UserTopicProgressRepositoryImpl(
       getIt<UserTopicProgressLocalDataSource>(),
     ),
+  );
+
+  getIt.registerLazySingleton(
+    () => HabitRepository(getIt(),),
   );
 }
