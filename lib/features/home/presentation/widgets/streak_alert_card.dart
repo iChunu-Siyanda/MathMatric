@@ -592,266 +592,266 @@ class _JourneyNode extends StatelessWidget {
 // MILESTONE PANEL
 // =============================================================================
 
-class _MilestonePanel extends StatelessWidget {
-  const _MilestonePanel({
-    required this.nextMilestone,
-    required this.daysRemaining,
-    required this.progress,
-    required this.onTap,
-  });
+// class _MilestonePanel extends StatelessWidget {
+//   const _MilestonePanel({
+//     required this.nextMilestone,
+//     required this.daysRemaining,
+//     required this.progress,
+//     required this.onTap,
+//   });
 
-  final int nextMilestone;
-  final int daysRemaining;
-  final double progress;
-  final VoidCallback? onTap;
+//   final int nextMilestone;
+//   final int daysRemaining;
+//   final double progress;
+//   final VoidCallback? onTap;
 
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
+//   @override
+//   Widget build(BuildContext context) {
+//     return GestureDetector(
+//       onTap: onTap,
 
-      child: Container(
-        padding:
-            const EdgeInsets.all(14),
+//       child: Container(
+//         padding:
+//             const EdgeInsets.all(14),
 
-        decoration: BoxDecoration(
-          color: AppColours
-              .surfaceElevated,
+//         decoration: BoxDecoration(
+//           color: AppColours
+//               .surfaceElevated,
 
-          borderRadius:
-              BorderRadius.circular(
-            17,
-          ),
+//           borderRadius:
+//               BorderRadius.circular(
+//             17,
+//           ),
 
-          border: Border.all(
-            color: AppColours
-                .border
-                .withValues(
-              alpha: 0.7,
-            ),
-          ),
-        ),
+//           border: Border.all(
+//             color: AppColours
+//                 .border
+//                 .withValues(
+//               alpha: 0.7,
+//             ),
+//           ),
+//         ),
 
-        child: Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.start,
+//         child: Column(
+//           crossAxisAlignment:
+//               CrossAxisAlignment.start,
 
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 34,
-                  height: 34,
+//           children: [
+//             Row(
+//               children: [
+//                 Container(
+//                   width: 34,
+//                   height: 34,
 
-                  decoration:
-                      BoxDecoration(
-                    color: AppColours
-                        .electricViolet
-                        .withValues(
-                      alpha: 0.10,
-                    ),
+//                   decoration:
+//                       BoxDecoration(
+//                     color: AppColours
+//                         .electricViolet
+//                         .withValues(
+//                       alpha: 0.10,
+//                     ),
 
-                    borderRadius:
-                        BorderRadius.circular(
-                      11,
-                    ),
-                  ),
+//                     borderRadius:
+//                         BorderRadius.circular(
+//                       11,
+//                     ),
+//                   ),
 
-                  child: const Icon(
-                    Icons.card_giftcard_rounded,
+//                   child: const Icon(
+//                     Icons.card_giftcard_rounded,
 
-                    color:
-                        AppColours
-                            .electricViolet,
+//                     color:
+//                         AppColours
+//                             .electricViolet,
 
-                    size: 18,
-                  ),
-                ),
+//                     size: 18,
+//                   ),
+//                 ),
 
-                const SizedBox(
-                  width: 10,
-                ),
+//                 const SizedBox(
+//                   width: 10,
+//                 ),
 
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment
-                            .start,
+//                 Expanded(
+//                   child: Column(
+//                     crossAxisAlignment:
+//                         CrossAxisAlignment
+//                             .start,
 
-                    children: [
-                      const Text(
-                        'NEXT MILESTONE',
+//                     children: [
+//                       const Text(
+//                         'NEXT MILESTONE',
 
-                        style: TextStyle(
-                          color:
-                              AppColours
-                                  .textMuted,
+//                         style: TextStyle(
+//                           color:
+//                               AppColours
+//                                   .textMuted,
 
-                          fontSize: 9,
+//                           fontSize: 9,
 
-                          fontWeight:
-                              FontWeight.w800,
+//                           fontWeight:
+//                               FontWeight.w800,
 
-                          letterSpacing:
-                              0.9,
-                        ),
-                      ),
+//                           letterSpacing:
+//                               0.9,
+//                         ),
+//                       ),
 
-                      const SizedBox(
-                        height: 3,
-                      ),
+//                       const SizedBox(
+//                         height: 3,
+//                       ),
 
-                      Text(
-                        '$nextMilestone-day milestone',
+//                       Text(
+//                         '$nextMilestone-day milestone',
 
-                        style:
-                            const TextStyle(
-                          color:
-                              AppColours
-                                  .textPrimary,
+//                         style:
+//                             const TextStyle(
+//                           color:
+//                               AppColours
+//                                   .textPrimary,
 
-                          fontSize: 14,
+//                           fontSize: 14,
 
-                          fontWeight:
-                              FontWeight.w800,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+//                           fontWeight:
+//                               FontWeight.w800,
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
 
-                Text(
-                  daysRemaining == 1
-                      ? '1 day left'
-                      : '$daysRemaining days left',
+//                 Text(
+//                   daysRemaining == 1
+//                       ? '1 day left'
+//                       : '$daysRemaining days left',
 
-                  style:
-                      const TextStyle(
-                    color:
-                        AppColours
-                            .electricViolet,
+//                   style:
+//                       const TextStyle(
+//                     color:
+//                         AppColours
+//                             .electricViolet,
 
-                    fontSize: 11,
+//                     fontSize: 11,
 
-                    fontWeight:
-                        FontWeight.w800,
-                  ),
-                ),
-              ],
-            ),
+//                     fontWeight:
+//                         FontWeight.w800,
+//                   ),
+//                 ),
+//               ],
+//             ),
 
-            const SizedBox(
-              height: 12,
-            ),
+//             const SizedBox(
+//               height: 12,
+//             ),
 
-            ClipRRect(
-              borderRadius:
-                  BorderRadius.circular(
-                20,
-              ),
+//             ClipRRect(
+//               borderRadius:
+//                   BorderRadius.circular(
+//                 20,
+//               ),
 
-              child:
-                  LinearProgressIndicator(
-                value:
-                    progress,
+//               child:
+//                   LinearProgressIndicator(
+//                 value:
+//                     progress,
 
-                minHeight:
-                    7,
+//                 minHeight:
+//                     7,
 
-                backgroundColor:
-                    AppColours
-                        .border,
+//                 backgroundColor:
+//                     AppColours
+//                         .border,
 
-                valueColor:
-                    const AlwaysStoppedAnimation<
-                        Color>(
-                  AppColours
-                      .electricViolet,
-                ),
-              ),
-            ),
+//                 valueColor:
+//                     const AlwaysStoppedAnimation<
+//                         Color>(
+//                   AppColours
+//                       .electricViolet,
+//                 ),
+//               ),
+//             ),
 
-            const SizedBox(
-              height: 9,
-            ),
+//             const SizedBox(
+//               height: 9,
+//             ),
 
-            Text(
-              'Keep showing up to unlock your next reward.',
+//             Text(
+//               'Keep showing up to unlock your next reward.',
 
-              style:
-                  const TextStyle(
-                color:
-                    AppColours
-                        .textSecondary,
+//               style:
+//                   const TextStyle(
+//                 color:
+//                     AppColours
+//                         .textSecondary,
 
-                fontSize: 11,
+//                 fontSize: 11,
 
-                fontWeight:
-                    FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+//                 fontWeight:
+//                     FontWeight.w500,
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 // =============================================================================
 // PERSONAL BEST MESSAGE
 // =============================================================================
 
-class _PersonalBestMessage extends StatelessWidget {
-  const _PersonalBestMessage({
-    required this.message,
-  });
+// class _PersonalBestMessage extends StatelessWidget {
+//   const _PersonalBestMessage({
+//     required this.message,
+//   });
 
-  final String message;
+//   final String message;
 
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        const Icon(
-          Icons.workspace_premium_rounded,
+//   @override
+//   Widget build(BuildContext context) {
+//     return Row(
+//       children: [
+//         const Icon(
+//           Icons.workspace_premium_rounded,
 
-          size: 16,
+//           size: 16,
 
-          color:
-              AppColours
-                  .warningAmber,
-        ),
+//           color:
+//               AppColours
+//                   .warningAmber,
+//         ),
 
-        const SizedBox(
-          width: 7,
-        ),
+//         const SizedBox(
+//           width: 7,
+//         ),
 
-        Expanded(
-          child: Text(
-            message,
+//         Expanded(
+//           child: Text(
+//             message,
 
-            maxLines: 1,
+//             maxLines: 1,
 
-            overflow:
-                TextOverflow.ellipsis,
+//             overflow:
+//                 TextOverflow.ellipsis,
 
-            style:
-                const TextStyle(
-              color:
-                  AppColours
-                      .textSecondary,
+//             style:
+//                 const TextStyle(
+//               color:
+//                   AppColours
+//                       .textSecondary,
 
-              fontSize: 12,
+//               fontSize: 12,
 
-              fontWeight:
-                  FontWeight.w500,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
+//               fontWeight:
+//                   FontWeight.w500,
+//             ),
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
 
 // =============================================================================
 // EMOTIONAL MESSAGES
@@ -895,27 +895,27 @@ String _streakMessage(
 // PERSONAL BEST CONTEXT
 // =============================================================================
 
-String _personalBestMessage(
-  int currentStreak,
-  int personalBest,
-) {
-  if (currentStreak > personalBest) {
-    return 'New personal best. You’re rewriting your record.';
-  }
+// String _personalBestMessage(
+//   int currentStreak,
+//   int personalBest,
+// ) {
+//   if (currentStreak > personalBest) {
+//     return 'New personal best. You’re rewriting your record.';
+//   }
 
-  if (currentStreak == personalBest) {
-    return 'You’ve matched your personal best. Keep going.';
-  }
+//   if (currentStreak == personalBest) {
+//     return 'You’ve matched your personal best. Keep going.';
+//   }
 
-  final difference =
-      personalBest - currentStreak;
+//   final difference =
+//       personalBest - currentStreak;
 
-  if (difference == 1) {
-    return 'One more day to match your personal best.';
-  }
+//   if (difference == 1) {
+//     return 'One more day to match your personal best.';
+//   }
 
-  return '$difference days to match your personal best.';
-}
+//   return '$difference days to match your personal best.';
+// }
 
 // =============================================================================
 // MILESTONE SYSTEM

@@ -25,24 +25,13 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+      return web;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.linux:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for linux - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return android;
       default:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions are not supported for this platform.',
-        );
+        return windows;
     }
   }
 
@@ -71,5 +60,14 @@ class DefaultFirebaseOptions {
     projectId: dotenv.env['PROJECT_ID'] ?? '',
     storageBucket: '${dotenv.env['PROJECT_ID']}.appspot.com',
     iosBundleId: 'com.example.mathMatric',
+  );
+
+  static final FirebaseOptions windows = FirebaseOptions(
+    apiKey: dotenv.env['WINDOWS_API_KEY'] ?? '',
+    appId: dotenv.env['WINDOWS_APP_ID'] ?? '',
+    messagingSenderId: dotenv.env['IOS_MESSAGING_SENDER_ID'] ?? '',
+    projectId: dotenv.env['PROJECT_ID'] ?? '',
+    authDomain: dotenv.env['AUTH_DOMAIN'] ?? '',
+    storageBucket: '${dotenv.env['PROJECT_ID']}.appspot.com',
   );
 }
