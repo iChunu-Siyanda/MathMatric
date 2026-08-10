@@ -4,7 +4,6 @@ import 'package:math_matric/features/curriculum/exams/domain/repositories/exam_p
 
 class ExamPapersRepositoryImpl implements ExamPapersRepository {
   final ExamPaperLocalDataSource local;
-
   ExamPapersRepositoryImpl(this.local);
 
   @override

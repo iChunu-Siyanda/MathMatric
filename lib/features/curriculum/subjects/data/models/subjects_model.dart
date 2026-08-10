@@ -18,9 +18,9 @@ class SubjectsModel extends SubjectsEntity{
 
   factory SubjectsModel.fromFirestore(Map<String,dynamic> json){
     return SubjectsModel(
-      id: json['id'] ?? '', 
-      name: json['name'] ?? '', 
-      grade: json['grade'] ?? '',
+      id: json['id'] as String? ?? '', 
+      name: json['name'] as String? ?? '', 
+      grade: json['grade'] as int? ?? 0,
     );
   }
 

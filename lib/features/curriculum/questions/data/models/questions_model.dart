@@ -14,13 +14,13 @@ class QuestionsModel extends QuestionsEntity{
 
   factory QuestionsModel.fromFirestore(Map<String,dynamic> json) {
     return QuestionsModel(
-      id: json['id'] ?? '', 
-      levelId: json['leevelId'] ?? '', 
-      questionText: json['questionText'] ?? '', 
-      options: json['options'] ?? '', 
-      explanation: json['explanation'] ?? '', 
-      difficulty: json['difficulty'] ?? '', 
-      correctAnswerIndex: json['correctAnswerIndex'] ?? '',
+      id: json['id'] as String? ?? '', 
+      levelId: json['levelId'] as String? ?? '', 
+      questionText: json['questionText'] as String? ?? '', 
+      options: List<String>.from(json['options'] ?? const []), 
+      explanation: json['explanation'] as String? ?? '', 
+      difficulty: (json['difficulty'] as num?)?.toDouble() ?? 0.0, 
+      correctAnswerIndex: json['correctAnswerIndex'] as int? ?? 0,
     );
   }
 

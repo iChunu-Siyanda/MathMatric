@@ -13,7 +13,7 @@ class ExamPaperEntity {
   final int year;
   final int pageCount;
 
-  final bool downloaded;
+  final bool? downloaded;
 
   const ExamPaperEntity({
     required this.id,
@@ -27,6 +27,6 @@ class ExamPaperEntity {
     required this.isNational,
     required this.year,
     required this.pageCount,
-    required this.downloaded,
+    this.downloaded,
   });
 }

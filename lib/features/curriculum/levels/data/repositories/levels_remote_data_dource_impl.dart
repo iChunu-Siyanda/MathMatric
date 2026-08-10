@@ -10,7 +10,7 @@ class LevelsRemoteDataDourceImpl implements LevelsRemoteDataSource{
   @override
   Future<List<LevelsModel>> getAllLevels() async {
     final snapshot = await firestore
-        .collection(FirestoreCollections.topics)
+        .collection(FirestoreCollections.levels)
         .get();
 
     return snapshot.docs
@@ -21,7 +21,7 @@ class LevelsRemoteDataDourceImpl implements LevelsRemoteDataSource{
   @override
   Future<LevelsModel?> getLevel(String levelId) async {
     final doc = await firestore
-        .collection(FirestoreCollections.topics)
+        .collection(FirestoreCollections.levels)
         .doc(levelId)
         .get();
 
@@ -33,7 +33,7 @@ class LevelsRemoteDataDourceImpl implements LevelsRemoteDataSource{
   @override
   Future<List<LevelsModel>> getLevelsByTopic(String topicId) async {
     final snapshot = await firestore
-        .collection(FirestoreCollections.topics)
+        .collection(FirestoreCollections.levels)
         .where(
           'topicId',
           isEqualTo: topicId,

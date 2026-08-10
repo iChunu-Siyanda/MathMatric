@@ -10,7 +10,7 @@ class QuestionsRemoteDatasourceImpl implements QuestionsRemoteDataSource{
   @override
   Future<List<QuestionsModel>> getAllQuestions() async {
     final snapshot = await firestore
-        .collection(FirestoreCollections.topics)
+        .collection(FirestoreCollections.questions)
         .get();
 
     return snapshot.docs
@@ -21,7 +21,7 @@ class QuestionsRemoteDatasourceImpl implements QuestionsRemoteDataSource{
   @override
   Future<QuestionsModel?> getQuestion(String questionId) async {
     final doc = await firestore
-        .collection(FirestoreCollections.topics)
+        .collection(FirestoreCollections.questions)
         .doc(questionId)
         .get();
 
@@ -33,7 +33,7 @@ class QuestionsRemoteDatasourceImpl implements QuestionsRemoteDataSource{
   @override
   Future<List<QuestionsModel>> getQuestionsByLevel(String levelId) async {
     final snapshot = await firestore
-        .collection(FirestoreCollections.topics)
+        .collection(FirestoreCollections.questions)
         .where(
           'levelId',
           isEqualTo: levelId,

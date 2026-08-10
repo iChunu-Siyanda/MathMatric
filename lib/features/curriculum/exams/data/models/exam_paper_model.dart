@@ -17,7 +17,7 @@ class ExamPaperModel extends ExamPaperEntity {
     required super.isNational,
     required super.year,
     required super.pageCount,
-    required super.downloaded,
+    super.downloaded,
     required this.version,
   });
 
@@ -36,7 +36,7 @@ class ExamPaperModel extends ExamPaperEntity {
       isNational: json['isNational'] as bool,
       year: json['year'] as int,
       pageCount: json['pageCount'] as int,
-      downloaded: json['downloaded'] as bool? ?? false,
+      //downloaded: json['downloaded'] as bool? ?? false,
       version: json['version'] as int,
     );
   }
@@ -54,7 +54,7 @@ class ExamPaperModel extends ExamPaperEntity {
       'isNational': isNational,
       'year': year,
       'pageCount': pageCount,
-      'downloaded': downloaded,
+      //'downloaded': downloaded,
       'version': version,
     };
   }
@@ -131,7 +131,7 @@ class ExamPaperModel extends ExamPaperEntity {
       year: year,
       pageCount: pageCount,
       version: version,
-      downloaded: downloaded,
+      downloaded: downloaded!,
     );
   }
 }
