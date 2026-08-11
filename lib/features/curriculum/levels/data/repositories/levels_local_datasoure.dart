@@ -5,7 +5,6 @@ import 'package:math_matric/features/curriculum/levels/data/models/levels_model.
 
 class LevelsLocalDatasourceImpl implements LevelsLocalDatasource {
   final AppDatabase db;
-
   LevelsLocalDatasourceImpl(this.db);
 
   @override

@@ -33,6 +33,27 @@ class ExamPaperRemoteDataSourceImpl  implements ExamPaperRemoteDataSource {
   }
 
   @override
+  Future<List<ExamPaperModel>> getExamPapersBySubject(
+    String subjectId,
+  ) async {
+    final snapshot = await firestore
+        .collection(FirestoreCollections.examPapers)
+        .where(
+          'subjectId',
+          isEqualTo: subjectId,
+        )
+        .get();
+
+    return snapshot.docs
+        .map(
+          (doc) => ExamPaperModel.fromFirestore(
+            doc.data(),
+          ),
+        )
+        .toList();
+  }
+
+  @override
   Future<List<ExamPaperModel>> getExamPapersByYear(
     int year,
   ) async {

@@ -1,0 +1,28 @@
+REMOTE:
+Firebase
+│
+├── Firestore
+│   ├── bundles
+│   ├── subjects
+│   ├── topics
+│   ├── levels
+│   ├── questions
+│   └── examPapers
+│
+└── Storage
+    └── exam-papers/
+        └── ...
+
+
+LOCALLY:    
+Drift
+├── curriculum metadata
+├── exam-paper metadata
+└── downloaded state
+
+Application Support
+└── exam_papers/
+    └── {paperId}/
+        ├── page-01.webp
+        ├── page-02.webp
+        └── ...

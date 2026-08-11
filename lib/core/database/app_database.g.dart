@@ -1886,6 +1886,12 @@ class $ExamPapersTable extends ExamPapers
       type: DriftSqlType.string,
       requiredDuringInsert: true,
       defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
+  static const VerificationMeta _subjectIdMeta =
+      const VerificationMeta('subjectId');
+  @override
+  late final GeneratedColumn<String> subjectId = GeneratedColumn<String>(
+      'subject_id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _parentPaperIdMeta =
       const VerificationMeta('parentPaperId');
   @override
@@ -1961,12 +1967,14 @@ class $ExamPapersTable extends ExamPapers
   late final GeneratedColumn<bool> downloaded = GeneratedColumn<bool>(
       'downloaded', aliasedName, false,
       type: DriftSqlType.bool,
-      requiredDuringInsert: true,
+      requiredDuringInsert: false,
       defaultConstraints:
-          GeneratedColumn.constraintIsAlways('CHECK ("downloaded" IN (0, 1))'));
+          GeneratedColumn.constraintIsAlways('CHECK ("downloaded" IN (0, 1))'),
+      defaultValue: const Constant(false));
   @override
   List<GeneratedColumn> get $columns => [
         id,
+        subjectId,
         parentPaperId,
         paperType,
         session,
@@ -1994,6 +2002,12 @@ class $ExamPapersTable extends ExamPapers
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     } else if (isInserting) {
       context.missing(_idMeta);
+    }
+    if (data.containsKey('subject_id')) {
+      context.handle(_subjectIdMeta,
+          subjectId.isAcceptableOrUnknown(data['subject_id']!, _subjectIdMeta));
+    } else if (isInserting) {
+      context.missing(_subjectIdMeta);
     }
     if (data.containsKey('parent_paper_id')) {
       context.handle(
@@ -2068,8 +2082,6 @@ class $ExamPapersTable extends ExamPapers
           _downloadedMeta,
           downloaded.isAcceptableOrUnknown(
               data['downloaded']!, _downloadedMeta));
-    } else if (isInserting) {
-      context.missing(_downloadedMeta);
     }
     return context;
   }
@@ -2082,6 +2094,8 @@ class $ExamPapersTable extends ExamPapers
     return ExamPaper(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      subjectId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}subject_id'])!,
       parentPaperId: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}parent_paper_id']),
       paperType: attachedDatabase.typeMapping
@@ -2117,6 +2131,7 @@ class $ExamPapersTable extends ExamPapers
 
 class ExamPaper extends DataClass implements Insertable<ExamPaper> {
   final String id;
+  final String subjectId;
   final String? parentPaperId;
   final String paperType;
   final String session;
@@ -2131,6 +2146,7 @@ class ExamPaper extends DataClass implements Insertable<ExamPaper> {
   final bool downloaded;
   const ExamPaper(
       {required this.id,
+      required this.subjectId,
       this.parentPaperId,
       required this.paperType,
       required this.session,
@@ -2147,6 +2163,7 @@ class ExamPaper extends DataClass implements Insertable<ExamPaper> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
+    map['subject_id'] = Variable<String>(subjectId);
     if (!nullToAbsent || parentPaperId != null) {
       map['parent_paper_id'] = Variable<String>(parentPaperId);
     }
@@ -2169,6 +2186,7 @@ class ExamPaper extends DataClass implements Insertable<ExamPaper> {
   ExamPapersCompanion toCompanion(bool nullToAbsent) {
     return ExamPapersCompanion(
       id: Value(id),
+      subjectId: Value(subjectId),
       parentPaperId: parentPaperId == null && nullToAbsent
           ? const Value.absent()
           : Value(parentPaperId),
@@ -2193,6 +2211,7 @@ class ExamPaper extends DataClass implements Insertable<ExamPaper> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return ExamPaper(
       id: serializer.fromJson<String>(json['id']),
+      subjectId: serializer.fromJson<String>(json['subjectId']),
       parentPaperId: serializer.fromJson<String?>(json['parentPaperId']),
       paperType: serializer.fromJson<String>(json['paperType']),
       session: serializer.fromJson<String>(json['session']),
@@ -2212,6 +2231,7 @@ class ExamPaper extends DataClass implements Insertable<ExamPaper> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
+      'subjectId': serializer.toJson<String>(subjectId),
       'parentPaperId': serializer.toJson<String?>(parentPaperId),
       'paperType': serializer.toJson<String>(paperType),
       'session': serializer.toJson<String>(session),
@@ -2229,6 +2249,7 @@ class ExamPaper extends DataClass implements Insertable<ExamPaper> {
 
   ExamPaper copyWith(
           {String? id,
+          String? subjectId,
           Value<String?> parentPaperId = const Value.absent(),
           String? paperType,
           String? session,
@@ -2243,6 +2264,7 @@ class ExamPaper extends DataClass implements Insertable<ExamPaper> {
           bool? downloaded}) =>
       ExamPaper(
         id: id ?? this.id,
+        subjectId: subjectId ?? this.subjectId,
         parentPaperId:
             parentPaperId.present ? parentPaperId.value : this.parentPaperId,
         paperType: paperType ?? this.paperType,
@@ -2260,6 +2282,7 @@ class ExamPaper extends DataClass implements Insertable<ExamPaper> {
   ExamPaper copyWithCompanion(ExamPapersCompanion data) {
     return ExamPaper(
       id: data.id.present ? data.id.value : this.id,
+      subjectId: data.subjectId.present ? data.subjectId.value : this.subjectId,
       parentPaperId: data.parentPaperId.present
           ? data.parentPaperId.value
           : this.parentPaperId,
@@ -2284,6 +2307,7 @@ class ExamPaper extends DataClass implements Insertable<ExamPaper> {
   String toString() {
     return (StringBuffer('ExamPaper(')
           ..write('id: $id, ')
+          ..write('subjectId: $subjectId, ')
           ..write('parentPaperId: $parentPaperId, ')
           ..write('paperType: $paperType, ')
           ..write('session: $session, ')
@@ -2303,6 +2327,7 @@ class ExamPaper extends DataClass implements Insertable<ExamPaper> {
   @override
   int get hashCode => Object.hash(
       id,
+      subjectId,
       parentPaperId,
       paperType,
       session,
@@ -2320,6 +2345,7 @@ class ExamPaper extends DataClass implements Insertable<ExamPaper> {
       identical(this, other) ||
       (other is ExamPaper &&
           other.id == this.id &&
+          other.subjectId == this.subjectId &&
           other.parentPaperId == this.parentPaperId &&
           other.paperType == this.paperType &&
           other.session == this.session &&
@@ -2336,6 +2362,7 @@ class ExamPaper extends DataClass implements Insertable<ExamPaper> {
 
 class ExamPapersCompanion extends UpdateCompanion<ExamPaper> {
   final Value<String> id;
+  final Value<String> subjectId;
   final Value<String?> parentPaperId;
   final Value<String> paperType;
   final Value<String> session;
@@ -2351,6 +2378,7 @@ class ExamPapersCompanion extends UpdateCompanion<ExamPaper> {
   final Value<int> rowid;
   const ExamPapersCompanion({
     this.id = const Value.absent(),
+    this.subjectId = const Value.absent(),
     this.parentPaperId = const Value.absent(),
     this.paperType = const Value.absent(),
     this.session = const Value.absent(),
@@ -2367,6 +2395,7 @@ class ExamPapersCompanion extends UpdateCompanion<ExamPaper> {
   });
   ExamPapersCompanion.insert({
     required String id,
+    required String subjectId,
     this.parentPaperId = const Value.absent(),
     required String paperType,
     required String session,
@@ -2378,9 +2407,10 @@ class ExamPapersCompanion extends UpdateCompanion<ExamPaper> {
     required int year,
     required int pageCount,
     required int version,
-    required bool downloaded,
+    this.downloaded = const Value.absent(),
     this.rowid = const Value.absent(),
   })  : id = Value(id),
+        subjectId = Value(subjectId),
         paperType = Value(paperType),
         session = Value(session),
         title = Value(title),
@@ -2389,10 +2419,10 @@ class ExamPapersCompanion extends UpdateCompanion<ExamPaper> {
         isNational = Value(isNational),
         year = Value(year),
         pageCount = Value(pageCount),
-        version = Value(version),
-        downloaded = Value(downloaded);
+        version = Value(version);
   static Insertable<ExamPaper> custom({
     Expression<String>? id,
+    Expression<String>? subjectId,
     Expression<String>? parentPaperId,
     Expression<String>? paperType,
     Expression<String>? session,
@@ -2409,6 +2439,7 @@ class ExamPapersCompanion extends UpdateCompanion<ExamPaper> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (subjectId != null) 'subject_id': subjectId,
       if (parentPaperId != null) 'parent_paper_id': parentPaperId,
       if (paperType != null) 'paper_type': paperType,
       if (session != null) 'session': session,
@@ -2427,6 +2458,7 @@ class ExamPapersCompanion extends UpdateCompanion<ExamPaper> {
 
   ExamPapersCompanion copyWith(
       {Value<String>? id,
+      Value<String>? subjectId,
       Value<String?>? parentPaperId,
       Value<String>? paperType,
       Value<String>? session,
@@ -2442,6 +2474,7 @@ class ExamPapersCompanion extends UpdateCompanion<ExamPaper> {
       Value<int>? rowid}) {
     return ExamPapersCompanion(
       id: id ?? this.id,
+      subjectId: subjectId ?? this.subjectId,
       parentPaperId: parentPaperId ?? this.parentPaperId,
       paperType: paperType ?? this.paperType,
       session: session ?? this.session,
@@ -2463,6 +2496,9 @@ class ExamPapersCompanion extends UpdateCompanion<ExamPaper> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<String>(id.value);
+    }
+    if (subjectId.present) {
+      map['subject_id'] = Variable<String>(subjectId.value);
     }
     if (parentPaperId.present) {
       map['parent_paper_id'] = Variable<String>(parentPaperId.value);
@@ -2510,6 +2546,7 @@ class ExamPapersCompanion extends UpdateCompanion<ExamPaper> {
   String toString() {
     return (StringBuffer('ExamPapersCompanion(')
           ..write('id: $id, ')
+          ..write('subjectId: $subjectId, ')
           ..write('parentPaperId: $parentPaperId, ')
           ..write('paperType: $paperType, ')
           ..write('session: $session, ')
@@ -5346,6 +5383,7 @@ typedef $$LevelsTableProcessedTableManager = ProcessedTableManager<
     PrefetchHooks Function()>;
 typedef $$ExamPapersTableCreateCompanionBuilder = ExamPapersCompanion Function({
   required String id,
+  required String subjectId,
   Value<String?> parentPaperId,
   required String paperType,
   required String session,
@@ -5357,11 +5395,12 @@ typedef $$ExamPapersTableCreateCompanionBuilder = ExamPapersCompanion Function({
   required int year,
   required int pageCount,
   required int version,
-  required bool downloaded,
+  Value<bool> downloaded,
   Value<int> rowid,
 });
 typedef $$ExamPapersTableUpdateCompanionBuilder = ExamPapersCompanion Function({
   Value<String> id,
+  Value<String> subjectId,
   Value<String?> parentPaperId,
   Value<String> paperType,
   Value<String> session,
@@ -5388,6 +5427,9 @@ class $$ExamPapersTableFilterComposer
   });
   ColumnFilters<String> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get subjectId => $composableBuilder(
+      column: $table.subjectId, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get parentPaperId => $composableBuilder(
       column: $table.parentPaperId, builder: (column) => ColumnFilters(column));
@@ -5438,6 +5480,9 @@ class $$ExamPapersTableOrderingComposer
   ColumnOrderings<String> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get subjectId => $composableBuilder(
+      column: $table.subjectId, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get parentPaperId => $composableBuilder(
       column: $table.parentPaperId,
       builder: (column) => ColumnOrderings(column));
@@ -5487,6 +5532,9 @@ class $$ExamPapersTableAnnotationComposer
   });
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get subjectId =>
+      $composableBuilder(column: $table.subjectId, builder: (column) => column);
 
   GeneratedColumn<String> get parentPaperId => $composableBuilder(
       column: $table.parentPaperId, builder: (column) => column);
@@ -5549,6 +5597,7 @@ class $$ExamPapersTableTableManager extends RootTableManager<
               $$ExamPapersTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
             Value<String> id = const Value.absent(),
+            Value<String> subjectId = const Value.absent(),
             Value<String?> parentPaperId = const Value.absent(),
             Value<String> paperType = const Value.absent(),
             Value<String> session = const Value.absent(),
@@ -5565,6 +5614,7 @@ class $$ExamPapersTableTableManager extends RootTableManager<
           }) =>
               ExamPapersCompanion(
             id: id,
+            subjectId: subjectId,
             parentPaperId: parentPaperId,
             paperType: paperType,
             session: session,
@@ -5581,6 +5631,7 @@ class $$ExamPapersTableTableManager extends RootTableManager<
           ),
           createCompanionCallback: ({
             required String id,
+            required String subjectId,
             Value<String?> parentPaperId = const Value.absent(),
             required String paperType,
             required String session,
@@ -5592,11 +5643,12 @@ class $$ExamPapersTableTableManager extends RootTableManager<
             required int year,
             required int pageCount,
             required int version,
-            required bool downloaded,
+            Value<bool> downloaded = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               ExamPapersCompanion.insert(
             id: id,
+            subjectId: subjectId,
             parentPaperId: parentPaperId,
             paperType: paperType,
             session: session,

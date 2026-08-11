@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 
 class ExamPapers extends Table {
   TextColumn get id => text().unique()();
+  TextColumn get subjectId => text()();
   TextColumn get parentPaperId => text().nullable()();
 
   TextColumn get paperType => text()();
@@ -16,5 +17,5 @@ class ExamPapers extends Table {
   IntColumn get pageCount => integer()();
 
   IntColumn get version => integer()();
-  BoolColumn get downloaded => boolean()();
+  BoolColumn get downloaded => boolean().withDefault(const Constant(false))();
 }

@@ -1,5 +1,6 @@
 class ExamPaperEntity {
   final String id;
+  final String subjectId;
   final String? parentPaperId;
 
   final String paperType;
@@ -17,6 +18,7 @@ class ExamPaperEntity {
 
   const ExamPaperEntity({
     required this.id,
+    required this.subjectId,
     this.parentPaperId,
     required this.paperType,
     required this.session,

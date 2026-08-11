@@ -17,6 +17,18 @@ extension ExamPapersQueries on AppDatabase {
         .getSingleOrNull();
   }
 
+  Future<List<ExamPaper>> getExamPapersBySubject(
+    String subjectId,
+  ) {
+    return (select(examPapers)
+          ..where((p) => p.subjectId.equals(subjectId))
+          ..orderBy([
+            (p) => OrderingTerm.desc(p.year),
+            (p) => OrderingTerm.asc(p.title),
+          ]))
+        .get();
+  }
+
   Future<List<ExamPaper>> getExamPapersByType(
     String paperType,
   ) {

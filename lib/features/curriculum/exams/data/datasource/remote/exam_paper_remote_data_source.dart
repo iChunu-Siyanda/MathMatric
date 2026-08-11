@@ -7,6 +7,10 @@ abstract class ExamPaperRemoteDataSource {
     String paperId,
   );
 
+  Future<List<ExamPaperModel>> getExamPapersBySubject(
+  String subjectId,
+);
+
   Future<List<ExamPaperModel>> getExamPapersByType(
     String paperType,
   );

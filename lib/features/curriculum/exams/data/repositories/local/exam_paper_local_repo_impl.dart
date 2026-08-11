@@ -6,7 +6,6 @@ import 'package:math_matric/features/curriculum/exams/data/models/exam_paper_mod
 
 class ExamPaperLocalDataSourceImpl implements ExamPaperLocalDataSource {
   final AppDatabase db;
-
   ExamPaperLocalDataSourceImpl(this.db);
 
   @override

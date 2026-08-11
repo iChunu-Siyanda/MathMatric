@@ -37,6 +37,19 @@ class AppDatabase extends _$AppDatabase {
   @override
   int get schemaVersion => 1; 
 }
+//Bump up schemaVersion by +1 if:
+// Adding/removing a table
+// Adding/removing a column
+// Changing a column's definition/type
+// Adding/changing indexes or constraints where migration is required
+
+//Not when:
+// Adding a query
+// Changing a query
+// Adding a Dart extension
+// Changing repository code
+// Changing datasource code
+// Changing model conversion logic
 
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {

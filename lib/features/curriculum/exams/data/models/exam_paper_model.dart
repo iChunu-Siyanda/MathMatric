@@ -7,6 +7,7 @@ class ExamPaperModel extends ExamPaperEntity {
 
   const ExamPaperModel({
     required super.id,
+    required super.subjectId,
     super.parentPaperId,
     required super.paperType,
     required super.session,
@@ -26,6 +27,7 @@ class ExamPaperModel extends ExamPaperEntity {
   ) {
     return ExamPaperModel(
       id: json['id'] as String,
+      subjectId: json['subjectId'] as String,
       parentPaperId: json['parentPaperId'] as String?,
       paperType: json['paperType'] as String,
       session: json['session'] as String,
@@ -44,6 +46,7 @@ class ExamPaperModel extends ExamPaperEntity {
   Map<String, dynamic> toFirestore() {
     return {
       'id': id,
+      'subjectId': subjectId,
       'parentPaperId': parentPaperId,
       'paperType': paperType,
       'session': session,
@@ -62,6 +65,7 @@ class ExamPaperModel extends ExamPaperEntity {
   ExamPaperEntity toEntity() {
     return ExamPaperEntity(
       id: id,
+      subjectId: subjectId,
       parentPaperId: parentPaperId,
       paperType: paperType,
       session: session,
@@ -82,6 +86,7 @@ class ExamPaperModel extends ExamPaperEntity {
   }) {
     return ExamPaperModel(
       id: paper.id,
+      subjectId: paper.subjectId,
       parentPaperId: paper.parentPaperId,
       paperType: paper.paperType,
       session: paper.session,
@@ -102,6 +107,7 @@ class ExamPaperModel extends ExamPaperEntity {
   ) {
     return ExamPaperModel(
       id: paper.id,
+      subjectId: paper.subjectId,
       parentPaperId: paper.parentPaperId,
       paperType: paper.paperType,
       session: paper.session,
@@ -120,6 +126,7 @@ class ExamPaperModel extends ExamPaperEntity {
   ExamPapersCompanion toCompanion() {
     return ExamPapersCompanion.insert(
       id: id,
+      subjectId: subjectId,
       parentPaperId: Value(parentPaperId),
       paperType: paperType,
       session: session,
@@ -131,7 +138,6 @@ class ExamPaperModel extends ExamPaperEntity {
       year: year,
       pageCount: pageCount,
       version: version,
-      downloaded: downloaded!,
     );
   }
 }
