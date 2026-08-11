@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:math_matric/features/curriculum/exams/data/datasource/storage/exam_paper_storage_storage_data_source.dart';
+import 'package:math_matric/features/curriculum/exams/data/datasource/storage/remote/exam_paper_remote_storage_data_source.dart';
 
-class ExamPaperStorageDataSourceImpl implements ExamPaperStorageDataSource {
+class ExamPaperRemoteStorageDataSourceImpl implements ExamPaperRemoteStorageDataSource {
   final FirebaseStorage storage;
-  ExamPaperStorageDataSourceImpl(this.storage);
+  ExamPaperRemoteStorageDataSourceImpl(this.storage);
 
   @override
   Future<Uint8List> downloadPage({

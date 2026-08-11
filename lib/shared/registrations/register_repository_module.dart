@@ -1,6 +1,6 @@
 import 'package:get_it/get_it.dart';
-import 'package:math_matric/features/curriculum/exams/data/repositories/exam_paper_local_repo_impl.dart';
-import 'package:math_matric/features/curriculum/exams/data/repositories/exam_paper_repository_impl.dart';
+import 'package:math_matric/features/curriculum/exams/data/repositories/local/exam_paper_local_repo_impl.dart';
+import 'package:math_matric/features/curriculum/exams/data/repositories/repos/exam_paper_repository_impl.dart';
 import 'package:math_matric/features/curriculum/exams/domain/repositories/exam_paper_repository.dart';
 import 'package:math_matric/features/curriculum/levels/data/repositories/levels_local_datasoure.dart';
 import 'package:math_matric/features/curriculum/levels/data/repositories/levels_repository_imple.dart';

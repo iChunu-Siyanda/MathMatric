@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-abstract class ExamPaperStorageDataSource {
+abstract class ExamPaperRemoteStorageDataSource {
   Future<Uint8List> downloadPage({
     required String storagePath,
     required String fileName,
