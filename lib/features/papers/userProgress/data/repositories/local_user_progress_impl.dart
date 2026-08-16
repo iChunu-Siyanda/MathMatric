@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:math_matric/features/papers/exam/domain/repositories/user_progress_repository.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalUserProgressRepository implements UserProgressRepository {
-  final SharedPreferences prefs;
-
-  LocalUserProgressRepository(this.prefs);
+  //final SharedPreferences prefs;
+  LocalUserProgressRepository();
 
   @override
   Future<List<String>> getCompletedLevels(String topicId) async {
-    return prefs.getStringList('completed_$topicId') ?? [];
+    //return prefs.getStringList('completed_$topicId') ?? [];
+    return [];
   }
 
   @override
@@ -25,14 +25,14 @@ class LocalUserProgressRepository implements UserProgressRepository {
     if (!completed.contains(levelId)) {
       
       completed.add(levelId);
-      await prefs.setStringList('completed_$topicId', completed);
+      // await prefs.setStringList('completed_$topicId', completed);
 
-      await prefs.setInt('xp_$levelId', xpEarned);
-      debugPrint("[REPO] Individual Level XP saved: xp_$levelId -> $xpEarned");
+      // await prefs.setInt('xp_$levelId', xpEarned);
+      // debugPrint("[REPO] Individual Level XP saved: xp_$levelId -> $xpEarned");
  
-      final currentXp = await getEarnedXp(topicId);
-      await prefs.setInt('xp_$topicId', currentXp + xpEarned);
-      debugPrint("[REPO] Successfully saved new XP: ${currentXp + xpEarned}");
+      // final currentXp = await getEarnedXp(topicId);
+      // await prefs.setInt('xp_$topicId', currentXp + xpEarned);
+      // debugPrint("[REPO] Successfully saved new XP: ${currentXp + xpEarned}");
     } else {
       debugPrint("[REPO] Level '$levelId' already marked as completed for topic '$topicId'. No changes made.");
     }
@@ -40,14 +40,16 @@ class LocalUserProgressRepository implements UserProgressRepository {
 
   @override
   Future<int> getEarnedXp(String topicId) async {
-    final xp = prefs.getInt('xp_$topicId') ?? 0;
+    //final xp = prefs.getInt('xp_$topicId') ?? 0;
+    final xp = 30;
     debugPrint("[REPO] getEarnedXp read for '$topicId' -> Returning: $xp");
     return xp;
   }
   
   @override
   Future<int> getLevelXp(String levelId) async {
-    final lxp = prefs.getInt('xp_$levelId') ?? 0;
+    //final lxp = prefs.getInt('xp_$levelId') ?? 0;
+    final lxp = 50;
     debugPrint("[REPO] getLevelXp read for '$levelId' -> Returning: $lxp");
     return lxp;
   }

@@ -101,6 +101,17 @@ class ExamPaperLocalDataSourceImpl implements ExamPaperLocalDataSource {
   }
 
   @override
+  Future<void> updateDownloadedStatus({
+    required String paperId,
+    required bool downloaded,
+  }) async {
+    await db.updateDownloadedStatus(
+      paperId: paperId,
+      downloaded: downloaded,
+    );
+  }
+
+  @override
   Future<void> clearExamPapers() async {
     await db.clearExamPapers();
   }

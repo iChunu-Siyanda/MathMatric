@@ -52,3 +52,13 @@ class CurriculumBundleLocalDataSourceImpl implements CurriculumBundleLocalDataSo
     );
   }
 }
+
+// installCurriculumBundle("grade12_math_v1")
+//               ↓
+//        get BundleInfo
+//               ↓
+//        download Bundle
+//               ↓
+//           Drift batch
+//               ↓
+//      save DownloadedBundle

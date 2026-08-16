@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:math_matric/shared/registrations/setup_locator.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'app/app.dart';
 import 'app/bloc_observer.dart';
 import 'firebase_options.dart';
@@ -22,9 +21,7 @@ void main() async {
     debugPrint("Error initializing Firebase & dot_env: $e");
   }
 
-  final prefs = await SharedPreferences.getInstance();
-
-  await setupLocator(prefs);
+  await setupLocator();
 
   Bloc.observer = AppBlocObserver();
 

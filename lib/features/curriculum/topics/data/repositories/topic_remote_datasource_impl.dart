@@ -5,14 +5,13 @@ import 'package:math_matric/core/constants/firestore_collections.dart';
 
 class TopicRemoteDataSourceImpl implements TopicRemoteDataSource {
   final FirebaseFirestore firestore;
+  TopicRemoteDataSourceImpl(this.firestore,);
 
-  TopicRemoteDataSourceImpl(
-    this.firestore,
-  );
+  DocumentReference<Map<String, dynamic>> get firestoreRef => firestore.collection(FirestoreCollections.curriculum).doc(FirestoreCollections.mathmatric);
 
   @override
   Future<List<TopicModel>> getAllTopics() async {
-    final snapshot = await firestore
+    final snapshot = await firestoreRef
         .collection(FirestoreCollections.topics)
         .get();
 
@@ -25,7 +24,7 @@ class TopicRemoteDataSourceImpl implements TopicRemoteDataSource {
   Future<TopicModel?> getTopic(
     String topicId,
   ) async {
-    final doc = await firestore
+    final doc = await firestoreRef
         .collection(FirestoreCollections.topics)
         .doc(topicId)
         .get();
@@ -39,7 +38,7 @@ class TopicRemoteDataSourceImpl implements TopicRemoteDataSource {
   Future<List<TopicModel>> getTopicsBySubject(
     String subjectId,
   ) async {
-    final snapshot = await firestore
+    final snapshot = await firestoreRef
         .collection(FirestoreCollections.topics)
         .where(
           'subjectId',

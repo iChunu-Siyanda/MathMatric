@@ -131,6 +131,19 @@ extension ExamPapersQueries on AppDatabase {
     });
   }
 
+  Future<void> updateDownloadedStatus({
+    required String paperId,
+    required bool downloaded,
+  }) async {
+    await (update(examPapers)
+          ..where((p) => p.id.equals(paperId)))
+        .write(
+      ExamPapersCompanion(
+        downloaded: Value(downloaded),
+      ),
+    );
+  }
+
   Future<bool> updateExamPaper(
     ExamPaper paper,
   ) {

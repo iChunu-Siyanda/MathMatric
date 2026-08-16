@@ -3,13 +3,15 @@ import 'package:math_matric/features/curriculum/levels/data/datasource/remote/le
 import 'package:math_matric/features/curriculum/levels/data/models/levels_model.dart';
 import 'package:math_matric/core/constants/firestore_collections.dart';
 
-class LevelsRemoteDataDourceImpl implements LevelsRemoteDataSource{
+class LevelsRemoteDataSourceImpl implements LevelsRemoteDataSource{
   final FirebaseFirestore firestore;
-  LevelsRemoteDataDourceImpl(this.firestore);
+  LevelsRemoteDataSourceImpl(this.firestore);
+
+  DocumentReference<Map<String, dynamic>> get firestoreRef => firestore.collection(FirestoreCollections.curriculum).doc(FirestoreCollections.mathmatric);
   
   @override
   Future<List<LevelsModel>> getAllLevels() async {
-    final snapshot = await firestore
+    final snapshot = await firestoreRef
         .collection(FirestoreCollections.levels)
         .get();
 
@@ -20,7 +22,7 @@ class LevelsRemoteDataDourceImpl implements LevelsRemoteDataSource{
 
   @override
   Future<LevelsModel?> getLevel(String levelId) async {
-    final doc = await firestore
+    final doc = await firestoreRef
         .collection(FirestoreCollections.levels)
         .doc(levelId)
         .get();
@@ -32,7 +34,7 @@ class LevelsRemoteDataDourceImpl implements LevelsRemoteDataSource{
 
   @override
   Future<List<LevelsModel>> getLevelsByTopic(String topicId) async {
-    final snapshot = await firestore
+    final snapshot = await firestoreRef
         .collection(FirestoreCollections.levels)
         .where(
           'topicId',

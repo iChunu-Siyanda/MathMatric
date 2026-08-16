@@ -7,9 +7,11 @@ class ExamPaperRemoteDataSourceImpl  implements ExamPaperRemoteDataSource {
   final FirebaseFirestore firestore;
   ExamPaperRemoteDataSourceImpl(this.firestore);
 
+  DocumentReference<Map<String, dynamic>> get firestoreRef => firestore.collection(FirestoreCollections.curriculum).doc(FirestoreCollections.mathmatric);
+
   @override
   Future<List<ExamPaperModel>> getAllExamPapers() async {
-    final snapshot = await firestore
+    final snapshot = await firestoreRef
         .collection(FirestoreCollections.examPapers)
         .get();
 
@@ -22,7 +24,7 @@ class ExamPaperRemoteDataSourceImpl  implements ExamPaperRemoteDataSource {
   Future<ExamPaperModel?> getExamPaper(
     String paperId,
   ) async {
-    final doc = await firestore
+    final doc = await firestoreRef
         .collection(FirestoreCollections.examPapers)
         .doc(paperId)
         .get();
@@ -36,7 +38,7 @@ class ExamPaperRemoteDataSourceImpl  implements ExamPaperRemoteDataSource {
   Future<List<ExamPaperModel>> getExamPapersBySubject(
     String subjectId,
   ) async {
-    final snapshot = await firestore
+    final snapshot = await firestoreRef
         .collection(FirestoreCollections.examPapers)
         .where(
           'subjectId',
@@ -57,7 +59,7 @@ class ExamPaperRemoteDataSourceImpl  implements ExamPaperRemoteDataSource {
   Future<List<ExamPaperModel>> getExamPapersByYear(
     int year,
   ) async {
-    final snapshot = await firestore
+    final snapshot = await firestoreRef
         .collection(FirestoreCollections.examPapers)
         .where('year', isEqualTo: year)
         .get();
@@ -71,7 +73,7 @@ class ExamPaperRemoteDataSourceImpl  implements ExamPaperRemoteDataSource {
   Future<List<ExamPaperModel>> getExamPapersBySession(
     String session,
   ) async {
-    final snapshot = await firestore
+    final snapshot = await firestoreRef
         .collection(FirestoreCollections.examPapers)
         .where('session', isEqualTo: session)
         .get();
@@ -83,7 +85,7 @@ class ExamPaperRemoteDataSourceImpl  implements ExamPaperRemoteDataSource {
 
   @override
   Future<List<ExamPaperModel>> getNationalExamPapers() async {
-    final snapshot = await firestore
+    final snapshot = await firestoreRef
         .collection(FirestoreCollections.examPapers)
         .where('isNational', isEqualTo: true)
         .get();
@@ -97,7 +99,7 @@ class ExamPaperRemoteDataSourceImpl  implements ExamPaperRemoteDataSource {
   Future<List<ExamPaperModel>> getProvincialExamPapers(
     String province,
   ) async {
-    final snapshot = await firestore
+    final snapshot = await firestoreRef
         .collection(FirestoreCollections.examPapers)
         .where('province', isEqualTo: province)
         .get();
@@ -109,7 +111,7 @@ class ExamPaperRemoteDataSourceImpl  implements ExamPaperRemoteDataSource {
 
   @override
   Future<List<ExamPaperModel>> getMemoPapers() async {
-    final snapshot = await firestore
+    final snapshot = await firestoreRef
         .collection(FirestoreCollections.examPapers)
         .where('isMemo', isEqualTo: true)
         .get();
@@ -123,7 +125,7 @@ class ExamPaperRemoteDataSourceImpl  implements ExamPaperRemoteDataSource {
   Future<List<ExamPaperModel>> getChildPapers(
     String parentPaperId,
   ) async {
-    final snapshot = await firestore
+    final snapshot = await firestoreRef
         .collection(FirestoreCollections.examPapers)
         .where(
           'parentPaperId',
@@ -138,7 +140,7 @@ class ExamPaperRemoteDataSourceImpl  implements ExamPaperRemoteDataSource {
 
   @override
   Future<List<ExamPaperModel>> getExamPapersByType(String paperType) async {
-    final snapshot = await firestore
+    final snapshot = await firestoreRef
         .collection(FirestoreCollections.examPapers)
         .where(
           'paperType',

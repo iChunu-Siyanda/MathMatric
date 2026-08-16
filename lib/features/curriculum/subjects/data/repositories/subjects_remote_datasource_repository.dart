@@ -5,12 +5,13 @@ import 'package:math_matric/core/constants/firestore_collections.dart';
 
 class SubjectsRemoteDataSourceImpl implements SubjectsRemoteDataSource {
   final FirebaseFirestore firestore;
-
   SubjectsRemoteDataSourceImpl(this.firestore,);
+
+  DocumentReference<Map<String, dynamic>> get firestoreRef => firestore.collection(FirestoreCollections.curriculum).doc(FirestoreCollections.mathmatric);
 
   @override
   Future<List<SubjectsModel>> getAllSubjects() async {
-    final snapshot = await firestore
+    final snapshot = await firestoreRef
         .collection(FirestoreCollections.subjects)
         .get();
 
@@ -23,7 +24,7 @@ class SubjectsRemoteDataSourceImpl implements SubjectsRemoteDataSource {
   Future<SubjectsModel?> getSubject(
     String subjectId,
   ) async {
-    final doc = await firestore
+    final doc = await firestoreRef
         .collection(FirestoreCollections.subjects)
         .doc(subjectId)
         .get();

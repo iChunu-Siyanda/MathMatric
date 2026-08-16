@@ -37,6 +37,11 @@ abstract class ExamPaperLocalDataSource {
     List<ExamPaperModel> papers,
   );
 
+  Future<void> updateDownloadedStatus({
+    required String paperId,
+    required bool downloaded,
+  });
+
   Future<void> clearExamPapers();
 
   Future<int> deleteExamPaper(

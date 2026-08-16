@@ -45,7 +45,7 @@ extension DownloadedBundleQueries on AppDatabase {
   Future<int> insertDownloadedBundle(
     DownloadedBundleCompanion bundle,
   ) {
-    return into(downloadedBundle).insert(bundle);
+    return into(downloadedBundle).insert(bundle, mode: InsertMode.insertOrReplace,);
   }
 
   Future<void> insertDownloadedBundles(
