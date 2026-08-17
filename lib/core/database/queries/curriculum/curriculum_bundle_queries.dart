@@ -1,9 +1,9 @@
 import 'package:math_matric/core/database/app_database.dart';
-import 'package:math_matric/core/database/queries/exam_papers_queries.dart';
-import 'package:math_matric/core/database/queries/levels_queries.dart';
-import 'package:math_matric/core/database/queries/questions_queries.dart';
-import 'package:math_matric/core/database/queries/subject_queries.dart';
-import 'package:math_matric/core/database/queries/topic_queries.dart';
+import 'package:math_matric/core/database/queries/curriculum/exam_papers_queries.dart';
+import 'package:math_matric/core/database/queries/curriculum/levels_queries.dart';
+import 'package:math_matric/core/database/queries/curriculum/questions_queries.dart';
+import 'package:math_matric/core/database/queries/curriculum/subject_queries.dart';
+import 'package:math_matric/core/database/queries/curriculum/topic_queries.dart';
 
 extension CurriculumBundleQueries on AppDatabase {
   Future<void> installCurriculumBundle({

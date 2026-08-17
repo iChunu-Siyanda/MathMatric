@@ -1,5 +1,5 @@
 import 'package:math_matric/core/database/app_database.dart';
-import 'package:math_matric/core/database/queries/user_topic_progesses_queries.dart';
+import 'package:math_matric/core/database/queries/userdata/user_topic_progesses_queries.dart';
 import 'package:math_matric/features/progress/usertopicprogress/data/datasource/local/user_topic_progress_local_data_source.dart';
 import 'package:math_matric/features/progress/usertopicprogress/data/models/user_topic_progresses_model.dart';
 

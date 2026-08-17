@@ -1,5 +1,5 @@
 import 'package:math_matric/core/database/app_database.dart';
-import 'package:math_matric/core/database/queries/exam_papers_queries.dart';
+import 'package:math_matric/core/database/queries/curriculum/exam_papers_queries.dart';
 import 'package:math_matric/features/curriculum/exams/data/datasource/local/exam_paper_local_data_source.dart';
 import 'package:math_matric/features/curriculum/exams/data/models/exam_paper_model.dart';
 

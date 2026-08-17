@@ -1,5 +1,5 @@
 import 'package:math_matric/core/database/app_database.dart';
-import 'package:math_matric/core/database/queries/study_session_queries.dart';
+import 'package:math_matric/core/database/queries/userdata/study_session_queries.dart';
 import 'package:math_matric/features/progress/studysession/data/datasource/local/study_session_local_data_source.dart';
 import 'package:math_matric/features/progress/studysession/data/models/study_session_model.dart';
 

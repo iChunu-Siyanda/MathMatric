@@ -1,5 +1,5 @@
 import 'package:math_matric/core/database/app_database.dart';
-import 'package:math_matric/core/database/queries/topic_queries.dart';
+import 'package:math_matric/core/database/queries/curriculum/topic_queries.dart';
 import 'package:math_matric/features/curriculum/topics/data/datasource/local/topic_local_datasource.dart';
 import 'package:math_matric/features/curriculum/topics/data/models/topic_model.dart';
 
