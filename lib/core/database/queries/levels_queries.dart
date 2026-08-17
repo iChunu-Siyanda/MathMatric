@@ -39,7 +39,7 @@ extension LevelsQueries on AppDatabase {
     List<LevelsCompanion> levelList,
   ) {
     return batch((batch) {
-      batch.insertAll(levels, levelList);
+      batch.insertAll(levels, levelList,mode: InsertMode.insertOrReplace,);
     });
   }
 

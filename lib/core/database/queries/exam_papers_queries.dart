@@ -127,7 +127,7 @@ extension ExamPapersQueries on AppDatabase {
     List<ExamPapersCompanion> papers,
   ) {
     return batch((batch) {
-      batch.insertAll(examPapers, papers);
+      batch.insertAll(examPapers, papers,mode: InsertMode.insertOrReplace,);
     });
   }
 

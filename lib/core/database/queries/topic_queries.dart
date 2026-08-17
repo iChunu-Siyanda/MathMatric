@@ -32,7 +32,7 @@ extension TopicQueries on AppDatabase {
 
   Future<void> insertTopics(List<TopicsCompanion> topicList) {
     return batch((batch) {
-        batch.insertAll(topics, topicList);
+        batch.insertAll(topics, topicList,mode: InsertMode.insertOrReplace,);
       }
     );
   }

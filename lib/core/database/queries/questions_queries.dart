@@ -52,7 +52,7 @@ extension QuestionsQueries on AppDatabase {
     List<QuestionsCompanion> questionList,
   ) {
     return batch((batch) {
-      batch.insertAll(questions, questionList);
+      batch.insertAll(questions, questionList,mode: InsertMode.insertOrReplace,);
     });
   }
 

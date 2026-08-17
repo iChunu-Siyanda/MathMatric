@@ -27,7 +27,7 @@ extension SubjectQueries on AppDatabase{
   //insertSubjects
   Future<void> insertSubjects(List<SubjectsCompanion> subjectCompanionList) {
     return batch((batch){
-      batch.insertAll(subjects, subjectCompanionList);
+      batch.insertAll(subjects, subjectCompanionList,mode: InsertMode.insertOrReplace,);
     });
   }
 
