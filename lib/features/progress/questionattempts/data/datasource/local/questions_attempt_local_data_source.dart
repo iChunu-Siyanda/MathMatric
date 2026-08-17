@@ -7,7 +7,6 @@ abstract class QuestionAttemptLocalDataSource {
     String attemptId,
   );
 
-  
   Future<List<QuestionAttemptModel>> getUnsyncedAttempts();
 
   Future<void> markAttemptSynced(

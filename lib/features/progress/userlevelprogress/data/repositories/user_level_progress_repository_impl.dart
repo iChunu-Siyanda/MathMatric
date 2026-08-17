@@ -1,16 +1,22 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:math_matric/features/progress/userlevelprogress/data/datasource/local/user_level_progress_local_data_source.dart';
+import 'package:math_matric/features/progress/userlevelprogress/data/datasource/remote/user_level_progress_remote_data_source.dart';
 import 'package:math_matric/features/progress/userlevelprogress/domain/entities/user_level_progresses_entity.dart';
 import 'package:math_matric/features/progress/userlevelprogress/domain/repositories/user_level_progress_repository.dart';
 
 class UserLevelProgressRepositoryImpl implements UserLevelProgressRepository {
   final UserLevelProgressLocalDataSource local;
-  UserLevelProgressRepositoryImpl(this.local);
+  final UserLevelProgressRemoteDataSource remote;
+  final FirebaseAuth auth;
+  UserLevelProgressRepositoryImpl(
+    this.local,
+    this.remote,
+    this.auth,
+  );
 
   @override
-  Future<List<UserLevelProgressEntity>>
-      getAllUserLevelProgresses() async {
-    final models =
-        await local.getAllUserLevelProgresses();
+  Future<List<UserLevelProgressEntity>> getAllUserLevelProgresses() async {
+    final models = await local.getAllUserLevelProgresses();
 
     return models
         .map((m) => m.toEntity())
@@ -61,5 +67,27 @@ class UserLevelProgressRepositoryImpl implements UserLevelProgressRepository {
     return models
         .map((m) => m.toEntity())
         .toList();
+  }
+
+  @override
+  Future<void> sync() async {
+    final user = auth.currentUser;
+    if (user == null) {
+      throw Exception('Cannot sync: user is not authenticated.');
+    }
+
+    final unsynced = await local.getUnsyncedAttempts();
+    if (unsynced.isEmpty) return;
+
+    await remote.saveUserLevelProgresses(
+      user.uid,
+      unsynced,
+    );
+
+    for (final progress in unsynced) {
+      await local.markAttemptSynced(
+        progress.id,
+      );
+    }
   }
 }

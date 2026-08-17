@@ -8,8 +8,7 @@ class UserLevelProgressLocalDataSourceImpl implements UserLevelProgressLocalData
   UserLevelProgressLocalDataSourceImpl(this.db);
 
   @override
-  Future<List<UserLevelProgressModel>>
-      getAllUserLevelProgresses() async {
+  Future<List<UserLevelProgressModel>> getAllUserLevelProgresses() async {
     final rows = await db.getAllUserLevelProgresses();
 
     return rows
@@ -54,8 +53,7 @@ class UserLevelProgressLocalDataSourceImpl implements UserLevelProgressLocalData
   }
 
   @override
-  Future<List<UserLevelProgressModel>>
-      getIncompleteLevels() async {
+  Future<List<UserLevelProgressModel>> getIncompleteLevels() async {
     final rows = await db.getIncompleteLevels();
 
     return rows
@@ -86,5 +84,19 @@ class UserLevelProgressLocalDataSourceImpl implements UserLevelProgressLocalData
     return db.deleteUserLevelProgress(
       levelId,
     );
+  }
+
+  @override
+  Future<List<UserLevelProgressModel>> getUnsyncedAttempts() async {
+    final rows = await db.getUnsyncedUserLevelProgresses();
+
+    return rows
+          .map(UserLevelProgressModel.fromDrift)
+          .toList();
+  }
+
+  @override
+  Future<void> markAttemptSynced(String attemptId) {
+    return db.markUserLevelProgressSynced(attemptId);
   }
 }

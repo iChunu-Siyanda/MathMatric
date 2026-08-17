@@ -7,6 +7,12 @@ abstract class UserTopicProgressLocalDataSource {
     String topicId,
   );
 
+  Future<List<UserTopicProgressModel>> getUnsyncedAttempts();
+
+  Future<void> markAttemptSynced(
+    String attemptId,
+  );
+
   Future<List<UserTopicProgressModel>> getFavoriteTopics();
 
   Future<UserTopicProgressModel?> getLastPlayedTopic();

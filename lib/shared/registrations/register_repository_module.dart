@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 import 'package:math_matric/features/curriculum/exams/data/repositories/local/exam_paper_local_repo_impl.dart';
 import 'package:math_matric/features/curriculum/exams/data/repositories/repos/exam_paper_repository_impl.dart';
@@ -15,15 +16,19 @@ import 'package:math_matric/features/curriculum/topics/data/repositories/topic_l
 import 'package:math_matric/features/curriculum/topics/data/repositories/topic_repository_impl.dart';
 import 'package:math_matric/features/curriculum/topics/domain/repositories/topic_repository.dart';
 import 'package:math_matric/features/progress/questionattempts/data/datasource/local/questions_attempt_local_data_source.dart';
+import 'package:math_matric/features/progress/questionattempts/data/datasource/remote/question_attempt_remote_data_source.dart';
 import 'package:math_matric/features/progress/questionattempts/data/repositories/questions_attempts_repository.dart';
 import 'package:math_matric/features/progress/questionattempts/domain/repositories/question_atempts_repository.dart';
-import 'package:math_matric/features/progress/studysession/data/repositories/study_session_local_data_source_impl.dart';
+import 'package:math_matric/features/progress/studysession/data/datasource/local/study_session_local_data_source.dart';
+import 'package:math_matric/features/progress/studysession/data/datasource/remote/study_session_remote_data_source.dart';
 import 'package:math_matric/features/progress/studysession/data/repositories/study_session_repository_impl.dart';
 import 'package:math_matric/features/progress/studysession/domain/repositories/study_session_repository.dart';
-import 'package:math_matric/features/progress/userlevelprogress/data/repositories/user_level_progress_local_data_source_impl.dart';
+import 'package:math_matric/features/progress/userlevelprogress/data/datasource/local/user_level_progress_local_data_source.dart';
+import 'package:math_matric/features/progress/userlevelprogress/data/datasource/remote/user_level_progress_remote_data_source.dart';
 import 'package:math_matric/features/progress/userlevelprogress/data/repositories/user_level_progress_repository_impl.dart';
 import 'package:math_matric/features/progress/userlevelprogress/domain/repositories/user_level_progress_repository.dart';
 import 'package:math_matric/features/progress/usertopicprogress/data/datasource/local/user_topic_progress_local_data_source.dart';
+import 'package:math_matric/features/progress/usertopicprogress/data/datasource/remote/user_topic_progress_remote_data_source.dart';
 import 'package:math_matric/features/progress/usertopicprogress/data/repositories/user_topic_progress_repository_impl.dart';
 import 'package:math_matric/features/progress/usertopicprogress/domain/repositories/user_topic_progress_repository.dart';
 import 'package:math_matric/features/streak/domain/repositories/habit_repository.dart';
@@ -65,24 +70,32 @@ void registerRepositoryModule() {
   getIt.registerLazySingleton<QuestionAttemptRepository>(
     () => QuestionAttemptRepositoryImpl(
       getIt<QuestionAttemptLocalDataSource>(),
+      getIt<QuestionAttemptRemoteDataSource>(),
+      getIt<FirebaseAuth>()
     )
   );
 
   getIt.registerLazySingleton<StudySessionRepository>(
     () => StudySessionRepositoryImpl(
-      getIt<StudySessionLocalDataSourceImpl>(),
+      getIt<StudySessionLocalDataSource>(),
+      getIt<StudySessionRemoteDataSource>(),
+      getIt<FirebaseAuth>(),
     ),
   );
 
   getIt.registerLazySingleton<UserLevelProgressRepository>(
     () => UserLevelProgressRepositoryImpl(
-      getIt<UserLevelProgressLocalDataSourceImpl>(),
+      getIt<UserLevelProgressLocalDataSource>(),
+      getIt<UserLevelProgressRemoteDataSource>(),
+      getIt<FirebaseAuth>(),
     ),
   );
 
   getIt.registerLazySingleton<UserTopicProgressRepository>(
     () => UserTopicProgressRepositoryImpl(
       getIt<UserTopicProgressLocalDataSource>(),
+      getIt<UserTopicProgressRemoteDataSource>(),
+      getIt<FirebaseAuth>(),
     ),
   );
 

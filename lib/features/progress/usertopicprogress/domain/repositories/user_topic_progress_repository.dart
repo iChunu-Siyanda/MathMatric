@@ -10,4 +10,6 @@ abstract class UserTopicProgressRepository {
   Future<List<UserTopicProgressEntity>> getFavoriteTopics();
 
   Future<UserTopicProgressEntity?> getLastPlayedTopic();
+
+  Future<void> sync();
 }

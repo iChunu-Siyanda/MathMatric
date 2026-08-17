@@ -9,6 +9,12 @@ abstract class StudySessionLocalDataSource {
     String sessionId,
   );
 
+  Future<List<StudySessionModel>> getUnsyncedAttempts();
+
+  Future<void> markAttemptSynced(
+    String attemptId,
+  );
+
   Future<List<StudySessionModel>> getStudySessionsByTopic(
     String topicId,
   );

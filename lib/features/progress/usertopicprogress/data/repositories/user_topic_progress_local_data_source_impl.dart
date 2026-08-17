@@ -75,4 +75,18 @@ class UserTopicProgressLocalDataSourceImpl implements UserTopicProgressLocalData
       topicId,
     );
   }
+
+  @override
+  Future<List<UserTopicProgressModel>> getUnsyncedAttempts() async {
+    final rows = await db.getUnsyncedUserTopicProgresses();
+
+    return rows
+          .map(UserTopicProgressModel.fromDrift)
+          .toList();
+  }
+
+  @override
+  Future<void> markAttemptSynced(String attemptId) {
+    return db.markUserTopicProgressSynced(attemptId);
+  }
 }

@@ -1,10 +1,18 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:math_matric/features/progress/questionattempts/data/datasource/local/questions_attempt_local_data_source.dart';
+import 'package:math_matric/features/progress/questionattempts/data/datasource/remote/question_attempt_remote_data_source.dart';
 import 'package:math_matric/features/progress/questionattempts/domain/entities/question_attempts_entity.dart';
 import 'package:math_matric/features/progress/questionattempts/domain/repositories/question_atempts_repository.dart';
 
 class QuestionAttemptRepositoryImpl implements QuestionAttemptRepository {
   final QuestionAttemptLocalDataSource local;
-  QuestionAttemptRepositoryImpl(this.local);
+  final QuestionAttemptRemoteDataSource remote;
+  final FirebaseAuth auth;
+  QuestionAttemptRepositoryImpl(
+    this.local, 
+    this.remote,
+    this.auth,
+  );
 
   @override
   Future<List<QuestionAttemptEntity>> getAllQuestionAttempts() async {
@@ -68,5 +76,25 @@ class QuestionAttemptRepositoryImpl implements QuestionAttemptRepository {
     return models
         .map((m) => m.toEntity())
         .toList();
+  }
+
+  @override
+  Future<void> sync() async {
+    final user = auth.currentUser;
+    if(user==null){
+      throw Exception('Cannot sync: user is not authenticated.');
+    }
+    
+    final unsynced = await local.getUnsyncedAttempts();
+    if (unsynced.isEmpty) return;
+
+    await remote.saveQuestionAttempts(
+      user.uid,
+      unsynced,
+    );
+
+    for (final attempt in unsynced) {
+      await local.markAttemptSynced(attempt.id);
+    }
   }
 }

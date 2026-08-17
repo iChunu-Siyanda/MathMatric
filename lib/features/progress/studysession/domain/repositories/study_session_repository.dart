@@ -14,4 +14,6 @@ abstract class StudySessionRepository {
   );
 
   Future<StudySessionEntity?> getLatestStudySession();
+
+  Future<void> sync();
 }

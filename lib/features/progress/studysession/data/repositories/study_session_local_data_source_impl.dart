@@ -81,4 +81,18 @@ class StudySessionLocalDataSourceImpl implements StudySessionLocalDataSource {
     final model = db.watchStudySessions(); 
     return model.map((rows) => rows.map((m) => StudySessionModel.fromDrift(m)).toList());
   }
+
+  @override
+  Future<List<StudySessionModel>> getUnsyncedAttempts() async {
+    final rows = await db.getUnsyncedStudySessions();
+
+    return rows
+          .map(StudySessionModel.fromDrift)
+          .toList();
+  }
+
+  @override
+  Future<void> markAttemptSynced(String attemptId) {
+    return db.markStudySessionSynced(attemptId);
+  }
 }

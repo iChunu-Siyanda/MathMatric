@@ -11,6 +11,12 @@ abstract class UserLevelProgressLocalDataSource {
     String topicId,
   );
 
+  Future<List<UserLevelProgressModel>> getUnsyncedAttempts();
+
+  Future<void> markAttemptSynced(
+    String attemptId,
+  );
+
   Future<List<UserLevelProgressModel>> getCompletedLevels();
 
   Future<List<UserLevelProgressModel>> getIncompleteLevels();
