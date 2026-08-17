@@ -1,14 +1,20 @@
+import 'package:drift/drift.dart';
 import 'package:math_matric/core/database/app_database.dart';
 import 'package:math_matric/features/progress/questionattempts/domain/entities/question_attempts_entity.dart';
 
 class QuestionAttemptModel extends QuestionAttemptEntity {
+  final bool synced;
+  final DateTime updatedAt;
+
   const QuestionAttemptModel({
     required super.id,
     required super.levelId,
     required super.questionId,
     required super.correct,
     required super.timeTaken,
-    required super.answeredAt,
+    required super.answeredAt, 
+    required this.synced, 
+    required this.updatedAt,
   });
 
   factory QuestionAttemptModel.fromFirestore(
@@ -23,6 +29,8 @@ class QuestionAttemptModel extends QuestionAttemptEntity {
       answeredAt: DateTime.parse(
         json['answeredAt'] as String,
       ),
+      synced: true,
+      updatedAt: DateTime.parse(json['updatedAt'] as String),
     );
   }
 
@@ -34,6 +42,7 @@ class QuestionAttemptModel extends QuestionAttemptEntity {
       'correct': correct,
       'timeTaken': timeTaken,
       'answeredAt': answeredAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
     };
   }
 
@@ -58,6 +67,8 @@ class QuestionAttemptModel extends QuestionAttemptEntity {
       correct: attempt.correct,
       timeTaken: attempt.timeTaken,
       answeredAt: attempt.answeredAt,
+      synced: false,
+      updatedAt: DateTime.now(),
     );
   }
 
@@ -71,6 +82,8 @@ class QuestionAttemptModel extends QuestionAttemptEntity {
       correct: attempt.correct,
       timeTaken: attempt.timeTaken,
       answeredAt: attempt.answeredAt,
+      synced: attempt.synced,
+      updatedAt: attempt.updatedAt,
     );
   }
 
@@ -82,6 +95,8 @@ class QuestionAttemptModel extends QuestionAttemptEntity {
       correct: correct,
       timeTaken: timeTaken,
       answeredAt: answeredAt,
+      synced: Value(synced),
+      updatedAt: updatedAt,
     );
   }
 }

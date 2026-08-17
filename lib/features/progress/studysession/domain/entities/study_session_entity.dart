@@ -33,7 +33,9 @@ class StudySessionEntity {
       endedAt: endedAt, 
       questionsAnswered: questionsAnswered, 
       correctAnswers: correctAnswers, 
-      earnedXP: earnedXP,
+      earnedXP: earnedXP, 
+      synced: false, 
+      updatedAt: DateTime.now(),
     );
   }
 }

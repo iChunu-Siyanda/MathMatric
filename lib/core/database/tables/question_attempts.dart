@@ -10,4 +10,7 @@ class QuestionAttempts extends Table {
 
   IntColumn get timeTaken => integer()(); // seconds
   DateTimeColumn get answeredAt => dateTime()();
+
+  BoolColumn get synced => boolean().withDefault(const Constant(false),)();
+  DateTimeColumn get updatedAt => dateTime()();
 }

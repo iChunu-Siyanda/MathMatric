@@ -4,6 +4,26 @@ import 'package:math_matric/features/streak/domain/entities/habit_entry.dart';
 import 'package:math_matric/features/streak/domain/mapper/habit_entry_mapper.dart';
 
 extension StudySessionQueries on AppDatabase {
+  //Syncing
+  Future<List<StudySessionData>> getUnsyncedStudySessions() {
+    return (select(studySession)
+          ..where((s) => s.synced.equals(false)))
+        .get();
+  }
+
+  Future<void> markStudySessionSynced(
+    String id,
+  ) async {
+    await (update(studySession)
+          ..where((s) => s.id.equals(id)))
+        .write(
+      const StudySessionCompanion(
+        synced: Value(true),
+      ),
+    );
+  }
+
+  //UI Data
   Future<List<HabitEntry>> getHabitEntries() async {
     final sessions = await (select(studySession)
           ..orderBy([
@@ -37,7 +57,14 @@ extension StudySessionQueries on AppDatabase {
           ..where((s) => s.id.equals(sessionId)))
         .getSingleOrNull();
   }
+  
+  Future<bool> hasStudySessions() async {
+    final sessions = await getAllStudySessions();
 
+    return sessions.isNotEmpty;
+  }
+
+  //Stats
   Future<List<StudySessionData>> getStudySessionsByTopic(
     String topicId,
   ) {
@@ -94,6 +121,7 @@ extension StudySessionQueries on AppDatabase {
     return result.read(studySession.earnedXP.sum()) ?? 0;
   }
 
+  //Updates and Insertions
   Future<int> insertStudySession(
     StudySessionCompanion session,
   ) {
@@ -104,7 +132,7 @@ extension StudySessionQueries on AppDatabase {
     List<StudySessionCompanion> sessions,
   ) {
     return batch((batch) {
-      batch.insertAll(studySession, sessions);
+      batch.insertAll(studySession, sessions, mode: InsertMode.insertOrReplace,);
     });
   }
 
@@ -113,7 +141,8 @@ extension StudySessionQueries on AppDatabase {
   ) {
     return update(studySession).replace(session);
   }
-
+  
+  //Deletions
   Future<int> deleteStudySession(
     String sessionId,
   ) {
@@ -124,11 +153,5 @@ extension StudySessionQueries on AppDatabase {
 
   Future<int> clearStudySessions() {
     return delete(studySession).go();
-  }
-
-  Future<bool> hasStudySessions() async {
-    final sessions = await getAllStudySessions();
-
-    return sessions.isNotEmpty;
   }
 }

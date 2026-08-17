@@ -2,6 +2,25 @@ import 'package:drift/drift.dart';
 import 'package:math_matric/core/database/app_database.dart';
 
 extension UserTopicProgressesQueries on AppDatabase {
+
+  Future<List<UserTopicProgressesData>> getUnsyncedUserTopicProgresses() {
+    return (select(userTopicProgresses)
+          ..where((p) => p.synced.equals(false)))
+        .get();
+  }
+
+  Future<void> markUserTopicProgressSynced(
+    String id,
+  ) async {
+    await (update(userTopicProgresses)
+          ..where((p) => p.id.equals(id)))
+        .write(
+      const UserTopicProgressesCompanion(
+        synced: Value(true),
+      ),
+    );
+  }
+
   Future<List<UserTopicProgressesData>> getAllUserTopicProgresses() {
     return (select(userTopicProgresses)
           ..orderBy([
@@ -54,7 +73,7 @@ extension UserTopicProgressesQueries on AppDatabase {
     List<UserTopicProgressesCompanion> progresses,
   ) {
     return batch((batch) {
-      batch.insertAll(userTopicProgresses, progresses);
+      batch.insertAll(userTopicProgresses, progresses,mode: InsertMode.insertOrReplace,);
     });
   }
 

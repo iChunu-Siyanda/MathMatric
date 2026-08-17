@@ -29,6 +29,25 @@ class QuestionAttemptLocalDataSourceImpl implements QuestionAttemptLocalDataSour
     return QuestionAttemptModel.fromDrift(row);
   }
 
+  
+  @override
+  Future<List<QuestionAttemptModel>> getUnsyncedAttempts() async {
+    final rows = await db.getUnsyncedQuestionAttempts();
+
+    return rows
+        .map(QuestionAttemptModel.fromDrift)
+        .toList();
+  }
+
+  @override
+  Future<void> markAttemptSynced(
+    String attemptId,
+  ) {
+    return db.markQuestionAttemptSynced(
+      attemptId,
+    );
+  }
+
   @override
   Future<List<QuestionAttemptModel>> getAttemptsByLevel(
     String levelId,

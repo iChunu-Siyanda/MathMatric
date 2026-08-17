@@ -3,6 +3,9 @@ import 'package:math_matric/core/database/app_database.dart';
 import 'package:math_matric/features/progress/userlevelprogress/domain/entities/user_level_progresses_entity.dart';
 
 class UserLevelProgressModel extends UserLevelProgressEntity {
+  final bool synced;
+ final DateTime updatedAt;
+
   const UserLevelProgressModel({
     required super.id,
     required super.levelId,
@@ -12,7 +15,9 @@ class UserLevelProgressModel extends UserLevelProgressEntity {
     required super.bestScore,
     required super.attempts,
     required super.completedAt,
-    required super.lastPlayed,
+    required super.lastPlayed, 
+    required this.synced, 
+    required this.updatedAt,
   });
 
   factory UserLevelProgressModel.fromFirestore(
@@ -32,6 +37,8 @@ class UserLevelProgressModel extends UserLevelProgressEntity {
       lastPlayed: DateTime.parse(
         json['lastPlayed'] as String,
       ),
+      synced: true,
+      updatedAt: DateTime.parse(json['updatedAt'] as String),
     );
   }
 
@@ -46,6 +53,7 @@ class UserLevelProgressModel extends UserLevelProgressEntity {
       'attempts': attempts,
       'completedAt': completedAt?.toIso8601String(),
       'lastPlayed': lastPlayed.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
     };
   }
 
@@ -76,6 +84,8 @@ class UserLevelProgressModel extends UserLevelProgressEntity {
       attempts: progress.attempts,
       completedAt: progress.completedAt,
       lastPlayed: progress.lastPlayed,
+      synced: false,
+      updatedAt: DateTime.now(),
     );
   }
 
@@ -92,6 +102,8 @@ class UserLevelProgressModel extends UserLevelProgressEntity {
       attempts: progress.attempts,
       completedAt: progress.completedAt,
       lastPlayed: progress.lastPlayed,
+      synced: progress.synced,
+      updatedAt: progress.updatedAt,
     );
   }
 
@@ -106,6 +118,8 @@ class UserLevelProgressModel extends UserLevelProgressEntity {
       attempts: attempts,
       completedAt: Value(completedAt),
       lastPlayed: lastPlayed,
+      synced: Value(synced),
+      updatedAt: updatedAt,
     );
   }
 }

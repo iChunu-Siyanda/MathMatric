@@ -80,3 +80,42 @@ extension DownloadedBundleQueries on AppDatabase {
     return bundles.isNotEmpty;
   }
 }
+
+// v1 installed
+//    ↓
+// v2 available
+//    ↓
+// download v2
+//    ↓
+// transaction
+//    ├── subjects → replace
+//    ├── topics → replace
+//    ├── levels → replace
+//    ├── questions → replace
+//    └── papers → replace
+//    ↓
+// commit
+//    ↓
+// DownloadedBundle = v2v1 installed
+//    ↓
+// v2 available
+//    ↓
+// download v2
+//    ↓
+// transaction
+//    ├── subjects → replace
+//    ├── topics → replace
+//    ├── levels → replace
+//    ├── questions → replace
+//    └── papers → replace
+//    ↓
+// commit
+//    ↓
+// DownloadedBundle = v2
+
+//If download fails:
+// transaction fails
+//        ↓
+// ROLLBACK
+//        ↓
+// DownloadedBundle remains v1

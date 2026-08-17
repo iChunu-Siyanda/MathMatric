@@ -18,6 +18,26 @@ extension QuestionAttemptsQueries on AppDatabase {
         .getSingleOrNull();
   }
 
+  //Syncing
+  Future<List<QuestionAttempt>> getUnsyncedQuestionAttempts() {
+    return (select(questionAttempts)
+          ..where((a) => a.synced.equals(false)))
+        .get();
+  }
+
+  Future<void> markQuestionAttemptSynced(
+    String attemptId,
+  ) async {
+    await (update(questionAttempts)
+          ..where((a) => a.id.equals(attemptId)))
+        .write(
+      const QuestionAttemptsCompanion(
+        synced: Value(true),
+      ),
+    );
+  }
+
+  // Stats
   Future<List<QuestionAttempt>> getAttemptsByLevel(
     String levelId,
   ) {
@@ -56,6 +76,12 @@ extension QuestionAttemptsQueries on AppDatabase {
             (a) => OrderingTerm.desc(a.answeredAt),
           ]))
         .get();
+  }
+
+  Future<bool> hasQuestionAttempts() async {
+    final attempts = await getAllQuestionAttempts();
+
+    return attempts.isNotEmpty;
   }
 
   Future<int> getAttemptCount() async {
@@ -106,6 +132,7 @@ extension QuestionAttemptsQueries on AppDatabase {
     return result.read(questionAttempts.timeTaken.avg()) ?? 0.0;
   }
 
+  // Upadates and insertions
   Future<int> insertQuestionAttempt(
     QuestionAttemptsCompanion attempt,
   ) {
@@ -116,7 +143,7 @@ extension QuestionAttemptsQueries on AppDatabase {
     List<QuestionAttemptsCompanion> attempts,
   ) {
     return batch((batch) {
-      batch.insertAll(questionAttempts, attempts);
+      batch.insertAll(questionAttempts, attempts, mode: InsertMode.insertOrReplace,);
     });
   }
 
@@ -126,6 +153,7 @@ extension QuestionAttemptsQueries on AppDatabase {
     return update(questionAttempts).replace(attempt);
   }
 
+  //Deletion
   Future<int> deleteQuestionAttempt(
     String attemptId,
   ) {
@@ -152,11 +180,5 @@ extension QuestionAttemptsQueries on AppDatabase {
 
   Future<int> clearQuestionAttempts() {
     return delete(questionAttempts).go();
-  }
-
-  Future<bool> hasQuestionAttempts() async {
-    final attempts = await getAllQuestionAttempts();
-
-    return attempts.isNotEmpty;
   }
 }

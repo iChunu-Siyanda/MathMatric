@@ -1,14 +1,20 @@
+import 'package:drift/drift.dart';
 import 'package:math_matric/core/database/app_database.dart';
 import 'package:math_matric/features/progress/usertopicprogress/domain/entities/user_topic_progresses_entity.dart';
 
 class UserTopicProgressModel extends UserTopicProgressEntity {
+  final bool synced;
+  final DateTime updatedAt;
+
   const UserTopicProgressModel({
     required super.id,
     required super.topicId,
     required super.earnedXP,
     required super.mastery,
     required super.lastPlayed,
-    required super.favorite,
+    required super.favorite, 
+    required this.synced, 
+    required this.updatedAt,
   });
 
   factory UserTopicProgressModel.fromFirestore(
@@ -23,6 +29,8 @@ class UserTopicProgressModel extends UserTopicProgressEntity {
         json['lastPlayed'] as String,
       ),
       favorite: json['favorite'] as bool,
+      synced: true,
+      updatedAt: DateTime.parse(json['updatedAt'] as String),
     );
   }
 
@@ -34,6 +42,7 @@ class UserTopicProgressModel extends UserTopicProgressEntity {
       'mastery': mastery,
       'lastPlayed': lastPlayed.toIso8601String(),
       'favorite': favorite,
+      'updatedAt': updatedAt.toIso8601String(),
     };
   }
 
@@ -58,6 +67,8 @@ class UserTopicProgressModel extends UserTopicProgressEntity {
       mastery: progress.mastery,
       lastPlayed: progress.lastPlayed,
       favorite: progress.favorite,
+      synced: false,
+      updatedAt: DateTime.now(),
     );
   }
 
@@ -71,6 +82,8 @@ class UserTopicProgressModel extends UserTopicProgressEntity {
       mastery: progress.mastery,
       lastPlayed: progress.lastPlayed,
       favorite: progress.favorite,
+      synced: progress.synced,
+      updatedAt: progress.updatedAt,
     );
   }
 
@@ -82,6 +95,8 @@ class UserTopicProgressModel extends UserTopicProgressEntity {
       mastery: mastery,
       lastPlayed: lastPlayed,
       favorite: favorite,
+      synced: Value(synced),
+      updatedAt: updatedAt,
     );
   }
 }

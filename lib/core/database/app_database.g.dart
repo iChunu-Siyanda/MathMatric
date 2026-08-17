@@ -2611,9 +2611,32 @@ class $QuestionAttemptsTable extends QuestionAttempts
   late final GeneratedColumn<DateTime> answeredAt = GeneratedColumn<DateTime>(
       'answered_at', aliasedName, false,
       type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _syncedMeta = const VerificationMeta('synced');
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, levelId, questionId, correct, timeTaken, answeredAt];
+  late final GeneratedColumn<bool> synced = GeneratedColumn<bool>(
+      'synced', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("synced" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _updatedAtMeta =
+      const VerificationMeta('updatedAt');
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        levelId,
+        questionId,
+        correct,
+        timeTaken,
+        answeredAt,
+        synced,
+        updatedAt
+      ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -2663,6 +2686,16 @@ class $QuestionAttemptsTable extends QuestionAttempts
     } else if (isInserting) {
       context.missing(_answeredAtMeta);
     }
+    if (data.containsKey('synced')) {
+      context.handle(_syncedMeta,
+          synced.isAcceptableOrUnknown(data['synced']!, _syncedMeta));
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta,
+          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
     return context;
   }
 
@@ -2684,6 +2717,10 @@ class $QuestionAttemptsTable extends QuestionAttempts
           .read(DriftSqlType.int, data['${effectivePrefix}time_taken'])!,
       answeredAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}answered_at'])!,
+      synced: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}synced'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
     );
   }
 
@@ -2700,13 +2737,17 @@ class QuestionAttempt extends DataClass implements Insertable<QuestionAttempt> {
   final bool correct;
   final int timeTaken;
   final DateTime answeredAt;
+  final bool synced;
+  final DateTime updatedAt;
   const QuestionAttempt(
       {required this.id,
       required this.levelId,
       required this.questionId,
       required this.correct,
       required this.timeTaken,
-      required this.answeredAt});
+      required this.answeredAt,
+      required this.synced,
+      required this.updatedAt});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -2716,6 +2757,8 @@ class QuestionAttempt extends DataClass implements Insertable<QuestionAttempt> {
     map['correct'] = Variable<bool>(correct);
     map['time_taken'] = Variable<int>(timeTaken);
     map['answered_at'] = Variable<DateTime>(answeredAt);
+    map['synced'] = Variable<bool>(synced);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
     return map;
   }
 
@@ -2727,6 +2770,8 @@ class QuestionAttempt extends DataClass implements Insertable<QuestionAttempt> {
       correct: Value(correct),
       timeTaken: Value(timeTaken),
       answeredAt: Value(answeredAt),
+      synced: Value(synced),
+      updatedAt: Value(updatedAt),
     );
   }
 
@@ -2740,6 +2785,8 @@ class QuestionAttempt extends DataClass implements Insertable<QuestionAttempt> {
       correct: serializer.fromJson<bool>(json['correct']),
       timeTaken: serializer.fromJson<int>(json['timeTaken']),
       answeredAt: serializer.fromJson<DateTime>(json['answeredAt']),
+      synced: serializer.fromJson<bool>(json['synced']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
   }
   @override
@@ -2752,6 +2799,8 @@ class QuestionAttempt extends DataClass implements Insertable<QuestionAttempt> {
       'correct': serializer.toJson<bool>(correct),
       'timeTaken': serializer.toJson<int>(timeTaken),
       'answeredAt': serializer.toJson<DateTime>(answeredAt),
+      'synced': serializer.toJson<bool>(synced),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
   }
 
@@ -2761,7 +2810,9 @@ class QuestionAttempt extends DataClass implements Insertable<QuestionAttempt> {
           String? questionId,
           bool? correct,
           int? timeTaken,
-          DateTime? answeredAt}) =>
+          DateTime? answeredAt,
+          bool? synced,
+          DateTime? updatedAt}) =>
       QuestionAttempt(
         id: id ?? this.id,
         levelId: levelId ?? this.levelId,
@@ -2769,6 +2820,8 @@ class QuestionAttempt extends DataClass implements Insertable<QuestionAttempt> {
         correct: correct ?? this.correct,
         timeTaken: timeTaken ?? this.timeTaken,
         answeredAt: answeredAt ?? this.answeredAt,
+        synced: synced ?? this.synced,
+        updatedAt: updatedAt ?? this.updatedAt,
       );
   QuestionAttempt copyWithCompanion(QuestionAttemptsCompanion data) {
     return QuestionAttempt(
@@ -2780,6 +2833,8 @@ class QuestionAttempt extends DataClass implements Insertable<QuestionAttempt> {
       timeTaken: data.timeTaken.present ? data.timeTaken.value : this.timeTaken,
       answeredAt:
           data.answeredAt.present ? data.answeredAt.value : this.answeredAt,
+      synced: data.synced.present ? data.synced.value : this.synced,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
   }
 
@@ -2791,14 +2846,16 @@ class QuestionAttempt extends DataClass implements Insertable<QuestionAttempt> {
           ..write('questionId: $questionId, ')
           ..write('correct: $correct, ')
           ..write('timeTaken: $timeTaken, ')
-          ..write('answeredAt: $answeredAt')
+          ..write('answeredAt: $answeredAt, ')
+          ..write('synced: $synced, ')
+          ..write('updatedAt: $updatedAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, levelId, questionId, correct, timeTaken, answeredAt);
+  int get hashCode => Object.hash(id, levelId, questionId, correct, timeTaken,
+      answeredAt, synced, updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2808,7 +2865,9 @@ class QuestionAttempt extends DataClass implements Insertable<QuestionAttempt> {
           other.questionId == this.questionId &&
           other.correct == this.correct &&
           other.timeTaken == this.timeTaken &&
-          other.answeredAt == this.answeredAt);
+          other.answeredAt == this.answeredAt &&
+          other.synced == this.synced &&
+          other.updatedAt == this.updatedAt);
 }
 
 class QuestionAttemptsCompanion extends UpdateCompanion<QuestionAttempt> {
@@ -2818,6 +2877,8 @@ class QuestionAttemptsCompanion extends UpdateCompanion<QuestionAttempt> {
   final Value<bool> correct;
   final Value<int> timeTaken;
   final Value<DateTime> answeredAt;
+  final Value<bool> synced;
+  final Value<DateTime> updatedAt;
   final Value<int> rowid;
   const QuestionAttemptsCompanion({
     this.id = const Value.absent(),
@@ -2826,6 +2887,8 @@ class QuestionAttemptsCompanion extends UpdateCompanion<QuestionAttempt> {
     this.correct = const Value.absent(),
     this.timeTaken = const Value.absent(),
     this.answeredAt = const Value.absent(),
+    this.synced = const Value.absent(),
+    this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   QuestionAttemptsCompanion.insert({
@@ -2835,13 +2898,16 @@ class QuestionAttemptsCompanion extends UpdateCompanion<QuestionAttempt> {
     required bool correct,
     required int timeTaken,
     required DateTime answeredAt,
+    this.synced = const Value.absent(),
+    required DateTime updatedAt,
     this.rowid = const Value.absent(),
   })  : id = Value(id),
         levelId = Value(levelId),
         questionId = Value(questionId),
         correct = Value(correct),
         timeTaken = Value(timeTaken),
-        answeredAt = Value(answeredAt);
+        answeredAt = Value(answeredAt),
+        updatedAt = Value(updatedAt);
   static Insertable<QuestionAttempt> custom({
     Expression<String>? id,
     Expression<String>? levelId,
@@ -2849,6 +2915,8 @@ class QuestionAttemptsCompanion extends UpdateCompanion<QuestionAttempt> {
     Expression<bool>? correct,
     Expression<int>? timeTaken,
     Expression<DateTime>? answeredAt,
+    Expression<bool>? synced,
+    Expression<DateTime>? updatedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -2858,6 +2926,8 @@ class QuestionAttemptsCompanion extends UpdateCompanion<QuestionAttempt> {
       if (correct != null) 'correct': correct,
       if (timeTaken != null) 'time_taken': timeTaken,
       if (answeredAt != null) 'answered_at': answeredAt,
+      if (synced != null) 'synced': synced,
+      if (updatedAt != null) 'updated_at': updatedAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -2869,6 +2939,8 @@ class QuestionAttemptsCompanion extends UpdateCompanion<QuestionAttempt> {
       Value<bool>? correct,
       Value<int>? timeTaken,
       Value<DateTime>? answeredAt,
+      Value<bool>? synced,
+      Value<DateTime>? updatedAt,
       Value<int>? rowid}) {
     return QuestionAttemptsCompanion(
       id: id ?? this.id,
@@ -2877,6 +2949,8 @@ class QuestionAttemptsCompanion extends UpdateCompanion<QuestionAttempt> {
       correct: correct ?? this.correct,
       timeTaken: timeTaken ?? this.timeTaken,
       answeredAt: answeredAt ?? this.answeredAt,
+      synced: synced ?? this.synced,
+      updatedAt: updatedAt ?? this.updatedAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -2902,6 +2976,12 @@ class QuestionAttemptsCompanion extends UpdateCompanion<QuestionAttempt> {
     if (answeredAt.present) {
       map['answered_at'] = Variable<DateTime>(answeredAt.value);
     }
+    if (synced.present) {
+      map['synced'] = Variable<bool>(synced.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -2917,6 +2997,8 @@ class QuestionAttemptsCompanion extends UpdateCompanion<QuestionAttempt> {
           ..write('correct: $correct, ')
           ..write('timeTaken: $timeTaken, ')
           ..write('answeredAt: $answeredAt, ')
+          ..write('synced: $synced, ')
+          ..write('updatedAt: $updatedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -2989,6 +3071,21 @@ class $UserLevelProgressesTable extends UserLevelProgresses
   late final GeneratedColumn<DateTime> lastPlayed = GeneratedColumn<DateTime>(
       'last_played', aliasedName, false,
       type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _syncedMeta = const VerificationMeta('synced');
+  @override
+  late final GeneratedColumn<bool> synced = GeneratedColumn<bool>(
+      'synced', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("synced" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _updatedAtMeta =
+      const VerificationMeta('updatedAt');
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -2999,7 +3096,9 @@ class $UserLevelProgressesTable extends UserLevelProgresses
         bestScore,
         attempts,
         completedAt,
-        lastPlayed
+        lastPlayed,
+        synced,
+        updatedAt
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3067,6 +3166,16 @@ class $UserLevelProgressesTable extends UserLevelProgresses
     } else if (isInserting) {
       context.missing(_lastPlayedMeta);
     }
+    if (data.containsKey('synced')) {
+      context.handle(_syncedMeta,
+          synced.isAcceptableOrUnknown(data['synced']!, _syncedMeta));
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta,
+          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
     return context;
   }
 
@@ -3095,6 +3204,10 @@ class $UserLevelProgressesTable extends UserLevelProgresses
           .read(DriftSqlType.dateTime, data['${effectivePrefix}completed_at']),
       lastPlayed: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}last_played'])!,
+      synced: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}synced'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
     );
   }
 
@@ -3115,6 +3228,8 @@ class UserLevelProgressesData extends DataClass
   final int attempts;
   final DateTime? completedAt;
   final DateTime lastPlayed;
+  final bool synced;
+  final DateTime updatedAt;
   const UserLevelProgressesData(
       {required this.id,
       required this.levelId,
@@ -3124,7 +3239,9 @@ class UserLevelProgressesData extends DataClass
       required this.bestScore,
       required this.attempts,
       this.completedAt,
-      required this.lastPlayed});
+      required this.lastPlayed,
+      required this.synced,
+      required this.updatedAt});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -3139,6 +3256,8 @@ class UserLevelProgressesData extends DataClass
       map['completed_at'] = Variable<DateTime>(completedAt);
     }
     map['last_played'] = Variable<DateTime>(lastPlayed);
+    map['synced'] = Variable<bool>(synced);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
     return map;
   }
 
@@ -3155,6 +3274,8 @@ class UserLevelProgressesData extends DataClass
           ? const Value.absent()
           : Value(completedAt),
       lastPlayed: Value(lastPlayed),
+      synced: Value(synced),
+      updatedAt: Value(updatedAt),
     );
   }
 
@@ -3171,6 +3292,8 @@ class UserLevelProgressesData extends DataClass
       attempts: serializer.fromJson<int>(json['attempts']),
       completedAt: serializer.fromJson<DateTime?>(json['completedAt']),
       lastPlayed: serializer.fromJson<DateTime>(json['lastPlayed']),
+      synced: serializer.fromJson<bool>(json['synced']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
   }
   @override
@@ -3186,6 +3309,8 @@ class UserLevelProgressesData extends DataClass
       'attempts': serializer.toJson<int>(attempts),
       'completedAt': serializer.toJson<DateTime?>(completedAt),
       'lastPlayed': serializer.toJson<DateTime>(lastPlayed),
+      'synced': serializer.toJson<bool>(synced),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
   }
 
@@ -3198,7 +3323,9 @@ class UserLevelProgressesData extends DataClass
           double? bestScore,
           int? attempts,
           Value<DateTime?> completedAt = const Value.absent(),
-          DateTime? lastPlayed}) =>
+          DateTime? lastPlayed,
+          bool? synced,
+          DateTime? updatedAt}) =>
       UserLevelProgressesData(
         id: id ?? this.id,
         levelId: levelId ?? this.levelId,
@@ -3209,6 +3336,8 @@ class UserLevelProgressesData extends DataClass
         attempts: attempts ?? this.attempts,
         completedAt: completedAt.present ? completedAt.value : this.completedAt,
         lastPlayed: lastPlayed ?? this.lastPlayed,
+        synced: synced ?? this.synced,
+        updatedAt: updatedAt ?? this.updatedAt,
       );
   UserLevelProgressesData copyWithCompanion(UserLevelProgressesCompanion data) {
     return UserLevelProgressesData(
@@ -3223,6 +3352,8 @@ class UserLevelProgressesData extends DataClass
           data.completedAt.present ? data.completedAt.value : this.completedAt,
       lastPlayed:
           data.lastPlayed.present ? data.lastPlayed.value : this.lastPlayed,
+      synced: data.synced.present ? data.synced.value : this.synced,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
   }
 
@@ -3237,14 +3368,16 @@ class UserLevelProgressesData extends DataClass
           ..write('bestScore: $bestScore, ')
           ..write('attempts: $attempts, ')
           ..write('completedAt: $completedAt, ')
-          ..write('lastPlayed: $lastPlayed')
+          ..write('lastPlayed: $lastPlayed, ')
+          ..write('synced: $synced, ')
+          ..write('updatedAt: $updatedAt')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode => Object.hash(id, levelId, topicId, completed, earnedXP,
-      bestScore, attempts, completedAt, lastPlayed);
+      bestScore, attempts, completedAt, lastPlayed, synced, updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3257,7 +3390,9 @@ class UserLevelProgressesData extends DataClass
           other.bestScore == this.bestScore &&
           other.attempts == this.attempts &&
           other.completedAt == this.completedAt &&
-          other.lastPlayed == this.lastPlayed);
+          other.lastPlayed == this.lastPlayed &&
+          other.synced == this.synced &&
+          other.updatedAt == this.updatedAt);
 }
 
 class UserLevelProgressesCompanion
@@ -3271,6 +3406,8 @@ class UserLevelProgressesCompanion
   final Value<int> attempts;
   final Value<DateTime?> completedAt;
   final Value<DateTime> lastPlayed;
+  final Value<bool> synced;
+  final Value<DateTime> updatedAt;
   final Value<int> rowid;
   const UserLevelProgressesCompanion({
     this.id = const Value.absent(),
@@ -3282,6 +3419,8 @@ class UserLevelProgressesCompanion
     this.attempts = const Value.absent(),
     this.completedAt = const Value.absent(),
     this.lastPlayed = const Value.absent(),
+    this.synced = const Value.absent(),
+    this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   UserLevelProgressesCompanion.insert({
@@ -3294,6 +3433,8 @@ class UserLevelProgressesCompanion
     required int attempts,
     this.completedAt = const Value.absent(),
     required DateTime lastPlayed,
+    this.synced = const Value.absent(),
+    required DateTime updatedAt,
     this.rowid = const Value.absent(),
   })  : id = Value(id),
         levelId = Value(levelId),
@@ -3302,7 +3443,8 @@ class UserLevelProgressesCompanion
         earnedXP = Value(earnedXP),
         bestScore = Value(bestScore),
         attempts = Value(attempts),
-        lastPlayed = Value(lastPlayed);
+        lastPlayed = Value(lastPlayed),
+        updatedAt = Value(updatedAt);
   static Insertable<UserLevelProgressesData> custom({
     Expression<String>? id,
     Expression<String>? levelId,
@@ -3313,6 +3455,8 @@ class UserLevelProgressesCompanion
     Expression<int>? attempts,
     Expression<DateTime>? completedAt,
     Expression<DateTime>? lastPlayed,
+    Expression<bool>? synced,
+    Expression<DateTime>? updatedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -3325,6 +3469,8 @@ class UserLevelProgressesCompanion
       if (attempts != null) 'attempts': attempts,
       if (completedAt != null) 'completed_at': completedAt,
       if (lastPlayed != null) 'last_played': lastPlayed,
+      if (synced != null) 'synced': synced,
+      if (updatedAt != null) 'updated_at': updatedAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -3339,6 +3485,8 @@ class UserLevelProgressesCompanion
       Value<int>? attempts,
       Value<DateTime?>? completedAt,
       Value<DateTime>? lastPlayed,
+      Value<bool>? synced,
+      Value<DateTime>? updatedAt,
       Value<int>? rowid}) {
     return UserLevelProgressesCompanion(
       id: id ?? this.id,
@@ -3350,6 +3498,8 @@ class UserLevelProgressesCompanion
       attempts: attempts ?? this.attempts,
       completedAt: completedAt ?? this.completedAt,
       lastPlayed: lastPlayed ?? this.lastPlayed,
+      synced: synced ?? this.synced,
+      updatedAt: updatedAt ?? this.updatedAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -3384,6 +3534,12 @@ class UserLevelProgressesCompanion
     if (lastPlayed.present) {
       map['last_played'] = Variable<DateTime>(lastPlayed.value);
     }
+    if (synced.present) {
+      map['synced'] = Variable<bool>(synced.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -3402,6 +3558,8 @@ class UserLevelProgressesCompanion
           ..write('attempts: $attempts, ')
           ..write('completedAt: $completedAt, ')
           ..write('lastPlayed: $lastPlayed, ')
+          ..write('synced: $synced, ')
+          ..write('updatedAt: $updatedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -3456,9 +3614,24 @@ class $UserTopicProgressesTable extends UserTopicProgresses
       requiredDuringInsert: true,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('CHECK ("favorite" IN (0, 1))'));
+  static const VerificationMeta _syncedMeta = const VerificationMeta('synced');
+  @override
+  late final GeneratedColumn<bool> synced = GeneratedColumn<bool>(
+      'synced', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("synced" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _updatedAtMeta =
+      const VerificationMeta('updatedAt');
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns =>
-      [id, topicId, earnedXP, mastery, lastPlayed, favorite];
+      [id, topicId, earnedXP, mastery, lastPlayed, favorite, synced, updatedAt];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -3507,6 +3680,16 @@ class $UserTopicProgressesTable extends UserTopicProgresses
     } else if (isInserting) {
       context.missing(_favoriteMeta);
     }
+    if (data.containsKey('synced')) {
+      context.handle(_syncedMeta,
+          synced.isAcceptableOrUnknown(data['synced']!, _syncedMeta));
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta,
+          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
     return context;
   }
 
@@ -3529,6 +3712,10 @@ class $UserTopicProgressesTable extends UserTopicProgresses
           .read(DriftSqlType.dateTime, data['${effectivePrefix}last_played'])!,
       favorite: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}favorite'])!,
+      synced: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}synced'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
     );
   }
 
@@ -3546,13 +3733,17 @@ class UserTopicProgressesData extends DataClass
   final double mastery;
   final DateTime lastPlayed;
   final bool favorite;
+  final bool synced;
+  final DateTime updatedAt;
   const UserTopicProgressesData(
       {required this.id,
       required this.topicId,
       required this.earnedXP,
       required this.mastery,
       required this.lastPlayed,
-      required this.favorite});
+      required this.favorite,
+      required this.synced,
+      required this.updatedAt});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -3562,6 +3753,8 @@ class UserTopicProgressesData extends DataClass
     map['mastery'] = Variable<double>(mastery);
     map['last_played'] = Variable<DateTime>(lastPlayed);
     map['favorite'] = Variable<bool>(favorite);
+    map['synced'] = Variable<bool>(synced);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
     return map;
   }
 
@@ -3573,6 +3766,8 @@ class UserTopicProgressesData extends DataClass
       mastery: Value(mastery),
       lastPlayed: Value(lastPlayed),
       favorite: Value(favorite),
+      synced: Value(synced),
+      updatedAt: Value(updatedAt),
     );
   }
 
@@ -3586,6 +3781,8 @@ class UserTopicProgressesData extends DataClass
       mastery: serializer.fromJson<double>(json['mastery']),
       lastPlayed: serializer.fromJson<DateTime>(json['lastPlayed']),
       favorite: serializer.fromJson<bool>(json['favorite']),
+      synced: serializer.fromJson<bool>(json['synced']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
   }
   @override
@@ -3598,6 +3795,8 @@ class UserTopicProgressesData extends DataClass
       'mastery': serializer.toJson<double>(mastery),
       'lastPlayed': serializer.toJson<DateTime>(lastPlayed),
       'favorite': serializer.toJson<bool>(favorite),
+      'synced': serializer.toJson<bool>(synced),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
   }
 
@@ -3607,7 +3806,9 @@ class UserTopicProgressesData extends DataClass
           int? earnedXP,
           double? mastery,
           DateTime? lastPlayed,
-          bool? favorite}) =>
+          bool? favorite,
+          bool? synced,
+          DateTime? updatedAt}) =>
       UserTopicProgressesData(
         id: id ?? this.id,
         topicId: topicId ?? this.topicId,
@@ -3615,6 +3816,8 @@ class UserTopicProgressesData extends DataClass
         mastery: mastery ?? this.mastery,
         lastPlayed: lastPlayed ?? this.lastPlayed,
         favorite: favorite ?? this.favorite,
+        synced: synced ?? this.synced,
+        updatedAt: updatedAt ?? this.updatedAt,
       );
   UserTopicProgressesData copyWithCompanion(UserTopicProgressesCompanion data) {
     return UserTopicProgressesData(
@@ -3625,6 +3828,8 @@ class UserTopicProgressesData extends DataClass
       lastPlayed:
           data.lastPlayed.present ? data.lastPlayed.value : this.lastPlayed,
       favorite: data.favorite.present ? data.favorite.value : this.favorite,
+      synced: data.synced.present ? data.synced.value : this.synced,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
   }
 
@@ -3636,14 +3841,16 @@ class UserTopicProgressesData extends DataClass
           ..write('earnedXP: $earnedXP, ')
           ..write('mastery: $mastery, ')
           ..write('lastPlayed: $lastPlayed, ')
-          ..write('favorite: $favorite')
+          ..write('favorite: $favorite, ')
+          ..write('synced: $synced, ')
+          ..write('updatedAt: $updatedAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, topicId, earnedXP, mastery, lastPlayed, favorite);
+  int get hashCode => Object.hash(
+      id, topicId, earnedXP, mastery, lastPlayed, favorite, synced, updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3653,7 +3860,9 @@ class UserTopicProgressesData extends DataClass
           other.earnedXP == this.earnedXP &&
           other.mastery == this.mastery &&
           other.lastPlayed == this.lastPlayed &&
-          other.favorite == this.favorite);
+          other.favorite == this.favorite &&
+          other.synced == this.synced &&
+          other.updatedAt == this.updatedAt);
 }
 
 class UserTopicProgressesCompanion
@@ -3664,6 +3873,8 @@ class UserTopicProgressesCompanion
   final Value<double> mastery;
   final Value<DateTime> lastPlayed;
   final Value<bool> favorite;
+  final Value<bool> synced;
+  final Value<DateTime> updatedAt;
   final Value<int> rowid;
   const UserTopicProgressesCompanion({
     this.id = const Value.absent(),
@@ -3672,6 +3883,8 @@ class UserTopicProgressesCompanion
     this.mastery = const Value.absent(),
     this.lastPlayed = const Value.absent(),
     this.favorite = const Value.absent(),
+    this.synced = const Value.absent(),
+    this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   UserTopicProgressesCompanion.insert({
@@ -3681,13 +3894,16 @@ class UserTopicProgressesCompanion
     required double mastery,
     required DateTime lastPlayed,
     required bool favorite,
+    this.synced = const Value.absent(),
+    required DateTime updatedAt,
     this.rowid = const Value.absent(),
   })  : id = Value(id),
         topicId = Value(topicId),
         earnedXP = Value(earnedXP),
         mastery = Value(mastery),
         lastPlayed = Value(lastPlayed),
-        favorite = Value(favorite);
+        favorite = Value(favorite),
+        updatedAt = Value(updatedAt);
   static Insertable<UserTopicProgressesData> custom({
     Expression<String>? id,
     Expression<String>? topicId,
@@ -3695,6 +3911,8 @@ class UserTopicProgressesCompanion
     Expression<double>? mastery,
     Expression<DateTime>? lastPlayed,
     Expression<bool>? favorite,
+    Expression<bool>? synced,
+    Expression<DateTime>? updatedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -3704,6 +3922,8 @@ class UserTopicProgressesCompanion
       if (mastery != null) 'mastery': mastery,
       if (lastPlayed != null) 'last_played': lastPlayed,
       if (favorite != null) 'favorite': favorite,
+      if (synced != null) 'synced': synced,
+      if (updatedAt != null) 'updated_at': updatedAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -3715,6 +3935,8 @@ class UserTopicProgressesCompanion
       Value<double>? mastery,
       Value<DateTime>? lastPlayed,
       Value<bool>? favorite,
+      Value<bool>? synced,
+      Value<DateTime>? updatedAt,
       Value<int>? rowid}) {
     return UserTopicProgressesCompanion(
       id: id ?? this.id,
@@ -3723,6 +3945,8 @@ class UserTopicProgressesCompanion
       mastery: mastery ?? this.mastery,
       lastPlayed: lastPlayed ?? this.lastPlayed,
       favorite: favorite ?? this.favorite,
+      synced: synced ?? this.synced,
+      updatedAt: updatedAt ?? this.updatedAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -3748,6 +3972,12 @@ class UserTopicProgressesCompanion
     if (favorite.present) {
       map['favorite'] = Variable<bool>(favorite.value);
     }
+    if (synced.present) {
+      map['synced'] = Variable<bool>(synced.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -3763,6 +3993,8 @@ class UserTopicProgressesCompanion
           ..write('mastery: $mastery, ')
           ..write('lastPlayed: $lastPlayed, ')
           ..write('favorite: $favorite, ')
+          ..write('synced: $synced, ')
+          ..write('updatedAt: $updatedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -3779,9 +4011,7 @@ class $StudySessionTable extends StudySession
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _topicIdMeta =
       const VerificationMeta('topicId');
   @override
@@ -3823,6 +4053,21 @@ class $StudySessionTable extends StudySession
   late final GeneratedColumn<int> earnedXP = GeneratedColumn<int>(
       'earned_x_p', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _syncedMeta = const VerificationMeta('synced');
+  @override
+  late final GeneratedColumn<bool> synced = GeneratedColumn<bool>(
+      'synced', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("synced" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _updatedAtMeta =
+      const VerificationMeta('updatedAt');
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -3832,7 +4077,9 @@ class $StudySessionTable extends StudySession
         endedAt,
         questionsAnswered,
         correctAnswers,
-        earnedXP
+        earnedXP,
+        synced,
+        updatedAt
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3889,6 +4136,16 @@ class $StudySessionTable extends StudySession
     } else if (isInserting) {
       context.missing(_earnedXPMeta);
     }
+    if (data.containsKey('synced')) {
+      context.handle(_syncedMeta,
+          synced.isAcceptableOrUnknown(data['synced']!, _syncedMeta));
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta,
+          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
     return context;
   }
 
@@ -3915,6 +4172,10 @@ class $StudySessionTable extends StudySession
           .read(DriftSqlType.int, data['${effectivePrefix}correct_answers'])!,
       earnedXP: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}earned_x_p'])!,
+      synced: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}synced'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
     );
   }
 
@@ -3937,6 +4198,8 @@ class StudySessionData extends DataClass
   final int questionsAnswered;
   final int correctAnswers;
   final int earnedXP;
+  final bool synced;
+  final DateTime updatedAt;
   const StudySessionData(
       {required this.id,
       required this.topicId,
@@ -3945,7 +4208,9 @@ class StudySessionData extends DataClass
       required this.endedAt,
       required this.questionsAnswered,
       required this.correctAnswers,
-      required this.earnedXP});
+      required this.earnedXP,
+      required this.synced,
+      required this.updatedAt});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -3960,6 +4225,8 @@ class StudySessionData extends DataClass
     map['questions_answered'] = Variable<int>(questionsAnswered);
     map['correct_answers'] = Variable<int>(correctAnswers);
     map['earned_x_p'] = Variable<int>(earnedXP);
+    map['synced'] = Variable<bool>(synced);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
     return map;
   }
 
@@ -3973,6 +4240,8 @@ class StudySessionData extends DataClass
       questionsAnswered: Value(questionsAnswered),
       correctAnswers: Value(correctAnswers),
       earnedXP: Value(earnedXP),
+      synced: Value(synced),
+      updatedAt: Value(updatedAt),
     );
   }
 
@@ -3989,6 +4258,8 @@ class StudySessionData extends DataClass
       questionsAnswered: serializer.fromJson<int>(json['questionsAnswered']),
       correctAnswers: serializer.fromJson<int>(json['correctAnswers']),
       earnedXP: serializer.fromJson<int>(json['earnedXP']),
+      synced: serializer.fromJson<bool>(json['synced']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
   }
   @override
@@ -4004,6 +4275,8 @@ class StudySessionData extends DataClass
       'questionsAnswered': serializer.toJson<int>(questionsAnswered),
       'correctAnswers': serializer.toJson<int>(correctAnswers),
       'earnedXP': serializer.toJson<int>(earnedXP),
+      'synced': serializer.toJson<bool>(synced),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
   }
 
@@ -4015,7 +4288,9 @@ class StudySessionData extends DataClass
           DateTime? endedAt,
           int? questionsAnswered,
           int? correctAnswers,
-          int? earnedXP}) =>
+          int? earnedXP,
+          bool? synced,
+          DateTime? updatedAt}) =>
       StudySessionData(
         id: id ?? this.id,
         topicId: topicId ?? this.topicId,
@@ -4025,6 +4300,8 @@ class StudySessionData extends DataClass
         questionsAnswered: questionsAnswered ?? this.questionsAnswered,
         correctAnswers: correctAnswers ?? this.correctAnswers,
         earnedXP: earnedXP ?? this.earnedXP,
+        synced: synced ?? this.synced,
+        updatedAt: updatedAt ?? this.updatedAt,
       );
   StudySessionData copyWithCompanion(StudySessionCompanion data) {
     return StudySessionData(
@@ -4040,6 +4317,8 @@ class StudySessionData extends DataClass
           ? data.correctAnswers.value
           : this.correctAnswers,
       earnedXP: data.earnedXP.present ? data.earnedXP.value : this.earnedXP,
+      synced: data.synced.present ? data.synced.value : this.synced,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
   }
 
@@ -4053,14 +4332,16 @@ class StudySessionData extends DataClass
           ..write('endedAt: $endedAt, ')
           ..write('questionsAnswered: $questionsAnswered, ')
           ..write('correctAnswers: $correctAnswers, ')
-          ..write('earnedXP: $earnedXP')
+          ..write('earnedXP: $earnedXP, ')
+          ..write('synced: $synced, ')
+          ..write('updatedAt: $updatedAt')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode => Object.hash(id, topicId, activity, startedAt, endedAt,
-      questionsAnswered, correctAnswers, earnedXP);
+      questionsAnswered, correctAnswers, earnedXP, synced, updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -4072,7 +4353,9 @@ class StudySessionData extends DataClass
           other.endedAt == this.endedAt &&
           other.questionsAnswered == this.questionsAnswered &&
           other.correctAnswers == this.correctAnswers &&
-          other.earnedXP == this.earnedXP);
+          other.earnedXP == this.earnedXP &&
+          other.synced == this.synced &&
+          other.updatedAt == this.updatedAt);
 }
 
 class StudySessionCompanion extends UpdateCompanion<StudySessionData> {
@@ -4084,6 +4367,8 @@ class StudySessionCompanion extends UpdateCompanion<StudySessionData> {
   final Value<int> questionsAnswered;
   final Value<int> correctAnswers;
   final Value<int> earnedXP;
+  final Value<bool> synced;
+  final Value<DateTime> updatedAt;
   final Value<int> rowid;
   const StudySessionCompanion({
     this.id = const Value.absent(),
@@ -4094,6 +4379,8 @@ class StudySessionCompanion extends UpdateCompanion<StudySessionData> {
     this.questionsAnswered = const Value.absent(),
     this.correctAnswers = const Value.absent(),
     this.earnedXP = const Value.absent(),
+    this.synced = const Value.absent(),
+    this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   StudySessionCompanion.insert({
@@ -4105,6 +4392,8 @@ class StudySessionCompanion extends UpdateCompanion<StudySessionData> {
     required int questionsAnswered,
     required int correctAnswers,
     required int earnedXP,
+    this.synced = const Value.absent(),
+    required DateTime updatedAt,
     this.rowid = const Value.absent(),
   })  : id = Value(id),
         topicId = Value(topicId),
@@ -4113,7 +4402,8 @@ class StudySessionCompanion extends UpdateCompanion<StudySessionData> {
         endedAt = Value(endedAt),
         questionsAnswered = Value(questionsAnswered),
         correctAnswers = Value(correctAnswers),
-        earnedXP = Value(earnedXP);
+        earnedXP = Value(earnedXP),
+        updatedAt = Value(updatedAt);
   static Insertable<StudySessionData> custom({
     Expression<String>? id,
     Expression<String>? topicId,
@@ -4123,6 +4413,8 @@ class StudySessionCompanion extends UpdateCompanion<StudySessionData> {
     Expression<int>? questionsAnswered,
     Expression<int>? correctAnswers,
     Expression<int>? earnedXP,
+    Expression<bool>? synced,
+    Expression<DateTime>? updatedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -4134,6 +4426,8 @@ class StudySessionCompanion extends UpdateCompanion<StudySessionData> {
       if (questionsAnswered != null) 'questions_answered': questionsAnswered,
       if (correctAnswers != null) 'correct_answers': correctAnswers,
       if (earnedXP != null) 'earned_x_p': earnedXP,
+      if (synced != null) 'synced': synced,
+      if (updatedAt != null) 'updated_at': updatedAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -4147,6 +4441,8 @@ class StudySessionCompanion extends UpdateCompanion<StudySessionData> {
       Value<int>? questionsAnswered,
       Value<int>? correctAnswers,
       Value<int>? earnedXP,
+      Value<bool>? synced,
+      Value<DateTime>? updatedAt,
       Value<int>? rowid}) {
     return StudySessionCompanion(
       id: id ?? this.id,
@@ -4157,6 +4453,8 @@ class StudySessionCompanion extends UpdateCompanion<StudySessionData> {
       questionsAnswered: questionsAnswered ?? this.questionsAnswered,
       correctAnswers: correctAnswers ?? this.correctAnswers,
       earnedXP: earnedXP ?? this.earnedXP,
+      synced: synced ?? this.synced,
+      updatedAt: updatedAt ?? this.updatedAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -4189,6 +4487,12 @@ class StudySessionCompanion extends UpdateCompanion<StudySessionData> {
     if (earnedXP.present) {
       map['earned_x_p'] = Variable<int>(earnedXP.value);
     }
+    if (synced.present) {
+      map['synced'] = Variable<bool>(synced.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -4206,6 +4510,8 @@ class StudySessionCompanion extends UpdateCompanion<StudySessionData> {
           ..write('questionsAnswered: $questionsAnswered, ')
           ..write('correctAnswers: $correctAnswers, ')
           ..write('earnedXP: $earnedXP, ')
+          ..write('synced: $synced, ')
+          ..write('updatedAt: $updatedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -5690,6 +5996,8 @@ typedef $$QuestionAttemptsTableCreateCompanionBuilder
   required bool correct,
   required int timeTaken,
   required DateTime answeredAt,
+  Value<bool> synced,
+  required DateTime updatedAt,
   Value<int> rowid,
 });
 typedef $$QuestionAttemptsTableUpdateCompanionBuilder
@@ -5700,6 +6008,8 @@ typedef $$QuestionAttemptsTableUpdateCompanionBuilder
   Value<bool> correct,
   Value<int> timeTaken,
   Value<DateTime> answeredAt,
+  Value<bool> synced,
+  Value<DateTime> updatedAt,
   Value<int> rowid,
 });
 
@@ -5729,6 +6039,12 @@ class $$QuestionAttemptsTableFilterComposer
 
   ColumnFilters<DateTime> get answeredAt => $composableBuilder(
       column: $table.answeredAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get synced => $composableBuilder(
+      column: $table.synced, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
 }
 
 class $$QuestionAttemptsTableOrderingComposer
@@ -5757,6 +6073,12 @@ class $$QuestionAttemptsTableOrderingComposer
 
   ColumnOrderings<DateTime> get answeredAt => $composableBuilder(
       column: $table.answeredAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get synced => $composableBuilder(
+      column: $table.synced, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
 }
 
 class $$QuestionAttemptsTableAnnotationComposer
@@ -5785,6 +6107,12 @@ class $$QuestionAttemptsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get answeredAt => $composableBuilder(
       column: $table.answeredAt, builder: (column) => column);
+
+  GeneratedColumn<bool> get synced =>
+      $composableBuilder(column: $table.synced, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 }
 
 class $$QuestionAttemptsTableTableManager extends RootTableManager<
@@ -5820,6 +6148,8 @@ class $$QuestionAttemptsTableTableManager extends RootTableManager<
             Value<bool> correct = const Value.absent(),
             Value<int> timeTaken = const Value.absent(),
             Value<DateTime> answeredAt = const Value.absent(),
+            Value<bool> synced = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               QuestionAttemptsCompanion(
@@ -5829,6 +6159,8 @@ class $$QuestionAttemptsTableTableManager extends RootTableManager<
             correct: correct,
             timeTaken: timeTaken,
             answeredAt: answeredAt,
+            synced: synced,
+            updatedAt: updatedAt,
             rowid: rowid,
           ),
           createCompanionCallback: ({
@@ -5838,6 +6170,8 @@ class $$QuestionAttemptsTableTableManager extends RootTableManager<
             required bool correct,
             required int timeTaken,
             required DateTime answeredAt,
+            Value<bool> synced = const Value.absent(),
+            required DateTime updatedAt,
             Value<int> rowid = const Value.absent(),
           }) =>
               QuestionAttemptsCompanion.insert(
@@ -5847,6 +6181,8 @@ class $$QuestionAttemptsTableTableManager extends RootTableManager<
             correct: correct,
             timeTaken: timeTaken,
             answeredAt: answeredAt,
+            synced: synced,
+            updatedAt: updatedAt,
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0
@@ -5882,6 +6218,8 @@ typedef $$UserLevelProgressesTableCreateCompanionBuilder
   required int attempts,
   Value<DateTime?> completedAt,
   required DateTime lastPlayed,
+  Value<bool> synced,
+  required DateTime updatedAt,
   Value<int> rowid,
 });
 typedef $$UserLevelProgressesTableUpdateCompanionBuilder
@@ -5895,6 +6233,8 @@ typedef $$UserLevelProgressesTableUpdateCompanionBuilder
   Value<int> attempts,
   Value<DateTime?> completedAt,
   Value<DateTime> lastPlayed,
+  Value<bool> synced,
+  Value<DateTime> updatedAt,
   Value<int> rowid,
 });
 
@@ -5933,6 +6273,12 @@ class $$UserLevelProgressesTableFilterComposer
 
   ColumnFilters<DateTime> get lastPlayed => $composableBuilder(
       column: $table.lastPlayed, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get synced => $composableBuilder(
+      column: $table.synced, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
 }
 
 class $$UserLevelProgressesTableOrderingComposer
@@ -5970,6 +6316,12 @@ class $$UserLevelProgressesTableOrderingComposer
 
   ColumnOrderings<DateTime> get lastPlayed => $composableBuilder(
       column: $table.lastPlayed, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get synced => $composableBuilder(
+      column: $table.synced, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
 }
 
 class $$UserLevelProgressesTableAnnotationComposer
@@ -6007,6 +6359,12 @@ class $$UserLevelProgressesTableAnnotationComposer
 
   GeneratedColumn<DateTime> get lastPlayed => $composableBuilder(
       column: $table.lastPlayed, builder: (column) => column);
+
+  GeneratedColumn<bool> get synced =>
+      $composableBuilder(column: $table.synced, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 }
 
 class $$UserLevelProgressesTableTableManager extends RootTableManager<
@@ -6048,6 +6406,8 @@ class $$UserLevelProgressesTableTableManager extends RootTableManager<
             Value<int> attempts = const Value.absent(),
             Value<DateTime?> completedAt = const Value.absent(),
             Value<DateTime> lastPlayed = const Value.absent(),
+            Value<bool> synced = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               UserLevelProgressesCompanion(
@@ -6060,6 +6420,8 @@ class $$UserLevelProgressesTableTableManager extends RootTableManager<
             attempts: attempts,
             completedAt: completedAt,
             lastPlayed: lastPlayed,
+            synced: synced,
+            updatedAt: updatedAt,
             rowid: rowid,
           ),
           createCompanionCallback: ({
@@ -6072,6 +6434,8 @@ class $$UserLevelProgressesTableTableManager extends RootTableManager<
             required int attempts,
             Value<DateTime?> completedAt = const Value.absent(),
             required DateTime lastPlayed,
+            Value<bool> synced = const Value.absent(),
+            required DateTime updatedAt,
             Value<int> rowid = const Value.absent(),
           }) =>
               UserLevelProgressesCompanion.insert(
@@ -6084,6 +6448,8 @@ class $$UserLevelProgressesTableTableManager extends RootTableManager<
             attempts: attempts,
             completedAt: completedAt,
             lastPlayed: lastPlayed,
+            synced: synced,
+            updatedAt: updatedAt,
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0
@@ -6117,6 +6483,8 @@ typedef $$UserTopicProgressesTableCreateCompanionBuilder
   required double mastery,
   required DateTime lastPlayed,
   required bool favorite,
+  Value<bool> synced,
+  required DateTime updatedAt,
   Value<int> rowid,
 });
 typedef $$UserTopicProgressesTableUpdateCompanionBuilder
@@ -6127,6 +6495,8 @@ typedef $$UserTopicProgressesTableUpdateCompanionBuilder
   Value<double> mastery,
   Value<DateTime> lastPlayed,
   Value<bool> favorite,
+  Value<bool> synced,
+  Value<DateTime> updatedAt,
   Value<int> rowid,
 });
 
@@ -6156,6 +6526,12 @@ class $$UserTopicProgressesTableFilterComposer
 
   ColumnFilters<bool> get favorite => $composableBuilder(
       column: $table.favorite, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get synced => $composableBuilder(
+      column: $table.synced, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
 }
 
 class $$UserTopicProgressesTableOrderingComposer
@@ -6184,6 +6560,12 @@ class $$UserTopicProgressesTableOrderingComposer
 
   ColumnOrderings<bool> get favorite => $composableBuilder(
       column: $table.favorite, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get synced => $composableBuilder(
+      column: $table.synced, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
 }
 
 class $$UserTopicProgressesTableAnnotationComposer
@@ -6212,6 +6594,12 @@ class $$UserTopicProgressesTableAnnotationComposer
 
   GeneratedColumn<bool> get favorite =>
       $composableBuilder(column: $table.favorite, builder: (column) => column);
+
+  GeneratedColumn<bool> get synced =>
+      $composableBuilder(column: $table.synced, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 }
 
 class $$UserTopicProgressesTableTableManager extends RootTableManager<
@@ -6250,6 +6638,8 @@ class $$UserTopicProgressesTableTableManager extends RootTableManager<
             Value<double> mastery = const Value.absent(),
             Value<DateTime> lastPlayed = const Value.absent(),
             Value<bool> favorite = const Value.absent(),
+            Value<bool> synced = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               UserTopicProgressesCompanion(
@@ -6259,6 +6649,8 @@ class $$UserTopicProgressesTableTableManager extends RootTableManager<
             mastery: mastery,
             lastPlayed: lastPlayed,
             favorite: favorite,
+            synced: synced,
+            updatedAt: updatedAt,
             rowid: rowid,
           ),
           createCompanionCallback: ({
@@ -6268,6 +6660,8 @@ class $$UserTopicProgressesTableTableManager extends RootTableManager<
             required double mastery,
             required DateTime lastPlayed,
             required bool favorite,
+            Value<bool> synced = const Value.absent(),
+            required DateTime updatedAt,
             Value<int> rowid = const Value.absent(),
           }) =>
               UserTopicProgressesCompanion.insert(
@@ -6277,6 +6671,8 @@ class $$UserTopicProgressesTableTableManager extends RootTableManager<
             mastery: mastery,
             lastPlayed: lastPlayed,
             favorite: favorite,
+            synced: synced,
+            updatedAt: updatedAt,
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0
@@ -6312,6 +6708,8 @@ typedef $$StudySessionTableCreateCompanionBuilder = StudySessionCompanion
   required int questionsAnswered,
   required int correctAnswers,
   required int earnedXP,
+  Value<bool> synced,
+  required DateTime updatedAt,
   Value<int> rowid,
 });
 typedef $$StudySessionTableUpdateCompanionBuilder = StudySessionCompanion
@@ -6324,6 +6722,8 @@ typedef $$StudySessionTableUpdateCompanionBuilder = StudySessionCompanion
   Value<int> questionsAnswered,
   Value<int> correctAnswers,
   Value<int> earnedXP,
+  Value<bool> synced,
+  Value<DateTime> updatedAt,
   Value<int> rowid,
 });
 
@@ -6363,6 +6763,12 @@ class $$StudySessionTableFilterComposer
 
   ColumnFilters<int> get earnedXP => $composableBuilder(
       column: $table.earnedXP, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get synced => $composableBuilder(
+      column: $table.synced, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
 }
 
 class $$StudySessionTableOrderingComposer
@@ -6399,6 +6805,12 @@ class $$StudySessionTableOrderingComposer
 
   ColumnOrderings<int> get earnedXP => $composableBuilder(
       column: $table.earnedXP, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get synced => $composableBuilder(
+      column: $table.synced, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
 }
 
 class $$StudySessionTableAnnotationComposer
@@ -6433,6 +6845,12 @@ class $$StudySessionTableAnnotationComposer
 
   GeneratedColumn<int> get earnedXP =>
       $composableBuilder(column: $table.earnedXP, builder: (column) => column);
+
+  GeneratedColumn<bool> get synced =>
+      $composableBuilder(column: $table.synced, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 }
 
 class $$StudySessionTableTableManager extends RootTableManager<
@@ -6469,6 +6887,8 @@ class $$StudySessionTableTableManager extends RootTableManager<
             Value<int> questionsAnswered = const Value.absent(),
             Value<int> correctAnswers = const Value.absent(),
             Value<int> earnedXP = const Value.absent(),
+            Value<bool> synced = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               StudySessionCompanion(
@@ -6480,6 +6900,8 @@ class $$StudySessionTableTableManager extends RootTableManager<
             questionsAnswered: questionsAnswered,
             correctAnswers: correctAnswers,
             earnedXP: earnedXP,
+            synced: synced,
+            updatedAt: updatedAt,
             rowid: rowid,
           ),
           createCompanionCallback: ({
@@ -6491,6 +6913,8 @@ class $$StudySessionTableTableManager extends RootTableManager<
             required int questionsAnswered,
             required int correctAnswers,
             required int earnedXP,
+            Value<bool> synced = const Value.absent(),
+            required DateTime updatedAt,
             Value<int> rowid = const Value.absent(),
           }) =>
               StudySessionCompanion.insert(
@@ -6502,6 +6926,8 @@ class $$StudySessionTableTableManager extends RootTableManager<
             questionsAnswered: questionsAnswered,
             correctAnswers: correctAnswers,
             earnedXP: earnedXP,
+            synced: synced,
+            updatedAt: updatedAt,
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0

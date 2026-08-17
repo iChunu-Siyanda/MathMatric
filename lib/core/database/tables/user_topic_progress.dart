@@ -8,4 +8,9 @@ class UserTopicProgresses extends Table {
   RealColumn get mastery => real()();
   DateTimeColumn get lastPlayed => dateTime()();
   BoolColumn get favorite => boolean()();
+
+  BoolColumn get synced => boolean().withDefault(
+    const Constant(false),
+  )();
+  DateTimeColumn get updatedAt => dateTime()();
 }

@@ -1,7 +1,11 @@
+import 'package:drift/drift.dart';
 import 'package:math_matric/core/database/app_database.dart';
 import 'package:math_matric/features/progress/studysession/domain/entities/study_session_entity.dart';
 
 class StudySessionModel extends StudySessionEntity {
+  final bool synced;
+  final DateTime updatedAt;
+
   const StudySessionModel({
     required super.id,
     required super.topicId,
@@ -10,7 +14,9 @@ class StudySessionModel extends StudySessionEntity {
     required super.questionsAnswered,
     required super.correctAnswers,
     required super.earnedXP, 
-    required super.activity,
+    required super.activity, 
+    required this.synced, 
+    required this.updatedAt,
   });
 
   factory StudySessionModel.fromFirestore(
@@ -29,6 +35,8 @@ class StudySessionModel extends StudySessionEntity {
       correctAnswers: json['correctAnswers'] as int,
       earnedXP: json['earnedXP'] as int, 
       activity: json['activity'] ?? '',
+      synced: true,
+      updatedAt: DateTime.parse(json['updatedAt'] as String),
     );
   }
 
@@ -42,6 +50,7 @@ class StudySessionModel extends StudySessionEntity {
       'questionsAnswered': questionsAnswered,
       'correctAnswers': correctAnswers,
       'earnedXP': earnedXP,
+      'updatedAt': updatedAt.toIso8601String(),
     };
   }
 
@@ -70,6 +79,8 @@ class StudySessionModel extends StudySessionEntity {
       correctAnswers: session.correctAnswers,
       earnedXP: session.earnedXP, 
       activity: session.activity,
+      synced: false,
+      updatedAt: DateTime.now(),
     );
   }
 
@@ -85,6 +96,8 @@ class StudySessionModel extends StudySessionEntity {
       correctAnswers: session.correctAnswers,
       earnedXP: session.earnedXP, 
       activity: session.activity,
+      synced: session.synced,
+      updatedAt: session.updatedAt,
     );
   }
 
@@ -98,6 +111,8 @@ class StudySessionModel extends StudySessionEntity {
       correctAnswers: correctAnswers,
       earnedXP: earnedXP, 
       activity: activity,
+      synced: Value(synced),
+      updatedAt: updatedAt,
     );
   }
 }

@@ -35,7 +35,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1; 
+  int get schemaVersion => 2; 
 }
 //Bump up schemaVersion by +1 if:
 // Adding/removing a table
