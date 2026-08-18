@@ -4,23 +4,25 @@ import 'package:math_matric/core/network/repositories/connectivity_service.dart'
 import 'package:math_matric/core/network/repositories/internet_checker.dart';
 import 'package:math_matric/features/sync/user-data-progress/services/sync_progress_coordinator.dart';
 
+typedef Now = DateTime Function();
+
 class SyncProgressManager with WidgetsBindingObserver {
   final ConnectivityService connectivityService;
   final InternetChecker internetChecker;
   final SyncProgressCoordinator syncCoordinator;
+  final Now now;
 
   SyncProgressManager({
     required this.connectivityService,
     required this.internetChecker,
     required this.syncCoordinator,
-  });
+    Now? now,
+  }): now = now ?? DateTime.now;
 
   StreamSubscription<bool>? _connectionSubscription;
   DateTime? _lastSync;
   bool _isSyncing = false;
   static const Duration syncCooldown = Duration(minutes: 10);
-
-
 
   Future<void> start() async {
     WidgetsBinding.instance.addObserver(this);
@@ -52,6 +54,10 @@ class SyncProgressManager with WidgetsBindingObserver {
 
     await _attemptSync();
   }
+  
+  Future<void> syncNow() async {
+    await _attemptSync();
+  }
 
   Future<void> _attemptSync() async {
     if (_isSyncing) return;
@@ -66,7 +72,7 @@ class SyncProgressManager with WidgetsBindingObserver {
     try {
       await syncCoordinator.syncAll();
 
-      _lastSync = DateTime.now();
+      _lastSync = now();
     } catch (e, stackTrace) {
       debugPrint('Sync failed: $e');
 
@@ -81,6 +87,6 @@ class SyncProgressManager with WidgetsBindingObserver {
       return true;
     }
 
-    return DateTime.now().difference(_lastSync!) >= syncCooldown;
+    return now().difference(_lastSync!) >= syncCooldown;
   }
 }

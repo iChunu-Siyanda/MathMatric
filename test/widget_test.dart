@@ -7,7 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:math_matric/app/app.dart';
+import 'package:math_matric/app/math_matric_app.dart';
 
 //import 'package:math_matric/main.dart';
 

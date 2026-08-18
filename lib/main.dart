@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:math_matric/shared/registrations/setup_locator.dart';
 import 'package:path_provider/path_provider.dart';
-import 'app/app.dart';
+import 'app/math_matric_app.dart';
 import 'app/bloc_observer.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -35,3 +35,39 @@ void main() async {
 
   runApp(MathMatricApp(),);
 }
+
+
+// main()
+//  │
+//  ├── Firebase.initializeApp()
+//  │
+//  ├── setupLocator()
+//  │      │
+//  │      └── registerServiceModule()
+//  │              │
+//  │              ├── ConnectivityService
+//  │              ├── InternetChecker
+//  │              ├── SyncCoordinator
+//  │              └── SyncManager
+//  │
+//  └── runApp()
+//         │
+//         ▼
+//  MathMatricApp
+//         │
+//         └── SyncManager.start()
+//                 │
+//                 ├── App resumed
+//                 │
+//                 ├── Internet returns
+//                 │
+//                 └── Initial startup
+//                          │
+//                          ▼
+//                     Internet check
+//                          │
+//                          ▼
+//                     10-min cooldown
+//                          │
+//                          ▼
+//                   SyncCoordinator
