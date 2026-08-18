@@ -1,13 +1,25 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:get_it/get_it.dart';
+import 'package:math_matric/core/network/repositories/connectivity_service.dart';
+import 'package:math_matric/core/network/repositories/internet_checker.dart';
+import 'package:math_matric/core/network/services/connectivity_service_impl.dart';
+import 'package:math_matric/core/network/services/internet_checker_impl.dart';
+import 'package:math_matric/core/network/services/sync_progress_manager.dart';
+import 'package:math_matric/features/progress/questionattempts/domain/repositories/question_atempts_repository.dart';
+import 'package:math_matric/features/progress/studysession/domain/repositories/study_session_repository.dart';
+import 'package:math_matric/features/progress/userlevelprogress/domain/repositories/user_level_progress_repository.dart';
+import 'package:math_matric/features/progress/usertopicprogress/domain/repositories/user_topic_progress_repository.dart';
 import 'package:math_matric/features/sync/curriculum-bundle-manager/data/datasource/remote/bundle_remote_data_source.dart';
 import 'package:math_matric/features/sync/curriculum-bundle-manager/data/repositories/bundel_remote_data_source_impl.dart';
 import 'package:math_matric/features/sync/curriculum-bundle-manager/domain/services/content_sync_service.dart';
 import 'package:math_matric/features/sync/curriculum-bundle-manager/domain/services/content_sync_service_impl.dart';
+import 'package:math_matric/features/sync/user-data-progress/services/sync_progress_coordinator.dart';
 
 final getIt = GetIt.instance;
 
 void registerServiceModule() {
-
+  
+  //Curriculum Installation/Updates:
   getIt.registerLazySingleton<BundleRemoteDataSource>(
     () => BundleRemoteDataSourceImpl(
       firestore: getIt(),
@@ -19,6 +31,7 @@ void registerServiceModule() {
     ),
   );
 
+  //Curriculum Sync:
   getIt.registerLazySingleton<ContentSyncService>(
     () => ContentSyncServiceImpl(
       subjectLocal: getIt(),
@@ -34,6 +47,32 @@ void registerServiceModule() {
       questionRemote: getIt(), 
       examPaperRemote: getIt(),
       bundleRemote: getIt(),
+    ),
+  );
+  
+  //User Progress Sync:
+  getIt.registerLazySingleton<ConnectivityService>(
+    () =>ConnectivityServiceImpl(getIt<Connectivity>()),
+  );
+
+  getIt.registerLazySingleton<InternetChecker>(
+    () => InternetCheckerImpl(),
+  );
+
+  getIt.registerLazySingleton(
+    () => SyncProgressCoordinator(
+      questionAttempts: getIt<QuestionAttemptRepository>(), 
+      topicProgress: getIt<UserTopicProgressRepository>(), 
+      levelProgress: getIt<UserLevelProgressRepository>(), 
+      studySessions: getIt<StudySessionRepository>(),
+    ),
+  );
+
+  getIt.registerLazySingleton(
+    () => SyncProgressManager(
+      connectivityService: getIt(), 
+      internetChecker: getIt(), 
+      syncCoordinator: getIt(),
     ),
   );
 }

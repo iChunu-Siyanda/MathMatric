@@ -21,7 +21,7 @@ import 'package:math_matric/features/progress/usertopicprogress/data/repositorie
 
 final getIt = GetIt.instance;
 
-void registerLocalDatasourceModule() {
+void registerLocalDataSourceModule() {
   getIt.registerLazySingleton<SubjectsLocalDataSource>(
     () => SubjectsLocalDatasourceImpl(
       getIt<AppDatabase>(),

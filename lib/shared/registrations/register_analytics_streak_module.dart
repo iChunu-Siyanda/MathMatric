@@ -4,7 +4,7 @@ import 'package:math_matric/features/streak/presentation/bloc/habit_bloc.dart';
 
 final getIt = GetIt.instance;
 
-void registerAnalyticsStreaakModule() {
+void registerAnalyticsStreakModule() {
   getIt.registerFactory(
     () => AnalyticsBloc(),
   );
