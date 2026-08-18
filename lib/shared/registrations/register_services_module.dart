@@ -18,6 +18,10 @@ import 'package:math_matric/features/sync/user-data-progress/services/sync_progr
 final getIt = GetIt.instance;
 
 void registerServiceModule() {
+  //Connectivity:
+  getIt.registerLazySingleton<Connectivity>(
+    () => Connectivity(),
+  );
   
   //Curriculum Installation/Updates:
   getIt.registerLazySingleton<BundleRemoteDataSource>(
