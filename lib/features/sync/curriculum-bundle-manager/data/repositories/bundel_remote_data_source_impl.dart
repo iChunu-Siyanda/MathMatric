@@ -7,9 +7,9 @@ import 'package:math_matric/features/curriculum/questions/data/datasource/remote
 import 'package:math_matric/features/curriculum/subjects/data/datasource/remote/subjects_remote_datasource.dart';
 import 'package:math_matric/features/curriculum/topics/data/datasource/remote/topic_remote_datasource.dart';
 import 'package:math_matric/features/curriculum/topics/data/models/topic_model.dart';
-import 'package:math_matric/features/sync/data/datasource/remote/bundle_remote_data_source.dart';
-import 'package:math_matric/features/sync/data/models/bundle_info_model.dart';
-import 'package:math_matric/features/sync/domain/entities/curriculum_bundle.dart';
+import 'package:math_matric/features/sync/curriculum-bundle-manager/data/datasource/remote/bundle_remote_data_source.dart';
+import 'package:math_matric/features/sync/curriculum-bundle-manager/data/models/bundle_info_model.dart';
+import 'package:math_matric/features/sync/curriculum-bundle-manager/domain/entities/curriculum_bundle.dart';
 
 class BundleRemoteDataSourceImpl implements BundleRemoteDataSource {
   final FirebaseFirestore firestore;

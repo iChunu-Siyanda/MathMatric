@@ -1,8 +1,8 @@
-import 'package:math_matric/features/sync/data/datasource/local/curriculum_bundle_local_data_source.dart';
-import 'package:math_matric/features/sync/data/datasource/local/downloaded_bundle_local_data_source.dart';
-import 'package:math_matric/features/sync/data/datasource/remote/bundle_remote_data_source.dart';
-import 'package:math_matric/features/sync/data/models/downloaded_bundle_model.dart';
-import 'package:math_matric/features/sync/domain/repositories/curriculum_bundle_repository.dart';
+import 'package:math_matric/features/sync/curriculum-bundle-manager/data/datasource/local/curriculum_bundle_local_data_source.dart';
+import 'package:math_matric/features/sync/curriculum-bundle-manager/data/datasource/local/downloaded_bundle_local_data_source.dart';
+import 'package:math_matric/features/sync/curriculum-bundle-manager/data/datasource/remote/bundle_remote_data_source.dart';
+import 'package:math_matric/features/sync/curriculum-bundle-manager/data/models/downloaded_bundle_model.dart';
+import 'package:math_matric/features/sync/curriculum-bundle-manager/domain/repositories/curriculum_bundle_repository.dart';
 
 class CurriculumBundleRepositoryImpl implements CurriculumBundleRepository {
   final BundleRemoteDataSource remote;

@@ -1,4 +1,4 @@
-import 'package:math_matric/features/sync/data/datasource/local/downloaded_bundle_local_data_source.dart';
+import 'package:math_matric/features/sync/curriculum-bundle-manager/data/datasource/local/downloaded_bundle_local_data_source.dart';
 import 'package:math_matric/features/curriculum/exams/data/datasource/local/exam_paper_local_data_source.dart';
 import 'package:math_matric/features/curriculum/exams/data/datasource/remote/exam_paper_remote_data_source.dart';
 import 'package:math_matric/features/curriculum/levels/data/datasource/local/levels_local_datasource.dart';
@@ -10,10 +10,10 @@ import 'package:math_matric/features/curriculum/subjects/data/datasource/remote/
 import 'package:math_matric/features/curriculum/topics/data/datasource/local/topic_local_datasource.dart';
 import 'package:math_matric/features/curriculum/topics/data/datasource/remote/topic_remote_datasource.dart';
 import 'package:math_matric/core/constants/bundle_ids.dart';
-import 'package:math_matric/features/sync/data/datasource/remote/bundle_remote_data_source.dart';
-import 'package:math_matric/features/sync/data/models/downloaded_bundle_model.dart';
-import 'package:math_matric/features/sync/domain/entities/sync_progress.dart';
-import 'package:math_matric/features/sync/domain/entities/sync_status.dart';
+import 'package:math_matric/features/sync/curriculum-bundle-manager/data/datasource/remote/bundle_remote_data_source.dart';
+import 'package:math_matric/features/sync/curriculum-bundle-manager/data/models/downloaded_bundle_model.dart';
+import 'package:math_matric/features/sync/curriculum-bundle-manager/domain/entities/sync_progress.dart';
+import 'package:math_matric/features/sync/curriculum-bundle-manager/domain/entities/sync_status.dart';
 import 'package:math_matric/features/sync/domain/services/content_sync_service.dart';
 
 class ContentSyncServiceImpl implements ContentSyncService {

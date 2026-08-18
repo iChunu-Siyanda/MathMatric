@@ -3,7 +3,7 @@ import 'package:math_matric/features/curriculum/levels/data/models/levels_model.
 import 'package:math_matric/features/curriculum/questions/data/models/questions_model.dart';
 import 'package:math_matric/features/curriculum/subjects/data/models/subjects_model.dart';
 import 'package:math_matric/features/curriculum/topics/data/models/topic_model.dart';
-import 'package:math_matric/features/sync/data/models/bundle_info_model.dart';
+import 'package:math_matric/features/sync/curriculum-bundle-manager/data/models/bundle_info_model.dart';
 
 class CurriculumBundle {
   final BundleInfoModel info;
