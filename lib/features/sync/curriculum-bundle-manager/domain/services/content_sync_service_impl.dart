@@ -14,7 +14,7 @@ import 'package:math_matric/features/sync/curriculum-bundle-manager/data/datasou
 import 'package:math_matric/features/sync/curriculum-bundle-manager/data/models/downloaded_bundle_model.dart';
 import 'package:math_matric/features/sync/curriculum-bundle-manager/domain/entities/sync_progress.dart';
 import 'package:math_matric/features/sync/curriculum-bundle-manager/domain/entities/sync_status.dart';
-import 'package:math_matric/features/sync/domain/services/content_sync_service.dart';
+import 'package:math_matric/features/sync/curriculum-bundle-manager/domain/services/content_sync_service.dart';
 
 class ContentSyncServiceImpl implements ContentSyncService {
 
