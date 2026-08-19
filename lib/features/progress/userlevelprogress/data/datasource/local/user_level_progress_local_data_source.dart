@@ -25,6 +25,10 @@ abstract class UserLevelProgressLocalDataSource {
     List<UserLevelProgressModel> progresses,
   );
 
+  Future<void> saveUserLevelProgress(
+    UserLevelProgressModel progress,
+  );
+
   Future<void> clearUserLevelProgresses();
 
   Future<int> deleteUserLevelProgress(

@@ -4,6 +4,53 @@ import 'package:math_matric/features/streak/domain/entities/habit_entry.dart';
 import 'package:math_matric/features/streak/domain/mapper/habit_entry_mapper.dart';
 
 extension StudySessionQueries on AppDatabase {
+  //STUDY SESSION LIFECYCLE:
+  Future<StudySessionData?> getActiveStudySession() {
+    return (select(studySession)
+          ..where((s) => s.endedAt.isNull())
+          ..orderBy([
+            (s) => OrderingTerm.desc(s.startedAt),
+          ])
+          ..limit(1))
+        .getSingleOrNull();
+  }
+
+  Future<bool> updateStudySessionProgress({
+    required String sessionId,
+    required int questionsAnswered,
+    required int correctAnswers,
+    required int earnedXP,
+  }) async {
+    final count = await (update(studySession)
+          ..where((s) => s.id.equals(sessionId)))
+        .write(
+      StudySessionCompanion(
+        questionsAnswered: Value(questionsAnswered),
+        correctAnswers: Value(correctAnswers),
+        earnedXP: Value(earnedXP),
+        synced: const Value(false),
+      ),
+    );
+
+    return count > 0;
+  }
+
+  Future<bool> completeStudySession({
+    required String sessionId,
+    required DateTime endedAt,
+  }) async {
+    final count = await (update(studySession)
+          ..where((s) => s.id.equals(sessionId)))
+        .write(
+      StudySessionCompanion(
+        endedAt: Value(endedAt),
+        synced: const Value(false),
+      ),
+    );
+
+    return count > 0;
+  }
+
   //Syncing
   Future<List<StudySessionData>> getUnsyncedStudySessions() {
     return (select(studySession)

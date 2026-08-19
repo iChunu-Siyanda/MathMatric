@@ -3071,6 +3071,12 @@ class $UserLevelProgressesTable extends UserLevelProgresses
   late final GeneratedColumn<DateTime> lastPlayed = GeneratedColumn<DateTime>(
       'last_played', aliasedName, false,
       type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _bestTimeMeta =
+      const VerificationMeta('bestTime');
+  @override
+  late final GeneratedColumn<int> bestTime = GeneratedColumn<int>(
+      'best_time', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
   static const VerificationMeta _syncedMeta = const VerificationMeta('synced');
   @override
   late final GeneratedColumn<bool> synced = GeneratedColumn<bool>(
@@ -3097,6 +3103,7 @@ class $UserLevelProgressesTable extends UserLevelProgresses
         attempts,
         completedAt,
         lastPlayed,
+        bestTime,
         synced,
         updatedAt
       ];
@@ -3166,6 +3173,10 @@ class $UserLevelProgressesTable extends UserLevelProgresses
     } else if (isInserting) {
       context.missing(_lastPlayedMeta);
     }
+    if (data.containsKey('best_time')) {
+      context.handle(_bestTimeMeta,
+          bestTime.isAcceptableOrUnknown(data['best_time']!, _bestTimeMeta));
+    }
     if (data.containsKey('synced')) {
       context.handle(_syncedMeta,
           synced.isAcceptableOrUnknown(data['synced']!, _syncedMeta));
@@ -3204,6 +3215,8 @@ class $UserLevelProgressesTable extends UserLevelProgresses
           .read(DriftSqlType.dateTime, data['${effectivePrefix}completed_at']),
       lastPlayed: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}last_played'])!,
+      bestTime: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}best_time']),
       synced: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}synced'])!,
       updatedAt: attachedDatabase.typeMapping
@@ -3228,6 +3241,7 @@ class UserLevelProgressesData extends DataClass
   final int attempts;
   final DateTime? completedAt;
   final DateTime lastPlayed;
+  final int? bestTime;
   final bool synced;
   final DateTime updatedAt;
   const UserLevelProgressesData(
@@ -3240,6 +3254,7 @@ class UserLevelProgressesData extends DataClass
       required this.attempts,
       this.completedAt,
       required this.lastPlayed,
+      this.bestTime,
       required this.synced,
       required this.updatedAt});
   @override
@@ -3256,6 +3271,9 @@ class UserLevelProgressesData extends DataClass
       map['completed_at'] = Variable<DateTime>(completedAt);
     }
     map['last_played'] = Variable<DateTime>(lastPlayed);
+    if (!nullToAbsent || bestTime != null) {
+      map['best_time'] = Variable<int>(bestTime);
+    }
     map['synced'] = Variable<bool>(synced);
     map['updated_at'] = Variable<DateTime>(updatedAt);
     return map;
@@ -3274,6 +3292,9 @@ class UserLevelProgressesData extends DataClass
           ? const Value.absent()
           : Value(completedAt),
       lastPlayed: Value(lastPlayed),
+      bestTime: bestTime == null && nullToAbsent
+          ? const Value.absent()
+          : Value(bestTime),
       synced: Value(synced),
       updatedAt: Value(updatedAt),
     );
@@ -3292,6 +3313,7 @@ class UserLevelProgressesData extends DataClass
       attempts: serializer.fromJson<int>(json['attempts']),
       completedAt: serializer.fromJson<DateTime?>(json['completedAt']),
       lastPlayed: serializer.fromJson<DateTime>(json['lastPlayed']),
+      bestTime: serializer.fromJson<int?>(json['bestTime']),
       synced: serializer.fromJson<bool>(json['synced']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
@@ -3309,6 +3331,7 @@ class UserLevelProgressesData extends DataClass
       'attempts': serializer.toJson<int>(attempts),
       'completedAt': serializer.toJson<DateTime?>(completedAt),
       'lastPlayed': serializer.toJson<DateTime>(lastPlayed),
+      'bestTime': serializer.toJson<int?>(bestTime),
       'synced': serializer.toJson<bool>(synced),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
@@ -3324,6 +3347,7 @@ class UserLevelProgressesData extends DataClass
           int? attempts,
           Value<DateTime?> completedAt = const Value.absent(),
           DateTime? lastPlayed,
+          Value<int?> bestTime = const Value.absent(),
           bool? synced,
           DateTime? updatedAt}) =>
       UserLevelProgressesData(
@@ -3336,6 +3360,7 @@ class UserLevelProgressesData extends DataClass
         attempts: attempts ?? this.attempts,
         completedAt: completedAt.present ? completedAt.value : this.completedAt,
         lastPlayed: lastPlayed ?? this.lastPlayed,
+        bestTime: bestTime.present ? bestTime.value : this.bestTime,
         synced: synced ?? this.synced,
         updatedAt: updatedAt ?? this.updatedAt,
       );
@@ -3352,6 +3377,7 @@ class UserLevelProgressesData extends DataClass
           data.completedAt.present ? data.completedAt.value : this.completedAt,
       lastPlayed:
           data.lastPlayed.present ? data.lastPlayed.value : this.lastPlayed,
+      bestTime: data.bestTime.present ? data.bestTime.value : this.bestTime,
       synced: data.synced.present ? data.synced.value : this.synced,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
@@ -3369,6 +3395,7 @@ class UserLevelProgressesData extends DataClass
           ..write('attempts: $attempts, ')
           ..write('completedAt: $completedAt, ')
           ..write('lastPlayed: $lastPlayed, ')
+          ..write('bestTime: $bestTime, ')
           ..write('synced: $synced, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -3376,8 +3403,19 @@ class UserLevelProgressesData extends DataClass
   }
 
   @override
-  int get hashCode => Object.hash(id, levelId, topicId, completed, earnedXP,
-      bestScore, attempts, completedAt, lastPlayed, synced, updatedAt);
+  int get hashCode => Object.hash(
+      id,
+      levelId,
+      topicId,
+      completed,
+      earnedXP,
+      bestScore,
+      attempts,
+      completedAt,
+      lastPlayed,
+      bestTime,
+      synced,
+      updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3391,6 +3429,7 @@ class UserLevelProgressesData extends DataClass
           other.attempts == this.attempts &&
           other.completedAt == this.completedAt &&
           other.lastPlayed == this.lastPlayed &&
+          other.bestTime == this.bestTime &&
           other.synced == this.synced &&
           other.updatedAt == this.updatedAt);
 }
@@ -3406,6 +3445,7 @@ class UserLevelProgressesCompanion
   final Value<int> attempts;
   final Value<DateTime?> completedAt;
   final Value<DateTime> lastPlayed;
+  final Value<int?> bestTime;
   final Value<bool> synced;
   final Value<DateTime> updatedAt;
   final Value<int> rowid;
@@ -3419,6 +3459,7 @@ class UserLevelProgressesCompanion
     this.attempts = const Value.absent(),
     this.completedAt = const Value.absent(),
     this.lastPlayed = const Value.absent(),
+    this.bestTime = const Value.absent(),
     this.synced = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -3433,6 +3474,7 @@ class UserLevelProgressesCompanion
     required int attempts,
     this.completedAt = const Value.absent(),
     required DateTime lastPlayed,
+    this.bestTime = const Value.absent(),
     this.synced = const Value.absent(),
     required DateTime updatedAt,
     this.rowid = const Value.absent(),
@@ -3455,6 +3497,7 @@ class UserLevelProgressesCompanion
     Expression<int>? attempts,
     Expression<DateTime>? completedAt,
     Expression<DateTime>? lastPlayed,
+    Expression<int>? bestTime,
     Expression<bool>? synced,
     Expression<DateTime>? updatedAt,
     Expression<int>? rowid,
@@ -3469,6 +3512,7 @@ class UserLevelProgressesCompanion
       if (attempts != null) 'attempts': attempts,
       if (completedAt != null) 'completed_at': completedAt,
       if (lastPlayed != null) 'last_played': lastPlayed,
+      if (bestTime != null) 'best_time': bestTime,
       if (synced != null) 'synced': synced,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (rowid != null) 'rowid': rowid,
@@ -3485,6 +3529,7 @@ class UserLevelProgressesCompanion
       Value<int>? attempts,
       Value<DateTime?>? completedAt,
       Value<DateTime>? lastPlayed,
+      Value<int?>? bestTime,
       Value<bool>? synced,
       Value<DateTime>? updatedAt,
       Value<int>? rowid}) {
@@ -3498,6 +3543,7 @@ class UserLevelProgressesCompanion
       attempts: attempts ?? this.attempts,
       completedAt: completedAt ?? this.completedAt,
       lastPlayed: lastPlayed ?? this.lastPlayed,
+      bestTime: bestTime ?? this.bestTime,
       synced: synced ?? this.synced,
       updatedAt: updatedAt ?? this.updatedAt,
       rowid: rowid ?? this.rowid,
@@ -3534,6 +3580,9 @@ class UserLevelProgressesCompanion
     if (lastPlayed.present) {
       map['last_played'] = Variable<DateTime>(lastPlayed.value);
     }
+    if (bestTime.present) {
+      map['best_time'] = Variable<int>(bestTime.value);
+    }
     if (synced.present) {
       map['synced'] = Variable<bool>(synced.value);
     }
@@ -3558,6 +3607,7 @@ class UserLevelProgressesCompanion
           ..write('attempts: $attempts, ')
           ..write('completedAt: $completedAt, ')
           ..write('lastPlayed: $lastPlayed, ')
+          ..write('bestTime: $bestTime, ')
           ..write('synced: $synced, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('rowid: $rowid')
@@ -4033,8 +4083,8 @@ class $StudySessionTable extends StudySession
       const VerificationMeta('endedAt');
   @override
   late final GeneratedColumn<DateTime> endedAt = GeneratedColumn<DateTime>(
-      'ended_at', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+      'ended_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
   static const VerificationMeta _questionsAnsweredMeta =
       const VerificationMeta('questionsAnswered');
   @override
@@ -4111,8 +4161,6 @@ class $StudySessionTable extends StudySession
     if (data.containsKey('ended_at')) {
       context.handle(_endedAtMeta,
           endedAt.isAcceptableOrUnknown(data['ended_at']!, _endedAtMeta));
-    } else if (isInserting) {
-      context.missing(_endedAtMeta);
     }
     if (data.containsKey('questions_answered')) {
       context.handle(
@@ -4165,7 +4213,7 @@ class $StudySessionTable extends StudySession
       startedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}started_at'])!,
       endedAt: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}ended_at'])!,
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}ended_at']),
       questionsAnswered: attachedDatabase.typeMapping.read(
           DriftSqlType.int, data['${effectivePrefix}questions_answered'])!,
       correctAnswers: attachedDatabase.typeMapping
@@ -4194,7 +4242,7 @@ class StudySessionData extends DataClass
   final String topicId;
   final StudyActivity activity;
   final DateTime startedAt;
-  final DateTime endedAt;
+  final DateTime? endedAt;
   final int questionsAnswered;
   final int correctAnswers;
   final int earnedXP;
@@ -4205,7 +4253,7 @@ class StudySessionData extends DataClass
       required this.topicId,
       required this.activity,
       required this.startedAt,
-      required this.endedAt,
+      this.endedAt,
       required this.questionsAnswered,
       required this.correctAnswers,
       required this.earnedXP,
@@ -4221,7 +4269,9 @@ class StudySessionData extends DataClass
           $StudySessionTable.$converteractivity.toSql(activity));
     }
     map['started_at'] = Variable<DateTime>(startedAt);
-    map['ended_at'] = Variable<DateTime>(endedAt);
+    if (!nullToAbsent || endedAt != null) {
+      map['ended_at'] = Variable<DateTime>(endedAt);
+    }
     map['questions_answered'] = Variable<int>(questionsAnswered);
     map['correct_answers'] = Variable<int>(correctAnswers);
     map['earned_x_p'] = Variable<int>(earnedXP);
@@ -4236,7 +4286,9 @@ class StudySessionData extends DataClass
       topicId: Value(topicId),
       activity: Value(activity),
       startedAt: Value(startedAt),
-      endedAt: Value(endedAt),
+      endedAt: endedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(endedAt),
       questionsAnswered: Value(questionsAnswered),
       correctAnswers: Value(correctAnswers),
       earnedXP: Value(earnedXP),
@@ -4254,7 +4306,7 @@ class StudySessionData extends DataClass
       activity: $StudySessionTable.$converteractivity
           .fromJson(serializer.fromJson<String>(json['activity'])),
       startedAt: serializer.fromJson<DateTime>(json['startedAt']),
-      endedAt: serializer.fromJson<DateTime>(json['endedAt']),
+      endedAt: serializer.fromJson<DateTime?>(json['endedAt']),
       questionsAnswered: serializer.fromJson<int>(json['questionsAnswered']),
       correctAnswers: serializer.fromJson<int>(json['correctAnswers']),
       earnedXP: serializer.fromJson<int>(json['earnedXP']),
@@ -4271,7 +4323,7 @@ class StudySessionData extends DataClass
       'activity': serializer.toJson<String>(
           $StudySessionTable.$converteractivity.toJson(activity)),
       'startedAt': serializer.toJson<DateTime>(startedAt),
-      'endedAt': serializer.toJson<DateTime>(endedAt),
+      'endedAt': serializer.toJson<DateTime?>(endedAt),
       'questionsAnswered': serializer.toJson<int>(questionsAnswered),
       'correctAnswers': serializer.toJson<int>(correctAnswers),
       'earnedXP': serializer.toJson<int>(earnedXP),
@@ -4285,7 +4337,7 @@ class StudySessionData extends DataClass
           String? topicId,
           StudyActivity? activity,
           DateTime? startedAt,
-          DateTime? endedAt,
+          Value<DateTime?> endedAt = const Value.absent(),
           int? questionsAnswered,
           int? correctAnswers,
           int? earnedXP,
@@ -4296,7 +4348,7 @@ class StudySessionData extends DataClass
         topicId: topicId ?? this.topicId,
         activity: activity ?? this.activity,
         startedAt: startedAt ?? this.startedAt,
-        endedAt: endedAt ?? this.endedAt,
+        endedAt: endedAt.present ? endedAt.value : this.endedAt,
         questionsAnswered: questionsAnswered ?? this.questionsAnswered,
         correctAnswers: correctAnswers ?? this.correctAnswers,
         earnedXP: earnedXP ?? this.earnedXP,
@@ -4363,7 +4415,7 @@ class StudySessionCompanion extends UpdateCompanion<StudySessionData> {
   final Value<String> topicId;
   final Value<StudyActivity> activity;
   final Value<DateTime> startedAt;
-  final Value<DateTime> endedAt;
+  final Value<DateTime?> endedAt;
   final Value<int> questionsAnswered;
   final Value<int> correctAnswers;
   final Value<int> earnedXP;
@@ -4388,7 +4440,7 @@ class StudySessionCompanion extends UpdateCompanion<StudySessionData> {
     required String topicId,
     required StudyActivity activity,
     required DateTime startedAt,
-    required DateTime endedAt,
+    this.endedAt = const Value.absent(),
     required int questionsAnswered,
     required int correctAnswers,
     required int earnedXP,
@@ -4399,7 +4451,6 @@ class StudySessionCompanion extends UpdateCompanion<StudySessionData> {
         topicId = Value(topicId),
         activity = Value(activity),
         startedAt = Value(startedAt),
-        endedAt = Value(endedAt),
         questionsAnswered = Value(questionsAnswered),
         correctAnswers = Value(correctAnswers),
         earnedXP = Value(earnedXP),
@@ -4437,7 +4488,7 @@ class StudySessionCompanion extends UpdateCompanion<StudySessionData> {
       Value<String>? topicId,
       Value<StudyActivity>? activity,
       Value<DateTime>? startedAt,
-      Value<DateTime>? endedAt,
+      Value<DateTime?>? endedAt,
       Value<int>? questionsAnswered,
       Value<int>? correctAnswers,
       Value<int>? earnedXP,
@@ -6218,6 +6269,7 @@ typedef $$UserLevelProgressesTableCreateCompanionBuilder
   required int attempts,
   Value<DateTime?> completedAt,
   required DateTime lastPlayed,
+  Value<int?> bestTime,
   Value<bool> synced,
   required DateTime updatedAt,
   Value<int> rowid,
@@ -6233,6 +6285,7 @@ typedef $$UserLevelProgressesTableUpdateCompanionBuilder
   Value<int> attempts,
   Value<DateTime?> completedAt,
   Value<DateTime> lastPlayed,
+  Value<int?> bestTime,
   Value<bool> synced,
   Value<DateTime> updatedAt,
   Value<int> rowid,
@@ -6273,6 +6326,9 @@ class $$UserLevelProgressesTableFilterComposer
 
   ColumnFilters<DateTime> get lastPlayed => $composableBuilder(
       column: $table.lastPlayed, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get bestTime => $composableBuilder(
+      column: $table.bestTime, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<bool> get synced => $composableBuilder(
       column: $table.synced, builder: (column) => ColumnFilters(column));
@@ -6317,6 +6373,9 @@ class $$UserLevelProgressesTableOrderingComposer
   ColumnOrderings<DateTime> get lastPlayed => $composableBuilder(
       column: $table.lastPlayed, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<int> get bestTime => $composableBuilder(
+      column: $table.bestTime, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<bool> get synced => $composableBuilder(
       column: $table.synced, builder: (column) => ColumnOrderings(column));
 
@@ -6359,6 +6418,9 @@ class $$UserLevelProgressesTableAnnotationComposer
 
   GeneratedColumn<DateTime> get lastPlayed => $composableBuilder(
       column: $table.lastPlayed, builder: (column) => column);
+
+  GeneratedColumn<int> get bestTime =>
+      $composableBuilder(column: $table.bestTime, builder: (column) => column);
 
   GeneratedColumn<bool> get synced =>
       $composableBuilder(column: $table.synced, builder: (column) => column);
@@ -6406,6 +6468,7 @@ class $$UserLevelProgressesTableTableManager extends RootTableManager<
             Value<int> attempts = const Value.absent(),
             Value<DateTime?> completedAt = const Value.absent(),
             Value<DateTime> lastPlayed = const Value.absent(),
+            Value<int?> bestTime = const Value.absent(),
             Value<bool> synced = const Value.absent(),
             Value<DateTime> updatedAt = const Value.absent(),
             Value<int> rowid = const Value.absent(),
@@ -6420,6 +6483,7 @@ class $$UserLevelProgressesTableTableManager extends RootTableManager<
             attempts: attempts,
             completedAt: completedAt,
             lastPlayed: lastPlayed,
+            bestTime: bestTime,
             synced: synced,
             updatedAt: updatedAt,
             rowid: rowid,
@@ -6434,6 +6498,7 @@ class $$UserLevelProgressesTableTableManager extends RootTableManager<
             required int attempts,
             Value<DateTime?> completedAt = const Value.absent(),
             required DateTime lastPlayed,
+            Value<int?> bestTime = const Value.absent(),
             Value<bool> synced = const Value.absent(),
             required DateTime updatedAt,
             Value<int> rowid = const Value.absent(),
@@ -6448,6 +6513,7 @@ class $$UserLevelProgressesTableTableManager extends RootTableManager<
             attempts: attempts,
             completedAt: completedAt,
             lastPlayed: lastPlayed,
+            bestTime: bestTime,
             synced: synced,
             updatedAt: updatedAt,
             rowid: rowid,
@@ -6704,7 +6770,7 @@ typedef $$StudySessionTableCreateCompanionBuilder = StudySessionCompanion
   required String topicId,
   required StudyActivity activity,
   required DateTime startedAt,
-  required DateTime endedAt,
+  Value<DateTime?> endedAt,
   required int questionsAnswered,
   required int correctAnswers,
   required int earnedXP,
@@ -6718,7 +6784,7 @@ typedef $$StudySessionTableUpdateCompanionBuilder = StudySessionCompanion
   Value<String> topicId,
   Value<StudyActivity> activity,
   Value<DateTime> startedAt,
-  Value<DateTime> endedAt,
+  Value<DateTime?> endedAt,
   Value<int> questionsAnswered,
   Value<int> correctAnswers,
   Value<int> earnedXP,
@@ -6883,7 +6949,7 @@ class $$StudySessionTableTableManager extends RootTableManager<
             Value<String> topicId = const Value.absent(),
             Value<StudyActivity> activity = const Value.absent(),
             Value<DateTime> startedAt = const Value.absent(),
-            Value<DateTime> endedAt = const Value.absent(),
+            Value<DateTime?> endedAt = const Value.absent(),
             Value<int> questionsAnswered = const Value.absent(),
             Value<int> correctAnswers = const Value.absent(),
             Value<int> earnedXP = const Value.absent(),
@@ -6909,7 +6975,7 @@ class $$StudySessionTableTableManager extends RootTableManager<
             required String topicId,
             required StudyActivity activity,
             required DateTime startedAt,
-            required DateTime endedAt,
+            Value<DateTime?> endedAt = const Value.absent(),
             required int questionsAnswered,
             required int correctAnswers,
             required int earnedXP,

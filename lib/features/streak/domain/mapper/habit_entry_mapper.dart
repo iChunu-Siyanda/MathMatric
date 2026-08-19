@@ -24,7 +24,7 @@ class HabitEntryMapper {
         date: group.key,
         totalStudyMinutes: sessions.fold(
           0,(sum, session) =>
-            sum + session.endedAt.difference(session.startedAt).inMinutes,
+            sum + session.endedAt!.difference(session.startedAt).inMinutes,
         ),
         activities: sessions
             .map((e) => e.activity)

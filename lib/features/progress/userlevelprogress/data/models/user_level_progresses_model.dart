@@ -18,6 +18,7 @@ class UserLevelProgressModel extends UserLevelProgressEntity {
     required super.lastPlayed, 
     required this.synced, 
     required this.updatedAt,
+    super.bestTime,
   });
 
   factory UserLevelProgressModel.fromFirestore(
@@ -39,6 +40,7 @@ class UserLevelProgressModel extends UserLevelProgressEntity {
       ),
       synced: true,
       updatedAt: DateTime.parse(json['updatedAt'] as String),
+      bestTime: json['bestTime'] as int,
     );
   }
 
@@ -54,6 +56,7 @@ class UserLevelProgressModel extends UserLevelProgressEntity {
       'completedAt': completedAt?.toIso8601String(),
       'lastPlayed': lastPlayed.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
+      'bestTime': bestTime,
     };
   }
 
@@ -68,6 +71,7 @@ class UserLevelProgressModel extends UserLevelProgressEntity {
       attempts: attempts,
       completedAt: completedAt,
       lastPlayed: lastPlayed,
+      bestTime: bestTime,
     );
   }
 
@@ -86,6 +90,7 @@ class UserLevelProgressModel extends UserLevelProgressEntity {
       lastPlayed: progress.lastPlayed,
       synced: false,
       updatedAt: DateTime.now(),
+      bestTime: progress.bestTime,
     );
   }
 
@@ -104,6 +109,7 @@ class UserLevelProgressModel extends UserLevelProgressEntity {
       lastPlayed: progress.lastPlayed,
       synced: progress.synced,
       updatedAt: progress.updatedAt,
+      bestTime: progress.bestTime,
     );
   }
 
@@ -120,6 +126,7 @@ class UserLevelProgressModel extends UserLevelProgressEntity {
       lastPlayed: lastPlayed,
       synced: Value(synced),
       updatedAt: updatedAt,
+      bestTime: Value(bestTime!),
     );
   }
 }

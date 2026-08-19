@@ -1,5 +1,6 @@
 import 'package:math_matric/features/progress/usertopicprogress/data/datasource/local/user_topic_progress_local_data_source.dart';
 import 'package:math_matric/features/progress/usertopicprogress/data/datasource/remote/user_topic_progress_remote_data_source.dart';
+import 'package:math_matric/features/progress/usertopicprogress/data/models/user_topic_progresses_model.dart';
 import 'package:math_matric/features/progress/usertopicprogress/domain/entities/user_topic_progresses_entity.dart';
 import 'package:math_matric/features/progress/usertopicprogress/domain/repositories/user_topic_progress_repository.dart';
 
@@ -68,5 +69,10 @@ class UserTopicProgressRepositoryImpl implements UserTopicProgressRepository {
         progress.id,
       );
     }
+  }
+
+  @override
+  Future<void> saveProgress(UserTopicProgressEntity progress) {
+    return local.saveUserTopicProgress(UserTopicProgressModel.fromEntity(progress));
   }
 }

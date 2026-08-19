@@ -34,6 +34,5 @@ class BlockingFakeSyncCoordinator implements SyncProgressCoordinator {
   UserTopicProgressRepository get topicProgress => throw UnimplementedError();
 
   @override
-  // TODO: implement auth
   FirebaseAuth get auth => throw UnimplementedError();
 }

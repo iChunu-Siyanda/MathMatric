@@ -1,8 +1,15 @@
 import 'package:math_matric/features/progress/questionattempts/domain/entities/question_attempts_entity.dart';
 
 abstract class QuestionAttemptRepository {
+  //Study Session Lifecycle:
+  Future<void> saveQuestionAttempt(
+    QuestionAttemptEntity attempt,
+  );
+
+  //Sync:
   Future<void> sync(String userId);
   
+  //Queries:
   Future<List<QuestionAttemptEntity>> getAllQuestionAttempts();
 
   Future<QuestionAttemptEntity?> getQuestionAttempt(

@@ -29,6 +29,10 @@ abstract class QuestionAttemptLocalDataSource {
     List<QuestionAttemptModel> attempts,
   );
 
+  Future<void> saveQuestionAttempt(
+    QuestionAttemptModel attempt,
+  );
+
   Future<void> clearQuestionAttempts();
 
   Future<int> deleteQuestionAttempt(

@@ -10,6 +10,7 @@ class UserLevelProgressEntity {
 
   final DateTime? completedAt;
   final DateTime lastPlayed;
+  final int? bestTime;
 
   const UserLevelProgressEntity({
     required this.id,
@@ -20,6 +21,7 @@ class UserLevelProgressEntity {
     required this.bestScore,
     required this.attempts,
     required this.completedAt,
-    required this.lastPlayed,
+    required this.lastPlayed, 
+    this.bestTime,
   });
 }

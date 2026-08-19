@@ -21,6 +21,10 @@ abstract class UserTopicProgressLocalDataSource {
     List<UserTopicProgressModel> progresses,
   );
 
+    Future<void> saveUserTopicProgress(
+    UserTopicProgressModel progress,
+  );
+
   Future<void> clearUserTopicProgresses();
 
   Future<int> deleteUserTopicProgress(

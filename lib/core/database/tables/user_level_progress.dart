@@ -12,6 +12,7 @@ class UserLevelProgresses extends Table {
 
   DateTimeColumn get completedAt => dateTime().nullable()();
   DateTimeColumn get lastPlayed => dateTime()();
+  IntColumn get bestTime => integer().nullable()();
 
   BoolColumn get synced => boolean().withDefault(
     const Constant(false),

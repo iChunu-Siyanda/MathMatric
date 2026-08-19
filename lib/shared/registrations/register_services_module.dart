@@ -15,10 +15,22 @@ import 'package:math_matric/features/sync/curriculum-bundle-manager/data/reposit
 import 'package:math_matric/features/sync/curriculum-bundle-manager/domain/services/content_sync_service.dart';
 import 'package:math_matric/features/sync/curriculum-bundle-manager/domain/services/content_sync_service_impl.dart';
 import 'package:math_matric/features/sync/user-data-progress/services/sync_progress_coordinator.dart';
+import 'package:math_matric/shared/services/app_clock.dart';
+import 'package:math_matric/shared/services/id_generator.dart';
+import 'package:uuid/uuid.dart';
 
 final getIt = GetIt.instance;
 
 void registerServiceModule() {
+  getIt.registerLazySingleton<AppClock>(
+    () => AppClockImpl(),
+  );
+
+  getIt.registerLazySingleton<IdGenerator>(
+    () => UuidGenerator(
+      Uuid(),
+    ),
+  );
   //Connectivity:
   getIt.registerLazySingleton<Connectivity>(
     () => Connectivity(),

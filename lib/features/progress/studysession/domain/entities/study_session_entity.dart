@@ -7,7 +7,7 @@ class StudySessionEntity {
   final StudyActivity activity;
 
   final DateTime startedAt;
-  final DateTime endedAt;
+  final DateTime? endedAt;
 
   final int questionsAnswered;
   final int correctAnswers;
@@ -17,7 +17,7 @@ class StudySessionEntity {
     required this.id,
     required this.topicId,
     required this.startedAt,
-    required this.endedAt,
+    this.endedAt,
     required this.questionsAnswered,
     required this.correctAnswers,
     required this.earnedXP, 
@@ -30,7 +30,7 @@ class StudySessionEntity {
       topicId: topicId, 
       activity: activity, 
       startedAt: startedAt, 
-      endedAt: endedAt, 
+      endedAt: endedAt!, 
       questionsAnswered: questionsAnswered, 
       correctAnswers: correctAnswers, 
       earnedXP: earnedXP, 

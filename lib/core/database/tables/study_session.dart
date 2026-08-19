@@ -7,7 +7,7 @@ class StudySession extends Table {
   TextColumn get activity => textEnum<StudyActivity>()();
 
   DateTimeColumn get startedAt => dateTime()();
-  DateTimeColumn get endedAt => dateTime()();
+  DateTimeColumn get endedAt => dateTime().nullable()();
 
   IntColumn get questionsAnswered => integer()();
   IntColumn get correctAnswers => integer()();

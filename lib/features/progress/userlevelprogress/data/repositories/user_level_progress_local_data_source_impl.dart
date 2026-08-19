@@ -73,6 +73,15 @@ class UserLevelProgressLocalDataSourceImpl implements UserLevelProgressLocalData
   }
 
   @override
+  Future<void> saveUserLevelProgress(
+    UserLevelProgressModel progress,
+  ) async {
+    await db.insertUserLevelProgress(
+      progress.toCompanion()
+    );
+  }
+
+  @override
   Future<void> clearUserLevelProgresses() async {
     await db.clearUserLevelProgresses();
   }

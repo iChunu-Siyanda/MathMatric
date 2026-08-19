@@ -104,6 +104,13 @@ class QuestionAttemptLocalDataSourceImpl implements QuestionAttemptLocalDataSour
   }
 
   @override
+  Future<void> saveQuestionAttempt(
+    QuestionAttemptModel attempt,
+  ) async {
+    await db.insertQuestionAttempt(attempt.toCompanion());
+  }
+
+  @override
   Future<void> clearQuestionAttempts() async {
     await db.clearQuestionAttempts();
   }

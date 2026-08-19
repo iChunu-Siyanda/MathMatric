@@ -1,11 +1,13 @@
 import 'package:math_matric/features/progress/questionattempts/data/datasource/local/questions_attempt_local_data_source.dart';
 import 'package:math_matric/features/progress/questionattempts/data/datasource/remote/question_attempt_remote_data_source.dart';
+import 'package:math_matric/features/progress/questionattempts/data/models/questions_attempt_model.dart';
 import 'package:math_matric/features/progress/questionattempts/domain/entities/question_attempts_entity.dart';
 import 'package:math_matric/features/progress/questionattempts/domain/repositories/question_atempts_repository.dart';
 
 class QuestionAttemptRepositoryImpl implements QuestionAttemptRepository {
   final QuestionAttemptLocalDataSource local;
   final QuestionAttemptRemoteDataSource remote;
+  
   QuestionAttemptRepositoryImpl(
     this.local, 
     this.remote,
@@ -29,6 +31,11 @@ class QuestionAttemptRepositoryImpl implements QuestionAttemptRepository {
     );
 
     return model?.toEntity();
+  }
+
+  @override
+  Future<void> saveQuestionAttempt(QuestionAttemptEntity attempt) {
+    return local.saveQuestionAttempt(QuestionAttemptModel.fromEntity(attempt));
   }
 
   @override

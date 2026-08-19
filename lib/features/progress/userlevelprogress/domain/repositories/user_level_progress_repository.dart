@@ -1,6 +1,12 @@
 import 'package:math_matric/features/progress/userlevelprogress/domain/entities/user_level_progresses_entity.dart';
 
 abstract class UserLevelProgressRepository {
+  // Study Session Lifecycle:
+  Future<void> saveProgress(
+    UserLevelProgressEntity progress,
+  );
+
+  // Queries:
   Future<List<UserLevelProgressEntity>> getAllUserLevelProgresses();
 
   Future<UserLevelProgressEntity?> getUserLevelProgress(
@@ -15,5 +21,6 @@ abstract class UserLevelProgressRepository {
 
   Future<List<UserLevelProgressEntity>> getIncompleteLevels();
 
+  // Sync:
   Future<void> sync(String userId);
 }

@@ -63,6 +63,15 @@ class UserTopicProgressLocalDataSourceImpl implements UserTopicProgressLocalData
   }
 
   @override
+  Future<void> saveUserTopicProgress(
+    UserTopicProgressModel progress,
+  ) async {
+    await db.insertUserTopicProgress(
+      progress.toCompanion()
+    );
+  }
+
+  @override
   Future<void> clearUserTopicProgresses() async {
     await db.clearUserTopicProgresses();
   }

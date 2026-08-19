@@ -95,4 +95,48 @@ class StudySessionLocalDataSourceImpl implements StudySessionLocalDataSource {
   Future<void> markAttemptSynced(String attemptId) {
     return db.markStudySessionSynced(attemptId);
   }
+
+  @override
+  Future<StudySessionModel?> getActiveStudySession() async {
+    final row = await db.getActiveStudySession();
+
+    if (row == null) return null;
+
+    return StudySessionModel.fromDrift(row);
+  }
+
+  @override
+  Future<void> saveStudySession(
+    StudySessionModel session,
+  ) async {
+    await db.insertStudySession(
+      session.toCompanion(),
+    );
+  }
+
+  @override
+  Future<bool> updateStudySessionProgress({
+    required String sessionId,
+    required int questionsAnswered,
+    required int correctAnswers,
+    required int earnedXP,
+  }) {
+    return db.updateStudySessionProgress(
+      sessionId: sessionId,
+      questionsAnswered: questionsAnswered,
+      correctAnswers: correctAnswers,
+      earnedXP: earnedXP,
+    );
+  }
+
+  @override
+  Future<bool> completeStudySession({
+    required String sessionId,
+    required DateTime endedAt,
+  }) {
+    return db.completeStudySession(
+      sessionId: sessionId,
+      endedAt: endedAt,
+    );
+  }
 }

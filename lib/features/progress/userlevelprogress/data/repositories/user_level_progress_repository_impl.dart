@@ -1,5 +1,6 @@
 import 'package:math_matric/features/progress/userlevelprogress/data/datasource/local/user_level_progress_local_data_source.dart';
 import 'package:math_matric/features/progress/userlevelprogress/data/datasource/remote/user_level_progress_remote_data_source.dart';
+import 'package:math_matric/features/progress/userlevelprogress/data/models/user_level_progresses_model.dart';
 import 'package:math_matric/features/progress/userlevelprogress/domain/entities/user_level_progresses_entity.dart';
 import 'package:math_matric/features/progress/userlevelprogress/domain/repositories/user_level_progress_repository.dart';
 
@@ -21,8 +22,7 @@ class UserLevelProgressRepositoryImpl implements UserLevelProgressRepository {
   }
 
   @override
-  Future<UserLevelProgressEntity?>
-      getUserLevelProgress(
+  Future<UserLevelProgressEntity?> getUserLevelProgress(
     String levelId,
   ) async {
     final model = await local.getUserLevelProgress(
@@ -33,8 +33,7 @@ class UserLevelProgressRepositoryImpl implements UserLevelProgressRepository {
   }
 
   @override
-  Future<List<UserLevelProgressEntity>>
-      getProgressByTopic(
+  Future<List<UserLevelProgressEntity>> getProgressByTopic(
     String topicId,
   ) async {
     final models = await local.getProgressByTopic(
@@ -47,8 +46,7 @@ class UserLevelProgressRepositoryImpl implements UserLevelProgressRepository {
   }
 
   @override
-  Future<List<UserLevelProgressEntity>>
-      getCompletedLevels() async {
+  Future<List<UserLevelProgressEntity>> getCompletedLevels() async {
     final models = await local.getCompletedLevels();
 
     return models
@@ -81,5 +79,10 @@ class UserLevelProgressRepositoryImpl implements UserLevelProgressRepository {
         progress.id,
       );
     }
+  }
+
+  @override
+  Future<void> saveProgress(UserLevelProgressEntity progress) {
+    return local.saveUserLevelProgress(UserLevelProgressModel.fromEntity(progress));
   }
 }

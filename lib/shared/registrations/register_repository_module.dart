@@ -31,6 +31,8 @@ import 'package:math_matric/features/progress/usertopicprogress/data/datasource/
 import 'package:math_matric/features/progress/usertopicprogress/data/repositories/user_topic_progress_repository_impl.dart';
 import 'package:math_matric/features/progress/usertopicprogress/domain/repositories/user_topic_progress_repository.dart';
 import 'package:math_matric/features/streak/domain/repositories/habit_repository.dart';
+import 'package:math_matric/shared/services/app_clock.dart';
+import 'package:math_matric/shared/services/id_generator.dart';
 
 final getIt = GetIt.instance;
 
@@ -77,6 +79,8 @@ void registerRepositoryModule() {
     () => StudySessionRepositoryImpl(
       getIt<StudySessionLocalDataSource>(),
       getIt<StudySessionRemoteDataSource>(),
+      getIt<AppClock>(),
+      getIt<IdGenerator>(),
     ),
   );
 
