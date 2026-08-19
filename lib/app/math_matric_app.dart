@@ -48,3 +48,14 @@ class _MathMatricAppState extends State<MathMatricApp> {
     );
   }
 }  
+
+// Lifecycle foundation:
+// main()
+//   ↓
+// Firebase.initializeApp()
+//   ↓
+// setupLocator()
+//   ↓
+// SyncProgressManager.start()
+//   ↓
+// MathMatricApp

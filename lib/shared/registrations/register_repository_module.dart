@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 import 'package:math_matric/features/curriculum/exams/data/repositories/local/exam_paper_local_repo_impl.dart';
 import 'package:math_matric/features/curriculum/exams/data/repositories/repos/exam_paper_repository_impl.dart';
@@ -71,7 +70,6 @@ void registerRepositoryModule() {
     () => QuestionAttemptRepositoryImpl(
       getIt<QuestionAttemptLocalDataSource>(),
       getIt<QuestionAttemptRemoteDataSource>(),
-      getIt<FirebaseAuth>()
     )
   );
 
@@ -79,7 +77,6 @@ void registerRepositoryModule() {
     () => StudySessionRepositoryImpl(
       getIt<StudySessionLocalDataSource>(),
       getIt<StudySessionRemoteDataSource>(),
-      getIt<FirebaseAuth>(),
     ),
   );
 
@@ -87,7 +84,6 @@ void registerRepositoryModule() {
     () => UserLevelProgressRepositoryImpl(
       getIt<UserLevelProgressLocalDataSource>(),
       getIt<UserLevelProgressRemoteDataSource>(),
-      getIt<FirebaseAuth>(),
     ),
   );
 
@@ -95,7 +91,6 @@ void registerRepositoryModule() {
     () => UserTopicProgressRepositoryImpl(
       getIt<UserTopicProgressLocalDataSource>(),
       getIt<UserTopicProgressRemoteDataSource>(),
-      getIt<FirebaseAuth>(),
     ),
   );
 

@@ -11,5 +11,5 @@ abstract class UserTopicProgressRepository {
 
   Future<UserTopicProgressEntity?> getLastPlayedTopic();
 
-  Future<void> sync();
+  Future<void> sync(String userId);
 }

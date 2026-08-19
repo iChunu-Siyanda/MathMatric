@@ -23,8 +23,12 @@ class SyncProgressManager with WidgetsBindingObserver {
   DateTime? _lastSync;
   bool _isSyncing = false;
   static const Duration syncCooldown = Duration(minutes: 10);
+  bool _started = false; //Prevent duplicate connectivity subscriptions and duplicate startup syncs.
 
   Future<void> start() async {
+    if(_started) return;
+    _started = true;
+
     WidgetsBinding.instance.addObserver(this);
 
     _connectionSubscription = connectivityService.connectionStream.listen(

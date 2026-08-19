@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:math_matric/features/progress/questionattempts/data/datasource/local/questions_attempt_local_data_source.dart';
 import 'package:math_matric/features/progress/questionattempts/data/datasource/remote/question_attempt_remote_data_source.dart';
 import 'package:math_matric/features/progress/questionattempts/domain/entities/question_attempts_entity.dart';
@@ -7,11 +6,9 @@ import 'package:math_matric/features/progress/questionattempts/domain/repositori
 class QuestionAttemptRepositoryImpl implements QuestionAttemptRepository {
   final QuestionAttemptLocalDataSource local;
   final QuestionAttemptRemoteDataSource remote;
-  final FirebaseAuth auth;
   QuestionAttemptRepositoryImpl(
     this.local, 
     this.remote,
-    this.auth,
   );
 
   @override
@@ -79,17 +76,12 @@ class QuestionAttemptRepositoryImpl implements QuestionAttemptRepository {
   }
 
   @override
-  Future<void> sync() async {
-    final user = auth.currentUser;
-    if(user==null){
-      throw Exception('Cannot sync: user is not authenticated.');
-    }
-    
+  Future<void> sync(String userId) async {
     final unsynced = await local.getUnsyncedAttempts();
     if (unsynced.isEmpty) return;
 
     await remote.saveQuestionAttempts(
-      user.uid,
+      userId,
       unsynced,
     );
 

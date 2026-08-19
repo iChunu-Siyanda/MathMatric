@@ -1,4 +1,5 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
 import 'package:math_matric/core/network/repositories/connectivity_service.dart';
 import 'package:math_matric/core/network/repositories/internet_checker.dart';
@@ -65,6 +66,7 @@ void registerServiceModule() {
 
   getIt.registerLazySingleton(
     () => SyncProgressCoordinator(
+      auth: getIt<FirebaseAuth>(),
       questionAttempts: getIt<QuestionAttemptRepository>(), 
       topicProgress: getIt<UserTopicProgressRepository>(), 
       levelProgress: getIt<UserLevelProgressRepository>(), 

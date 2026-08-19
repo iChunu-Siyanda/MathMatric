@@ -15,5 +15,5 @@ abstract class UserLevelProgressRepository {
 
   Future<List<UserLevelProgressEntity>> getIncompleteLevels();
 
-  Future<void> sync();
+  Future<void> sync(String userId);
 }

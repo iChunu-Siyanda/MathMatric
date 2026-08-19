@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:math_matric/features/progress/studysession/data/datasource/local/study_session_local_data_source.dart';
 import 'package:math_matric/features/progress/studysession/data/datasource/remote/study_session_remote_data_source.dart';
 import 'package:math_matric/features/progress/studysession/domain/entities/study_session_entity.dart';
@@ -7,11 +6,9 @@ import 'package:math_matric/features/progress/studysession/domain/repositories/s
 class StudySessionRepositoryImpl implements StudySessionRepository {
   final StudySessionLocalDataSource local;
   final StudySessionRemoteDataSource remote;
-  final FirebaseAuth auth;
   StudySessionRepositoryImpl(
     this.local,
     this.remote,
-    this.auth,
   );
 
   @override
@@ -61,17 +58,12 @@ class StudySessionRepositoryImpl implements StudySessionRepository {
   }
 
   @override
-  Future<void> sync() async {
-    final user = auth.currentUser;
-    if (user == null) {
-      throw Exception('Cannot sync: user is not authenticated.');
-    }
-
+  Future<void> sync(String userId) async {
     final unsynced = await local.getUnsyncedAttempts();
     if (unsynced.isEmpty) return;
 
     await remote.saveStudySessions(
-      user.uid,
+      userId,
       unsynced,
     ); 
     for (final session in unsynced) {

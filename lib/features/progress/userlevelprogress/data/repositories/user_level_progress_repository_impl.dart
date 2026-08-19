@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:math_matric/features/progress/userlevelprogress/data/datasource/local/user_level_progress_local_data_source.dart';
 import 'package:math_matric/features/progress/userlevelprogress/data/datasource/remote/user_level_progress_remote_data_source.dart';
 import 'package:math_matric/features/progress/userlevelprogress/domain/entities/user_level_progresses_entity.dart';
@@ -7,11 +6,9 @@ import 'package:math_matric/features/progress/userlevelprogress/domain/repositor
 class UserLevelProgressRepositoryImpl implements UserLevelProgressRepository {
   final UserLevelProgressLocalDataSource local;
   final UserLevelProgressRemoteDataSource remote;
-  final FirebaseAuth auth;
   UserLevelProgressRepositoryImpl(
     this.local,
     this.remote,
-    this.auth,
   );
 
   @override
@@ -70,17 +67,12 @@ class UserLevelProgressRepositoryImpl implements UserLevelProgressRepository {
   }
 
   @override
-  Future<void> sync() async {
-    final user = auth.currentUser;
-    if (user == null) {
-      throw Exception('Cannot sync: user is not authenticated.');
-    }
-
+  Future<void> sync(String userId) async {
     final unsynced = await local.getUnsyncedAttempts();
     if (unsynced.isEmpty) return;
 
     await remote.saveUserLevelProgresses(
-      user.uid,
+      userId,
       unsynced,
     );
 

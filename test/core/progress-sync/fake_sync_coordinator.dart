@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:math_matric/features/progress/questionattempts/domain/repositories/question_atempts_repository.dart';
 import 'package:math_matric/features/progress/studysession/domain/repositories/study_session_repository.dart';
 import 'package:math_matric/features/progress/userlevelprogress/domain/repositories/user_level_progress_repository.dart';
@@ -23,4 +24,8 @@ class FakeSyncCoordinator implements SyncProgressCoordinator {
 
   @override
   UserTopicProgressRepository get topicProgress => throw UnimplementedError();
+
+  @override
+  // TODO: implement auth
+  FirebaseAuth get auth => throw UnimplementedError();
 }
