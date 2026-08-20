@@ -21,6 +21,10 @@ abstract class QuestionAttemptLocalDataSource {
     String questionId,
   );
 
+  Future<List<String>> getCorrectQuestionIdsByLevel(
+    String levelId,
+  );
+
   Future<List<QuestionAttemptModel>> getCorrectAttempts();
 
   Future<List<QuestionAttemptModel>> getIncorrectAttempts();

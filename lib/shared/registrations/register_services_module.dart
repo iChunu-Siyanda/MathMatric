@@ -7,6 +7,8 @@ import 'package:math_matric/core/network/services/connectivity_service_impl.dart
 import 'package:math_matric/core/network/services/internet_checker_impl.dart';
 import 'package:math_matric/core/network/services/sync_progress_manager.dart';
 import 'package:math_matric/features/progress/questionattempts/domain/repositories/question_atempts_repository.dart';
+import 'package:math_matric/features/progress/services/user_progress_calculator.dart';
+import 'package:math_matric/features/progress/services/xp_calculator.dart';
 import 'package:math_matric/features/progress/studysession/domain/repositories/study_session_repository.dart';
 import 'package:math_matric/features/progress/userlevelprogress/domain/repositories/user_level_progress_repository.dart';
 import 'package:math_matric/features/progress/usertopicprogress/domain/repositories/user_topic_progress_repository.dart';
@@ -92,5 +94,14 @@ void registerServiceModule() {
       internetChecker: getIt(), 
       syncCoordinator: getIt(),
     ),
+  );
+
+  // Calculators:
+  getIt.registerLazySingleton<UserProgressCalculator>(
+    () => UserProgressCalculator(),
+  );
+
+  getIt.registerLazySingleton<XPCalculator>(
+    () => XPCalculator(),
   );
 }

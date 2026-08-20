@@ -29,6 +29,13 @@ class QuestionAttemptLocalDataSourceImpl implements QuestionAttemptLocalDataSour
     return QuestionAttemptModel.fromDrift(row);
   }
 
+  @override
+  Future<List<String>> getCorrectQuestionIdsByLevel(
+    String levelId,
+  ) {
+    return db.getCorrectQuestionIdsByLevel(levelId);
+  }
+
   
   @override
   Future<List<QuestionAttemptModel>> getUnsyncedAttempts() async {

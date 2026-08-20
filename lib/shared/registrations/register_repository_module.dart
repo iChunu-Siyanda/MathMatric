@@ -18,6 +18,8 @@ import 'package:math_matric/features/progress/questionattempts/data/datasource/l
 import 'package:math_matric/features/progress/questionattempts/data/datasource/remote/question_attempt_remote_data_source.dart';
 import 'package:math_matric/features/progress/questionattempts/data/repositories/questions_attempts_repository.dart';
 import 'package:math_matric/features/progress/questionattempts/domain/repositories/question_atempts_repository.dart';
+import 'package:math_matric/features/progress/services/user_progress_calculator.dart';
+import 'package:math_matric/features/progress/services/xp_calculator.dart';
 import 'package:math_matric/features/progress/studysession/data/datasource/local/study_session_local_data_source.dart';
 import 'package:math_matric/features/progress/studysession/data/datasource/remote/study_session_remote_data_source.dart';
 import 'package:math_matric/features/progress/studysession/data/repositories/study_session_repository_impl.dart';
@@ -88,6 +90,8 @@ void registerRepositoryModule() {
     () => UserLevelProgressRepositoryImpl(
       getIt<UserLevelProgressLocalDataSource>(),
       getIt<UserLevelProgressRemoteDataSource>(),
+      getIt<UserProgressCalculator>(),
+      getIt<XPCalculator>(),
     ),
   );
 

@@ -1,3 +1,5 @@
+import 'package:math_matric/features/progress/services/user_progress_calculator.dart';
+import 'package:math_matric/features/progress/services/xp_calculator.dart';
 import 'package:math_matric/features/progress/userlevelprogress/data/datasource/local/user_level_progress_local_data_source.dart';
 import 'package:math_matric/features/progress/userlevelprogress/data/datasource/remote/user_level_progress_remote_data_source.dart';
 import 'package:math_matric/features/progress/userlevelprogress/data/models/user_level_progresses_model.dart';
@@ -7,9 +9,14 @@ import 'package:math_matric/features/progress/userlevelprogress/domain/repositor
 class UserLevelProgressRepositoryImpl implements UserLevelProgressRepository {
   final UserLevelProgressLocalDataSource local;
   final UserLevelProgressRemoteDataSource remote;
+  final UserProgressCalculator progressCalculator;
+  final XPCalculator xpCalculator;
+
   UserLevelProgressRepositoryImpl(
     this.local,
     this.remote,
+    this.progressCalculator,
+    this.xpCalculator,
   );
 
   @override
@@ -81,6 +88,7 @@ class UserLevelProgressRepositoryImpl implements UserLevelProgressRepository {
     }
   }
 
+  // STUDY SESSION LIFECYCLE:
   @override
   Future<void> saveProgress(UserLevelProgressEntity progress) {
     return local.saveUserLevelProgress(UserLevelProgressModel.fromEntity(progress));

@@ -57,7 +57,7 @@ class UserProgressCalculator {
     return newScore > currentBest;
   }
   
-  bool isNewBestTime({
+  bool isNewBest({
     required double currentBestScore,
     required int? currentBestTime,
     required double newScore,
@@ -71,6 +71,40 @@ class UserProgressCalculator {
       return false;
     }
 
-    return newTime < currentBestTime!;
+    // Same score, but no previous time exists.
+    if (currentBestTime == null) {
+      return true;
+    }
+
+    return newTime < currentBestTime;
+  }
+
+  double calculateMastery(
+    List<double> attempts,
+  ) {
+    if (attempts.isEmpty) {
+      return 0.0;
+    }
+
+    final recent = attempts.reversed.take(3).toList();
+
+    if (recent.length == 1) {
+      return recent[0];
+    }
+
+    if (recent.length == 2) {
+      return (recent[0] * 0.60) + (recent[1] * 0.40);
+    }
+
+    return (recent[0] * 0.50) + (recent[1] * 0.30) + (recent[2] * 0.20);
+  }
+
+  int calculateNewCorrectAnswers({
+    required List<String> previouslyCorrectQuestionIds,
+    required Map<String, bool> currentAnswers,
+  }) {
+    return currentAnswers.entries.where(
+          (entry) => entry.value && !previouslyCorrectQuestionIds.contains(entry.key),
+        ).length;
   }
 }

@@ -34,8 +34,20 @@ class QuestionAttemptRepositoryImpl implements QuestionAttemptRepository {
   }
 
   @override
+  Future<List<String>> getCorrectQuestionIdsByLevel(
+    String levelId,
+  ) async {
+    return local.getCorrectQuestionIdsByLevel(levelId);
+  }
+
+  @override
   Future<void> saveQuestionAttempt(QuestionAttemptEntity attempt) {
     return local.saveQuestionAttempt(QuestionAttemptModel.fromEntity(attempt));
+  }
+  
+  @override
+  Future<void> saveQuestionAttempts(List<QuestionAttemptEntity> attempts,){
+    return local.saveQuestionAttempts(attempts.map(QuestionAttemptModel.fromEntity).toList());
   }
 
   @override

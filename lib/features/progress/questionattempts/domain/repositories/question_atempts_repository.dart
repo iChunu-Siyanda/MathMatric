@@ -6,6 +6,14 @@ abstract class QuestionAttemptRepository {
     QuestionAttemptEntity attempt,
   );
 
+  Future<void> saveQuestionAttempts(
+    List<QuestionAttemptEntity> attempts,
+  );
+
+  Future<List<String>> getCorrectQuestionIdsByLevel(
+    String levelId,
+  );
+
   //Sync:
   Future<void> sync(String userId);
   

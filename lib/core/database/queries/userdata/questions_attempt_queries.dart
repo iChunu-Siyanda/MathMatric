@@ -18,6 +18,22 @@ extension QuestionAttemptsQueries on AppDatabase {
         .getSingleOrNull();
   }
 
+  Future<List<String>> getCorrectQuestionIdsByLevel(
+    String levelId,
+  ) async {
+    final rows = await (select(questionAttempts)
+          ..where(
+            (a) =>
+                a.levelId.equals(levelId) &
+                a.correct.equals(true),
+          ))
+        .get();
+
+    return rows
+        .map((row) => row.questionId)
+        .toList();
+  }
+
   //Syncing
   Future<List<QuestionAttempt>> getUnsyncedQuestionAttempts() {
     return (select(questionAttempts)
