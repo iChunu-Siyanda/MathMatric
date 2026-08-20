@@ -20,8 +20,7 @@ class FakeUserLevelProgressRepository implements UserLevelProgressRepository {
   }
 
   @override
-  Future<List<UserLevelProgressEntity>>
-      getAllUserLevelProgresses() async {
+  Future<List<UserLevelProgressEntity>> getAllUserLevelProgresses() async {
     return [];
   }
 
@@ -33,14 +32,12 @@ class FakeUserLevelProgressRepository implements UserLevelProgressRepository {
   }
 
   @override
-  Future<List<UserLevelProgressEntity>>
-      getCompletedLevels() async {
+  Future<List<UserLevelProgressEntity>> getCompletedLevels() async {
     return [];
   }
 
   @override
-  Future<List<UserLevelProgressEntity>>
-      getIncompleteLevels() async {
+  Future<List<UserLevelProgressEntity>> getIncompleteLevels() async {
     return [];
   }
 

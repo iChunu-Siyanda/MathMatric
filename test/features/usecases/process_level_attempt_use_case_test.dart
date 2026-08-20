@@ -4,24 +4,33 @@ import 'package:math_matric/features/progress/services/xp_calculator.dart';
 import 'package:math_matric/features/progress/userlevelprogress/domain/entities/level_attempt.dart';
 import 'package:math_matric/features/progress/userlevelprogress/domain/entities/user_level_progresses_entity.dart';
 import 'package:math_matric/features/progress/userlevelprogress/domain/usecases/process_level_attempt_use_case.dart';
+import 'package:math_matric/features/progress/usertopicprogress/domain/usecases/update_topic_progress_use_case.dart';
 
 import '../question-attempt/fake_question_attempt_repo.dart';
 import '../user-level-progress/fake_user_level_progress_repository.dart';
+import '../user-topic-progress/fake_topic_progress_repository.dart';
 
 void main() {
   late FakeQuestionAttemptRepository questionAttempts;
   late FakeUserLevelProgressRepository levelProgress;
+  late FakeTopicProgressRepository topicProgress;
   late ProcessLevelAttemptUseCase useCase;
+  late UpdateTopicProgressUseCase updateUseCase;
 
   setUp(() {
     questionAttempts = FakeQuestionAttemptRepository();
     levelProgress = FakeUserLevelProgressRepository();
-
+    topicProgress = FakeTopicProgressRepository();
+    updateUseCase = UpdateTopicProgressUseCase(
+      topicProgressRepository: topicProgress, 
+      levelProgressRepository: levelProgress,
+    );
     useCase = ProcessLevelAttemptUseCase(
       levelProgressRepository: levelProgress,
       questionAttemptRepository: questionAttempts,
       progressCalculator: const UserProgressCalculator(),
-      xpCalculator: const XPCalculator(),
+      xpCalculator: const XPCalculator(), 
+      updateTopicProgress: updateUseCase,
     );
   });
 

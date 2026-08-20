@@ -5,6 +5,7 @@ import 'package:math_matric/features/progress/services/xp_calculator.dart';
 import 'package:math_matric/features/progress/userlevelprogress/data/models/user_level_progresses_model.dart';
 import 'package:math_matric/features/progress/userlevelprogress/domain/entities/level_attempt.dart';
 import 'package:math_matric/features/progress/userlevelprogress/domain/repositories/user_level_progress_repository.dart';
+import 'package:math_matric/features/progress/usertopicprogress/domain/usecases/update_topic_progress_use_case.dart';
 import 'package:uuid/uuid.dart';
 
 class ProcessLevelAttemptUseCase {
@@ -12,12 +13,14 @@ class ProcessLevelAttemptUseCase {
   final QuestionAttemptRepository questionAttemptRepository;
   final UserProgressCalculator progressCalculator;
   final XPCalculator xpCalculator;
+  final UpdateTopicProgressUseCase updateTopicProgress;
 
   const ProcessLevelAttemptUseCase({
     required this.levelProgressRepository,
     required this.questionAttemptRepository,
     required this.progressCalculator,
-    required this.xpCalculator,
+    required this.xpCalculator, 
+    required this.updateTopicProgress,
   });
 
   Future<void> call({
@@ -82,5 +85,10 @@ class ProcessLevelAttemptUseCase {
 
     // 8. Persist updated level progress.
     await levelProgressRepository.saveProgress(updatedProgress,);
+
+    // 9. Update Topic Level Stats.
+    await updateTopicProgress(
+      topicId: attempt.topicId,
+    );
   }
 }
