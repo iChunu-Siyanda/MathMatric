@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:math_matric/features/curriculum/exams/domain/entities/exam_paper_entity.dart';
+import 'package:math_matric/shared/app_routes/routes.dart';
 import 'package:math_matric/shared/entities/section_context_modal.dart';
 import 'package:math_matric/features/papers/exam/domain/entities/exam_page_mode.dart.dart';
 import 'package:math_matric/features/papers/exam/presentation/bloc/exam_bloc.dart';
@@ -73,51 +75,72 @@ class _ExamPaperPageState extends State<ExamPaperPage> with SingleTickerProvider
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      slivers: [
-        BlocBuilder<ExamBloc, ExamState>(
-          builder: (context, state) {
-            if (state is ExamLoading) {
-              // Must return a sliver inside CustomScrollView
-              return const SliverFillRemaining(
-                child: Center(child: CircularProgressIndicator()),
-              );
-            }
+    return BlocListener<ExamBloc, ExamState>(
+      listener: (context, state) {
+        if (state is ExamPaperPagesLoaded) {
+          context.push(
+            Routes.examPaperViewer,
+            extra: {
+              'title': state.paper.title,
+              'pageAssets': state.pages,
+            },
+          );
+        }
 
-            if (state is ExamError) {
-              return SliverFillRemaining(
-                child: Center(child: Text(state.message)),
-              );
-            }
-
-            if (state is ExamPaperListLoaded) {
-              final papers = state.papers
-                  .where((p) => isPaper ? !p.isMemo : p.isMemo)
-                  .toList();
-
-              final national = papers
-                  .where((p) => p.isNational)
-                  .toList();
-
-              final provincial = papers
-                  .where((p) => !p.isNational)
-                  .toList();
-
-              return SliverMainAxisGroup(
-                slivers: [
-                  if (national.isNotEmpty)
-                    _section('National', national),
-
-                  if (provincial.isNotEmpty)
-                    _section('Provincial', provincial),
-                ],
-              );
-            }
-
-            return const SliverToBoxAdapter(child: SizedBox.shrink());
-          },
-        ),
-      ],
+        if (state is ExamError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+            ),
+          );
+        }
+      },
+      child: CustomScrollView(
+        slivers: [
+          BlocBuilder<ExamBloc, ExamState>(
+            builder: (context, state) {
+              if (state is ExamLoading) {
+                // Must return a sliver inside CustomScrollView
+                return const SliverFillRemaining(
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+      
+              if (state is ExamError) {
+                return SliverFillRemaining(
+                  child: Center(child: Text(state.message)),
+                );
+              }
+      
+              if (state is ExamPaperListLoaded) {
+                final papers = state.papers
+                    .where((p) => isPaper ? !p.isMemo : p.isMemo)
+                    .toList();
+      
+                final national = papers
+                    .where((p) => p.isNational)
+                    .toList();
+      
+                final provincial = papers
+                    .where((p) => !p.isNational)
+                    .toList();
+      
+                return SliverMainAxisGroup(
+                  slivers: [
+                    if (national.isNotEmpty)
+                      _section('National', national),
+      
+                    if (provincial.isNotEmpty)
+                      _section('Provincial', provincial),
+                  ],
+                );
+              }
+      
+              return const SliverToBoxAdapter(child: SizedBox.shrink());
+            },
+          ),
+        ],
+      ),
     );
   }
 

@@ -57,11 +57,9 @@ class _ExamPaperViewerState extends State<ExamPaperViewer> {
 
     final double offset = _scrollController.offset;
 
-    final double itemHeight =
-        MediaQuery.of(context).size.height * 0.8;
+    final double itemHeight = MediaQuery.of(context).size.height * 0.8;
 
-    final int page =
-        (offset / itemHeight).round() + 1;
+    final int page = (offset / itemHeight).round() + 1;
 
     if (page != _currentPage &&
         page > 0 &&
@@ -89,8 +87,7 @@ class _ExamPaperViewerState extends State<ExamPaperViewer> {
       page = widget.pagePaths.length;
     }
 
-    final double progress =
-        page / widget.pagePaths.length;
+    final double progress = page / widget.pagePaths.length;
 
     context.read<StudyHistoryBloc>().add(
       TopicAccessed(
@@ -148,9 +145,7 @@ class _ExamPaperViewerState extends State<ExamPaperViewer> {
             ),
 
             Text(
-              isListView
-                  ? 'Scroll View'
-                  : 'Book View',
+              isListView ? 'Scroll View' : 'Book View',
               style: const TextStyle(
                 fontSize: 12,
                 color: Colors.grey,
@@ -170,9 +165,7 @@ class _ExamPaperViewerState extends State<ExamPaperViewer> {
         actions: [
           IconButton(
             icon: Icon(
-              isListView
-                  ? Icons.stay_primary_portrait
-                  : Icons.import_contacts,
+              isListView ? Icons.stay_primary_portrait : Icons.import_contacts,
               color: Colors.blueAccent,
             ),
             tooltip: 'Toggle View Mode',
@@ -200,9 +193,7 @@ class _ExamPaperViewerState extends State<ExamPaperViewer> {
             )
           : Stack(
               children: [
-                isListView
-                    ? _buildListView(pages)
-                    : _buildPageView(pages),
+                isListView ? _buildListView(pages) : _buildPageView(pages),
 
                 _buildPageIndicator(pages.length),
               ],
@@ -308,7 +299,7 @@ class _ExamPaperViewerState extends State<ExamPaperViewer> {
           child: Image.file(
             file,
             fit: BoxFit.contain,
-
+ 
             errorBuilder: (
               context,
               error,

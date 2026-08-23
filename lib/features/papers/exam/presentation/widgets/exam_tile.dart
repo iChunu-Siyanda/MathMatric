@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:math_matric/features/curriculum/exams/domain/entities/exam_paper_entity.dart';
 import 'package:math_matric/features/papers/exam/domain/entities/exam_page_mode.dart.dart';
-import 'package:math_matric/shared/app_routes/routes.dart';
+import 'package:math_matric/features/papers/exam/presentation/bloc/exam_bloc.dart';
+import 'package:math_matric/features/papers/exam/presentation/bloc/exam_event.dart';
 import 'package:math_matric/core/theme/app_colours.dart'; // Adjust import path if needed
 
 class ExamTile extends StatefulWidget {
@@ -24,26 +25,14 @@ class ExamTile extends StatefulWidget {
 }
 
 class _ExamTileState extends State<ExamTile> {
-  List<String> _buildPagePaths(String assetPath, int pageCount) {
-    final basePath = widget.paperMode == ExamPageMode.paper
-        ? "papers/paper_1/exams/papers"
-        : "papers/paper_1/exams/memos";
-
-    return List.generate(
-      pageCount,
-      (index) => "$basePath/$assetPath/p${index + 1}.webp",
-    );
-  }
-
-  void _openViewer(BuildContext context, ExamPaperEntity document) {
-    final pages = _buildPagePaths(document.storagePath, document.pageCount);
-
-    context.push(
-      Routes.examPaperViewer,
-      extra: {
-        'title': document.title,
-        'pageAssets': pages,
-      },
+  void _openViewer(
+    BuildContext context,
+    ExamPaperEntity document,
+  ) {
+    context.read<ExamBloc>().add(
+      ExamPaperPagesRequested(
+        paper: document,
+      ),
     );
   }
 
