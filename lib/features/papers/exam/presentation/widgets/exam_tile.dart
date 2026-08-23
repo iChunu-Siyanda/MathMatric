@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:math_matric/features/curriculum/exams/domain/entities/exam_paper_entity.dart';
 import 'package:math_matric/features/papers/exam/domain/entities/exam_page_mode.dart.dart';
-import 'package:math_matric/features/papers/exam/domain/entities/exam_paper.dart';
 import 'package:math_matric/shared/app_routes/routes.dart';
 import 'package:math_matric/core/theme/app_colours.dart'; // Adjust import path if needed
 
 class ExamTile extends StatefulWidget {
-  final ExamPaper paper;
+  final ExamPaperEntity paper;
   final ExamPageMode paperMode;
-  final Set<ExamPaper> savedPapers;
+  final Set<ExamPaperEntity> savedPapers;
   final VoidCallback? onBookmarkToggle;
 
   const ExamTile({
@@ -35,8 +35,8 @@ class _ExamTileState extends State<ExamTile> {
     );
   }
 
-  void _openViewer(BuildContext context, ExamPaper document) {
-    final pages = _buildPagePaths(document.assetPath, document.pageCount);
+  void _openViewer(BuildContext context, ExamPaperEntity document) {
+    final pages = _buildPagePaths(document.storagePath, document.pageCount);
 
     context.push(
       Routes.examPaperViewer,
@@ -64,14 +64,11 @@ class _ExamTileState extends State<ExamTile> {
   @override
   Widget build(BuildContext context) {
     final isSaved = widget.savedPapers.contains(widget.paper);
-    final isMemo = widget.paperMode == ExamPageMode.memo ||
-        widget.paper.title.toLowerCase().contains('memo');
+    final isMemo = widget.paperMode == ExamPageMode.memo || widget.paper.title.toLowerCase().contains('memo');
 
     // Color accents based on paper vs memo
-    final accentColor =
-        isMemo ? AppColours.electricViolet : AppColours.cobaltBlue;
-    final iconData =
-        isMemo ? Icons.assignment_turned_in_outlined : Icons.description_outlined;
+    final accentColor = isMemo ? AppColours.electricViolet : AppColours.cobaltBlue;
+    final iconData = isMemo ? Icons.assignment_turned_in_outlined : Icons.description_outlined;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 16),

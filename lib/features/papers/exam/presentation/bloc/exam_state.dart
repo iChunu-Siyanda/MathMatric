@@ -1,44 +1,37 @@
-import 'package:math_matric/features/papers/exam/domain/entities/exam_paper.dart';
+import 'package:math_matric/features/curriculum/exams/domain/entities/exam_paper_entity.dart';
 
-abstract class ExamState {
+sealed class ExamState {
   const ExamState();
 }
 
-//Initial state
-class ExamPaperInitial extends ExamState{
-  const ExamPaperInitial();
+final class ExamInitial extends ExamState {
+  const ExamInitial();
 }
 
-//Loading assets or data
-class ExamPaperLoading extends ExamState{
-  const ExamPaperLoading();
+final class ExamLoading extends ExamState {
+  const ExamLoading();
 }
 
-//Exam papers are loaded. Browsing state
-class ExamPaperListLoaded extends ExamState {
-  final Map<String, List<ExamPaper>> sections;
+final class ExamPaperListLoaded extends ExamState {
+  final List<ExamPaperEntity> papers;
 
-  const ExamPaperListLoaded(this.sections);
+  const ExamPaperListLoaded({
+    required this.papers,
+  });
 }
 
-//Focus state, getting specific papers
-// class ExamPaperFocusLoaded extends ExamState {
-//   final ExamPaper paper;
-//   final ExamPaper memo;
-//   final List<ExamPaper> allPapers;  
-//   final List<ExamPaper> allMemos;
+final class ExamPaperLoaded extends ExamState {
+  final ExamPaperEntity paper;
+  final ExamPaperEntity? memo;
 
-//   ExamPaperFocusLoaded({
-//     required this.paper,
-//     required this.memo,
-//     required this.allPapers,
-//     required this.allMemos,
-//   });
-// }
+  const ExamPaperLoaded({
+    required this.paper,
+    this.memo,
+  });
+}
 
-//Error state missing any data
-class ExamPaperError extends ExamState {
+final class ExamError extends ExamState {
   final String message;
 
-  const ExamPaperError(this.message);
+  const ExamError(this.message);
 }

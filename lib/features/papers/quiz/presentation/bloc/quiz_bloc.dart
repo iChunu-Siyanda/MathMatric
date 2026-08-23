@@ -18,7 +18,6 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
     emit(QuizLoading());
     try {
       final questions = await loadQuizQuestionsUseCase(
-        subjectTopic: event.subjectTopic, 
         levelId: event.levelId,
       );
       emit(QuizQuestionsLoaded(questions: questions));
@@ -57,7 +56,14 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
         nextScore++;
       }
 
-      int nextTotalScore = currentState.totalScore + currentQuestion.scoreValue;
+      int nextTotalScore = currentState.totalScore + 1;
+
+      // final nextTotalMarks = currentState.totalMarks + currentQuestion.marks;
+
+      // final nextScore = currentQuestion.correctAnswerIndex ==
+      //         currentState.selectedIndex
+      //     ? currentState.score + currentQuestion.marks
+      //     : currentState.score;
 
       // Inside QuizBloc's _onSubmitAnswer handler:
       if (currentState.isLastQuestion) {

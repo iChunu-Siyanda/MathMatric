@@ -1,6 +1,7 @@
-import 'package:math_matric/features/papers/quiz/domain/entities/quiz_question.dart';
-import 'package:math_matric/features/papers/papers/domain/entities/subject_topic_quiz.dart';
+import 'package:math_matric/features/curriculum/questions/domain/entities/questions_entity.dart';
 
 abstract class QuizQuestionsRepository {
-    Future<List<QuizQuestion>> getQuizQuestionsForLevel(SubjectTopic subject, String levelId);
+  Future<List<QuestionsEntity>> getQuestionsForLevel(
+    String levelId,
+  );
 }

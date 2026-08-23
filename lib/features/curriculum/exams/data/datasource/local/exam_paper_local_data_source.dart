@@ -7,6 +7,13 @@ abstract class ExamPaperLocalDataSource {
     String paperId,
   );
 
+  Future<List<ExamPaperModel>> getExamPapers({
+    required String subjectId,
+    required String paperType,
+    required String session,
+    int? year,
+  });
+
   Future<List<ExamPaperModel>> getExamPapersByType(
     String paperType,
   );

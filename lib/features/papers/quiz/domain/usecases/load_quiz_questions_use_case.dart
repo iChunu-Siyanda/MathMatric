@@ -1,17 +1,13 @@
-import 'package:math_matric/features/papers/quiz/domain/entities/quiz_question.dart';
-import 'package:math_matric/features/papers/papers/domain/entities/subject_topic_quiz.dart';
+import 'package:math_matric/features/curriculum/questions/domain/entities/questions_entity.dart';
 import 'package:math_matric/features/papers/quiz/domain/repositories/quiz_questions_repository.dart';
 
 class LoadQuizQuestionsUseCase{
   final QuizQuestionsRepository quizRepository;
   LoadQuizQuestionsUseCase(this.quizRepository);
 
-  Future<List<QuizQuestion>> call({
-    required SubjectTopic subjectTopic,
+  Future<List<QuestionsEntity>> call({
     required String levelId,
   }) async {
-    return await quizRepository.getQuizQuestionsForLevel(subjectTopic, levelId);
+    return await quizRepository.getQuestionsForLevel(levelId,);
   }
 }
-
-

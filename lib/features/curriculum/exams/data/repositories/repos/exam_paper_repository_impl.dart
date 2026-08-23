@@ -23,6 +23,23 @@ class ExamPapersRepositoryImpl implements ExamPapersRepository {
   }
 
   @override
+  Future<List<ExamPaperEntity>> getExamPapers({
+    required String subjectId,
+    required String paperType,
+    required String session,
+    int? year,
+  }) async {
+    final models = await local.getExamPapers(
+      subjectId: subjectId,
+      paperType: paperType,
+      session: session,
+      year: year,
+    );
+
+    return models.map((m) => m.toEntity()).toList();
+  }
+
+  @override
   Future<List<ExamPaperEntity>> getExamPapersByType(
     String paperType,
   ) async {
@@ -70,6 +87,17 @@ class ExamPapersRepositoryImpl implements ExamPapersRepository {
     final models = await local.getDownloadedExamPapers();
 
     return models.map((m) => m.toEntity()).toList();
+  }
+
+  @override
+  Future<void> updateDownloadedStatus({
+    required String paperId,
+    required bool downloaded,
+  }) {
+    return local.updateDownloadedStatus(
+      paperId: paperId,
+      downloaded: downloaded,
+    );
   }
 
   @override

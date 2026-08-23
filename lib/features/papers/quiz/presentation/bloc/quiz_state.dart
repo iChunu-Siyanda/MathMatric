@@ -1,12 +1,12 @@
-import 'package:math_matric/features/papers/quiz/domain/entities/quiz_question.dart';
+import 'package:math_matric/features/curriculum/questions/domain/entities/questions_entity.dart';
 
-abstract class QuizState {}
+sealed class QuizState {}
 
 class QuizInitial extends QuizState {}
 class QuizLoading extends QuizState {}
 
-class QuizQuestionsLoaded extends QuizState {
-  final List<QuizQuestion> questions;
+final class QuizQuestionsLoaded extends QuizState {
+  final List<QuestionsEntity> questions;
   final int currentIndex;
   final int score;
   final int totalScore;
@@ -22,11 +22,11 @@ class QuizQuestionsLoaded extends QuizState {
     this.userAnswers = const [],
   });
 
-  QuizQuestion get currentQuestion => questions[currentIndex];
+  QuestionsEntity get currentQuestion => questions[currentIndex];
   bool get isLastQuestion => currentIndex == questions.length - 1;
 
   QuizQuestionsLoaded copyWith({
-    List<QuizQuestion>? questions,
+    List<QuestionsEntity>? questions,
     int? currentIndex,
     int? score,
     int? totalScore,
@@ -44,11 +44,11 @@ class QuizQuestionsLoaded extends QuizState {
   }
 }
 
-class QuizFinished extends QuizState {
+final class QuizFinished extends QuizState {
   final int score;
   final int totalScore;
   final int xpEarned;
-  final List<QuizQuestion> questions;
+  final List<QuestionsEntity> questions;
   final List<int> userAnswers;
   final int selectedIndex;
 
@@ -62,7 +62,7 @@ class QuizFinished extends QuizState {
   });
 }
 
-class QuizError extends QuizState{
+final class QuizError extends QuizState{
   final String message;
 
   QuizError(this.message);

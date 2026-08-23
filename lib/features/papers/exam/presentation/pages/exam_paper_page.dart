@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:math_matric/features/curriculum/exams/domain/entities/exam_paper_entity.dart';
 import 'package:math_matric/shared/entities/section_context_modal.dart';
 import 'package:math_matric/features/papers/exam/domain/entities/exam_page_mode.dart.dart';
-import 'package:math_matric/features/papers/exam/domain/entities/exam_paper.dart';
 import 'package:math_matric/features/papers/exam/presentation/bloc/exam_bloc.dart';
 import 'package:math_matric/features/papers/exam/presentation/bloc/exam_event.dart';
 import 'package:math_matric/features/papers/exam/presentation/bloc/exam_state.dart';
@@ -27,7 +27,7 @@ class ExamPaperPage extends StatefulWidget {
 }
 
 class _ExamPaperPageState extends State<ExamPaperPage> with SingleTickerProviderStateMixin {
-  final Set<ExamPaper> savedPapers = {};
+  final Set<ExamPaperEntity> savedPapers = {};
   late final AnimationController _controller;
   static const int _staggerMs = 100;
   bool get isPaper => widget.mode == ExamPageMode.paper;
@@ -37,8 +37,12 @@ class _ExamPaperPageState extends State<ExamPaperPage> with SingleTickerProvider
     super.initState();
 
     context.read<ExamBloc>().add(
-      ExamPaperRequested(widget.contextData.paperType,
-      widget.contextData.session!, widget.contextData.year),
+      ExamPapersRequested(
+        subjectId: widget.contextData.topic.topicId.toString(), 
+        paperType: widget.contextData.paperType.toString(), 
+        session: widget.contextData.session!.toString(),
+        year: widget.contextData.year, 
+      ),
     );
 
     _controller = AnimationController(
@@ -73,32 +77,40 @@ class _ExamPaperPageState extends State<ExamPaperPage> with SingleTickerProvider
       slivers: [
         BlocBuilder<ExamBloc, ExamState>(
           builder: (context, state) {
-            if (state is ExamPaperLoading) {
+            if (state is ExamLoading) {
               // Must return a sliver inside CustomScrollView
               return const SliverFillRemaining(
                 child: Center(child: CircularProgressIndicator()),
               );
             }
 
-            if (state is ExamPaperError) {
+            if (state is ExamError) {
               return SliverFillRemaining(
                 child: Center(child: Text(state.message)),
               );
             }
 
             if (state is ExamPaperListLoaded) {
-              final filteredSections = state.sections.map((key, papers) {
-                final filtered = papers
-                    .where((p) => isPaper ? !p.isMemo : p.isMemo)
-                    .toList();
-                return MapEntry(key, filtered);
-              });
+              final papers = state.papers
+                  .where((p) => isPaper ? !p.isMemo : p.isMemo)
+                  .toList();
+
+              final national = papers
+                  .where((p) => p.isNational)
+                  .toList();
+
+              final provincial = papers
+                  .where((p) => !p.isNational)
+                  .toList();
 
               return SliverMainAxisGroup(
-                slivers: filteredSections.entries
-                    .where((entry) => entry.value.isNotEmpty)
-                    .map((entry) => _section(entry.key, entry.value))
-                    .toList(),
+                slivers: [
+                  if (national.isNotEmpty)
+                    _section('National', national),
+
+                  if (provincial.isNotEmpty)
+                    _section('Provincial', provincial),
+                ],
               );
             }
 
@@ -109,7 +121,7 @@ class _ExamPaperPageState extends State<ExamPaperPage> with SingleTickerProvider
     );
   }
 
-  Widget _section(String title, List<ExamPaper> papers) {
+  Widget _section(String title, List<ExamPaperEntity> papers) {
     return MultiSliver(
       children: [
         // Section Header Title

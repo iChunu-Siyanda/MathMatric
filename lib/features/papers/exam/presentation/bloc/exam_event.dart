@@ -1,27 +1,55 @@
-import 'package:math_matric/features/papers/exam/domain/entities/exam_session.dart';
-import 'package:math_matric/features/papers/papers/domain/entities/paper_type.dart';
-
-abstract class ExamEvent {
+sealed class ExamEvent {
   const ExamEvent();
 }
 
-class ExamPaperRequested extends ExamEvent {
-  final PaperType paperType;
-  final ExamSession session;
+final class ExamPapersRequested extends ExamEvent {
+  final String subjectId;
+  final String paperType;
+  final String session;
   final int? year;
 
-  const ExamPaperRequested(this.paperType, this.session, this.year);
+  const ExamPapersRequested({
+    required this.subjectId,
+    required this.paperType,
+    required this.session,
+    this.year,
+  });
 }
 
-//specific exam (Paper + Memo tabs)
-// class ExamPaperFocusRequested extends ExamEvent {
-//   final String paperId;
-//   final PaperType paperType;
+final class ExamPapersByTypeRequested extends ExamEvent {
+  final String paperType;
 
-//   const ExamPaperFocusRequested(this.paperId,this.paperType);
-// }
+  const ExamPapersByTypeRequested({
+    required this.paperType,
+  });
+}
 
-// Reset when leaving page
-class ResetExamPapers extends ExamEvent {
+final class ExamPapersBySessionRequested extends ExamEvent {
+  final String session;
+
+  const ExamPapersBySessionRequested({
+    required this.session,
+  });
+}
+
+final class ExamPaperRequested extends ExamEvent {
+  final String paperId;
+
+  const ExamPaperRequested({
+    required this.paperId,
+  });
+}
+
+final class ExamPaperDownloadStatusChanged extends ExamEvent {
+  final String paperId;
+  final bool downloaded;
+
+  const ExamPaperDownloadStatusChanged({
+    required this.paperId,
+    required this.downloaded,
+  });
+}
+
+final class ResetExamPapers extends ExamEvent {
   const ResetExamPapers();
 }

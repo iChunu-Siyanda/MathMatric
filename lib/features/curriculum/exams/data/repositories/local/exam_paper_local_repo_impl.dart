@@ -3,7 +3,6 @@ import 'package:math_matric/core/database/queries/curriculum/exam_papers_queries
 import 'package:math_matric/features/curriculum/exams/data/datasource/local/exam_paper_local_data_source.dart';
 import 'package:math_matric/features/curriculum/exams/data/models/exam_paper_model.dart';
 
-
 class ExamPaperLocalDataSourceImpl implements ExamPaperLocalDataSource {
   final AppDatabase db;
   ExamPaperLocalDataSourceImpl(this.db);
@@ -121,5 +120,17 @@ class ExamPaperLocalDataSourceImpl implements ExamPaperLocalDataSource {
     String paperId,
   ) {
     return db.deleteExamPaper(paperId);
+  }
+
+  @override
+  Future<List<ExamPaperModel>> getExamPapers({
+    required String subjectId, 
+    required String paperType, 
+    required String session,
+    int? year,
+  }) async {
+    final rows = await db.getExamPapers(subjectId: subjectId, session: session, paperType: paperType);
+
+    return rows.map(ExamPaperModel.fromDrift).toList();
   }
 }

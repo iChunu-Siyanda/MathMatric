@@ -1,5 +1,8 @@
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
+import 'package:math_matric/features/curriculum/levels/domain/entities/levels_entity.dart';
+
 class PracticeLevel {
   final String levelId;
   final String topicId;
@@ -48,6 +51,17 @@ class PracticeLevel {
       isCompleted: isCompleted ?? this.isCompleted,
       isUnlocked: isUnlocked ?? this.isUnlocked,
       progress: progress ?? this.progress,
+    );
+  }
+
+  factory PracticeLevel.fromEntity(LevelsEntity level) {
+    return PracticeLevel(
+      levelId: level.id,
+      topicId: level.topicId,
+      title: level.title,
+      subtitle: level.subtitle,
+      color: Colors.deepPurple, // temporary — see below
+      xpReward: level.xpReward,
     );
   }
 }

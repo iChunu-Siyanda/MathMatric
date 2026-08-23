@@ -16,7 +16,12 @@ class QuestionsLocalDatasourceImpl implements QuestionsLocalDatasource{
   @override
   Future<QuestionsModel?> getQuestion(String questionId) async {
     final model = await db.getQuestion(questionId);
-    return QuestionsModel.fromDrift(model!);
+
+    if (model == null) {
+      return null;
+    }
+    
+    return QuestionsModel.fromDrift(model);
   }
 
   @override

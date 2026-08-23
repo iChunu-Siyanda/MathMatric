@@ -31,7 +31,7 @@ class ExamRoutes {
       builder: (context, state) {
         final args = state.extra as Map<String, dynamic>;
         return ExamPaperViewer(
-          pageAssets: List<String>.from(args['pageAssets']), 
+          pagePaths: List<String>.from(args['pagePathss']), 
           title: args['title'],
         );
       },

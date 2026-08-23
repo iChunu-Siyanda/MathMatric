@@ -3,6 +3,13 @@ import 'package:math_matric/features/curriculum/exams/domain/entities/exam_paper
 abstract class ExamPapersRepository {
   Future<List<ExamPaperEntity>> getAllExamPapers();
 
+  Future<List<ExamPaperEntity>> getExamPapers({
+    required String subjectId,
+    required String paperType,
+    required String session,
+    int? year,
+  });
+
   Future<ExamPaperEntity?> getExamPaper(
     String paperId,
   );
@@ -18,6 +25,11 @@ abstract class ExamPapersRepository {
   Future<List<ExamPaperEntity>> getExamPapersBySession(
     String session,
   );
+
+  Future<void> updateDownloadedStatus({
+    required String paperId,
+    required bool downloaded,
+  });
 
   Future<List<ExamPaperEntity>> getNationalExamPapers();
 

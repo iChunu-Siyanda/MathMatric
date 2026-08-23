@@ -109,4 +109,23 @@ void main() {
     expect(result.levels[2].isUnlocked, false);
     expect(result.levels[2].progress, 0.0);
   });
+
+  test(
+    'gets levels for topic from local datasource',
+    () async {
+      // arrange datasource fake
+      
+
+      // act
+      final levels = await practiceRepository.getLevelsForTopic(
+        'algebra',
+      );
+
+      // assert
+      expect(levels.length, 2);
+      expect(levels.first.levelId, 'algebra_level1');
+      expect(levels.first.topicId, 'algebra');
+      expect(levels.first.xpReward, 20);
+    },
+  );
 }

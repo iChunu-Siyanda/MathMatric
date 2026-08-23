@@ -1,16 +1,19 @@
-import 'package:math_matric/features/papers/quiz/data/local/quiz_data_source.dart';
-import 'package:math_matric/features/papers/quiz/domain/entities/quiz_question.dart';
-import 'package:math_matric/features/papers/papers/domain/entities/subject_topic_quiz.dart';
+import 'package:math_matric/features/curriculum/questions/data/datasource/local/questions_local_datasource.dart';
+import 'package:math_matric/features/curriculum/questions/domain/entities/questions_entity.dart';
 import 'package:math_matric/features/papers/quiz/domain/repositories/quiz_questions_repository.dart';
 
-class QuizQuestionsRepositoryImpl implements QuizQuestionsRepository{
-  final QuizDataSource quizDataSource;
-  QuizQuestionsRepositoryImpl(this.quizDataSource);
+class QuizQuestionsRepositoryImpl implements QuizQuestionsRepository {
+  final QuestionsLocalDatasource local;
+  QuizQuestionsRepositoryImpl(this.local);
 
   @override
-  Future<List<QuizQuestion>> getQuizQuestionsForLevel(SubjectTopic subject, String levelId) async {
-    final questions = QuizDataSource.questionBanksP1[subject] ?? [];
-    
-    return questions.where((q) => q.levelId == levelId).toList();
+  Future<List<QuestionsEntity>> getQuestionsForLevel(
+    String levelId,
+  ) async {
+    final questions = await local.getQuestionsByLevel(levelId);
+
+    return questions
+        .map((question) => question.toEntity())
+        .toList();
   }
 }

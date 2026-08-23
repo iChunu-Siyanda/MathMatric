@@ -1,123 +1,81 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:math_matric/features/papers/exam/domain/entities/exam_paper.dart';
-import 'package:math_matric/features/papers/exam/domain/entities/exam_session.dart';
+import 'package:math_matric/features/papers/exam/domain/usercases/get_child_exam_papers_use_case.dart';
 import 'package:math_matric/features/papers/exam/domain/usercases/get_exam_paper_data.dart';
+import 'package:math_matric/features/papers/exam/domain/usercases/get_exam_paper_use_case.dart';
 import 'package:math_matric/features/papers/exam/presentation/bloc/exam_event.dart';
 import 'package:math_matric/features/papers/exam/presentation/bloc/exam_state.dart';
 
 class ExamBloc extends Bloc<ExamEvent, ExamState> {
-  final GetExamPaperData getExamPaperData;
+  final GetExamPapersUseCase getExamPapers;
+  final GetExamPaperUseCase getExamPaper;
+  final GetChildExamPapersUseCase getChildExamPapers;
 
-  // Cache to reuse loaded papers
-  Map<ExamSession, Map<String, List<ExamPaper>>>? _cachedExamPapers;
-
-  ExamBloc(this.getExamPaperData) : super(const ExamPaperInitial()) {
+  ExamBloc({
+    required this.getExamPapers,
+    required this.getExamPaper,
+    required this.getChildExamPapers,
+  }) : super(const ExamInitial()) {
+    on<ExamPapersRequested>(_onExamPapersRequested);
     on<ExamPaperRequested>(_onExamPaperRequested);
-    //on<ExamPaperFocusRequested>(_onExamPaperFocusRequested);
     on<ResetExamPapers>(_onResetExamPapers);
   }
 
-  //All papers
+  Future<void> _onExamPapersRequested(
+    ExamPapersRequested event,
+    Emitter<ExamState> emit,
+  ) async {
+    emit(const ExamLoading());
+
+    try {
+      final papers = await getExamPapers(
+        subjectId: event.subjectId, 
+        paperType: event.paperType, 
+        session: event.session,
+        year: event.year,
+      );
+
+      emit(ExamPaperListLoaded(papers: papers));
+    } catch (e) {
+      emit(ExamError('Failed to load exam papers: $e',),);
+    }
+  }
+
   Future<void> _onExamPaperRequested(
     ExamPaperRequested event,
     Emitter<ExamState> emit,
   ) async {
-    emit(const ExamPaperLoading());
+    emit(const ExamLoading());
 
     try {
-      _cachedExamPapers ??= await getExamPaperData(event.paperType);
+      final paper = await getExamPaper(paperId: event.paperId,);
 
-      if (_cachedExamPapers == null) {
-        emit(const ExamPaperError('No exam papers loaded'));
+      if (paper == null) {
+        emit(const ExamError('Exam paper not found.',),);
         return;
       }
 
-      final sessionMap = _cachedExamPapers![event.session];
+      final children = await getChildExamPapers(
+        parentPaperId: paper.id,
+      );
 
-      if (sessionMap == null) {
-        emit(const ExamPaperError('No papers for this session'));
-        return;
-      }
+      final memo = children
+          .where((paper) => paper.isMemo)
+          .firstOrNull;
 
-      final sessionPapers = sessionMap.values.expand((list) => list).toList();
-
-      final filteredByYear = event.year == null
-          ? sessionPapers
-          : sessionPapers.where((p) => p.year == event.year).toList();
-
-      final Map<String, List<ExamPaper>> sections = {}; // "National" and "Provincial"
-
-      for (final paper in filteredByYear) {
-        final key = paper.isNational ? "National" : "Provincial";
-        sections.putIfAbsent(key, () => []).add(paper);
-      }
-
-      emit(ExamPaperListLoaded(sections));
+      emit(ExamPaperLoaded(
+          paper: paper,
+          memo: memo,
+        ),
+      );
     } catch (e) {
-      emit(ExamPaperError('Exam Paper failed to load. Error: $e'));
+      emit(ExamError('Failed to load exam paper: $e',),);
     }
   }
-
-  //Specific papers
-  // Future<void> _onExamPaperFocusRequested(
-  //   ExamPaperFocusRequested event,
-  //   Emitter<ExamState> emit,
-  // ) async {
-  //   if (state is ExamPaperFocusLoaded) {
-  //     final currentState = state as ExamPaperFocusLoaded;
-
-  //     if (currentState.paper.id == event.paperId) {
-  //       return; //do nothing since it is already loaded
-  //     }
-  //   }
-
-  //   emit(const ExamPaperLoading());
-
-  //   final examPapers = await getExamPaperData(event.paperType);
-  //   _cachedExamPapers = examPapers;
-
-  //   if (_cachedExamPapers == null) {
-  //     emit(const ExamPaperError('No exam papers loaded'));
-  //     return;
-  //   }
-
-  //   try {
-  //     final allPapers = _cachedExamPapers?.values
-  //             .expand((innerMap) => innerMap
-  //                 .values) // Flattens Map<String, List<ExamPaper>> to Iterable<List<ExamPaper>>
-  //             .expand((list) =>
-  //                 list) // Flattens Iterable<List<ExamPaper>> to Iterable<ExamPaper>
-  //             .toList() ??
-  //         [];
-
-  //     debugPrint("Event Paper ID: ${event.paperId}");
-  //     debugPrint("Available IDs: ${allPapers.map((e) => e.id).toList()}");
-
-  //     final paper = allPapers.firstWhere(
-  //       (p) => p.id == event.paperId && !p.isMemo,
-  //       orElse: () => throw Exception("Paper not found: ${event.paperId}"),
-  //     );
-
-  //     final memo = allPapers.firstWhere(
-  //       (p) => p.isMemo && p.parentPaperId == paper.id,
-  //     );
-
-  //     emit(
-  //       ExamPaperFocusLoaded(
-  //         paper: paper,
-  //         memo: memo,
-  //       ),
-  //     );
-  //   } catch (e) {
-  //     emit(ExamPaperError('Exam Paper failed to load. Error: $e'));
-  //   }
-  // }
 
   void _onResetExamPapers(
     ResetExamPapers event,
     Emitter<ExamState> emit,
   ) {
-    _cachedExamPapers = null;
-    emit(const ExamPaperInitial());
+    emit(const ExamInitial());
   }
 }
