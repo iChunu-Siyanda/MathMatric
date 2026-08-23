@@ -30,6 +30,26 @@ final class ExamPaperLoaded extends ExamState {
   });
 }
 
+final class ExamPaperPagesLoaded extends ExamState {
+  final ExamPaperEntity paper;
+  final List<String> pages;
+
+  const ExamPaperPagesLoaded({
+    required this.paper,
+    required this.pages,
+  });
+}
+
+final class ExamPaperDownloading extends ExamState {
+  final ExamPaperEntity paper;
+
+  const ExamPaperDownloading({
+    required this.paper,
+  });
+}
+
+
+
 final class ExamError extends ExamState {
   final String message;
 

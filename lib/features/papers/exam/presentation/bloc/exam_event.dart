@@ -1,3 +1,5 @@
+import 'package:math_matric/features/curriculum/exams/domain/entities/exam_paper_entity.dart';
+
 sealed class ExamEvent {
   const ExamEvent();
 }
@@ -16,19 +18,11 @@ final class ExamPapersRequested extends ExamEvent {
   });
 }
 
-final class ExamPapersByTypeRequested extends ExamEvent {
-  final String paperType;
+final class ExamPaperPagesRequested extends ExamEvent {
+  final ExamPaperEntity paper;
 
-  const ExamPapersByTypeRequested({
-    required this.paperType,
-  });
-}
-
-final class ExamPapersBySessionRequested extends ExamEvent {
-  final String session;
-
-  const ExamPapersBySessionRequested({
-    required this.session,
+  const ExamPaperPagesRequested({
+    required this.paper,
   });
 }
 
@@ -40,13 +34,11 @@ final class ExamPaperRequested extends ExamEvent {
   });
 }
 
-final class ExamPaperDownloadStatusChanged extends ExamEvent {
-  final String paperId;
-  final bool downloaded;
+final class ExamPaperDownloadRequested extends ExamEvent {
+  final ExamPaperEntity paper;
 
-  const ExamPaperDownloadStatusChanged({
-    required this.paperId,
-    required this.downloaded,
+  const ExamPaperDownloadRequested({
+    required this.paper,
   });
 }
 

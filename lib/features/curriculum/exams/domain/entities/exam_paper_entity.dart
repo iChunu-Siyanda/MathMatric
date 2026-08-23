@@ -31,4 +31,36 @@ class ExamPaperEntity {
     required this.pageCount,
     this.downloaded,
   });
+
+  ExamPaperEntity copyWith({
+    String? id,
+    String? subjectId,
+    String? parentPaperId,
+    String? paperType,
+    String? session,
+    String? title,
+    bool? isMemo,
+    String? storagePath,
+    String? province,
+    bool? isNational,
+    int? year,
+    int? pageCount,
+    bool? downloaded,
+  }) {
+    return ExamPaperEntity(
+      id: id ?? this.id,
+      subjectId: subjectId ?? this.subjectId,
+      parentPaperId: parentPaperId ?? this.parentPaperId,
+      paperType: paperType ?? this.paperType,
+      session: session ?? this.session,
+      title: title ?? this.title,
+      isMemo: isMemo ?? this.isMemo,
+      storagePath: storagePath ?? this.storagePath,
+      province: province ?? this.province,
+      isNational: isNational ?? this.isNational,
+      year: year ?? this.year,
+      pageCount: pageCount ?? this.pageCount,
+      downloaded: downloaded ?? this.downloaded,
+    );
+  }
 }

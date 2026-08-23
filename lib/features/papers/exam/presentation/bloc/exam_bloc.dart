@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:math_matric/features/papers/exam/domain/usercases/get_child_exam_papers_use_case.dart';
+import 'package:math_matric/features/papers/exam/domain/usercases/download_exam_paper_use_case.dart';
 import 'package:math_matric/features/papers/exam/domain/usercases/get_exam_paper_data.dart';
+import 'package:math_matric/features/papers/exam/domain/usercases/get_exam_paper_pages_use_case.dart';
 import 'package:math_matric/features/papers/exam/domain/usercases/get_exam_paper_use_case.dart';
 import 'package:math_matric/features/papers/exam/presentation/bloc/exam_event.dart';
 import 'package:math_matric/features/papers/exam/presentation/bloc/exam_state.dart';
@@ -8,15 +9,19 @@ import 'package:math_matric/features/papers/exam/presentation/bloc/exam_state.da
 class ExamBloc extends Bloc<ExamEvent, ExamState> {
   final GetExamPapersUseCase getExamPapers;
   final GetExamPaperUseCase getExamPaper;
-  final GetChildExamPapersUseCase getChildExamPapers;
+  final GetExamPaperPagesUseCase getExamPaperPages;
+  final DownloadExamPaperUseCase downloadExamPaper;
 
   ExamBloc({
     required this.getExamPapers,
-    required this.getExamPaper,
-    required this.getChildExamPapers,
+    required this.getExamPaper, 
+    required this.getExamPaperPages, 
+    required this.downloadExamPaper,
   }) : super(const ExamInitial()) {
     on<ExamPapersRequested>(_onExamPapersRequested);
     on<ExamPaperRequested>(_onExamPaperRequested);
+    on<ExamPaperPagesRequested>(_onExamPaperPagesRequested);
+    on<ExamPaperDownloadRequested>(_onExamPaperDownloadRequested);
     on<ResetExamPapers>(_onResetExamPapers);
   }
 
@@ -47,28 +52,65 @@ class ExamBloc extends Bloc<ExamEvent, ExamState> {
     emit(const ExamLoading());
 
     try {
-      final paper = await getExamPaper(paperId: event.paperId,);
+      final paper = await getExamPaper(
+        paperId: event.paperId,
+      );
 
       if (paper == null) {
-        emit(const ExamError('Exam paper not found.',),);
+        emit(const ExamError('Exam paper not found.'),);
         return;
       }
 
-      final children = await getChildExamPapers(
-        parentPaperId: paper.id,
+      emit(ExamPaperLoaded(paper: paper,),);
+    } catch (e) {
+      emit(ExamError('Failed to load exam paper: $e',),);
+    }
+  }
+
+  Future<void> _onExamPaperPagesRequested(
+    ExamPaperPagesRequested event,
+    Emitter<ExamState> emit,
+  ) async {
+    try {
+      final pages = await getExamPaperPages(
+        event.paper,
       );
 
-      final memo = children
-          .where((paper) => paper.isMemo)
-          .firstOrNull;
-
-      emit(ExamPaperLoaded(
-          paper: paper,
-          memo: memo,
+      emit(
+        ExamPaperPagesLoaded(
+          paper: event.paper,
+          pages: pages,
         ),
       );
     } catch (e) {
-      emit(ExamError('Failed to load exam paper: $e',),);
+      emit(ExamError('Failed to load exam paper pages: $e',),);
+    }
+  }
+
+  Future<void> _onExamPaperDownloadRequested(
+    ExamPaperDownloadRequested event,
+    Emitter<ExamState> emit,
+  ) async {
+    emit(
+      ExamPaperDownloading(
+        paper: event.paper,
+      ),
+    );
+
+    try {
+      await downloadExamPaper(
+        paper:event.paper,
+      );
+
+      emit(
+        ExamPaperLoaded(
+          paper: event.paper.copyWith(
+            downloaded: true,
+          ),
+        ),
+      );
+    } catch (e) {
+      emit(ExamError('Failed to download exam paper: $e',),);
     }
   }
 
@@ -78,4 +120,5 @@ class ExamBloc extends Bloc<ExamEvent, ExamState> {
   ) {
     emit(const ExamInitial());
   }
+
 }
