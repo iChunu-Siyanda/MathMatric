@@ -1,26 +1,35 @@
 import 'package:get_it/get_it.dart';
+import 'package:math_matric/features/papers/exam/domain/usercases/download_exam_paper_use_case.dart';
 import 'package:math_matric/features/papers/exam/domain/usercases/get_exam_paper_data.dart';
+import 'package:math_matric/features/papers/exam/domain/usercases/get_exam_paper_pages_use_case.dart';
+import 'package:math_matric/features/papers/exam/domain/usercases/get_exam_paper_use_case.dart';
 import 'package:math_matric/features/papers/exam/presentation/bloc/exam_bloc.dart';
 
 final getIt = GetIt.instance;
 
 void registerExamsModule () {
-  // //final localExamDataSource = ExamPaperData();
-  // getIt.registerLazySingleton(
-  //   () => ExamPaperData(),
-  // );
+  getIt.registerLazySingleton(
+    () => GetExamPapersUseCase(getIt(),),
+  );
 
-  // //final repository = ExamPaperRepositoryImpl(localExamDataSource);
-  // getIt.registerLazySingleton<ExamPaperRepository>(
-  //   () => ExamPaperRepositoryImpl(getIt(),),
-  // );
+  getIt.registerLazySingleton(
+    () => GetExamPaperUseCase(getIt(),),
+  );
 
-  // //final getExamPaperData = GetExamPaperData(repository);
-  // getIt.registerLazySingleton(
-  //   () => GetExamPaperData(getIt(),),
-  // );
+  getIt.registerLazySingleton(
+    () => GetExamPaperPagesUseCase(getIt(),),
+  );
 
-  // getIt.registerFactory(
-  //   () => ExamBloc(getIt(),),
-  // );
+  getIt.registerLazySingleton(
+    () => DownloadExamPaperUseCase(getIt(),),
+  );
+
+  getIt.registerFactory(
+    () => ExamBloc(
+      getExamPapers: getIt<GetExamPapersUseCase>(), 
+      getExamPaper: getIt<GetExamPaperUseCase>(), 
+      getExamPaperPages: getIt<GetExamPaperPagesUseCase>(), 
+      downloadExamPaper: getIt<DownloadExamPaperUseCase>(),
+    ),
+  );
 }
