@@ -10,11 +10,6 @@ abstract class ExamPaperStorageRepository {
     required String fileName,
   });
 
-  Future<List<String>> getPagePaths({
-    required String paperId,
-    required int pageCount,
-  });
-
   Future<bool> isPaperDownloaded(
     ExamPaperEntity paper,
   );

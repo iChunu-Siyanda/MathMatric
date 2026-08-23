@@ -104,34 +104,6 @@ class ExamPaperStorageRepositoryImpl implements ExamPaperStorageRepository {
   }
 
   @override
-  Future<List<String>> getPagePaths({
-    required String paperId,
-    required int pageCount,
-  }) async {
-    final paths = <String>[];
-
-    for (int i = 1; i <= pageCount; i++) {
-      final fileName =
-          'p-${i.toString().padLeft(2, '0')}.webp';
-
-      final path = await localStorage.getPagePath(
-        paperId: paperId,
-        fileName: fileName,
-      );
-
-      if (path == null) {
-        throw Exception(
-          'Exam paper page not found: $fileName',
-        );
-      }
-
-      paths.add(path);
-    }
-
-    return paths;
-  }
-
-  @override
   Future<void> deletePaper(
     ExamPaperEntity paper,
   ) async {
