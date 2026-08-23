@@ -30,10 +30,10 @@ class ExamPapersRepositoryImpl implements ExamPapersRepository {
     int? year,
   }) async {
     final models = await local.getExamPapers(
-      subjectId: subjectId,
-      paperType: paperType,
-      session: session,
-      year: year,
+      subjectId,
+      paperType,
+      session,
+      year,
     );
 
     return models.map((m) => m.toEntity()).toList();

@@ -1,8 +1,8 @@
-import 'package:math_matric/features/curriculum/exams/data/models/exam_paper_model.dart';
+import 'package:math_matric/features/curriculum/exams/domain/entities/exam_paper_entity.dart';
 
 abstract class ExamPaperStorageRepository {
   Future<void> downloadPaper(
-    ExamPaperModel paper,
+    ExamPaperEntity paper,
   );
 
   Future<String?> getPagePath({
@@ -11,10 +11,10 @@ abstract class ExamPaperStorageRepository {
   });
 
   Future<bool> isPaperDownloaded(
-    ExamPaperModel paper,
+    ExamPaperEntity paper,
   );
 
   Future<void> deletePaper(
-    ExamPaperModel paper,
+    ExamPaperEntity paper,
   );
 }

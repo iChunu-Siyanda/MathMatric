@@ -1,7 +1,7 @@
 import 'package:math_matric/features/curriculum/exams/data/datasource/local/exam_paper_local_data_source.dart';
 import 'package:math_matric/features/curriculum/exams/data/datasource/storage/local/exam_paper_local_storage_data_source.dart';
 import 'package:math_matric/features/curriculum/exams/data/datasource/storage/remote/exam_paper_remote_storage_data_source.dart';
-import 'package:math_matric/features/curriculum/exams/data/models/exam_paper_model.dart';
+import 'package:math_matric/features/curriculum/exams/domain/entities/exam_paper_entity.dart';
 import 'package:math_matric/features/curriculum/exams/domain/repositories/exam_paper_storage_repository.dart';
 
 class ExamPaperStorageRepositoryImpl implements ExamPaperStorageRepository {
@@ -17,7 +17,7 @@ class ExamPaperStorageRepositoryImpl implements ExamPaperStorageRepository {
 
   @override
   Future<void> downloadPaper(
-    ExamPaperModel paper,
+    ExamPaperEntity paper,
   ) async {
     final pagePaths = await remote.getPagePaths(
       storagePath: paper.storagePath,
@@ -79,7 +79,7 @@ class ExamPaperStorageRepositoryImpl implements ExamPaperStorageRepository {
 
   @override
   Future<bool> isPaperDownloaded(
-    ExamPaperModel paper,
+    ExamPaperEntity paper,
   ) async {
     if (paper.downloaded != true) {
       return false;
@@ -105,7 +105,7 @@ class ExamPaperStorageRepositoryImpl implements ExamPaperStorageRepository {
 
   @override
   Future<void> deletePaper(
-    ExamPaperModel paper,
+    ExamPaperEntity paper,
   ) async {
     await localStorage.deletePaper(
       paper.id,

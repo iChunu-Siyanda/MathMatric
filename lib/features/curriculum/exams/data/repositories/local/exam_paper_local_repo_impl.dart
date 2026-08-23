@@ -25,6 +25,23 @@ class ExamPaperLocalDataSourceImpl implements ExamPaperLocalDataSource {
   }
 
   @override
+  Future<List<ExamPaperModel>> getExamPapers(
+    String subjectId, 
+    String paperType, 
+    String session, 
+    int? year,
+  ) async {
+    final rows = await db.getExamPapers(
+      subjectId: subjectId, 
+      session: session, 
+      paperType: paperType,
+      year: year,
+    );
+
+    return rows.map(ExamPaperModel.fromDrift).toList();
+  }
+
+  @override
   Future<List<ExamPaperModel>> getExamPapersByType(
     String paperType,
   ) async {
@@ -120,17 +137,5 @@ class ExamPaperLocalDataSourceImpl implements ExamPaperLocalDataSource {
     String paperId,
   ) {
     return db.deleteExamPaper(paperId);
-  }
-
-  @override
-  Future<List<ExamPaperModel>> getExamPapers({
-    required String subjectId, 
-    required String paperType, 
-    required String session,
-    int? year,
-  }) async {
-    final rows = await db.getExamPapers(subjectId: subjectId, session: session, paperType: paperType);
-
-    return rows.map(ExamPaperModel.fromDrift).toList();
   }
 }
