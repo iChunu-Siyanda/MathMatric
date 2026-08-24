@@ -1,89 +1,94 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:math_matric/features/ui/analytics/domain/entites/analytics_time_frame.dart';
+import 'package:math_matric/features/ui/analytics/domain/usecases/get_analytics_use_case.dart';
 import 'package:math_matric/features/ui/analytics/presentation/bloc/analytics_event.dart';
 import 'package:math_matric/features/ui/analytics/presentation/bloc/analytics_state.dart';
-import 'package:math_matric/features/ui/practice/domain/entities/practice_topic.dart';
-import 'package:math_matric/features/progress/questionattempts/domain/entities/question_attempts_entity.dart';
-import 'package:math_matric/features/progress/studysession/domain/entities/study_session_entity.dart';
-import 'package:math_matric/features/progress/userlevelprogress/domain/entities/user_level_progresses_entity.dart';
 
-class AnalyticsBloc extends Bloc<AnalyticsEvent, AnalyticsState>{
-  AnalyticsBloc():super(const AnalyticsInitial()){
-    on<FetchAnalyticsData>(_onFetchAnalyticsData);
-    on<RefreshAnalyticsData>(_onRefreshAnalyticsData);
-    on<ChangeAnalyticsTimeframe>(_onChangeAnalyticsTimeframe);
+class AnalyticsBloc extends Bloc<AnalyticsEvent, AnalyticsState> {
+  final GetAnalyticsUseCase getAnalytics;
+
+  AnalyticsBloc({
+    required this.getAnalytics,
+  }) : super(const AnalyticsInitial()) {
+    on<AnalyticsStarted>(_onStarted);
+    on<AnalyticsRefreshed>(_onRefreshed);
+    on<AnalyticsTimeframeChanged>(_onTimeframeChanged);
   }
 
-  Future<void> _onFetchAnalyticsData(
-    FetchAnalyticsData event,
+  Future<void> _onStarted(
+    AnalyticsStarted event,
     Emitter<AnalyticsState> emit,
   ) async {
     emit(const AnalyticsLoading());
 
     try {
-      final topics = <PracticeTopic>[];
-      final levels = <UserLevelProgressEntity>[];
-      final questionAttempts = <QuestionAttemptEntity>[];
-      final sessions = <StudySessionEntity>[];
+      const timeframe = AnalyticsTimeframe.days7;
+
+      final metrics = await getAnalytics(timeframe: timeframe);
 
       emit(
         AnalyticsLoaded(
-          topics: topics,
-          levels: levels,
-          questionAttempts: questionAttempts,
-          sessions: sessions,
-          selectedTimeframe: AnalyticsTimeframe.days7,
+          metrics: metrics,
+          selectedTimeframe: timeframe,
         ),
       );
     } catch (e) {
-      emit(AnalyticsError(message: 'Failed to load analytics: ${e.toString()}'));
+      emit(AnalyticsError(message:'Failed to load analytics: $e',),);
     }
   }
 
-  Future<void> _onRefreshAnalyticsData(
-    RefreshAnalyticsData event,
+  Future<void> _onRefreshed(
+    AnalyticsRefreshed event,
     Emitter<AnalyticsState> emit,
   ) async {
-    final currentState = state;
+    final current = state;
 
-    if (currentState is AnalyticsLoaded) {
-      // 1. Set isRefreshing to true so RefreshIndicator / loading bar shows without wiping existing cards
-      emit(currentState.copyWith(isRefreshing: true));
+    if (current is! AnalyticsLoaded) {
+      add(const AnalyticsStarted());
+      return;
+    }
 
-      try {
-        final topics = <PracticeTopic>[];
-        final levels = <UserLevelProgressEntity>[];
-        final questionAttempts = <QuestionAttemptEntity>[];
-        final sessions = <StudySessionEntity>[];
+    emit(current.copyWith(isRefreshing: true,),);
 
-        emit(
-          AnalyticsLoaded(
-            topics: topics,
-            levels: levels,
-            questionAttempts: questionAttempts,
-            sessions: sessions,
-            selectedTimeframe: AnalyticsTimeframe.days7,
-          ),
-        );
-      } catch (e) {
-        // If refresh fails, turn off refreshing spinner but keep the existing data visible
-        emit(currentState.copyWith(isRefreshing: false));
-      }
-    } else {
-      add(const FetchAnalyticsData());
+    try {
+      final metrics = await getAnalytics(timeframe:current.selectedTimeframe,);
+
+      emit(
+        AnalyticsLoaded(
+          metrics: metrics,
+          selectedTimeframe: current.selectedTimeframe,
+        ),
+      );
+    } catch (e) {
+      emit(current.copyWith(isRefreshing: false,),);
     }
   }
-  
-  //Filter/Timeframe Switching (7 Days / 30 Days / All Time)
-  void _onChangeAnalyticsTimeframe(
-    ChangeAnalyticsTimeframe event,
-    Emitter<AnalyticsState> emit,
-  ) {
-    final currentState = state;
-    if (currentState is AnalyticsLoaded) {
-      if (currentState.selectedTimeframe == event.timeframe) return;
 
-      emit(currentState.copyWith(selectedTimeframe: event.timeframe));
+  Future<void> _onTimeframeChanged(
+    AnalyticsTimeframeChanged event,
+    Emitter<AnalyticsState> emit,
+  ) async {
+    final current = state;
+
+    if (current is! AnalyticsLoaded) return;
+
+    if (current.selectedTimeframe == event.timeframe) return;
+
+    emit(const AnalyticsLoading());
+
+    try {
+      final data = await getAnalytics(timeframe: event.timeframe,);
+
+      emit(
+        AnalyticsLoaded(
+          metrics: data,
+          selectedTimeframe: event.timeframe,
+        ),
+      );
+    } catch (e) {
+      emit(
+        AnalyticsError(message:'Failed to change analytics timeframe: $e',),
+      );
     }
   }
 }

@@ -3,11 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:math_matric/core/theme/app_colours.dart';
 import 'package:math_matric/features/ui/analytics/domain/entites/analytics_time_frame.dart';
-import 'package:math_matric/features/ui/analytics/domain/services/analytics_loaded_topic_cards.dart';
 import 'package:math_matric/features/ui/analytics/presentation/bloc/analytics_bloc.dart';
 import 'package:math_matric/features/ui/analytics/presentation/bloc/analytics_event.dart';
 import 'package:math_matric/features/ui/analytics/presentation/bloc/analytics_state.dart';
-import 'package:math_matric/features/ui/analytics/domain/services/analytics_state_extension.dart';
 import 'package:math_matric/features/ui/analytics/presentation/widgets/chart_card.dart';
 import 'package:math_matric/features/ui/analytics/presentation/widgets/kpi_grid.dart';
 import 'package:math_matric/features/ui/analytics/presentation/widgets/streak_header_card.dart';
@@ -76,6 +74,8 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
             }
 
             if (state is AnalyticsLoaded) {
+              final metrics = state.metrics;
+
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -87,7 +87,6 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                             longestStreak: habitState.longestStreak,
                             weeklyScore: habitState.weeklyProgressScore,
                           ),
-
                         _ => const StreakHeaderCard(
                             currentStreak: 0,
                             longestStreak: 0,
@@ -96,33 +95,41 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                       };
                     },
                   ),
+
                   const SizedBox(height: 16),
 
                   TimeframePicker(
-                    selectedIndex: _selectedTimeframe, 
-                    onChanged: (index){
+                    selectedIndex: _selectedTimeframe,
+                    onChanged: (index) {
                       context.read<AnalyticsBloc>().add(
-                        ChangeAnalyticsTimeframe(AnalyticsTimeframe.values[index])
+                        AnalyticsTimeframeChanged(
+                          AnalyticsTimeframe.values[index],
+                        ),
                       );
                     },
                   ),
+
                   const SizedBox(height: 16),
 
                   ChartCard(
-                    sessions: state.sessions, 
-                    isLineGraph: _showLineGraph, 
-                    onToggleGraph: (){setState(() {
-                      _showLineGraph = !_showLineGraph;
-                    });},
+                    sessions: metrics.sessions,
+                    isLineGraph: _showLineGraph,
+                    onToggleGraph: () {
+                      setState(() {
+                        _showLineGraph = !_showLineGraph;
+                      });
+                    },
                   ),
-                  const SizedBox(height: 16,),
+
+                  const SizedBox(height: 16),
 
                   KpiGrid(
-                    totalEarnedXP: state.totalEarnedXP.toString(), 
-                    overallAccuracy: state.overallAccuracy.toStringAsFixed(1), 
-                    overallCompletionRate: state.overallCompletionRate.toStringAsFixed(1), 
-                    avgTime: state.avgTimePerQuestionSeconds.toStringAsFixed(1),
+                    totalEarnedXP: metrics.totalEarnedXP.toString(),
+                    overallAccuracy: metrics.overallAccuracy.toStringAsFixed(1),
+                    overallCompletionRate: metrics.overallCompletionRate.toStringAsFixed(1),
+                    avgTime: metrics.avgTimePerQuestionSeconds.toStringAsFixed(1),
                   ),
+
                   const SizedBox(height: 24),
 
                   const Text(
@@ -133,9 +140,13 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                       color: AppColours.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 12,),
 
-                  TopicProgressList(topicCards: state.topicProgressCards,),
+                  const SizedBox(height: 12),
+
+                  TopicProgressList(
+                    topicCards: state.metrics.topicProgressCards,
+                  ),
+
                   const SizedBox(height: 24),
                 ],
               );

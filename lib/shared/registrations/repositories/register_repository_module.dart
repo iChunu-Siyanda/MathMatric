@@ -35,6 +35,9 @@ import 'package:math_matric/features/progress/usertopicprogress/data/datasource/
 import 'package:math_matric/features/progress/usertopicprogress/data/datasource/remote/user_topic_progress_remote_data_source.dart';
 import 'package:math_matric/features/progress/usertopicprogress/data/repositories/user_topic_progress_repository_impl.dart';
 import 'package:math_matric/features/progress/usertopicprogress/domain/repositories/user_topic_progress_repository.dart';
+import 'package:math_matric/features/ui/analytics/data/datasource/analytics_local_data_source.dart';
+import 'package:math_matric/features/ui/analytics/data/repositories/analytics_repository_impl.dart';
+import 'package:math_matric/features/ui/analytics/domain/repositories/analytics_repository.dart';
 import 'package:math_matric/features/ui/streak/domain/repositories/habit_repository.dart';
 import 'package:math_matric/shared/services/app_clock.dart';
 import 'package:math_matric/shared/services/id_generator.dart';
@@ -107,6 +110,10 @@ void registerRepositoryModule() {
 
   getIt.registerLazySingleton<ClassNoteRepository>(
     () => ClassNoteRepositoryImpl(getIt<ClassNoteLocalDataSource>()),
+  );
+
+  getIt.registerLazySingleton<AnalyticsRepository>(
+    () => AnalyticsRepositoryImpl(getIt<AnalyticsLocalDataSource>())
   );
 
   getIt.registerLazySingleton(

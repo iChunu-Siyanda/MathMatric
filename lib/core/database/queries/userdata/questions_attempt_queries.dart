@@ -54,6 +54,24 @@ extension QuestionAttemptsQueries on AppDatabase {
   }
 
   // Stats
+  Future<List<QuestionAttempt>> getQuestionAttemptsSince(
+    DateTime? since,
+  ) {
+    final query = select(questionAttempts);
+
+    if (since != null) {
+      query.where(
+        (q) => q.answeredAt.isBiggerOrEqualValue(since),
+      );
+    }
+
+    query.orderBy([
+      (q) => OrderingTerm.desc(q.answeredAt),
+    ]);
+
+    return query.get();
+  }
+
   Future<List<QuestionAttempt>> getAttemptsByLevel(
     String levelId,
   ) {

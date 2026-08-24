@@ -8,19 +8,18 @@ sealed class AnalyticsEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class FetchAnalyticsData extends AnalyticsEvent {
-  const FetchAnalyticsData();
+final class AnalyticsStarted extends AnalyticsEvent {
+  const AnalyticsStarted();
 }
 
-class RefreshAnalyticsData extends AnalyticsEvent {
-  const RefreshAnalyticsData();
+final class AnalyticsRefreshed extends AnalyticsEvent {
+  const AnalyticsRefreshed();
 }
 
-//When the user taps on '7 Days', '30 Days', or 'All Time'
-class ChangeAnalyticsTimeframe extends AnalyticsEvent {
+final class AnalyticsTimeframeChanged extends AnalyticsEvent {
   final AnalyticsTimeframe timeframe;
 
-  const ChangeAnalyticsTimeframe(this.timeframe);
+  const AnalyticsTimeframeChanged(this.timeframe);
 
   @override
   List<Object?> get props => [timeframe];

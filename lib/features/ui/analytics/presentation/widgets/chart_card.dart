@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:math_matric/core/theme/app_colours.dart';
+import 'package:math_matric/features/ui/analytics/domain/entites/daily_chart_data.dart';
 import 'package:math_matric/features/ui/analytics/presentation/widgets/build_line_chart.dart';
 import 'package:math_matric/features/progress/studysession/domain/entities/study_session_entity.dart';
 
@@ -10,7 +11,7 @@ class ChartCard extends StatelessWidget {
   final VoidCallback onToggleGraph;
 
   const ChartCard({
-    super.key, 
+    super.key,
     required this.sessions,
     required this.isLineGraph,
     required this.onToggleGraph,
@@ -18,6 +19,22 @@ class ChartCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final chartData = _buildDailyData();
+
+    final totalMinutes = chartData.fold<int>(
+      0,
+      (sum, value) => (sum + value.minutes).toInt(),
+    );
+
+    final averageAccuracy = chartData.isEmpty
+        ? 0.0
+        : chartData
+        .where((e) => e.totalQuestions > 0)
+        .fold<double>(
+          0,
+          (sum, e) => sum + e.accuracy,
+        ) / chartData.where((e) => e.totalQuestions > 0).length;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -29,12 +46,11 @@ class ChartCard extends StatelessWidget {
             color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
-          )
+          ),
         ],
       ),
       child: Column(
         children: [
-          // Header Row inside Graph Card
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -50,45 +66,27 @@ class ChartCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 2),
-                  Row(
-                    children: [
-                      Text(
-                        isLineGraph ? '88.4%' : '42 mins',
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: AppColours.textPrimary,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: AppColours.correctGreen.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: const Text(
-                          '+4.2%',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                            color: AppColours.correctGreen,
-                          ),
-                        ),
-                      ),
-                    ],
+                  Text(
+                    isLineGraph
+                        ? '${averageAccuracy.toStringAsFixed(1)}%'
+                        : '$totalMinutes mins',
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: AppColours.textPrimary,
+                    ),
                   ),
                 ],
               ),
 
-              // Graph Toggle Button
               InkWell(
                 onTap: onToggleGraph,
                 borderRadius: BorderRadius.circular(10),
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColours.surfaceSecondary,
                     borderRadius: BorderRadius.circular(10),
@@ -120,36 +118,96 @@ class ChartCard extends StatelessWidget {
 
           const SizedBox(height: 20),
 
-          // Dynamic Graph Output
           SizedBox(
             height: 160,
-            child: isLineGraph ? BuildLineChart() : _buildBarChart(),
+            child: isLineGraph
+                ? BuildLineChart(data: chartData)
+                : _buildBarChart(chartData),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildBarChart() {
+  List<DailyChartData> _buildDailyData() {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    final result = List.generate(
+      7,
+      (index) {
+        final date = today.subtract(Duration(days: 6 - index));
+
+        return DailyChartData(
+          date: date,
+          minutes: 0,
+          correctAnswers: 0,
+          totalQuestions: 0,
+        );
+      },
+    );
+
+    for (final session in sessions) {
+      if (session.endedAt == null) continue;
+
+      final date = DateTime(
+        session.startedAt.year,
+        session.startedAt.month,
+        session.startedAt.day,
+      );
+
+      final index = result.indexWhere(
+        (item) => item.date == date,
+      );
+
+      if (index == -1) continue;
+
+      final current = result[index];
+
+      result[index] = DailyChartData(
+        date: current.date,
+        minutes: current.minutes + session.endedAt!
+                .difference(session.startedAt)
+                .inMinutes,
+        correctAnswers: current.correctAnswers + session.correctAnswers,
+        totalQuestions: current.totalQuestions + session.questionsAnswered,
+      );
+    }
+
+    return result;
+  }
+
+  Widget _buildBarChart(List<DailyChartData> data) {
+    final maxMinutes = data.fold<double>(
+      0,
+      (max, item) => item.minutes > max ? item.minutes.toDouble() : max,
+    );
+
+    final maxY = maxMinutes <= 0 ? 60.0 : maxMinutes * 1.2;
+
     return BarChart(
       BarChartData(
+        maxY: maxY,
         gridData: const FlGridData(show: false),
         titlesData: const FlTitlesData(show: false),
         borderData: FlBorderData(show: false),
         barGroups: [
-          _makeBarGroup(0, 20),
-          _makeBarGroup(1, 35),
-          _makeBarGroup(2, 15),
-          _makeBarGroup(3, 40),
-          _makeBarGroup(4, 50),
-          _makeBarGroup(5, 30),
-          _makeBarGroup(6, 42),
+          for (int i = 0; i < data.length; i++)
+            _makeBarGroup(
+              i,
+              data[i].minutes.toDouble(),
+              maxY,
+            ),
         ],
       ),
     );
   }
 
-  BarChartGroupData _makeBarGroup(int x, double y) {
+  BarChartGroupData _makeBarGroup(
+    int x,
+    double y,
+    double maxY,
+  ) {
     return BarChartGroupData(
       x: x,
       barRods: [
@@ -160,7 +218,7 @@ class ChartCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(6),
           backDrawRodData: BackgroundBarChartRodData(
             show: true,
-            toY: 60,
+            toY: maxY,
             color: AppColours.surfaceSecondary,
           ),
         ),

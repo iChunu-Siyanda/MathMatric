@@ -31,7 +31,7 @@ class TopicProgressList extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      card.topic.title,
+                      card.topic.id,
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,

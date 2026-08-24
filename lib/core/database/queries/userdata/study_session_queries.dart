@@ -112,6 +112,25 @@ extension StudySessionQueries on AppDatabase {
   }
 
   //Stats
+  Future<List<StudySessionData>> getStudySessionsSince(
+    DateTime? since,
+  ) {
+    final query = select(studySession)
+      ..where((s) => s.endedAt.isNotNull());
+
+    if (since != null) {
+      query.where(
+        (s) => s.startedAt.isBiggerOrEqualValue(since),
+      );
+    }
+
+    query.orderBy([
+      (s) => OrderingTerm.desc(s.startedAt),
+    ]);
+
+    return query.get();
+  }
+
   Future<List<StudySessionData>> getStudySessionsByTopic(
     String topicId,
   ) {

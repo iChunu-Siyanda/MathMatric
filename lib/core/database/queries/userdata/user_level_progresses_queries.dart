@@ -53,6 +53,24 @@ extension UserLevelProgressesQueries on AppDatabase {
         .get();
   }
 
+  Future<List<UserLevelProgressesData>> getLevelProgressSince(
+    DateTime? since,
+  ) {
+    final query = select(userLevelProgresses);
+
+    if (since != null) {
+      query.where(
+        (p) => p.lastPlayed.isBiggerOrEqualValue(since),
+      );
+    }
+
+    query.orderBy([
+      (p) => OrderingTerm.desc(p.lastPlayed),
+    ]);
+
+    return query.get();
+  }
+
   Future<List<UserLevelProgressesData>> getIncompleteLevels() {
     return (select(userLevelProgresses)
           ..where((l) => l.completed.equals(false))

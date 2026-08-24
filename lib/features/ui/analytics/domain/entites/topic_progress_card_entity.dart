@@ -1,10 +1,10 @@
 import 'dart:ui';
 
 import 'package:math_matric/core/theme/app_colours.dart';
-import 'package:math_matric/features/ui/practice/domain/entities/practice_topic.dart';
+import 'package:math_matric/features/progress/usertopicprogress/domain/entities/user_topic_progresses_entity.dart';
 
 class TopicProgressCardEntity {
-  final PracticeTopic topic;
+  final UserTopicProgressEntity topic;
   final int totalLevels;
   final int completedLevels;
   final double averageBestScore; // 0.0 to 1.0
