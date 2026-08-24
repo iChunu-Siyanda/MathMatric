@@ -28,9 +28,9 @@ class StudySessionModel extends StudySessionEntity {
       startedAt: DateTime.parse(
         json['startedAt'] as String,
       ),
-      endedAt: DateTime.parse(
-        json['endedAt'] as String,
-      ),
+      endedAt: json['endedAt'] == null
+              ? null
+              : DateTime.parse(json['endedAt'] as String,),
       questionsAnswered: json['questionsAnswered'] as int,
       correctAnswers: json['correctAnswers'] as int,
       earnedXP: json['earnedXP'] as int, 
@@ -91,7 +91,7 @@ class StudySessionModel extends StudySessionEntity {
       id: session.id,
       topicId: session.topicId,
       startedAt: session.startedAt,
-      endedAt: session.endedAt!,
+      endedAt: session.endedAt,
       questionsAnswered: session.questionsAnswered,
       correctAnswers: session.correctAnswers,
       earnedXP: session.earnedXP, 
