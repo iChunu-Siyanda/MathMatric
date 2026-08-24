@@ -1,6 +1,7 @@
 import 'package:math_matric/features/curriculum/exams/data/datasource/local/exam_paper_local_data_source.dart';
 import 'package:math_matric/features/curriculum/exams/data/datasource/storage/local/exam_paper_local_storage_data_source.dart';
 import 'package:math_matric/features/curriculum/exams/data/datasource/storage/remote/exam_paper_remote_storage_data_source.dart';
+import 'package:math_matric/features/curriculum/exams/data/models/exam_paper_model.dart';
 import 'package:math_matric/features/curriculum/exams/domain/entities/exam_paper_entity.dart';
 import 'package:math_matric/features/curriculum/exams/domain/repositories/exam_paper_storage_repository.dart';
 
@@ -19,46 +20,46 @@ class ExamPaperStorageRepositoryImpl implements ExamPaperStorageRepository {
   Future<void> downloadPaper(
     ExamPaperEntity paper,
   ) async {
+    final model = ExamPaperModel.fromEntity(
+      paper,
+      version: 1,
+    );
+
     final pagePaths = await remote.getPagePaths(
-      storagePath: paper.storagePath,
-      pageCount: paper.pageCount,
+      storagePath: model.storagePath,
+      pageCount: model.pageCount,
     );
 
     try {
       for (final fullPath in pagePaths) {
         final fileName = fullPath.split('/').last;
 
-        final exists =
-            await localStorage.pageExists(
-          paperId: paper.id,
+        final exists = await localStorage.pageExists(
+          paperId: model.id,
           fileName: fileName,
         );
 
-        if (exists) {
-          continue;
-        }
+        if (exists) continue;
 
         final data = await remote.downloadPage(
-          storagePath: paper.storagePath,
+          storagePath: model.storagePath,
           fileName: fileName,
         );
 
         await localStorage.savePage(
-          paperId: paper.id,
+          paperId: model.id,
           fileName: fileName,
           data: data,
         );
       }
 
       await localData.updateDownloadedStatus(
-        paperId: paper.id,
+        paperId: model.id,
         downloaded: true,
       );
     } catch (e) {
-      // Don't leave the database saying
-      // the paper is downloaded if something failed.
       await localData.updateDownloadedStatus(
-        paperId: paper.id,
+        paperId: model.id,
         downloaded: false,
       );
 
@@ -81,17 +82,21 @@ class ExamPaperStorageRepositoryImpl implements ExamPaperStorageRepository {
   Future<bool> isPaperDownloaded(
     ExamPaperEntity paper,
   ) async {
-    if (paper.downloaded != true) {
+    final model = ExamPaperModel.fromEntity(
+      paper,
+      version: 1,
+    );
+
+    if (model.downloaded != true) {
       return false;
     }
 
-    for (int i = 1; i <= paper.pageCount; i++) {
+    for (int i = 1; i <= model.pageCount; i++) {
       final fileName =
           'p-${i.toString().padLeft(2, '0')}.webp';
 
-      final exists =
-          await localStorage.pageExists(
-        paperId: paper.id,
+      final exists = await localStorage.pageExists(
+        paperId: model.id,
         fileName: fileName,
       );
 
@@ -107,12 +112,17 @@ class ExamPaperStorageRepositoryImpl implements ExamPaperStorageRepository {
   Future<void> deletePaper(
     ExamPaperEntity paper,
   ) async {
+    final model = ExamPaperModel.fromEntity(
+      paper,
+      version: 1,
+    );
+
     await localStorage.deletePaper(
-      paper.id,
+      model.id,
     );
 
     await localData.updateDownloadedStatus(
-      paperId: paper.id,
+      paperId: model.id,
       downloaded: false,
     );
   }

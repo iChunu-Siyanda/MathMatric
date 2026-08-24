@@ -1,21 +1,21 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:math_matric/features/papers/exam/domain/usercases/download_exam_paper_use_case.dart';
 import 'package:math_matric/features/papers/exam/domain/usercases/get_exam_paper_data.dart';
-import 'package:math_matric/features/papers/exam/domain/usercases/get_exam_paper_pages_use_case.dart';
 import 'package:math_matric/features/papers/exam/domain/usercases/get_exam_paper_use_case.dart';
+import 'package:math_matric/features/papers/exam/domain/usercases/open_exam_paper_use_case.dart';
 import 'package:math_matric/features/papers/exam/presentation/bloc/exam_event.dart';
 import 'package:math_matric/features/papers/exam/presentation/bloc/exam_state.dart';
 
 class ExamBloc extends Bloc<ExamEvent, ExamState> {
   final GetExamPapersUseCase getExamPapers;
   final GetExamPaperUseCase getExamPaper;
-  final GetExamPaperPagesUseCase getExamPaperPages;
+  final OpenExamPaperUseCase openExamPaper;
   final DownloadExamPaperUseCase downloadExamPaper;
 
   ExamBloc({
     required this.getExamPapers,
     required this.getExamPaper, 
-    required this.getExamPaperPages, 
+    required this.openExamPaper, 
     required this.downloadExamPaper,
   }) : super(const ExamInitial()) {
     on<ExamPapersRequested>(_onExamPapersRequested);
@@ -71,10 +71,10 @@ class ExamBloc extends Bloc<ExamEvent, ExamState> {
     ExamPaperPagesRequested event,
     Emitter<ExamState> emit,
   ) async {
+    emit(const ExamLoading());
+
     try {
-      final pages = await getExamPaperPages(
-        event.paper,
-      );
+      final pages = await openExamPaper(event.paper);
 
       emit(
         ExamPaperPagesLoaded(
@@ -83,7 +83,11 @@ class ExamBloc extends Bloc<ExamEvent, ExamState> {
         ),
       );
     } catch (e) {
-      emit(ExamError('Failed to load exam paper pages: $e',),);
+      emit(
+        ExamError(
+          'Failed to open exam paper: $e',
+        ),
+      );
     }
   }
 

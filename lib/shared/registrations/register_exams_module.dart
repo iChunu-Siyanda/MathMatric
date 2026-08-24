@@ -3,6 +3,7 @@ import 'package:math_matric/features/papers/exam/domain/usercases/download_exam_
 import 'package:math_matric/features/papers/exam/domain/usercases/get_exam_paper_data.dart';
 import 'package:math_matric/features/papers/exam/domain/usercases/get_exam_paper_pages_use_case.dart';
 import 'package:math_matric/features/papers/exam/domain/usercases/get_exam_paper_use_case.dart';
+import 'package:math_matric/features/papers/exam/domain/usercases/open_exam_paper_use_case.dart';
 import 'package:math_matric/features/papers/exam/presentation/bloc/exam_bloc.dart';
 
 final getIt = GetIt.instance;
@@ -21,6 +22,12 @@ void registerExamsModule () {
   );
 
   getIt.registerLazySingleton(
+    () => OpenExamPaperUseCase(
+      storageRepository: getIt(), 
+      getExamPaperPages: getIt()),
+  );
+
+  getIt.registerLazySingleton(
     () => DownloadExamPaperUseCase(getIt(),),
   );
 
@@ -28,7 +35,7 @@ void registerExamsModule () {
     () => ExamBloc(
       getExamPapers: getIt<GetExamPapersUseCase>(), 
       getExamPaper: getIt<GetExamPaperUseCase>(), 
-      getExamPaperPages: getIt<GetExamPaperPagesUseCase>(), 
+      openExamPaper: getIt<OpenExamPaperUseCase>(), 
       downloadExamPaper: getIt<DownloadExamPaperUseCase>(),
     ),
   );

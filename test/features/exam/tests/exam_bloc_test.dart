@@ -8,11 +8,13 @@ import '../usecases/mock_download_bloc_exam_paper_use_case.dart';
 import '../usecases/mock_get_exam_paper_pages_use_case.dart';
 import '../usecases/mock_get_exam_paper_use_case.dart';
 import '../usecases/mock_get_exam_papers_use_case.dart';
+import '../usecases/mock_open_exam_paper_use_case.dart';
 
 void main() {
   late MockGetExamPapersUseCase getExamPapers;
   late MockGetExamPaperUseCase getExamPaper;
   late MockGetExamPaperPagesUseCase getExamPaperPages;
+  late MockOpenExamPaperUseCase openExamPaper;
   late MockDownloadBlocExamPaperUseCase downloadExamPaper;
   late ExamBloc bloc;
 
@@ -34,12 +36,13 @@ void main() {
     getExamPapers = MockGetExamPapersUseCase();
     getExamPaper = MockGetExamPaperUseCase();
     getExamPaperPages = MockGetExamPaperPagesUseCase();
+    openExamPaper = MockOpenExamPaperUseCase();
     downloadExamPaper = MockDownloadBlocExamPaperUseCase();
 
     bloc = ExamBloc(
       getExamPapers: getExamPapers,
       getExamPaper: getExamPaper,
-      getExamPaperPages: getExamPaperPages,
+      openExamPaper: openExamPaper,
       downloadExamPaper: downloadExamPaper,
     );
   });
