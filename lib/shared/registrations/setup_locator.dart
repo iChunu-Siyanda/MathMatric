@@ -1,10 +1,10 @@
-import 'package:math_matric/shared/registrations/register_analytics_streak_module.dart';
-import 'package:math_matric/shared/registrations/register_exams_module.dart';
-import 'package:math_matric/shared/registrations/register_local_data_sources.dart';
-import 'package:math_matric/shared/registrations/register_papers_module.dart';
-import 'package:math_matric/shared/registrations/register_practice_module.dart';
-import 'package:math_matric/shared/registrations/register_quiz_module.dart';
-import 'package:math_matric/shared/registrations/register_repository_module.dart';
+import 'package:math_matric/shared/registrations/ui/register_analytics_streak_module.dart';
+import 'package:math_matric/shared/registrations/ui/register_exams_module.dart';
+import 'package:math_matric/shared/registrations/repositories/register_local_data_sources.dart';
+import 'package:math_matric/shared/registrations/ui/register_papers_module.dart';
+import 'package:math_matric/shared/registrations/ui/register_practice_module.dart';
+import 'package:math_matric/shared/registrations/ui/register_quiz_module.dart';
+import 'package:math_matric/shared/registrations/repositories/register_repository_module.dart';
 
 Future<void> setupLocator() async {
   //Firebase

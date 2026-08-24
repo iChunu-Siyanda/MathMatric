@@ -4,7 +4,7 @@ import 'package:math_matric/core/network/services/sync_progress_manager.dart';
 import 'package:math_matric/features/progress/studysession/bloc/study_session_bloc.dart';
 import 'package:math_matric/features/ui/home/presentation/bloc/study_history_bloc.dart';
 import 'package:math_matric/features/ui/streak/presentation/bloc/habit_bloc.dart';
-import 'package:math_matric/shared/registrations/register_analytics_streak_module.dart';
+import 'package:math_matric/shared/registrations/ui/register_analytics_streak_module.dart';
 import '../shared/app_routes/router.dart';
 
 class MathMatricApp extends StatefulWidget {

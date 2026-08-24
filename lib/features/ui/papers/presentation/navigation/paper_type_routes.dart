@@ -4,7 +4,7 @@ import 'package:math_matric/features/ui/papers/domain/entities/paper_type.dart';
 import 'package:math_matric/features/ui/papers/presentation/bloc/papers_bloc.dart';
 import 'package:math_matric/features/ui/papers/presentation/pages/papers_page.dart';
 import 'package:math_matric/shared/app_routes/routes.dart';
-import 'package:math_matric/shared/registrations/register_exams_module.dart';
+import 'package:math_matric/shared/registrations/ui/register_exams_module.dart';
 
 class PaperTypeRoutes {
   const PaperTypeRoutes._();

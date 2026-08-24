@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:math_matric/core/network/services/sync_progress_manager.dart';
-import 'package:math_matric/shared/registrations/register_analytics_streak_module.dart';
+import 'package:math_matric/shared/registrations/ui/register_analytics_streak_module.dart';
 import 'package:math_matric/shared/registrations/setup_locator.dart';
 import 'package:path_provider/path_provider.dart';
 import 'app/math_matric_app.dart';

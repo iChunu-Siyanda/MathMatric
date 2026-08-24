@@ -6,7 +6,7 @@ import 'package:math_matric/features/ui/papers/domain/entities/section_type_argu
 import 'package:math_matric/features/ui/papers/presentation/pages/section_type.dart';
 import 'package:math_matric/shared/app_routes/routes.dart';
 import 'package:math_matric/shared/entities/tab_type.dart';
-import 'package:math_matric/shared/registrations/register_exams_module.dart';
+import 'package:math_matric/shared/registrations/ui/register_exams_module.dart';
 
 class SectionPageRoutes {
   const SectionPageRoutes._();

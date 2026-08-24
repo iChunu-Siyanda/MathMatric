@@ -4,7 +4,7 @@ import 'package:math_matric/features/ui/analytics/presentation/bloc/analytics_bl
 import 'package:math_matric/features/ui/analytics/presentation/pages/analytics_page.dart';
 import 'package:math_matric/features/ui/streak/presentation/bloc/habit_bloc.dart';
 import 'package:math_matric/shared/app_routes/routes.dart';
-import 'package:math_matric/shared/registrations/register_services_module.dart';
+import 'package:math_matric/shared/registrations/services/register_services_module.dart';
 
 class AnalyticsRoutes {
   const AnalyticsRoutes._();
