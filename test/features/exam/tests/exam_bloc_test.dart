@@ -4,6 +4,7 @@ import 'package:math_matric/features/papers/exam/presentation/bloc/exam_bloc.dar
 import 'package:math_matric/features/papers/exam/presentation/bloc/exam_event.dart';
 import 'package:math_matric/features/papers/exam/presentation/bloc/exam_state.dart';
 
+import '../usecases/failing_open_exam_paper_use_case.dart';
 import '../usecases/mock_download_bloc_exam_paper_use_case.dart';
 import '../usecases/mock_get_exam_paper_pages_use_case.dart';
 import '../usecases/mock_get_exam_paper_use_case.dart';
@@ -16,6 +17,7 @@ void main() {
   late MockGetExamPaperPagesUseCase getExamPaperPages;
   late MockOpenExamPaperUseCase openExamPaper;
   late MockDownloadBlocExamPaperUseCase downloadExamPaper;
+  late FailingOpenExamPaperUseCase failOpenExamPaper;
   late ExamBloc bloc;
 
   final paper = ExamPaperEntity(
@@ -37,6 +39,7 @@ void main() {
     getExamPaper = MockGetExamPaperUseCase();
     getExamPaperPages = MockGetExamPaperPagesUseCase();
     openExamPaper = MockOpenExamPaperUseCase();
+    failOpenExamPaper = FailingOpenExamPaperUseCase();
     downloadExamPaper = MockDownloadBlocExamPaperUseCase();
 
     bloc = ExamBloc(
@@ -202,6 +205,91 @@ void main() {
       );
     },
   );
+
+  test('loads exam paper pages successfully', () async {
+    final paper = ExamPaperEntity(
+      id: 'paper-1',
+      subjectId: 'math',
+      paperType: 'paper1',
+      session: 'november',
+      title: 'Mathematics Paper 1',
+      isMemo: false,
+      storagePath: 'exam-papers/math/paper-1',
+      isNational: true,
+      year: 2025,
+      pageCount: 2,
+    );
+
+    openExamPaper.pages = [
+      '/local/exam_papers/paper-1/p-01.webp',
+      '/local/exam_papers/paper-1/p-02.webp',
+    ];
+
+    bloc.add(
+      ExamPaperPagesRequested(
+        paper: paper,
+      ),
+    );
+
+    await expectLater(
+      bloc.stream,
+      emitsInOrder([
+        isA<ExamLoading>(),
+        isA<ExamPaperPagesLoaded>()
+            .having(
+              (state) => state.paper.id,
+              'paper id',
+              'paper-1',
+            )
+            .having(
+              (state) => state.pages.length,
+              'page count',
+              2,
+            ),
+      ]),
+    );
+
+    expect(openExamPaper.receivedPaper?.id, 'paper-1');
+  });
+
+  test('emits ExamError when opening exam paper fails', () async {
+    final paper = ExamPaperEntity(
+      id: 'paper-1',
+      subjectId: 'math',
+      paperType: 'paper1',
+      session: 'november',
+      title: 'Mathematics Paper 1',
+      isMemo: false,
+      storagePath: 'exam-papers/math/paper-1',
+      isNational: true,
+      year: 2025,
+      pageCount: 2,
+    );
+
+    bloc.close();
+
+    bloc = ExamBloc(
+      getExamPapers: getExamPapers,
+      getExamPaper: getExamPaper,
+      openExamPaper: failOpenExamPaper, 
+      downloadExamPaper: downloadExamPaper,
+    );
+
+    bloc.add(
+      ExamPaperPagesRequested(
+        paper: paper,
+      ),
+    );
+
+    await expectLater(
+      bloc.stream,
+      emitsInOrder([
+        isA<ExamLoading>(),
+        isA<ExamError>(),
+      ]),
+    );
+  });
+
 
   test(
     'ExamPaperPagesRequested emits pages loaded',
