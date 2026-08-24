@@ -4,6 +4,8 @@ import 'package:math_matric/features/curriculum/exams/data/datasource/local/exam
 import 'package:math_matric/features/curriculum/exams/data/repositories/local/exam_paper_local_repo_impl.dart';
 import 'package:math_matric/features/curriculum/levels/data/datasource/local/levels_local_datasource.dart';
 import 'package:math_matric/features/curriculum/levels/data/repositories/levels_local_datasoure.dart';
+import 'package:math_matric/features/curriculum/notes/data/datasource/class_note_local_data_source.dart';
+import 'package:math_matric/features/curriculum/notes/data/repositories/class_note_local_data_source_impl.dart';
 import 'package:math_matric/features/curriculum/questions/data/datasource/local/questions_local_datasource.dart';
 import 'package:math_matric/features/curriculum/questions/data/repositories/questions_local_datasource_impl.dart';
 import 'package:math_matric/features/curriculum/subjects/data/datasource/local/subjects_local_datasource.dart';
@@ -74,5 +76,9 @@ void registerLocalDataSourceModule() {
     () => UserTopicProgressLocalDataSourceImpl(
       getIt<AppDatabase>(),
     ),
+  );
+
+  getIt.registerLazySingleton<ClassNoteLocalDataSource>(
+    () => ClassNoteLocalDataSourceImpl(getIt<AppDatabase>(),),
   );
 }

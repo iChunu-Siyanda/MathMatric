@@ -5,6 +5,9 @@ import 'package:math_matric/features/curriculum/exams/domain/repositories/exam_p
 import 'package:math_matric/features/curriculum/levels/data/repositories/levels_local_datasoure.dart';
 import 'package:math_matric/features/curriculum/levels/data/repositories/levels_repository_imple.dart';
 import 'package:math_matric/features/curriculum/levels/domain/repositories/levels_repository.dart';
+import 'package:math_matric/features/curriculum/notes/data/datasource/class_note_local_data_source.dart';
+import 'package:math_matric/features/curriculum/notes/data/repositories/class_note_repository_impl.dart';
+import 'package:math_matric/features/curriculum/notes/domain/repositories/class_note_repository.dart';
 import 'package:math_matric/features/curriculum/questions/data/repositories/questions_local_datasource_impl.dart';
 import 'package:math_matric/features/curriculum/questions/data/repositories/questions_repository_impl.dart';
 import 'package:math_matric/features/curriculum/questions/domain/repositories/questions_repository.dart';
@@ -100,6 +103,10 @@ void registerRepositoryModule() {
       getIt<UserTopicProgressLocalDataSource>(),
       getIt<UserTopicProgressRemoteDataSource>(),
     ),
+  );
+
+  getIt.registerLazySingleton<ClassNoteRepository>(
+    () => ClassNoteRepositoryImpl(getIt<ClassNoteLocalDataSource>()),
   );
 
   getIt.registerLazySingleton(
