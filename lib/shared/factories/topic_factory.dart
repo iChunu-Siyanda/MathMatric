@@ -29,7 +29,7 @@ class TopicFactory {
           title: "Tips",
           builder: (ctx) => ClassNotesTips(),
         ),
-        SectionTab(title: "Class Notes", builder: (ctx) => ClassNotesPage())
+        SectionTab(title: "Class Notes", builder: (ctx) => ClassNotesPage(topicId: ctx.topic.topicId!,))
       ],
       tabType: TabType.classNotes,
     ),
@@ -43,7 +43,7 @@ class TopicFactory {
         ),
         SectionTab(
           title: "Practice Tests",
-          builder: (ctx) => PracticePage(),
+          builder: (ctx) => PracticePage(topicId: ctx.topic.topicId!,),
         ),
       ],
       tabType: TabType.practicePapers,

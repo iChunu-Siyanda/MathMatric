@@ -3,18 +3,23 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:math_matric/features/progress/studysession/bloc/study_session_bloc.dart';
+import 'package:math_matric/features/progress/studysession/bloc/study_session_event.dart';
 import 'package:math_matric/features/ui/home/domain/entities/last_studied.dart';
 import 'package:math_matric/features/ui/home/presentation/bloc/study_history_bloc.dart';
 import 'package:math_matric/features/ui/home/presentation/bloc/study_history_event.dart';
+import 'package:math_matric/features/ui/streak/domain/entities/activities.dart';
 
 class ExamPaperViewer extends StatefulWidget {
   final List<String> pagePaths;
   final String title;
+  final String topicId;
 
   const ExamPaperViewer({
     super.key,
     required this.pagePaths,
-    required this.title,
+    required this.title, 
+    required this.topicId,
   });
 
   @override
@@ -31,6 +36,7 @@ class _ExamPaperViewerState extends State<ExamPaperViewer> {
   // Controllers
   late final PageController _pageController;
   late final ScrollController _scrollController;
+  late StudySessionBloc _sessionBloc;
 
   @override
   void initState() {
@@ -45,6 +51,13 @@ class _ExamPaperViewerState extends State<ExamPaperViewer> {
       if (!mounted || widget.pagePaths.isEmpty) return;
 
       _syncProgressToBloc(1);
+
+      _sessionBloc.add(
+        StudySessionStarted(
+          topicId: widget.topicId,
+          activity: StudyActivity.pastPapers,
+        ),
+      );
     });
   }
 
@@ -110,6 +123,10 @@ class _ExamPaperViewerState extends State<ExamPaperViewer> {
   void dispose() {
     _pageController.dispose();
     _scrollController.dispose();
+    _sessionBloc.add(
+      const StudySessionCompleted(),
+    );
+
     super.dispose();
   }
 

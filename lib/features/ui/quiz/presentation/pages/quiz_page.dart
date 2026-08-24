@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:math_matric/features/progress/studysession/bloc/study_session_bloc.dart';
+import 'package:math_matric/features/progress/studysession/bloc/study_session_event.dart';
 import 'package:math_matric/features/ui/papers/domain/entities/subject_topic_quiz.dart';
 import 'package:math_matric/features/ui/practice/presentation/bloc/practice_bloc.dart';
 import 'package:math_matric/features/ui/practice/presentation/bloc/practice_event.dart';
@@ -11,9 +13,10 @@ import 'package:math_matric/features/ui/quiz/presentation/widgets/quiz_content_a
 import 'package:math_matric/features/ui/quiz/presentation/widgets/quiz_next_btn.dart';
 import 'package:math_matric/features/ui/quiz/presentation/widgets/quiz_page_back_btn.dart';
 import 'package:math_matric/features/ui/quiz/presentation/widgets/visual_progress_bar.dart';
+import 'package:math_matric/features/ui/streak/domain/entities/activities.dart';
 import 'package:math_matric/shared/app_routes/routes.dart';
 
-class QuizPage extends StatelessWidget {
+class QuizPage extends StatefulWidget {
   final String topicId;
   final int xpEarned;
   final String levelId;
@@ -26,8 +29,27 @@ class QuizPage extends StatelessWidget {
   });
 
   @override
+  State<QuizPage> createState() => _QuizPageState();
+}
+
+class _QuizPageState extends State<QuizPage> {
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<StudySessionBloc>().add(
+        StudySessionStarted(
+          topicId: widget.topicId,
+          activity: StudyActivity.quiz,
+        ),
+      );
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final currentTopic = SubjectTopic.values.byName(topicId);
+    final currentTopic = SubjectTopic.values.byName(widget.topicId);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
@@ -37,10 +59,22 @@ class QuizPage extends StatelessWidget {
             if (state is QuizFinished) {
               context.read<PracticeBloc>().add(
                 CompleteLevel(
-                  topicId: topicId,
-                  levelId: levelId,
+                  topicId: widget.topicId,
+                  levelId: widget.levelId,
                   xpEarned: state.xpEarned,
                 ),
+              );
+
+              context.read<StudySessionBloc>().add(
+                StudySessionProgressUpdated(
+                  questionsAnswered: state.questions.length,
+                  correctAnswers: state.score,
+                  earnedXP: state.xpEarned,
+                ),
+              );
+
+              context.read<StudySessionBloc>().add(
+                const StudySessionCompleted(),
               );
 
               // debugPrint("Questions Length: ${state.questions.length}");
@@ -63,9 +97,9 @@ class QuizPage extends StatelessWidget {
                   getTotalQuestions: (_) => state.questions.length, 
                   getQuestionByIndex: (index, _) => state.questions[index],  
                   userAnswers: state.userAnswers, 
-                  topicId: topicId, 
-                  xpEarned: xpEarned, 
-                  levelId: levelId,
+                  topicId: widget.topicId, 
+                  xpEarned: widget.xpEarned, 
+                  levelId: widget.levelId,
                   topic: currentTopic, 
                 ),
               ); 

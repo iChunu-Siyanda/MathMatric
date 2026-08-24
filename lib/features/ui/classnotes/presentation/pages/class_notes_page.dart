@@ -1,23 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:math_matric/features/progress/studysession/bloc/study_session_bloc.dart';
+import 'package:math_matric/features/progress/studysession/bloc/study_session_event.dart';
 import 'package:math_matric/features/ui/classnotes/presentation/bloc/class_notes_bloc.dart';
 import 'package:math_matric/features/ui/classnotes/presentation/bloc/class_notes_state.dart';
+import 'package:math_matric/features/ui/streak/domain/entities/activities.dart';
 
-class ClassNotesPage extends StatelessWidget {
-  const ClassNotesPage({super.key});
+class ClassNotesPage extends StatefulWidget {
+  final String topicId;
+  const ClassNotesPage({
+    super.key,
+    required this.topicId,
+  });
 
-  //How to trigger it:
-  // For all class notes:
-  // context.read<ClassNotesBloc>().add(
-  //   const ClassNotesRequested(),
-  // );
+  @override
+  State<ClassNotesPage> createState() => _ClassNotesPageState();
+}
 
-  // For a topic-specific page:
-  // context.read<ClassNotesBloc>().add(
-  //   ClassNotesByTopicRequested(
-  //     topicId: topicId,
-  //   ),
-  // );
+class _ClassNotesPageState extends State<ClassNotesPage> {
+  late final StudySessionBloc _studySessionBloc;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _studySessionBloc = context.read<StudySessionBloc>();
+
+    _studySessionBloc.add(
+      StudySessionStarted(
+        topicId: widget.topicId,
+        activity: StudyActivity.notes,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _studySessionBloc.add(
+      const StudySessionCompleted(),
+    );
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

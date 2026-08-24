@@ -33,6 +33,7 @@ class ExamRoutes {
         return ExamPaperViewer(
           pagePaths: List<String>.from(args['pagePathss']), 
           title: args['title'],
+          topicId: args['topicId'],
         );
       },
     ),

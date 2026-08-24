@@ -15,10 +15,10 @@ class QuizRoutes {
         final args = state.extra as QuizPageParams;
 
         return QuizPage(
-          topicId: args.topicId,
-          xpEarned: args.xp,
-          levelId: args.levelId,
-        );
+            topicId: args.topicId,
+            xpEarned: args.xp,
+            levelId: args.levelId,
+          );
       },
     ),
 
