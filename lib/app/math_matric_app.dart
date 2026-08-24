@@ -35,8 +35,8 @@ class _MathMatricAppState extends State<MathMatricApp> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => getIt<HabitBloc>()),
-        BlocProvider(create: (context) => StudyHistoryBloc()),
+        BlocProvider(create: (context) => getIt<HabitBloc>(),),
+        BlocProvider(create: (context) => getIt<StudyHistoryBloc>(),),
         BlocProvider(create: (context) => getIt<StudySessionBloc>(),),
       ],
       child: MaterialApp.router(

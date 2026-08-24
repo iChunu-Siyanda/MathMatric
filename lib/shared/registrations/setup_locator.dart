@@ -5,6 +5,7 @@ import 'package:math_matric/shared/registrations/ui/register_papers_module.dart'
 import 'package:math_matric/shared/registrations/ui/register_practice_module.dart';
 import 'package:math_matric/shared/registrations/ui/register_quiz_module.dart';
 import 'package:math_matric/shared/registrations/repositories/register_repository_module.dart';
+import 'package:math_matric/shared/registrations/ui/register_study_history_module.dart';
 
 Future<void> setupLocator() async {
   //Firebase
@@ -12,6 +13,9 @@ Future<void> setupLocator() async {
 
   //App Database
   //setupDependencies();
+
+  //Study History Bloc:
+  registerStudyHistoryModule();
 
   // Repositories
   registerRepositoryModule();
