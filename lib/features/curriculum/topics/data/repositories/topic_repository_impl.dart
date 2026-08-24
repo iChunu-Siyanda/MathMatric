@@ -1,6 +1,6 @@
 import 'package:math_matric/features/curriculum/topics/data/repositories/topic_local_datasource_impl.dart';
 import 'package:math_matric/features/curriculum/topics/domain/repositories/topic_repository.dart';
-import 'package:math_matric/features/papers/practice/domain/entities/practice_topic.dart';
+import 'package:math_matric/features/ui/practice/domain/entities/practice_topic.dart';
 
 class TopicRepositoryImpl implements TopicRepository{
   final TopicLocalDataSourceImpl local;

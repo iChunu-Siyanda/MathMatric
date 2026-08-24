@@ -1,11 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:math_matric/features/papers/exam/presentation/navigation/exam_routes.dart';
-import 'package:math_matric/features/papers/papers/presentation/navigation/paper_type_routes.dart';
-import 'package:math_matric/features/papers/papers/presentation/navigation/section_type_routes.dart';
-import 'package:math_matric/features/papers/practice/presentation/bloc/practice_bloc.dart';
-import 'package:math_matric/features/papers/quiz/presentation/bloc/quiz_bloc.dart';
-import 'package:math_matric/features/papers/quiz/presentation/navigation/quiz_routes.dart';
+import 'package:math_matric/features/ui/exam/presentation/navigation/exam_routes.dart';
+import 'package:math_matric/features/ui/papers/presentation/navigation/paper_type_routes.dart';
+import 'package:math_matric/features/ui/papers/presentation/navigation/section_type_routes.dart';
+import 'package:math_matric/features/ui/practice/presentation/bloc/practice_bloc.dart';
+import 'package:math_matric/features/ui/quiz/presentation/bloc/quiz_bloc.dart';
+import 'package:math_matric/features/ui/quiz/presentation/navigation/quiz_routes.dart';
 import 'package:math_matric/shared/registrations/register_exams_module.dart';
 
 class PracticeShell {

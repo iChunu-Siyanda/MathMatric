@@ -1,8 +1,8 @@
 import 'package:get_it/get_it.dart';
-import 'package:math_matric/features/papers/practice/data/repositories/practice_repository_impl.dart';
-import 'package:math_matric/features/papers/practice/domain/repositories/practice_respository.dart';
-import 'package:math_matric/features/papers/practice/domain/usecases/load_practice_topic.dart';
-import 'package:math_matric/features/papers/practice/presentation/bloc/practice_bloc.dart';
+import 'package:math_matric/features/ui/practice/data/repositories/practice_repository_impl.dart';
+import 'package:math_matric/features/ui/practice/domain/repositories/practice_respository.dart';
+import 'package:math_matric/features/ui/practice/domain/usecases/load_practice_topic.dart';
+import 'package:math_matric/features/ui/practice/presentation/bloc/practice_bloc.dart';
 import 'package:math_matric/features/progress/services/level_unlock_calculator.dart';
 
 final getIt = GetIt.instance;

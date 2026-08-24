@@ -1,6 +1,6 @@
-import 'package:math_matric/features/papers/practice/domain/entities/practice_level.dart';
-import 'package:math_matric/features/papers/practice/domain/entities/practice_topic.dart';
-import 'package:math_matric/features/papers/practice/domain/repositories/practice_respository.dart';
+import 'package:math_matric/features/ui/practice/domain/entities/practice_level.dart';
+import 'package:math_matric/features/ui/practice/domain/entities/practice_topic.dart';
+import 'package:math_matric/features/ui/practice/domain/repositories/practice_respository.dart';
 
 class FakePracticeRepository implements PracticeRepository {
   PracticeTopic? topic;

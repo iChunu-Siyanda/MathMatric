@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:math_matric/features/curriculum/exams/domain/entities/exam_paper_entity.dart';
-import 'package:math_matric/features/papers/exam/presentation/bloc/exam_bloc.dart';
-import 'package:math_matric/features/papers/exam/presentation/bloc/exam_event.dart';
-import 'package:math_matric/features/papers/exam/presentation/bloc/exam_state.dart';
+import 'package:math_matric/features/ui/exam/presentation/bloc/exam_bloc.dart';
+import 'package:math_matric/features/ui/exam/presentation/bloc/exam_event.dart';
+import 'package:math_matric/features/ui/exam/presentation/bloc/exam_state.dart';
 
 import '../usecases/failing_open_exam_paper_use_case.dart';
 import '../usecases/mock_download_bloc_exam_paper_use_case.dart';

@@ -1,4 +1,4 @@
-import 'package:math_matric/features/papers/practice/domain/entities/practice_topic.dart';
+import 'package:math_matric/features/ui/practice/domain/entities/practice_topic.dart';
 
 final mockTopics = [
   PracticeTopic(

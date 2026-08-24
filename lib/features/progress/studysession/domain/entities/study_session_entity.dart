@@ -1,5 +1,5 @@
 import 'package:math_matric/core/database/app_database.dart';
-import 'package:math_matric/features/streak/domain/entities/activities.dart';
+import 'package:math_matric/features/ui/streak/domain/entities/activities.dart';
 
 class StudySessionEntity {
   final String id;

@@ -1,5 +1,5 @@
 import 'package:math_matric/features/progress/studysession/domain/entities/study_session_entity.dart';
-import 'package:math_matric/features/streak/domain/entities/activities.dart';
+import 'package:math_matric/features/ui/streak/domain/entities/activities.dart';
 
 abstract class StudySessionRepository {
   // Queries:

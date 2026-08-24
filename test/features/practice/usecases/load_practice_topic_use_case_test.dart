@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:math_matric/features/papers/practice/domain/entities/practice_level.dart';
-import 'package:math_matric/features/papers/practice/domain/entities/practice_topic.dart';
-import 'package:math_matric/features/papers/practice/domain/usecases/load_practice_topic.dart';
+import 'package:math_matric/features/ui/practice/domain/entities/practice_level.dart';
+import 'package:math_matric/features/ui/practice/domain/entities/practice_topic.dart';
+import 'package:math_matric/features/ui/practice/domain/usecases/load_practice_topic.dart';
 import 'package:math_matric/features/progress/services/level_unlock_calculator.dart';
 import 'package:math_matric/features/progress/userlevelprogress/domain/entities/user_level_progresses_entity.dart';
 

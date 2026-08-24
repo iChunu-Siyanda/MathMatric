@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:math_matric/features/curriculum/exams/domain/entities/exam_paper_entity.dart';
-import 'package:math_matric/features/papers/exam/domain/usercases/get_exam_paper_pages_use_case.dart';
+import 'package:math_matric/features/ui/exam/domain/usercases/get_exam_paper_pages_use_case.dart';
 
 import '../repos/mock_exam_paper_storage_repository.dart';
 

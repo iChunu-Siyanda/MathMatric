@@ -1,5 +1,5 @@
-import 'package:math_matric/features/papers/papers/domain/entities/subject_topic_quiz.dart';
-import 'package:math_matric/features/papers/quiz/domain/entities/quiz_question.dart';
+import 'package:math_matric/features/ui/papers/domain/entities/subject_topic_quiz.dart';
+import 'package:math_matric/features/ui/quiz/domain/entities/quiz_question.dart';
 
 final Map<SubjectTopic, int> questionNumberIndices = {
   SubjectTopic.algebra: 0,

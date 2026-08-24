@@ -1,10 +1,10 @@
 import 'package:get_it/get_it.dart';
-import 'package:math_matric/features/papers/exam/domain/usercases/download_exam_paper_use_case.dart';
-import 'package:math_matric/features/papers/exam/domain/usercases/get_exam_paper_data.dart';
-import 'package:math_matric/features/papers/exam/domain/usercases/get_exam_paper_pages_use_case.dart';
-import 'package:math_matric/features/papers/exam/domain/usercases/get_exam_paper_use_case.dart';
-import 'package:math_matric/features/papers/exam/domain/usercases/open_exam_paper_use_case.dart';
-import 'package:math_matric/features/papers/exam/presentation/bloc/exam_bloc.dart';
+import 'package:math_matric/features/ui/exam/domain/usercases/download_exam_paper_use_case.dart';
+import 'package:math_matric/features/ui/exam/domain/usercases/get_exam_paper_data.dart';
+import 'package:math_matric/features/ui/exam/domain/usercases/get_exam_paper_pages_use_case.dart';
+import 'package:math_matric/features/ui/exam/domain/usercases/get_exam_paper_use_case.dart';
+import 'package:math_matric/features/ui/exam/domain/usercases/open_exam_paper_use_case.dart';
+import 'package:math_matric/features/ui/exam/presentation/bloc/exam_bloc.dart';
 
 final getIt = GetIt.instance;
 

@@ -3,7 +3,7 @@ import 'package:math_matric/features/progress/studysession/data/datasource/remot
 import 'package:math_matric/features/progress/studysession/data/models/study_session_model.dart';
 import 'package:math_matric/features/progress/studysession/domain/entities/study_session_entity.dart';
 import 'package:math_matric/features/progress/studysession/domain/repositories/study_session_repository.dart';
-import 'package:math_matric/features/streak/domain/entities/activities.dart';
+import 'package:math_matric/features/ui/streak/domain/entities/activities.dart';
 import 'package:math_matric/shared/services/app_clock.dart';
 import 'package:math_matric/shared/services/id_generator.dart';
 

@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:math_matric/core/database/app_database.dart';
-import 'package:math_matric/features/streak/domain/entities/habit_entry.dart';
-import 'package:math_matric/features/streak/domain/mapper/habit_entry_mapper.dart';
+import 'package:math_matric/features/ui/streak/domain/entities/habit_entry.dart';
+import 'package:math_matric/features/ui/streak/domain/mapper/habit_entry_mapper.dart';
 
 extension StudySessionQueries on AppDatabase {
   //STUDY SESSION LIFECYCLE:

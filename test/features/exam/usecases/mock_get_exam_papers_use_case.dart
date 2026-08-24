@@ -1,6 +1,6 @@
 import 'package:math_matric/features/curriculum/exams/domain/entities/exam_paper_entity.dart';
 import 'package:math_matric/features/curriculum/exams/domain/repositories/exam_paper_repository.dart';
-import 'package:math_matric/features/papers/exam/domain/usercases/get_exam_paper_data.dart';
+import 'package:math_matric/features/ui/exam/domain/usercases/get_exam_paper_data.dart';
 
 class MockGetExamPapersUseCase implements GetExamPapersUseCase {
   List<ExamPaperEntity> papers = [];

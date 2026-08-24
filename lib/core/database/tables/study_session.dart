@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'package:math_matric/features/streak/domain/entities/activities.dart';
+import 'package:math_matric/features/ui/streak/domain/entities/activities.dart';
 
 class StudySession extends Table {
   TextColumn get id => text()();

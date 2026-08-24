@@ -1,5 +1,5 @@
 import 'package:math_matric/core/database/app_database.dart';
-import 'package:math_matric/features/papers/practice/domain/entities/practice_topic.dart';
+import 'package:math_matric/features/ui/practice/domain/entities/practice_topic.dart';
 
 class TopicModel extends PracticeTopic {
   const TopicModel({

@@ -1,8 +1,8 @@
 import 'package:go_router/go_router.dart';
-import 'package:math_matric/features/home/presentation/page/home_page.dart';
-import 'package:math_matric/features/profile/presentation/pages/profile_page.dart';
-import 'package:math_matric/features/search/presentation/pages/search_page.dart';
-import 'package:math_matric/features/tutors/presentation/pages/tutor_page.dart';
+import 'package:math_matric/features/ui/home/presentation/page/home_page.dart';
+import 'package:math_matric/features/ui/profile/presentation/pages/profile_page.dart';
+import 'package:math_matric/features/ui/search/presentation/pages/search_page.dart';
+import 'package:math_matric/features/ui/tutors/presentation/pages/tutor_page.dart';
 import 'package:math_matric/shared/app_routes/main_navigation_shell.dart';
 
 class MainAppRoutes {

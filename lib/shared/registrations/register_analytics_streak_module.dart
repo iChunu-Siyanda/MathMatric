@@ -1,6 +1,6 @@
 import 'package:get_it/get_it.dart';
-import 'package:math_matric/features/analytics/presentation/bloc/analytics_bloc.dart';
-import 'package:math_matric/features/streak/presentation/bloc/habit_bloc.dart';
+import 'package:math_matric/features/ui/analytics/presentation/bloc/analytics_bloc.dart';
+import 'package:math_matric/features/ui/streak/presentation/bloc/habit_bloc.dart';
 
 final getIt = GetIt.instance;
 
