@@ -4807,6 +4807,388 @@ class DownloadedBundleCompanion extends UpdateCompanion<DownloadedBundleData> {
   }
 }
 
+class $ClassNotesTable extends ClassNotes
+    with TableInfo<$ClassNotesTable, ClassNote> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ClassNotesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _topicIdMeta =
+      const VerificationMeta('topicId');
+  @override
+  late final GeneratedColumn<String> topicId = GeneratedColumn<String>(
+      'topic_id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _contentMeta =
+      const VerificationMeta('content');
+  @override
+  late final GeneratedColumn<String> content = GeneratedColumn<String>(
+      'content', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _orderMeta = const VerificationMeta('order');
+  @override
+  late final GeneratedColumn<int> order = GeneratedColumn<int>(
+      'order', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _versionMeta =
+      const VerificationMeta('version');
+  @override
+  late final GeneratedColumn<int> version = GeneratedColumn<int>(
+      'version', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _updatedAtMeta =
+      const VerificationMeta('updatedAt');
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, topicId, title, content, order, version, updatedAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'class_notes';
+  @override
+  VerificationContext validateIntegrity(Insertable<ClassNote> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('topic_id')) {
+      context.handle(_topicIdMeta,
+          topicId.isAcceptableOrUnknown(data['topic_id']!, _topicIdMeta));
+    } else if (isInserting) {
+      context.missing(_topicIdMeta);
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+          _titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('content')) {
+      context.handle(_contentMeta,
+          content.isAcceptableOrUnknown(data['content']!, _contentMeta));
+    } else if (isInserting) {
+      context.missing(_contentMeta);
+    }
+    if (data.containsKey('order')) {
+      context.handle(
+          _orderMeta, order.isAcceptableOrUnknown(data['order']!, _orderMeta));
+    } else if (isInserting) {
+      context.missing(_orderMeta);
+    }
+    if (data.containsKey('version')) {
+      context.handle(_versionMeta,
+          version.isAcceptableOrUnknown(data['version']!, _versionMeta));
+    } else if (isInserting) {
+      context.missing(_versionMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta,
+          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ClassNote map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ClassNote(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      topicId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}topic_id'])!,
+      title: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      content: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}content'])!,
+      order: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}order'])!,
+      version: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}version'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $ClassNotesTable createAlias(String alias) {
+    return $ClassNotesTable(attachedDatabase, alias);
+  }
+}
+
+class ClassNote extends DataClass implements Insertable<ClassNote> {
+  final String id;
+  final String topicId;
+  final String title;
+  final String content;
+  final int order;
+  final int version;
+  final DateTime updatedAt;
+  const ClassNote(
+      {required this.id,
+      required this.topicId,
+      required this.title,
+      required this.content,
+      required this.order,
+      required this.version,
+      required this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['topic_id'] = Variable<String>(topicId);
+    map['title'] = Variable<String>(title);
+    map['content'] = Variable<String>(content);
+    map['order'] = Variable<int>(order);
+    map['version'] = Variable<int>(version);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  ClassNotesCompanion toCompanion(bool nullToAbsent) {
+    return ClassNotesCompanion(
+      id: Value(id),
+      topicId: Value(topicId),
+      title: Value(title),
+      content: Value(content),
+      order: Value(order),
+      version: Value(version),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory ClassNote.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ClassNote(
+      id: serializer.fromJson<String>(json['id']),
+      topicId: serializer.fromJson<String>(json['topicId']),
+      title: serializer.fromJson<String>(json['title']),
+      content: serializer.fromJson<String>(json['content']),
+      order: serializer.fromJson<int>(json['order']),
+      version: serializer.fromJson<int>(json['version']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'topicId': serializer.toJson<String>(topicId),
+      'title': serializer.toJson<String>(title),
+      'content': serializer.toJson<String>(content),
+      'order': serializer.toJson<int>(order),
+      'version': serializer.toJson<int>(version),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  ClassNote copyWith(
+          {String? id,
+          String? topicId,
+          String? title,
+          String? content,
+          int? order,
+          int? version,
+          DateTime? updatedAt}) =>
+      ClassNote(
+        id: id ?? this.id,
+        topicId: topicId ?? this.topicId,
+        title: title ?? this.title,
+        content: content ?? this.content,
+        order: order ?? this.order,
+        version: version ?? this.version,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  ClassNote copyWithCompanion(ClassNotesCompanion data) {
+    return ClassNote(
+      id: data.id.present ? data.id.value : this.id,
+      topicId: data.topicId.present ? data.topicId.value : this.topicId,
+      title: data.title.present ? data.title.value : this.title,
+      content: data.content.present ? data.content.value : this.content,
+      order: data.order.present ? data.order.value : this.order,
+      version: data.version.present ? data.version.value : this.version,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ClassNote(')
+          ..write('id: $id, ')
+          ..write('topicId: $topicId, ')
+          ..write('title: $title, ')
+          ..write('content: $content, ')
+          ..write('order: $order, ')
+          ..write('version: $version, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, topicId, title, content, order, version, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ClassNote &&
+          other.id == this.id &&
+          other.topicId == this.topicId &&
+          other.title == this.title &&
+          other.content == this.content &&
+          other.order == this.order &&
+          other.version == this.version &&
+          other.updatedAt == this.updatedAt);
+}
+
+class ClassNotesCompanion extends UpdateCompanion<ClassNote> {
+  final Value<String> id;
+  final Value<String> topicId;
+  final Value<String> title;
+  final Value<String> content;
+  final Value<int> order;
+  final Value<int> version;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const ClassNotesCompanion({
+    this.id = const Value.absent(),
+    this.topicId = const Value.absent(),
+    this.title = const Value.absent(),
+    this.content = const Value.absent(),
+    this.order = const Value.absent(),
+    this.version = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ClassNotesCompanion.insert({
+    required String id,
+    required String topicId,
+    required String title,
+    required String content,
+    required int order,
+    required int version,
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        topicId = Value(topicId),
+        title = Value(title),
+        content = Value(content),
+        order = Value(order),
+        version = Value(version),
+        updatedAt = Value(updatedAt);
+  static Insertable<ClassNote> custom({
+    Expression<String>? id,
+    Expression<String>? topicId,
+    Expression<String>? title,
+    Expression<String>? content,
+    Expression<int>? order,
+    Expression<int>? version,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (topicId != null) 'topic_id': topicId,
+      if (title != null) 'title': title,
+      if (content != null) 'content': content,
+      if (order != null) 'order': order,
+      if (version != null) 'version': version,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ClassNotesCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? topicId,
+      Value<String>? title,
+      Value<String>? content,
+      Value<int>? order,
+      Value<int>? version,
+      Value<DateTime>? updatedAt,
+      Value<int>? rowid}) {
+    return ClassNotesCompanion(
+      id: id ?? this.id,
+      topicId: topicId ?? this.topicId,
+      title: title ?? this.title,
+      content: content ?? this.content,
+      order: order ?? this.order,
+      version: version ?? this.version,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (topicId.present) {
+      map['topic_id'] = Variable<String>(topicId.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (content.present) {
+      map['content'] = Variable<String>(content.value);
+    }
+    if (order.present) {
+      map['order'] = Variable<int>(order.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ClassNotesCompanion(')
+          ..write('id: $id, ')
+          ..write('topicId: $topicId, ')
+          ..write('title: $title, ')
+          ..write('content: $content, ')
+          ..write('order: $order, ')
+          ..write('version: $version, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -4824,6 +5206,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $StudySessionTable studySession = $StudySessionTable(this);
   late final $DownloadedBundleTable downloadedBundle =
       $DownloadedBundleTable(this);
+  late final $ClassNotesTable classNotes = $ClassNotesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -4838,7 +5221,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         userLevelProgresses,
         userTopicProgresses,
         studySession,
-        downloadedBundle
+        downloadedBundle,
+        classNotes
       ];
 }
 
@@ -7165,6 +7549,201 @@ typedef $$DownloadedBundleTableProcessedTableManager = ProcessedTableManager<
     ),
     DownloadedBundleData,
     PrefetchHooks Function()>;
+typedef $$ClassNotesTableCreateCompanionBuilder = ClassNotesCompanion Function({
+  required String id,
+  required String topicId,
+  required String title,
+  required String content,
+  required int order,
+  required int version,
+  required DateTime updatedAt,
+  Value<int> rowid,
+});
+typedef $$ClassNotesTableUpdateCompanionBuilder = ClassNotesCompanion Function({
+  Value<String> id,
+  Value<String> topicId,
+  Value<String> title,
+  Value<String> content,
+  Value<int> order,
+  Value<int> version,
+  Value<DateTime> updatedAt,
+  Value<int> rowid,
+});
+
+class $$ClassNotesTableFilterComposer
+    extends Composer<_$AppDatabase, $ClassNotesTable> {
+  $$ClassNotesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get topicId => $composableBuilder(
+      column: $table.topicId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get title => $composableBuilder(
+      column: $table.title, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get content => $composableBuilder(
+      column: $table.content, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get order => $composableBuilder(
+      column: $table.order, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get version => $composableBuilder(
+      column: $table.version, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+}
+
+class $$ClassNotesTableOrderingComposer
+    extends Composer<_$AppDatabase, $ClassNotesTable> {
+  $$ClassNotesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get topicId => $composableBuilder(
+      column: $table.topicId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get title => $composableBuilder(
+      column: $table.title, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get content => $composableBuilder(
+      column: $table.content, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get order => $composableBuilder(
+      column: $table.order, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get version => $composableBuilder(
+      column: $table.version, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+}
+
+class $$ClassNotesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ClassNotesTable> {
+  $$ClassNotesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get topicId =>
+      $composableBuilder(column: $table.topicId, builder: (column) => column);
+
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
+
+  GeneratedColumn<String> get content =>
+      $composableBuilder(column: $table.content, builder: (column) => column);
+
+  GeneratedColumn<int> get order =>
+      $composableBuilder(column: $table.order, builder: (column) => column);
+
+  GeneratedColumn<int> get version =>
+      $composableBuilder(column: $table.version, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$ClassNotesTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $ClassNotesTable,
+    ClassNote,
+    $$ClassNotesTableFilterComposer,
+    $$ClassNotesTableOrderingComposer,
+    $$ClassNotesTableAnnotationComposer,
+    $$ClassNotesTableCreateCompanionBuilder,
+    $$ClassNotesTableUpdateCompanionBuilder,
+    (ClassNote, BaseReferences<_$AppDatabase, $ClassNotesTable, ClassNote>),
+    ClassNote,
+    PrefetchHooks Function()> {
+  $$ClassNotesTableTableManager(_$AppDatabase db, $ClassNotesTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ClassNotesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ClassNotesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ClassNotesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> topicId = const Value.absent(),
+            Value<String> title = const Value.absent(),
+            Value<String> content = const Value.absent(),
+            Value<int> order = const Value.absent(),
+            Value<int> version = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              ClassNotesCompanion(
+            id: id,
+            topicId: topicId,
+            title: title,
+            content: content,
+            order: order,
+            version: version,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String topicId,
+            required String title,
+            required String content,
+            required int order,
+            required int version,
+            required DateTime updatedAt,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              ClassNotesCompanion.insert(
+            id: id,
+            topicId: topicId,
+            title: title,
+            content: content,
+            order: order,
+            version: version,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$ClassNotesTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $ClassNotesTable,
+    ClassNote,
+    $$ClassNotesTableFilterComposer,
+    $$ClassNotesTableOrderingComposer,
+    $$ClassNotesTableAnnotationComposer,
+    $$ClassNotesTableCreateCompanionBuilder,
+    $$ClassNotesTableUpdateCompanionBuilder,
+    (ClassNote, BaseReferences<_$AppDatabase, $ClassNotesTable, ClassNote>),
+    ClassNote,
+    PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -7189,4 +7768,6 @@ class $AppDatabaseManager {
       $$StudySessionTableTableManager(_db, _db.studySession);
   $$DownloadedBundleTableTableManager get downloadedBundle =>
       $$DownloadedBundleTableTableManager(_db, _db.downloadedBundle);
+  $$ClassNotesTableTableManager get classNotes =>
+      $$ClassNotesTableTableManager(_db, _db.classNotes);
 }

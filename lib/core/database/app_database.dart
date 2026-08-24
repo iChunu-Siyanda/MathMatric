@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:math_matric/core/database/tables/class_notes.dart';
 import 'package:math_matric/core/database/tables/downloaded_bundle.dart';
 import 'package:math_matric/core/database/tables/exam_papers.dart';
 import 'package:math_matric/core/database/tables/levels.dart';
@@ -29,13 +30,14 @@ part 'app_database.g.dart';
     UserTopicProgresses,
     StudySession,
     DownloadedBundle,
+    ClassNotes,
   ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 3; 
+  int get schemaVersion => 4; 
 }
 //Bump up schemaVersion by +1 if:
 // Adding/removing a table

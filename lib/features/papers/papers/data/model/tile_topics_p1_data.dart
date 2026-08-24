@@ -127,5 +127,4 @@ class TileTopicsP1Data{
     colorPicker: colorPicker,
     iconPicker: iconPicker,
   );
-
 }
