@@ -117,6 +117,6 @@ void registerRepositoryModule() {
   );
 
   getIt.registerLazySingleton(
-    () => HabitRepository(getIt(),),
+    () => HabitRepository(getIt(),getIt<AppClock>()),
   );
 }
