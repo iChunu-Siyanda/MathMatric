@@ -346,5 +346,4 @@ void main() {
       expect(metrics.totalEarnedXP, 700);
     },
   );
-
 }

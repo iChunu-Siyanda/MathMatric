@@ -2,14 +2,17 @@ import 'package:math_matric/features/ui/analytics/domain/calculator/analytics_ca
 import 'package:math_matric/features/ui/analytics/domain/entites/analytics_metrics.dart';
 import 'package:math_matric/features/ui/analytics/domain/entites/analytics_time_frame.dart';
 import 'package:math_matric/features/ui/analytics/domain/repositories/analytics_repository.dart';
+import 'package:math_matric/shared/services/app_clock.dart';
 
 class GetAnalyticsUseCase {
   final AnalyticsRepository repository;
   final AnalyticsCalculator calculator;
+  final AppClock clock;
 
   GetAnalyticsUseCase({
     required this.repository,
     required this.calculator,
+    required this.clock,
   });
 
   Future<AnalyticsMetrics> call({
@@ -35,7 +38,7 @@ class GetAnalyticsUseCase {
   }
 
   DateTime? _getSince(AnalyticsTimeframe timeframe) {
-    final now = DateTime.now();
+    final now = clock.now();
 
     switch (timeframe) {
       case AnalyticsTimeframe.days7:

@@ -17,6 +17,7 @@ void registerAnalyticsStreakModule() {
     () => GetAnalyticsUseCase(
       repository: getIt<AnalyticsRepository>(), 
       calculator: getIt<AnalyticsCalculator>(),
+      clock: getIt<AppClock>(),
     ),
   );
 
