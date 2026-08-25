@@ -4,54 +4,12 @@ import 'package:math_matric/features/progress/userlevelprogress/domain/entities/
 import 'package:math_matric/features/progress/usertopicprogress/domain/entities/user_topic_progresses_entity.dart';
 import 'package:math_matric/features/ui/analytics/domain/entites/analytics_metrics.dart';
 import 'package:math_matric/features/ui/analytics/domain/entites/analytics_time_frame.dart';
-import 'package:math_matric/features/ui/analytics/domain/entites/topic_progress_card_entity.dart';
+import 'package:math_matric/features/ui/analytics/domain/extensions/analytics_calculator_extension.dart';
 import 'package:math_matric/shared/services/app_clock.dart';
 
 class AnalyticsCalculator {
   final AppClock clock;
   const AnalyticsCalculator(this.clock);
-
-  List<TopicProgressCardEntity> _buildTopicProgressCards({
-    required List<UserTopicProgressEntity> topics,
-    required List<UserLevelProgressEntity> levels,
-  }) {
-    return topics.map((topic) {
-      final topicLevels = levels
-          .where((level) => level.topicId == topic.id)
-          .toList();
-
-      final completedCount =
-          topicLevels.where((level) => level.completed).length;
-
-      final averageBestScore = topicLevels.isEmpty
-          ? 0.0
-          : topicLevels
-                  .map((level) => level.bestScore)
-                  .reduce((a, b) => a + b) /
-              topicLevels.length;
-
-      DateTime? latestPlay;
-
-      for (final level in topicLevels) {
-        if (latestPlay == null ||
-            level.lastPlayed.isAfter(latestPlay)) {
-          latestPlay = level.lastPlayed;
-        }
-      }
-
-      return TopicProgressCardEntity(
-        topic: topic,
-        totalLevels: topicLevels.length,
-        completedLevels: completedCount,
-        averageBestScore: averageBestScore,
-        lastPlayed: latestPlay,
-      );
-    }).toList()
-      ..sort(
-        (a, b) => a.completionPercentage
-            .compareTo(b.completionPercentage),
-      );
-  }
 
   AnalyticsMetrics calculate({
     required List<StudySessionEntity> sessions,
@@ -61,17 +19,43 @@ class AnalyticsCalculator {
     required AnalyticsTimeframe timeframe,
   }) {
     
-    final cutoff = _getCutoff(timeframe);
+    final cutoff = getCutoff(timeframe);
 
-    final filteredAttempts = questionAttempts
-        .where((q) => q.answeredAt.isAfter(cutoff))
-        .toList();
+    final filteredAttempts = cutoff == null
+        ? questionAttempts 
+        : questionAttempts.where((q) => q.answeredAt.isAfter(cutoff)).toList();
 
-    final filteredLevels = levels
-        .where((l) => l.lastPlayed.isAfter(cutoff))
-        .toList();
+    final filteredLevels = cutoff == null
+        ? levels
+        : levels.where((l) => l.lastPlayed.isAfter(cutoff)).toList();
 
-    final topicProgressCards = _buildTopicProgressCards(
+    final filteredSessions = cutoff == null 
+        ? sessions 
+        : sessions.where((session) {
+          final startedAt = session.startedAt;
+          return startedAt.isAfter(cutoff);
+        })
+        .toList();  
+
+    final studyVolume = buildStudyVolume(
+      sessions: filteredSessions,
+    );
+
+    final accuracyTrend = buildAccuracyTrend(
+      attempts: filteredAttempts,
+    );
+
+    final totalStudyMinutes = calculateTotalStudyMinutes(
+      filteredSessions,
+    );
+
+    final totalQuestionsAnswered = calculateTotalQuestionsAnswered(filteredSessions);
+
+    final activityBreakdown = buildActivityBreakdown(
+      sessions: filteredSessions,
+    );
+  
+    final topicProgressCards = buildTopicProgressCards(
       topics: topics, 
       levels: levels,
     );    
@@ -107,29 +91,23 @@ class AnalyticsCalculator {
       levels: levels,
       questionAttempts: questionAttempts,
       sessions: sessions,
+
       filteredAttempts: filteredAttempts,
       filteredLevels: filteredLevels,
+
       topicProgressCards: topicProgressCards,
+
       totalEarnedXP: totalEarnedXP,
       overallAccuracy: overallAccuracy,
       overallCompletionRate: overallCompletionRate,
       avgTimePerQuestionSeconds: avgTimePerQuestionSeconds,
       totalPracticeTimeSeconds: totalPracticeTimeSeconds,
+
+      studyVolume: studyVolume,
+      accuracyTrend: accuracyTrend,
+      totalStudyMinutes: totalStudyMinutes,
+      totalQuestionsAnswered: totalQuestionsAnswered,
+      activityBreakdown: activityBreakdown,
     );
-  }
-
-  DateTime _getCutoff(AnalyticsTimeframe timeframe) {
-    final now = clock.now();
-
-    switch (timeframe) {
-      case AnalyticsTimeframe.days7:
-        return now.subtract(const Duration(days: 7));
-
-      case AnalyticsTimeframe.days30:
-        return now.subtract(const Duration(days: 30));
-
-      case AnalyticsTimeframe.allTime:
-        return DateTime.fromMillisecondsSinceEpoch(0);
-    }
   }
 }

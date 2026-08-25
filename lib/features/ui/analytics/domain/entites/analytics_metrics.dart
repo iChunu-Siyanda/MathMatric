@@ -2,6 +2,8 @@ import 'package:math_matric/features/progress/questionattempts/domain/entities/q
 import 'package:math_matric/features/progress/studysession/domain/entities/study_session_entity.dart';
 import 'package:math_matric/features/progress/userlevelprogress/domain/entities/user_level_progresses_entity.dart';
 import 'package:math_matric/features/progress/usertopicprogress/domain/entities/user_topic_progresses_entity.dart';
+import 'package:math_matric/features/ui/analytics/domain/entites/activity_analysis.dart';
+import 'package:math_matric/features/ui/analytics/domain/entites/analytics_chart_point.dart';
 import 'package:math_matric/features/ui/analytics/domain/entites/topic_progress_card_entity.dart';
 
 class AnalyticsMetrics {
@@ -21,6 +23,12 @@ class AnalyticsMetrics {
   final double avgTimePerQuestionSeconds;
   final int totalPracticeTimeSeconds;
 
+  final List<AnalyticsChartPoint> studyVolume;
+  final List<AnalyticsChartPoint> accuracyTrend;
+  final int totalStudyMinutes;
+  final int totalQuestionsAnswered;
+  final List<ActivityAnalytics> activityBreakdown;
+
   const AnalyticsMetrics({
     required this.topics,
     required this.levels,
@@ -33,6 +41,11 @@ class AnalyticsMetrics {
     required this.overallAccuracy,
     required this.overallCompletionRate,
     required this.avgTimePerQuestionSeconds,
-    required this.totalPracticeTimeSeconds,
+    required this.totalPracticeTimeSeconds, 
+    required this.studyVolume, 
+    required this.accuracyTrend, 
+    required this.totalStudyMinutes, 
+    required this.totalQuestionsAnswered, 
+    required this.activityBreakdown,
   });
 }

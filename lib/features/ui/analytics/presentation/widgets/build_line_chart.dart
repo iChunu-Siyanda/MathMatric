@@ -13,24 +13,41 @@ class BuildLineChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final spots = [
-      for (int i = 0; i < data.length; i++)
+    final spots = <FlSpot>[];
+
+    for (int i = 0; i < data.length; i++) {
+      final day = data[i];
+
+      spots.add(
         FlSpot(
           i.toDouble(),
-          data[i].accuracy,
+          day.accuracy,
         ),
-    ];
+      );
+    }
 
     return LineChart(
       LineChartData(
         minY: 0,
         maxY: 100,
-        gridData: const FlGridData(show: false),
-        titlesData: const FlTitlesData(show: false),
-        borderData: FlBorderData(show: false),
+
+        gridData: const FlGridData(
+          show: false,
+        ),
+
+        titlesData: const FlTitlesData(
+          show: false,
+        ),
+
+        borderData: FlBorderData(
+          show: false,
+        ),
+
         lineTouchData: LineTouchData(
           touchTooltipData: LineTouchTooltipData(
-            getTooltipColor: (spot) => AppColours.textPrimary,
+            getTooltipColor: (spot) =>
+                AppColours.textPrimary,
+
             getTooltipItems: (touchedSpots) {
               return touchedSpots.map((spot) {
                 return LineTooltipItem(
@@ -45,21 +62,33 @@ class BuildLineChart extends StatelessWidget {
             },
           ),
         ),
+
         lineBarsData: [
           LineChartBarData(
             spots: spots,
+
             isCurved: true,
             curveSmoothness: 0.35,
+
             gradient: AppColours.mathMatricGradient,
+
             barWidth: 4,
+
             isStrokeCapRound: true,
-            dotData: const FlDotData(show: false),
+
+            dotData: const FlDotData(
+              show: false,
+            ),
+
             belowBarData: BarAreaData(
               show: true,
               gradient: LinearGradient(
-                colors: AppColours.mathMatricGradientColors
+                colors: AppColours
+                    .mathMatricGradientColors
                     .map(
-                      (c) => c.withValues(alpha: 0.18),
+                      (c) => c.withValues(
+                        alpha: 0.18,
+                      ),
                     )
                     .toList(),
                 begin: Alignment.topCenter,

@@ -8,8 +8,8 @@ sealed class AnalyticsEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-final class AnalyticsStarted extends AnalyticsEvent {
-  const AnalyticsStarted();
+final class FetchAnalyticsData extends AnalyticsEvent {
+  const FetchAnalyticsData();
 }
 
 final class AnalyticsRefreshed extends AnalyticsEvent {

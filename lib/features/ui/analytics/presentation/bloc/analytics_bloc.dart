@@ -10,13 +10,13 @@ class AnalyticsBloc extends Bloc<AnalyticsEvent, AnalyticsState> {
   AnalyticsBloc({
     required this.getAnalytics,
   }) : super(const AnalyticsInitial()) {
-    on<AnalyticsStarted>(_onStarted);
+    on<FetchAnalyticsData>(_onFetchAnalyticsData);
     on<AnalyticsRefreshed>(_onRefreshed);
     on<AnalyticsTimeframeChanged>(_onTimeframeChanged);
   }
 
-  Future<void> _onStarted(
-    AnalyticsStarted event,
+  Future<void> _onFetchAnalyticsData(
+    FetchAnalyticsData event,
     Emitter<AnalyticsState> emit,
   ) async {
     emit(const AnalyticsLoading());
@@ -41,26 +41,35 @@ class AnalyticsBloc extends Bloc<AnalyticsEvent, AnalyticsState> {
     AnalyticsRefreshed event,
     Emitter<AnalyticsState> emit,
   ) async {
-    final current = state;
+    final currentState = state;
 
-    if (current is! AnalyticsLoaded) {
-      add(const AnalyticsStarted());
-      return;
-    }
-
-    emit(current.copyWith(isRefreshing: true,),);
-
-    try {
-      final metrics = await getAnalytics(timeframe:current.selectedTimeframe,);
-
+    if (currentState is AnalyticsLoaded) {
       emit(
-        AnalyticsLoaded(
-          metrics: metrics,
-          selectedTimeframe: current.selectedTimeframe,
+        currentState.copyWith(
+          isRefreshing: true,
         ),
       );
-    } catch (e) {
-      emit(current.copyWith(isRefreshing: false,),);
+
+      try {
+        final metrics = await getAnalytics(
+          timeframe: currentState.selectedTimeframe,
+        );
+
+        emit(
+          AnalyticsLoaded(
+            metrics: metrics,
+            selectedTimeframe: currentState.selectedTimeframe,
+          ),
+        );
+      } catch (e) {
+        emit(
+          currentState.copyWith(
+            isRefreshing: false,
+          ),
+        );
+      }
+    } else {
+      add(const FetchAnalyticsData());
     }
   }
 
@@ -74,7 +83,12 @@ class AnalyticsBloc extends Bloc<AnalyticsEvent, AnalyticsState> {
 
     if (current.selectedTimeframe == event.timeframe) return;
 
-    emit(const AnalyticsLoading());
+    emit(
+      current.copyWith(
+        selectedTimeframe: event.timeframe,
+        isRefreshing: true,
+      ),
+    );
 
     try {
       final data = await getAnalytics(timeframe: event.timeframe,);
@@ -87,7 +101,9 @@ class AnalyticsBloc extends Bloc<AnalyticsEvent, AnalyticsState> {
       );
     } catch (e) {
       emit(
-        AnalyticsError(message:'Failed to change analytics timeframe: $e',),
+        current.copyWith(
+          isRefreshing: false,
+        ),
       );
     }
   }

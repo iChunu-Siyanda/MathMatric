@@ -113,6 +113,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
 
                   ChartCard(
                     sessions: metrics.sessions,
+                    timeframe: state.selectedTimeframe,
                     isLineGraph: _showLineGraph,
                     onToggleGraph: () {
                       setState(() {

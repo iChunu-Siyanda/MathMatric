@@ -12,7 +12,7 @@ class DailyChartData {
   });
 
   double get accuracy {
-    if (totalQuestions == 0) return 0;
+    if (totalQuestions == 0) return 0.0;
     return (correctAnswers / totalQuestions) * 100;
   }
 }
