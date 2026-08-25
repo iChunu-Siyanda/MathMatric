@@ -5,9 +5,11 @@ import 'package:math_matric/features/progress/usertopicprogress/domain/entities/
 import 'package:math_matric/features/ui/analytics/domain/entites/analytics_metrics.dart';
 import 'package:math_matric/features/ui/analytics/domain/entites/analytics_time_frame.dart';
 import 'package:math_matric/features/ui/analytics/domain/entites/topic_progress_card_entity.dart';
+import 'package:math_matric/shared/services/app_clock.dart';
 
 class AnalyticsCalculator {
-  const AnalyticsCalculator();
+  final AppClock clock;
+  const AnalyticsCalculator(this.clock);
 
   List<TopicProgressCardEntity> _buildTopicProgressCards({
     required List<UserTopicProgressEntity> topics,
@@ -117,7 +119,7 @@ class AnalyticsCalculator {
   }
 
   DateTime _getCutoff(AnalyticsTimeframe timeframe) {
-    final now = DateTime.now();
+    final now = clock.now();
 
     switch (timeframe) {
       case AnalyticsTimeframe.days7:

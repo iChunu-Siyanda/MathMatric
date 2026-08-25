@@ -242,7 +242,4 @@ void main() {
       expect(topic.favorite, isTrue);
     },
   );
-
-
-
 }
