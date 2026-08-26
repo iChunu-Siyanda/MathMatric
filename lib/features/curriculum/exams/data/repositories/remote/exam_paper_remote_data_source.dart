@@ -7,7 +7,9 @@ class ExamPaperRemoteDataSourceImpl  implements ExamPaperRemoteDataSource {
   final FirebaseFirestore firestore;
   ExamPaperRemoteDataSourceImpl(this.firestore);
 
-  DocumentReference<Map<String, dynamic>> get firestoreRef => firestore.collection(FirestoreCollections.curriculum).doc(FirestoreCollections.mathmatric);
+  DocumentReference<Map<String, dynamic>> get firestoreRef => firestore
+                                              .collection(FirestoreCollections.curriculum)
+                                              .doc(FirestoreCollections.mathmatric);
 
   @override
   Future<List<ExamPaperModel>> getAllExamPapers() async {

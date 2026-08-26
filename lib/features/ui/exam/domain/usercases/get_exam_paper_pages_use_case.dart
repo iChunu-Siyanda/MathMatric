@@ -1,31 +1,41 @@
 import 'package:math_matric/features/curriculum/exams/domain/entities/exam_paper_entity.dart';
 import 'package:math_matric/features/curriculum/exams/domain/repositories/exam_paper_storage_repository.dart';
+import 'package:math_matric/features/ui/exam/domain/services/exam_paper_missing_exeption.dart';
 
 class GetExamPaperPagesUseCase {
-  final ExamPaperStorageRepository repository;
+  final ExamPaperStorageRepository _repository;
 
-  GetExamPaperPagesUseCase(this.repository);
+  GetExamPaperPagesUseCase(this._repository);
 
-  Future<List<String>> call(
-    ExamPaperEntity paper,
-  ) async {
-    final pages = <String>[];
+  Future<List<String>> call(ExamPaperEntity paper) async {
+    // 1. Guard input validity early
+    if (paper.pageCount <= 0) {
+      return const [];
+    }
 
-    for (int i = 1; i <= paper.pageCount; i++) {
-      final fileName = 'p-${i.toString().padLeft(2, '0')}.webp';
+    // 2. Prepare parallel fetch tasks
+    final tasks = List.generate(paper.pageCount, (index) async {
+      final pageNumber = (index + 1).toString().padLeft(2, '0');
+      final fileName = 'p-$pageNumber.webp';
 
-      final path = await repository.getPagePath(
+      final path = await _repository.getPagePath(
         paperId: paper.id,
         fileName: fileName,
       );
 
-      if (path == null) {
-        throw Exception('Exam paper page not found: $fileName',);
+      // 3. Fail fast on missing resources
+      if (path == null || path.isEmpty) {
+        throw ExamPaperMissingPageException(
+          paperId: paper.id,
+          fileName: fileName,
+        );
       }
 
-      pages.add(path);
-    }
+      return path;
+    });
 
-    return pages;
+    // 4. Run concurrently; cancel immediately if any page fails
+    return await Future.wait(tasks, eagerError: true);
   }
 }
+

@@ -75,11 +75,9 @@ class BundleRemoteDataSourceImpl implements BundleRemoteDataSource {
       ),
     ]);
 
-    final topics =
-        results[0] as List<TopicModel>;
+    final topics = results[0] as List<TopicModel>;
 
-    final examPapers =
-        results[1] as List<ExamPaperModel>;
+    final examPapers = results[1] as List<ExamPaperModel>;
 
     // Get levels for all topics in parallel.
     final levelResults = await Future.wait(
