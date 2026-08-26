@@ -15,8 +15,10 @@ class StudySessionRemoteDataSourceImpl implements StudySessionRemoteDataSource {
   ) {
     return firestore
         .collection(FirestoreCollections.userdata)
+        .doc(FirestoreCollections.mathUser)
+        .collection('userId')
         .doc(userId)
-        .collection('studySessions');
+        .collection(FirestoreCollections.studySessions);
   }
 
   @override

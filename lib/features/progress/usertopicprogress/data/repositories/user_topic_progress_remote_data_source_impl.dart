@@ -12,8 +12,10 @@ class UserTopicProgressRemoteDataSourceImpl implements UserTopicProgressRemoteDa
   ) {
     return firestore
         .collection(FirestoreCollections.userdata)
+        .doc(FirestoreCollections.mathUser)
+        .collection('userId')
         .doc(userId)
-        .collection('userTopicProgresses');
+        .collection(FirestoreCollections.userTopicProgress);
   }
 
   @override

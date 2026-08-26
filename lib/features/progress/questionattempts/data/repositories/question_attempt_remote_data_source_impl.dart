@@ -12,8 +12,10 @@ class QuestionAttemptRemoteDataSourceImpl implements QuestionAttemptRemoteDataSo
   ) {
     return firestore
         .collection(FirestoreCollections.userdata)
+        .doc(FirestoreCollections.mathUser)
+        .collection('userId')
         .doc(userId)
-        .collection('questionAttempts');
+        .collection(FirestoreCollections.questionAttempts);
   }
 
   @override

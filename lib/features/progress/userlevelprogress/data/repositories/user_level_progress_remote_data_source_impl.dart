@@ -12,8 +12,10 @@ class UserLevelProgressRemoteDataSourceImpl implements UserLevelProgressRemoteDa
   ) {
     return firestore
         .collection(FirestoreCollections.userdata)
+        .doc(FirestoreCollections.mathUser)
+        .collection('userId')
         .doc(userId)
-        .collection('userLevelProgresses');
+        .collection(FirestoreCollections.userLevelProgress);
   }
 
   @override
