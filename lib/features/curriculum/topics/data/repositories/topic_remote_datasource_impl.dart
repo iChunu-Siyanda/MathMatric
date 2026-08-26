@@ -7,7 +7,9 @@ class TopicRemoteDataSourceImpl implements TopicRemoteDataSource {
   final FirebaseFirestore firestore;
   TopicRemoteDataSourceImpl(this.firestore,);
 
-  DocumentReference<Map<String, dynamic>> get firestoreRef => firestore.collection(FirestoreCollections.curriculum).doc(FirestoreCollections.mathmatric);
+  DocumentReference<Map<String, dynamic>> get firestoreRef => firestore
+                                                    .collection(FirestoreCollections.curriculum)
+                                                    .doc(FirestoreCollections.mathmatric);
 
   @override
   Future<List<TopicModel>> getAllTopics() async {
@@ -16,7 +18,7 @@ class TopicRemoteDataSourceImpl implements TopicRemoteDataSource {
         .get();
 
     return snapshot.docs
-        .map((doc) => TopicModel.fromFirestore(doc.data()))
+        .map((doc) => TopicModel.fromFirestore(doc.data(),doc.id))
         .toList();
   }
 
@@ -31,7 +33,7 @@ class TopicRemoteDataSourceImpl implements TopicRemoteDataSource {
 
     if (!doc.exists) return null;
 
-    return TopicModel.fromFirestore(doc.data()!);
+    return TopicModel.fromFirestore(doc.data()!,doc.id);
   }
 
   @override
@@ -47,7 +49,7 @@ class TopicRemoteDataSourceImpl implements TopicRemoteDataSource {
         .get();
 
     return snapshot.docs
-        .map((doc) => TopicModel.fromFirestore(doc.data()))
+        .map((doc) => TopicModel.fromFirestore(doc.data(),doc.id))
         .toList();
   }
 }

@@ -13,16 +13,16 @@ class TopicModel extends PracticeTopic {
     required super.colorHex,
   });
 
-  factory TopicModel.fromFirestore(Map<String, dynamic> json) {
+  factory TopicModel.fromFirestore(Map<String, dynamic> json, String docId) {
     return TopicModel(
-      id: json['id'] as String,
-      subjectId: json['subjectId'] as String,
-      title: json['title'] as String,
-      description: json['description'] as String,
-      order: json['order'] as int,
-      totalLevels: json['totalLevels'] as int,
-      totalXp: json['totalXp'] as int,
-      colorHex: json['colorHex'] as String,
+      id: (json['id'] as String?) ?? docId,
+      subjectId: (json['subjectId'] as String?) ?? '',
+      title: (json['title'] as String?) ?? '',
+      description: (json['description'] as String?) ?? '',
+      order: (json['order'] as num?)?.toInt() ?? 0,
+      totalLevels: (json['totalLevels'] as num?)?.toInt() ?? 0,
+      totalXp: (json['totalXp'] as num?)?.toInt() ?? 0,
+      colorHex: (json['colorHex'] as String?) ?? '#000000',
     );
   }
 

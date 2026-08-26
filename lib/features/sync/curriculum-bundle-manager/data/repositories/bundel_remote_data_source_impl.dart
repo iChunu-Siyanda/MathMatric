@@ -33,6 +33,8 @@ class BundleRemoteDataSourceImpl implements BundleRemoteDataSource {
     String bundleId,
   ) async {
     final doc = await firestore
+        .collection(FirestoreCollections.curriculum)
+        .doc(FirestoreCollections.mathmatric)
         .collection(FirestoreCollections.bundles)
         .doc(bundleId)
         .get();
