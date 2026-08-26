@@ -13,10 +13,23 @@ import 'package:math_matric/features/curriculum/subjects/data/datasource/remote/
 import 'package:math_matric/features/curriculum/subjects/data/repositories/subjects_remote_datasource_repository.dart';
 import 'package:math_matric/features/curriculum/topics/data/datasource/remote/topic_remote_datasource.dart';
 import 'package:math_matric/features/curriculum/topics/data/repositories/topic_remote_datasource_impl.dart';
+import 'package:math_matric/features/sync/curriculum-bundle-manager/data/datasource/remote/bundle_remote_data_source.dart';
+import 'package:math_matric/features/sync/curriculum-bundle-manager/data/repositories/bundel_remote_data_source_impl.dart';
 
 final getIt = GetIt.instance;
 
 void regiserRemoteDatasourceModule() {
+  getIt.registerLazySingleton<BundleRemoteDataSource>(
+    () => BundleRemoteDataSourceImpl(
+      firestore: getIt<FirebaseFirestore>(), 
+      subjectRemote: getIt<SubjectsRemoteDataSource>(), 
+      topicRemote: getIt<TopicRemoteDataSource>(), 
+      levelRemote: getIt<LevelsRemoteDataSource>(), 
+      questionRemote: getIt<QuestionsRemoteDataSource>(), 
+      examPaperRemote: getIt<ExamPaperRemoteDataSource>(),
+    ),
+  );
+
   getIt.registerLazySingleton<SubjectsRemoteDataSource>(
     () => SubjectsRemoteDataSourceImpl(
       getIt<FirebaseFirestore>(),

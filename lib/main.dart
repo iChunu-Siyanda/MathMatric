@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:math_matric/core/dev/dev_seeder.dart';
 import 'package:math_matric/core/network/services/sync_progress_manager.dart';
 import 'package:math_matric/shared/registrations/ui/register_analytics_streak_module.dart';
 import 'package:math_matric/shared/registrations/setup_locator.dart';
@@ -24,6 +25,9 @@ void main() async {
   }
 
   await setupLocator();
+
+  //Uncomment DevSeeder when you want to reset/sync.
+  await DevSeeder.seedDatabaseOnce();
 
   final syncManager = getIt<SyncProgressManager>(); //SyncProgressManager is an application-lifetime service
   await syncManager.start();

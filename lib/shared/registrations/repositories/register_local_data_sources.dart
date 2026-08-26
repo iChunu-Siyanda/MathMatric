@@ -20,12 +20,29 @@ import 'package:math_matric/features/progress/userlevelprogress/data/datasource/
 import 'package:math_matric/features/progress/userlevelprogress/data/repositories/user_level_progress_local_data_source_impl.dart';
 import 'package:math_matric/features/progress/usertopicprogress/data/datasource/local/user_topic_progress_local_data_source.dart';
 import 'package:math_matric/features/progress/usertopicprogress/data/repositories/user_topic_progress_local_data_source_impl.dart';
+import 'package:math_matric/features/sync/curriculum-bundle-manager/data/datasource/local/curriculum_bundle_local_data_source.dart';
+import 'package:math_matric/features/sync/curriculum-bundle-manager/data/datasource/local/downloaded_bundle_local_data_source.dart';
+import 'package:math_matric/features/sync/curriculum-bundle-manager/data/repositories/curriculum_bundle_local_data_source_impl.dart';
+import 'package:math_matric/features/sync/curriculum-bundle-manager/data/repositories/dowloaded_bundle_local_data_source_impl.dart';
 import 'package:math_matric/features/ui/analytics/data/datasource/analytics_local_data_source.dart';
 import 'package:math_matric/features/ui/analytics/data/repositories/analytics_local_data_source_impl.dart';
 
 final getIt = GetIt.instance;
 
 void registerLocalDataSourceModule() {
+
+  getIt.registerLazySingleton<CurriculumBundleLocalDataSource>(
+    () => CurriculumBundleLocalDataSourceImpl(
+      getIt<AppDatabase>(),
+    ),
+  );
+
+  getIt.registerLazySingleton<DownloadedBundleLocalDataSource>(
+    () => DownloadedBundleLocalDataSourceImpl(
+      getIt<AppDatabase>(),
+    ),
+  );
+
   getIt.registerLazySingleton<SubjectsLocalDataSource>(
     () => SubjectsLocalDatasourceImpl(
       getIt<AppDatabase>(),

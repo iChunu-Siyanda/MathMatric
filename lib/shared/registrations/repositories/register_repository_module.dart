@@ -35,6 +35,11 @@ import 'package:math_matric/features/progress/usertopicprogress/data/datasource/
 import 'package:math_matric/features/progress/usertopicprogress/data/datasource/remote/user_topic_progress_remote_data_source.dart';
 import 'package:math_matric/features/progress/usertopicprogress/data/repositories/user_topic_progress_repository_impl.dart';
 import 'package:math_matric/features/progress/usertopicprogress/domain/repositories/user_topic_progress_repository.dart';
+import 'package:math_matric/features/sync/curriculum-bundle-manager/data/datasource/local/curriculum_bundle_local_data_source.dart';
+import 'package:math_matric/features/sync/curriculum-bundle-manager/data/datasource/local/downloaded_bundle_local_data_source.dart';
+import 'package:math_matric/features/sync/curriculum-bundle-manager/data/datasource/remote/bundle_remote_data_source.dart';
+import 'package:math_matric/features/sync/curriculum-bundle-manager/data/repositories/curriculum_bundle_repository_impl.dart';
+import 'package:math_matric/features/sync/curriculum-bundle-manager/domain/repositories/curriculum_bundle_repository.dart';
 import 'package:math_matric/features/ui/analytics/data/datasource/analytics_local_data_source.dart';
 import 'package:math_matric/features/ui/analytics/data/repositories/analytics_repository_impl.dart';
 import 'package:math_matric/features/ui/analytics/domain/repositories/analytics_repository.dart';
@@ -45,6 +50,14 @@ import 'package:math_matric/shared/services/id_generator.dart';
 final getIt = GetIt.instance;
 
 void registerRepositoryModule() {
+
+  getIt.registerLazySingleton<CurriculumBundleRepository>(
+    () => CurriculumBundleRepositoryImpl(
+      remote: getIt<BundleRemoteDataSource>(),
+      curriculumLocal: getIt<CurriculumBundleLocalDataSource>(),
+      bundleLocal: getIt<DownloadedBundleLocalDataSource>(),
+    ),
+  );
 
   getIt.registerLazySingleton<SubjectsRepository>(
     () => SubjectsRepositoryImpl(

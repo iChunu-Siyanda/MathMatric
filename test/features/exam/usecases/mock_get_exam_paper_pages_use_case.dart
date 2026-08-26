@@ -12,6 +12,5 @@ class MockGetExamPaperPagesUseCase implements GetExamPaperPagesUseCase {
     return pages;
   }
 
-  @override
   ExamPaperStorageRepository get repository => throw UnimplementedError();
 }

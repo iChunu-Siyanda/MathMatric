@@ -12,10 +12,10 @@ import 'package:math_matric/features/progress/services/xp_calculator.dart';
 import 'package:math_matric/features/progress/studysession/domain/repositories/study_session_repository.dart';
 import 'package:math_matric/features/progress/userlevelprogress/domain/repositories/user_level_progress_repository.dart';
 import 'package:math_matric/features/progress/usertopicprogress/domain/repositories/user_topic_progress_repository.dart';
-import 'package:math_matric/features/sync/curriculum-bundle-manager/data/datasource/remote/bundle_remote_data_source.dart';
-import 'package:math_matric/features/sync/curriculum-bundle-manager/data/repositories/bundel_remote_data_source_impl.dart';
+import 'package:math_matric/features/sync/curriculum-bundle-manager/domain/repositories/curriculum_bundle_repository.dart';
 import 'package:math_matric/features/sync/curriculum-bundle-manager/domain/services/content_sync_service.dart';
 import 'package:math_matric/features/sync/curriculum-bundle-manager/domain/services/content_sync_service_impl.dart';
+import 'package:math_matric/features/sync/curriculum-bundle-manager/domain/usecases/download_and_install_bundle_use_case.dart';
 import 'package:math_matric/features/sync/user-data-progress/services/sync_progress_coordinator.dart';
 import 'package:math_matric/shared/services/app_clock.dart';
 import 'package:math_matric/shared/services/id_generator.dart';
@@ -39,14 +39,9 @@ void registerServiceModule() {
   );
   
   //Curriculum Installation/Updates:
-  getIt.registerLazySingleton<BundleRemoteDataSource>(
-    () => BundleRemoteDataSourceImpl(
-      firestore: getIt(),
-      subjectRemote: getIt(),
-      topicRemote: getIt(),
-      levelRemote: getIt(),
-      questionRemote: getIt(),
-      examPaperRemote: getIt(),
+  getIt.registerFactory(
+    () => DownloadAndInstallBundleUseCase(
+      getIt<CurriculumBundleRepository>(),
     ),
   );
 
