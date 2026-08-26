@@ -1,4 +1,9 @@
+import 'package:math_matric/shared/registrations/dependencies/register_app_database_module.dart';
+import 'package:math_matric/shared/registrations/dependencies/register_firebase_module.dart';
+import 'package:math_matric/shared/registrations/repositories/register_remote_data_source_module.dart';
+import 'package:math_matric/shared/registrations/services/register_services_module.dart';
 import 'package:math_matric/shared/registrations/ui/register_analytics_streak_module.dart';
+import 'package:math_matric/shared/registrations/ui/register_class_notes_module.dart';
 import 'package:math_matric/shared/registrations/ui/register_exams_module.dart';
 import 'package:math_matric/shared/registrations/repositories/register_local_data_sources.dart';
 import 'package:math_matric/shared/registrations/ui/register_papers_module.dart';
@@ -6,16 +11,22 @@ import 'package:math_matric/shared/registrations/ui/register_practice_module.dar
 import 'package:math_matric/shared/registrations/ui/register_quiz_module.dart';
 import 'package:math_matric/shared/registrations/repositories/register_repository_module.dart';
 import 'package:math_matric/shared/registrations/ui/register_study_history_module.dart';
+import 'package:math_matric/shared/registrations/ui/register_study_session_module.dart';
+import 'package:math_matric/shared/registrations/ui/register_user_progress_module.dart';
 
 Future<void> setupLocator() async {
+  // ==================================
+  // CORE:
+  // ==================================
   //Firebase
-  //registerFirebaseModule();
+  registerFirebaseModule();
 
   //App Database
-  //setupDependencies();
+  setupDependencies();
 
-  //Study History Bloc:
-  registerStudyHistoryModule();
+  // ==================================
+  // REPOS:
+  // ==================================
 
   // Repositories
   registerRepositoryModule();
@@ -24,10 +35,26 @@ Future<void> setupLocator() async {
   registerLocalDataSourceModule();
 
   //Remote repos
-  //registerRemoteDataSourceModule();
+  registerRemoteDataSourceModule();
+
+  // ===================================
+  // UI:
+  // ===================================
+
+  //Study History:
+  registerStudyHistoryModule();
+
+  //Study Session:
+  registerStudySessionModule();
+
+  //User Progress:
+  registerUserProgressModule();
 
   //Analytics & Streak
   registerAnalyticsStreakModule();
+
+  //Class
+  registerClassNotesModule();
 
   //Exam
   registerExamsModule();
@@ -40,7 +67,8 @@ Future<void> setupLocator() async {
 
   //Quiz
   registerQuizModule();
-
- // Services
- //registerServiceModule();
+ 
+  //======================================
+  // Services
+  registerServiceModule();
 }

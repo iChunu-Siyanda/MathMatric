@@ -18,7 +18,7 @@ import 'package:math_matric/features/sync/curriculum-bundle-manager/data/reposit
 
 final getIt = GetIt.instance;
 
-void regiserRemoteDatasourceModule() {
+void registerRemoteDataSourceModule() {
   getIt.registerLazySingleton<BundleRemoteDataSource>(
     () => BundleRemoteDataSourceImpl(
       firestore: getIt<FirebaseFirestore>(), 
