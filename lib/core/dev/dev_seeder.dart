@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:math_matric/core/constants/bundle_ids.dart';
+import 'package:math_matric/core/database/app_database.dart';
 import 'package:math_matric/features/sync/curriculum-bundle-manager/domain/repositories/curriculum_bundle_repository.dart';
 import 'package:math_matric/shared/registrations/dependencies/register_app_database_module.dart';
 
@@ -25,7 +26,15 @@ class DevSeeder {
       // 2. Allow Firestore a tiny tick to register the active auth state
       await Future.delayed(const Duration(milliseconds: 100));
 
-      debugPrint('🌱 [DevSeeder] Starting dev bundle download from Firestore...');
+      final db = getIt<AppDatabase>();
+      final alreadySeeded = await db.hasCurriculumData();
+
+      if (alreadySeeded) {
+        debugPrint('📦 [DevSeeder] Drift DB already contains data. Skipping seed.');
+        return;
+      }
+
+      debugPrint('🌱 [DevSeeder] DB is empty. Downloading dev bundle from Firestore...');
 
       // 3. Download and install
       final repository = getIt<CurriculumBundleRepository>();

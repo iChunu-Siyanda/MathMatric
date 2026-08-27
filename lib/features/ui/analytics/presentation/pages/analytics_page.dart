@@ -44,7 +44,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
         leading: IconButton(
           onPressed: () => context.pop(),
           icon: const Icon(
-            Icons.menu,
+            Icons.arrow_back,
             color: AppColours.textPrimary,
           ),
         ),

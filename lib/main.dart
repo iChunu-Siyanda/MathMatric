@@ -41,6 +41,8 @@ void main() async {
             (await getApplicationDocumentsDirectory()).path,
           ),
   );
+  // ⚠️ UNCOMMENT THIS ONCE to completely purge old cached state from disk:
+  // await HydratedBloc.storage.clear();
 
   runApp(MathMatricApp(),);
 }

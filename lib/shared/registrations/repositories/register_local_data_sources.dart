@@ -1,7 +1,9 @@
 import 'package:get_it/get_it.dart';
 import 'package:math_matric/core/database/app_database.dart';
 import 'package:math_matric/features/curriculum/exams/data/datasource/local/exam_paper_local_data_source.dart';
+import 'package:math_matric/features/curriculum/exams/data/datasource/storage/local/exam_paper_local_storage_data_source.dart';
 import 'package:math_matric/features/curriculum/exams/data/repositories/local/exam_paper_local_repo_impl.dart';
+import 'package:math_matric/features/curriculum/exams/data/repositories/storage/exam_paper_local_storage_data_source_impl.dart';
 import 'package:math_matric/features/curriculum/levels/data/datasource/local/levels_local_datasource.dart';
 import 'package:math_matric/features/curriculum/levels/data/repositories/levels_local_datasoure.dart';
 import 'package:math_matric/features/curriculum/notes/data/datasource/class_note_local_data_source.dart';
@@ -71,6 +73,10 @@ void registerLocalDataSourceModule() {
     () => ExamPaperLocalDataSourceImpl(
       getIt<AppDatabase>(),
     ),
+  );
+
+  getIt.registerLazySingleton<ExamPaperLocalStorageDataSource>(
+    () => ExamPaperLocalStorageDataSourceImpl(),
   );
 
   getIt.registerLazySingleton<QuestionAttemptLocalDataSource>(

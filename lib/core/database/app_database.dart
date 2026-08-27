@@ -37,6 +37,11 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   AppDatabase.test(super.executor);
+
+  Future<bool> hasCurriculumData() async {
+    final count = await select(topics).get().then((rows) => rows.length);
+    return count > 0;
+  }
   
   @override
   int get schemaVersion => 4; 
