@@ -38,3 +38,21 @@
         │
         └────────────── Firebase Cloud Messaging
         
+
+# The major boundaries:
+CURRICULUM
+    ↓
+STUDENTS ─────────── TUTORS
+    │                   │
+    │                   │
+    └──── BOOKING ──────┘
+             │
+             ↓
+          SESSION
+             │
+       ┌─────┴─────┐
+       ↓           ↓
+    PAYMENT    VIDEO
+       │
+       ↓
+   SETTLEMENT    
