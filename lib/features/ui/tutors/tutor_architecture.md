@@ -1,3 +1,23 @@
+                  STUDENT APP
+                       │
+        ┌──────────────┴──────────────┐
+        │                             │
+       UI                         DOMAIN
+        │                             │
+ Tutors ───────┐              Booking logic
+ Masterclasses ├──→ BLoC ───→ Payment logic
+ Bookings ─────┤              Availability
+ Sessions ─────┤              Eligibility
+ Reviews ──────┘              etc.
+                                      │
+                                      ↓
+                              INFRASTRUCTURE
+                                      │
+                 ┌────────────┬───────┼────────┐
+                 ↓            ↓       ↓        ↓
+              Firestore    Storage  Video   Payments
+
+
 # Tutor:
 1. Classification: Core Firestore document
 2. Firestore: 
