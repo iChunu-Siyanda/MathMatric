@@ -1021,4 +1021,205 @@ A student 30 km away → not eligible.
 TutorLocation = where their service is anchored
 TutorServiceArea = where they are willing to travel
 
+# ===============================================
+# Step 27: PaymentMethod
+# ===============================================
+# Core data:
+PaymentMethod
+├── id
+├── studentId
+├── provider
+├── providerMethodId
+├── type
+├── last4
+├── brand
+├── isDefault
+└── createdAt
+# Status:
+No lifecycle status needed for MVP; isDefault is enough. Provider handles the actual payment-method validity.
+# Dependencies:
+Student → PaymentMethod → Payment
 
+
+# ===============================================
+# Step 28: TutorPayout
+# ===============================================
+# Core data:
+TutorPayout
+├── id
+├── tutorId
+├── earningIds[]
+├── amount
+├── currency
+├── provider
+├── providerPayoutId
+├── status
+├── initiatedAt
+└── completedAt?
+# Status:
+pending
+processing
+paid
+failed
+reversed
+# Dependencies:
+TutorEarning
+      ↓
+TutorPayout
+
+
+# ===============================================
+# Step 29: Cancellation
+# ===============================================
+# Core data:
+Cancellation
+├── id
+├── bookingId?
+├── enrollmentId?
+├── cancelledBy
+├── reason
+├── cancelledAt
+├── refundAmount
+└── refundId?
+# Status: 
+None needed. The cancellation itself is an immutable event.
+# Dependencies:
+Booking / Enrollment
+        ↓
+   Cancellation
+        ↓
+      Refund
+
+
+# ===============================================      
+# Step30: Reschedule
+# ===============================================
+# Core data:
+Reschedule
+├── id
+├── bookingId
+├── requestedBy
+├── previousStartAt
+├── previousEndAt
+├── newStartAt
+├── newEndAt
+├── reason
+└── createdAt
+# Status:
+requested
+approved
+rejected
+cancelled
+# Dependencies:
+Booking
+   ↓
+Reschedule
+   ↓
+Availability
+   ↓
+New booking time
+
+
+# ===============================================
+# Step 31: Dispute
+# ===============================================
+# Core data:
+Dispute
+├── id
+├── bookingId?
+├── paymentId?
+├── sessionId?
+├── raisedBy
+├── category
+├── description
+├── evidencePaths[]
+├── resolution
+├── resolvedBy?
+├── createdAt
+└── resolvedAt?
+# Status:
+open
+under_review
+resolved
+rejected
+closed
+# Dependencies:
+Booking
+Payment
+Session
+   ↓
+Dispute
+   ↓
+Resolution
+
+
+# ===============================================
+# Step 32: FavouriteTutor
+# ===============================================
+# Core data:
+FavouriteTutor
+├── id
+├── studentId
+├── tutorId
+└── createdAt
+# Status: 
+None.
+The record exists = favourite.
+Record removed = no longer favourite.
+# Dependencies:
+Student → FavouriteTutor → Tutor
+
+# ===============================================
+# Step 33: TutorReliability
+# ===============================================
+# Core data:
+TutorReliability
+├── tutorId
+├── completedSessions
+├── cancellationRate
+├── noShowRate
+├── attendanceRate
+├── punctualityScore
+└── updatedAt
+# Status:
+ None. This is derived data.
+# Dependencies:
+Bookings
+Sessions
+Attendance
+Cancellations
+      ↓
+TutorReliability
+      ↓
+TutorMatch
+
+
+# ===============================================
+# Step 34: SupportCase
+# ===============================================
+# Core data:
+SupportCase
+├── id
+├── openedBy
+├── bookingId?
+├── paymentId?
+├── disputeId?
+├── category
+├── description
+├── status
+├── assignedTo?
+├── resolution?
+├── createdAt
+└── closedAt?
+# Status:
+open
+assigned
+in_progress
+resolved
+closed
+# Dependencies:
+Student / Tutor
+       ↓
+ SupportCase
+       ↓
+Dispute / Booking / Payment
