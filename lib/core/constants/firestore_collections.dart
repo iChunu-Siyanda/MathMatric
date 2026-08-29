@@ -20,5 +20,7 @@ class FirestoreCollections {
   static const userTopicProgress = 'userTopicProgress';
   static const studySessions = 'studySessions';
 
+  static const tutors = 'tutors';
+
   const FirestoreCollections._();
 }
