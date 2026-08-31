@@ -1,6 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:math_matric/features/marketplace/tutors/domain/entities/tutor_page.dart';
 
+import '../entities/pagination_cursor.dart';
 import '../repositories/tutor_repository.dart';
 
 class GetTutorsUseCase {
@@ -9,7 +9,7 @@ class GetTutorsUseCase {
 
   Future<TutorPage> call({
     int limit = 20,
-    DocumentSnapshot? startAfter,
+    PaginationCursor? startAfter,
   }) {
     return repository.getTutors(
       limit: limit,

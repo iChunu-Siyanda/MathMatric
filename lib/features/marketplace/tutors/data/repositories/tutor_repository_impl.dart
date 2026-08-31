@@ -1,6 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:math_matric/features/marketplace/tutors/data/datasources/remote/firestore_pagination_cursor.dart';
 import 'package:math_matric/features/marketplace/tutors/data/datasources/remote/tutor_remote_data_source.dart';
 import 'package:math_matric/features/marketplace/tutors/domain/entities/tutor_page.dart';
+
+import '../../domain/entities/pagination_cursor.dart';
 import '../../domain/entities/tutor_entity.dart';
 import '../../domain/repositories/tutor_repository.dart';
 
@@ -14,16 +16,20 @@ class TutorRepositoryImpl implements TutorRepository {
   @override
   Future<TutorPage> getTutors({
     int limit = 20,
-    DocumentSnapshot? startAfter,
+    PaginationCursor? startAfter,
   }) async {
+    final firestoreCursor = startAfter is FirestorePaginationCursor
+        ? startAfter
+        : null;
+
     final result = await remoteDataSource.getTutors(
       limit: limit,
-      startAfter: startAfter,
+      startAfter: firestoreCursor,
     );
 
     return TutorPage(
-      tutors: result.tutors, 
-      lastDocument: result.lastDocument, 
+      tutors: result.tutors,
+      lastCursor: result.lastCursor,
       hasMore: result.hasMore,
     );
   }

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:math_matric/core/constants/firestore_collections.dart';
+import 'package:math_matric/features/marketplace/tutors/data/datasources/remote/firestore_pagination_cursor.dart';
 import 'package:math_matric/features/marketplace/tutors/data/datasources/remote/tutor_remote_data_source.dart';
 import 'package:math_matric/features/marketplace/tutors/data/models/tutor_page_model.dart';
 import '../models/tutor_model.dart';
@@ -17,7 +18,7 @@ class TutorRemoteDataSourceImpl implements TutorRemoteDataSource {
   @override
   Future<TutorPageModel> getTutors({
     int limit = 20,
-    DocumentSnapshot? startAfter,
+    FirestorePaginationCursor? startAfter,
   }) async {
     Query<Map<String, dynamic>> query = _tutors
         .where('profileStatus', isEqualTo: 'published')
@@ -25,7 +26,7 @@ class TutorRemoteDataSourceImpl implements TutorRemoteDataSource {
         .limit(limit);
 
     if (startAfter != null) {
-      query = query.startAfterDocument(startAfter);
+      query = query.startAfterDocument(startAfter.document);
     }
 
     final snapshot = await query.get();
@@ -39,7 +40,11 @@ class TutorRemoteDataSourceImpl implements TutorRemoteDataSource {
             }),
           )
           .toList(),
-      lastDocument: snapshot.docs.isEmpty ? null : snapshot.docs.last,
+      lastCursor: snapshot.docs.isEmpty
+          ? null
+          : FirestorePaginationCursor(
+              document: snapshot.docs.last,
+            ),
       hasMore: snapshot.docs.length == limit,
     );
   }
