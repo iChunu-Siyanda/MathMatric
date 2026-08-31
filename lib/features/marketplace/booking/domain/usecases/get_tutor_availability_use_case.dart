@@ -40,3 +40,28 @@ class GetTutorAvailabilityUseCase {
 // [15:00] ← unavailable
 // 15:30
 // 16:00
+
+      //            STUDENT
+      //               │
+      //         selects date
+      //               │
+      //               ▼
+      //  ┌────────────────────────┐
+      //  │ TutorAvailability      │
+      //  │ Firestore document     │
+      //  └───────────┬────────────┘
+      //              │
+      //              ▼
+      //     Generate slots locally
+      //              │
+      //              │
+      //  ┌───────────▼────────────┐
+      //  │ Confirmed bookings     │
+      //  │ tutor + selected date  │
+      //  └───────────┬────────────┘
+      //              │
+      //              ▼
+      //  BookingConflictChecker
+      //              │
+      //              ▼
+      //       AVAILABLE SLOTS
