@@ -19,6 +19,7 @@ class BookingModel extends BookingEntity {
     super.tutorPhotoUrl,
     required super.createdAt,
     required super.updatedAt,
+    super.respondedAt,
   });
 
   factory BookingModel.fromMap(
@@ -45,8 +46,11 @@ class BookingModel extends BookingEntity {
       tutorPhotoUrl: map['tutorPhotoUrl'] as String?,
 
       createdAt: (map['createdAt'] as Timestamp).toDate(),
-
       updatedAt: (map['updatedAt'] as Timestamp).toDate(),
+
+      respondedAt: map['respondedAt'] == null
+                  ? null
+                  : (map['resondedAt'] as Timestamp).toDate(),
     );
   }
 
@@ -65,6 +69,9 @@ class BookingModel extends BookingEntity {
       'tutorPhotoUrl': tutorPhotoUrl,
       'createdAt': Timestamp.fromDate(createdAt),
       'updatedAt': Timestamp.fromDate(updatedAt),
+      'respondedAt': respondedAt == null
+                    ? null
+                    : Timestamp.fromDate(respondedAt!),
     };
   }
 }

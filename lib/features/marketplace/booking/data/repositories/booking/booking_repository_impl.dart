@@ -1,8 +1,8 @@
 import 'package:math_matric/features/marketplace/booking/data/datasource/booking_remote_datasource.dart';
 
-import '../../domain/entities/booking_entity.dart';
-import '../../domain/repositories/booking_repository.dart';
-import '../models/booking_model.dart';
+import '../../../domain/entities/booking_entity.dart';
+import '../../../domain/repositories/booking_repository.dart';
+import '../../models/booking_model.dart';
 
 class BookingRepositoryImpl implements BookingRepository {
   final BookingRemoteDataSource remoteDataSource;

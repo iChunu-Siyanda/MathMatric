@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:math_matric/core/constants/firestore_collections.dart';
 import 'package:math_matric/features/marketplace/booking/data/datasource/booking_remote_datasource.dart';
 import 'package:math_matric/features/marketplace/booking/domain/entities/booking_status.dart';
-import '../models/booking_model.dart';
+import '../../models/booking_model.dart';
 
 class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
   final FirebaseFirestore firestore;

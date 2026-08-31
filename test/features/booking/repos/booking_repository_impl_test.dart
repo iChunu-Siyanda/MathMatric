@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:math_matric/features/marketplace/booking/data/datasource/booking_remote_datasource.dart';
 import 'package:math_matric/features/marketplace/booking/data/models/booking_model.dart';
-import 'package:math_matric/features/marketplace/booking/data/repositories/booking_repository_impl.dart';
+import 'package:math_matric/features/marketplace/booking/data/repositories/booking/booking_repository_impl.dart';
 import 'package:math_matric/features/marketplace/booking/domain/entities/booking_status.dart';
 import 'package:math_matric/features/marketplace/tutors/domain/entities/teaching_mode.dart';
 import 'package:mocktail/mocktail.dart';

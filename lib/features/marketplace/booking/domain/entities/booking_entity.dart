@@ -25,6 +25,8 @@ class BookingEntity extends Equatable {
   final DateTime createdAt;
   final DateTime updatedAt;
 
+  final DateTime? respondedAt;
+
   const BookingEntity({
     required this.id,
     required this.studentId,
@@ -38,7 +40,8 @@ class BookingEntity extends Equatable {
     required this.tutorName,
     this.tutorPhotoUrl,
     required this.createdAt,
-    required this.updatedAt,
+    required this.updatedAt, 
+    this.respondedAt,
   });
 
   @override
@@ -56,5 +59,6 @@ class BookingEntity extends Equatable {
     tutorPhotoUrl,
     createdAt,
     updatedAt,
+    respondedAt,
   ];
 }

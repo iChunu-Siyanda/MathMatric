@@ -1,7 +1,7 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:math_matric/features/marketplace/booking/data/models/booking_model.dart';
-import 'package:math_matric/features/marketplace/booking/data/repositories/booking_remote_datasource_impl.dart';
+import 'package:math_matric/features/marketplace/booking/data/repositories/booking/booking_remote_datasource_impl.dart';
 import 'package:math_matric/features/marketplace/booking/domain/entities/booking_status.dart';
 import 'package:math_matric/features/marketplace/tutors/domain/entities/teaching_mode.dart';
 
