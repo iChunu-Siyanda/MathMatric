@@ -1,0 +1,4 @@
+enum TeachingMode {
+  online,
+  inPerson,
+}

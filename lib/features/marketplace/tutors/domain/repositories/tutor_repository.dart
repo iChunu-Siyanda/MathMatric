@@ -9,4 +9,12 @@ abstract class TutorRepository {
   });
 
   Future<TutorEntity> getTutor(String tutorId);
+
+  Future<TutorPage> searchTutors({
+    required String searchKey,
+    double? maxPrice,
+    double? minRating,
+    int limit = 20,
+    PaginationCursor? startAfter,
+  });
 }

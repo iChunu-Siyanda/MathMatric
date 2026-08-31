@@ -38,4 +38,30 @@ class TutorRepositoryImpl implements TutorRepository {
   Future<TutorEntity> getTutor(String tutorId) {
     return remoteDataSource.getTutor(tutorId);
   }
+
+  @override
+  Future<TutorPage> searchTutors({
+    required String searchKey,
+    double? maxPrice,
+    double? minRating,
+    int limit = 20,
+    PaginationCursor? startAfter,
+  }) async {
+    final firestoreCursor = startAfter is FirestorePaginationCursor
+        ? startAfter
+        : null;
+
+    final result = await remoteDataSource.searchTutors(
+      searchKey: searchKey,
+      minRating: minRating,
+      limit: limit,
+      startAfter: firestoreCursor,
+    );
+
+    return TutorPage(
+      tutors: result.tutors,
+      lastCursor: result.lastCursor,
+      hasMore: result.hasMore,
+    );
+  }
 }

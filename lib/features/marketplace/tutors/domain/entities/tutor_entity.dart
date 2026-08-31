@@ -33,3 +33,34 @@ class TutorEntity extends Equatable {
     isVerified,
   ];
 }
+
+
+// Example:
+// tutors/
+// └── tutor_001/
+//     │
+//     ├── displayName: "Siya Ndlovu"
+//     ├── photoUrl: "..."
+//     ├── headline: "Grade 12 Mathematics Tutor"
+//     │
+//     ├── profileStatus: "published"
+//     ├── isVerified: true
+//     │
+//     ├── serachKeys:
+//     │   ├── "mathematics_grade12"
+//     │   ├── "mathematics_grade12:quadratic_functions:online"
+//     │   └── "mathematics_grade12:calculus:inPerson"
+//     ├── teachingModes:
+//     │   ├── "online"
+//     │   └── "inPerson"
+//     │
+//     ├── onlinePrice: 180
+//     ├── inPersonPrice: 250
+//     │
+//     ├── rating: 4.8
+//     ├── reviewCount: 124
+//     ├── experienceYears: 6
+//     │
+//     ├── latitude: -26.2041
+//     ├── longitude: 28.0473
+//     └── geohash: "..."

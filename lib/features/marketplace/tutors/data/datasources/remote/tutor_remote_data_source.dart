@@ -9,4 +9,11 @@ abstract class TutorRemoteDataSource {
   });
 
   Future<TutorModel> getTutor(String tutorId);
+
+  Future<TutorPageModel> searchTutors({
+    required String searchKey,
+    double? minRating,
+    int limit = 20,
+    FirestorePaginationCursor? startAfter,
+  });
 }
