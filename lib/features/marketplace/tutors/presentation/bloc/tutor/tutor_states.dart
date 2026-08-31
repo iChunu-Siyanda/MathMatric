@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:math_matric/features/marketplace/tutors/domain/entities/pagination_cursor.dart';
-import '../../domain/entities/tutor_entity.dart';
+import '../../../domain/entities/tutor_entity.dart';
 
 sealed class TutorState extends Equatable{
   const TutorState();

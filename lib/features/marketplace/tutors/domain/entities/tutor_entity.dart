@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:math_matric/features/marketplace/tutors/domain/entities/teaching_mode.dart';
 
 class TutorEntity extends Equatable {
   final String id;
@@ -9,6 +10,7 @@ class TutorEntity extends Equatable {
   final int reviewCount;
   final int experienceYears;
   final bool isVerified;
+  final List<TeachingMode> teachingModes;
 
   const TutorEntity({
     required this.id,
@@ -19,6 +21,7 @@ class TutorEntity extends Equatable {
     required this.reviewCount,
     required this.experienceYears,
     required this.isVerified,
+    required this.teachingModes,
   });
 
   @override
@@ -31,11 +34,18 @@ class TutorEntity extends Equatable {
     reviewCount,
     experienceYears,
     isVerified,
+    teachingModes,
   ];
 }
 
+// teachingModes:
+// [
+//   "online",
+//   "inPerson"
+// ]
 
-// Example:
+
+// Example In Tutors App:
 // tutors/
 // └── tutor_001/
 //     │

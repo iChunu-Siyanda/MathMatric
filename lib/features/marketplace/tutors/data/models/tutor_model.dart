@@ -1,3 +1,5 @@
+import 'package:math_matric/features/marketplace/tutors/domain/entities/teaching_mode.dart';
+
 import '../../domain/entities/tutor_entity.dart';
 
 class TutorModel extends TutorEntity {
@@ -9,7 +11,8 @@ class TutorModel extends TutorEntity {
     required super.rating,
     required super.reviewCount,
     required super.experienceYears,
-    required super.isVerified,
+    required super.isVerified, 
+    required super.teachingModes,
   });
 
   factory TutorModel.fromFirestore(Map<String, dynamic> map) {
@@ -22,6 +25,9 @@ class TutorModel extends TutorEntity {
       reviewCount: (map['reviewCount'] as num?)?.toInt() ?? 0,
       experienceYears: (map['experienceYears'] as num?)?.toInt() ?? 0,
       isVerified: map['isVerified'] as bool? ?? false,
+      teachingModes: (map['teachingModes'] as List<String>? ?? [])
+                    .map((mode) => TeachingMode.values.byName(mode),)
+                    .toList(),
     );
   }
 
@@ -35,6 +41,7 @@ class TutorModel extends TutorEntity {
       'reviewCount': reviewCount,
       'experienceYears': experienceYears,
       'isVerified': isVerified,
+      'teachingModes': teachingModes.map((mode) => mode.name).toList(),
     };
   }
 }

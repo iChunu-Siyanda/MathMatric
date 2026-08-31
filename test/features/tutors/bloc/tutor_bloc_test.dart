@@ -4,9 +4,9 @@ import 'package:math_matric/features/marketplace/tutors/domain/entities/paginati
 import 'package:math_matric/features/marketplace/tutors/domain/entities/tutor_entity.dart';
 import 'package:math_matric/features/marketplace/tutors/domain/entities/tutor_page.dart';
 import 'package:math_matric/features/marketplace/tutors/domain/usecases/get_tutors_use_case.dart';
-import 'package:math_matric/features/marketplace/tutors/presentation/bloc/tutor_bloc.dart';
-import 'package:math_matric/features/marketplace/tutors/presentation/bloc/tutor_event.dart';
-import 'package:math_matric/features/marketplace/tutors/presentation/bloc/tutor_states.dart';
+import 'package:math_matric/features/marketplace/tutors/presentation/bloc/tutor/tutor_bloc.dart';
+import 'package:math_matric/features/marketplace/tutors/presentation/bloc/tutor/tutor_event.dart';
+import 'package:math_matric/features/marketplace/tutors/presentation/bloc/tutor/tutor_states.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockGetTutors extends Mock implements GetTutorsUseCase {}

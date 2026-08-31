@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:math_matric/features/marketplace/tutors/domain/usecases/get_tutors_use_case.dart';
-import 'package:math_matric/features/marketplace/tutors/presentation/bloc/tutor_event.dart';
-import 'package:math_matric/features/marketplace/tutors/presentation/bloc/tutor_states.dart';
+import 'package:math_matric/features/marketplace/tutors/presentation/bloc/tutor/tutor_event.dart';
+import 'package:math_matric/features/marketplace/tutors/presentation/bloc/tutor/tutor_states.dart';
 
 class TutorBloc extends Bloc<TutorEvent, TutorState> {
   final GetTutorsUseCase getTutors;
