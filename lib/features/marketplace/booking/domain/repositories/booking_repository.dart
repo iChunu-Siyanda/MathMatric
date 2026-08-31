@@ -16,4 +16,9 @@ abstract class BookingRepository {
   Future<void> cancelBooking(
     String bookingId,
   );
+
+  Future<List<BookingEntity>> getConfirmedBookingsForDate({
+    required String tutorId,
+    required DateTime date,
+  });
 }

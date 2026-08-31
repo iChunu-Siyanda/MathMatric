@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:math_matric/features/marketplace/booking/data/models/booking_model.dart';
@@ -184,5 +185,114 @@ void main() {
         );
       },
     );
+  
+    group('getConfirmedBookingsForDate', () {
+      test(
+        'returns only confirmed bookings for the requested tutor and date',
+        () async {
+          final date = DateTime(2026, 9, 15);
+
+          await firestore
+              .collection('bookings')
+              .doc('booking-1')
+              .set({
+                'id': 'booking-1',
+                'studentId': 'student-1',
+                'tutorId': 'tutor-1',
+                'scheduledAt': Timestamp.fromDate(
+                  DateTime(2026, 9, 15, 15, 0),
+                ),
+                'durationMinutes': 60,
+                'teachingMode': 'online',
+                'priceCents': 18000,
+                'currency': 'ZAR',
+                'status': 'confirmed',
+                'tutorName': 'Alice',
+                'tutorPhotoUrl': null,
+                'createdAt': Timestamp.fromDate(date),
+                'updatedAt': Timestamp.fromDate(date),
+                'respondedAt': Timestamp.fromDate(date),
+              });
+
+          // Pending — must not be returned.
+          await firestore
+              .collection('bookings')
+              .doc('booking-2')
+              .set({
+                'id': 'booking-2',
+                'studentId': 'student-2',
+                'tutorId': 'tutor-1',
+                'scheduledAt': Timestamp.fromDate(
+                  DateTime(2026, 9, 15, 16, 0),
+                ),
+                'durationMinutes': 60,
+                'teachingMode': 'online',
+                'priceCents': 18000,
+                'currency': 'ZAR',
+                'status': 'pending',
+                'tutorName': 'Alice',
+                'tutorPhotoUrl': null,
+                'createdAt': Timestamp.fromDate(date),
+                'updatedAt': Timestamp.fromDate(date),
+                'respondedAt': null,
+              });
+
+          // Different tutor — must not be returned.
+          await firestore
+              .collection('bookings')
+              .doc('booking-3')
+              .set({
+                'id': 'booking-3',
+                'studentId': 'student-3',
+                'tutorId': 'tutor-2',
+                'scheduledAt': Timestamp.fromDate(
+                  DateTime(2026, 9, 15, 17, 0),
+                ),
+                'durationMinutes': 60,
+                'teachingMode': 'online',
+                'priceCents': 18000,
+                'currency': 'ZAR',
+                'status': 'confirmed',
+                'tutorName': 'Bob',
+                'tutorPhotoUrl': null,
+                'createdAt': Timestamp.fromDate(date),
+                'updatedAt': Timestamp.fromDate(date),
+                'respondedAt': Timestamp.fromDate(date),
+              });
+
+          // Different date — must not be returned.
+          await firestore
+              .collection('bookings')
+              .doc('booking-4')
+              .set({
+            'id': 'booking-4',
+            'studentId': 'student-4',
+            'tutorId': 'tutor-1',
+            'scheduledAt': Timestamp.fromDate(
+              DateTime(2026, 9, 16, 15, 0),
+            ),
+            'durationMinutes': 60,
+            'teachingMode': 'online',
+            'priceCents': 18000,
+            'currency': 'ZAR',
+            'status': 'confirmed',
+            'tutorName': 'Alice',
+            'tutorPhotoUrl': null,
+            'createdAt': Timestamp.fromDate(date),
+            'updatedAt': Timestamp.fromDate(date),
+            'respondedAt': Timestamp.fromDate(date),
+          });
+
+          final result = await dataSource.getConfirmedBookingsForDate(
+            tutorId: 'tutor-1',
+            date: date,
+          );
+
+          expect(result.length, 1);
+          expect(result.first.id, 'booking-1');
+        },
+      );
+    });
+  
   });
 }

@@ -73,4 +73,53 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
       'updatedAt': FieldValue.serverTimestamp(),
     });
   }
+
+  @override
+  Future<List<BookingModel>> getConfirmedBookingsForDate({
+    required String tutorId,
+    required DateTime date,
+  }) async {
+    final startOfDay = DateTime(
+      date.year,
+      date.month,
+      date.day,
+    );
+
+    final endOfDay = startOfDay.add(
+      const Duration(days: 1),
+    );
+
+    final snapshot = await firestore
+        .collection('bookings')
+        .where(
+          'tutorId',
+          isEqualTo: tutorId,
+        )
+        .where(
+          'status',
+          isEqualTo: BookingStatus.confirmed.name,
+        )
+        .where(
+          'scheduledAt',
+          isGreaterThanOrEqualTo: Timestamp.fromDate(
+            startOfDay,
+          ),
+        )
+        .where(
+          'scheduledAt',
+          isLessThan: Timestamp.fromDate(
+            endOfDay,
+          ),
+        )
+        .orderBy('scheduledAt')
+        .get();
+
+    return snapshot.docs
+        .map(
+          (doc) => BookingModel.fromMap(
+            doc.data(),
+          ),
+        )
+        .toList();
+  }
 }

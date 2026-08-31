@@ -44,4 +44,15 @@ class BookingRepositoryImpl implements BookingRepository {
       bookingId,
     );
   }
+
+  @override
+  Future<List<BookingEntity>> getConfirmedBookingsForDate({
+    required String tutorId,
+    required DateTime date,
+  }) {
+    return remoteDataSource.getConfirmedBookingsForDate(
+      tutorId: tutorId,
+      date: date,
+    );
+  }
 }

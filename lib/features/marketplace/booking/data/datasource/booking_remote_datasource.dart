@@ -11,6 +11,11 @@ abstract class BookingRemoteDataSource {
 
   Future<void> cancelBooking(String bookingId);
 
+  Future<List<BookingModel>> getConfirmedBookingsForDate({
+    required String tutorId,
+    required DateTime date,
+  });
+
   // In Tutor's App:
   // Future<void> acceptBooking(
   //   String bookingId,
