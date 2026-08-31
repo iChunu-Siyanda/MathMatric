@@ -14,8 +14,8 @@ class TutorModel extends TutorEntity {
     required super.isVerified, 
     required super.teachingModes, 
     required super.searchKeys, 
-    required super.onlinePrice, 
-    required super.inPersonPrice,
+    required super.onlinePriceCents, 
+    required super.inPersonPriceCents,
     super.bio,
     super.qualification,
     super.institution,
@@ -47,8 +47,8 @@ class TutorModel extends TutorEntity {
           )
           .toList(),
 
-      onlinePrice: (map['onlinePrice'] as num).toDouble(),
-      inPersonPrice: (map['inPersonPrice'] as num).toDouble(),
+      onlinePriceCents: (map['onlinePrice'] as num).toDouble(),
+      inPersonPriceCents: (map['inPersonPrice'] as num).toDouble(),
 
       rating: (map['rating'] as num).toDouble(),
       reviewCount: map['reviewCount'] as int,
@@ -78,8 +78,8 @@ class TutorModel extends TutorEntity {
           .map((mode) => mode.name)
           .toList(),
 
-      'onlinePrice': onlinePrice,
-      'inPersonPrice': inPersonPrice,
+      'onlinePrice': onlinePriceCents,
+      'inPersonPrice': inPersonPriceCents,
 
       'rating': rating,
       'reviewCount': reviewCount,

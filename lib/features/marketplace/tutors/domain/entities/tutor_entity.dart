@@ -13,8 +13,8 @@ class TutorEntity extends Equatable {
   
   final List<String> searchKeys;
   final List<TeachingMode> teachingModes;
-  final double onlinePrice;
-  final double inPersonPrice;
+  final double onlinePriceCents;
+  final double inPersonPriceCents;
 
   final double rating;
   final int reviewCount;
@@ -35,8 +35,8 @@ class TutorEntity extends Equatable {
     this.institution,
     required this.searchKeys,
     required this.teachingModes,
-    required this.onlinePrice,
-    required this.inPersonPrice,
+    required this.onlinePriceCents,
+    required this.inPersonPriceCents,
     required this.rating,
     required this.reviewCount,
     required this.experienceYears,
@@ -57,8 +57,8 @@ class TutorEntity extends Equatable {
     institution,
     searchKeys,
     teachingModes,
-    onlinePrice,
-    inPersonPrice,
+    onlinePriceCents,
+    inPersonPriceCents,
     rating,
     reviewCount,
     experienceYears,

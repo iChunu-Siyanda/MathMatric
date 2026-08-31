@@ -34,7 +34,7 @@ void main() {
     teachingModes: const [
       TeachingMode.online,
       TeachingMode.inPerson,
-    ],
+    ], searchKeys: [], onlinePriceCents: 0.0, inPersonPriceCents: 0.0,
   );
 
   final tutor2 = TutorEntity(
@@ -48,7 +48,7 @@ void main() {
     isVerified: true,
     teachingModes: const [
       TeachingMode.online,
-    ],
+    ], searchKeys: [], onlinePriceCents: 0.0, inPersonPriceCents: 0.0,
   );
 
   setUp(() {

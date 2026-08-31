@@ -33,7 +33,7 @@ void main() {
             rating: 4.8,
             reviewCount: 10,
             experienceYears: 5,
-            isVerified: true, teachingModes: [],
+            isVerified: true, teachingModes: [], searchKeys: [], onlinePriceCents:0.0, inPersonPriceCents:0.0,
           ),
         ],
         lastCursor: null,
@@ -70,7 +70,7 @@ void main() {
         rating: 4.8,
         reviewCount: 10,
         experienceYears: 5,
-        isVerified: true, teachingModes: [],
+        isVerified: true, teachingModes: [], searchKeys: [], onlinePriceCents: 0.0, inPersonPriceCents: 0.0,
       );
 
       when(

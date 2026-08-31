@@ -21,7 +21,10 @@ void main() {
     reviewCount: 100,
     experienceYears: 5,
     isVerified: true, 
-    teachingModes: [],
+    teachingModes: [], 
+    searchKeys: [], 
+    onlinePriceCents: 0.0, 
+    inPersonPriceCents: 0.0,
   );
 
   const tutor2 = TutorEntity(
@@ -31,7 +34,9 @@ void main() {
     reviewCount: 80,
     experienceYears: 4,
     isVerified: true, 
-    teachingModes: [],
+    teachingModes: [], 
+    searchKeys: [], 
+    onlinePriceCents: 0.0, inPersonPriceCents: 0.0,
   );
 
   setUp(() {
