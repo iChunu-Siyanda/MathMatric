@@ -20,7 +20,8 @@ void main() {
     rating: 4.8,
     reviewCount: 100,
     experienceYears: 5,
-    isVerified: true,
+    isVerified: true, 
+    teachingModes: [],
   );
 
   const tutor2 = TutorEntity(
@@ -29,7 +30,8 @@ void main() {
     rating: 4.7,
     reviewCount: 80,
     experienceYears: 4,
-    isVerified: true,
+    isVerified: true, 
+    teachingModes: [],
   );
 
   setUp(() {

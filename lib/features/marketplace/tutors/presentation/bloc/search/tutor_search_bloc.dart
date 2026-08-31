@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:math_matric/features/marketplace/tutors/domain/entities/teaching_mode.dart';
 import 'package:math_matric/features/marketplace/tutors/domain/entities/tutor_search_criteria.dart';
 import 'package:math_matric/features/marketplace/tutors/domain/usecases/search_tutors_use_case.dart';
 import 'tutor_search_event.dart';
@@ -8,6 +9,7 @@ class TutorSearchBloc extends Bloc<TutorSearchEvent, TutorSearchState> {
   final SearchTutors searchTutors;
 
   TutorSearchCriteria? _criteria;
+  TeachingMode? _teachingMode;
 
   TutorSearchBloc({
     required this.searchTutors,
@@ -136,13 +138,15 @@ class TutorSearchBloc extends Bloc<TutorSearchEvent, TutorSearchState> {
 
     if (currentState is! TutorSearchLoaded) return;
 
+    _teachingMode = event.teachingMode;
+
     emit(
       TutorSearchLoaded(
         tutors: currentState.tutors,
         lastCursor: currentState.lastCursor,
         hasMore: currentState.hasMore,
         isLoadingMore: currentState.isLoadingMore,
-        teachingMode: event.teachingMode,
+        teachingMode: _teachingMode,
       ),
     );
   }

@@ -11,7 +11,8 @@ void main() {
       rating: 4.8,
       reviewCount: 125,
       experienceYears: 6,
-      isVerified: true,
+      isVerified: true, 
+      teachingModes: [],
     );
 
     test('fromMap should create TutorModel correctly', () {

@@ -6,22 +6,44 @@ class TutorEntity extends Equatable {
   final String displayName;
   final String? photoUrl;
   final String? headline;
+
+  final String? bio;
+  final String? qualification;
+  final String? institution;
+  
+  final List<String> searchKeys;
+  final List<TeachingMode> teachingModes;
+  final double onlinePrice;
+  final double inPersonPrice;
+
   final double rating;
   final int reviewCount;
   final int experienceYears;
   final bool isVerified;
-  final List<TeachingMode> teachingModes;
+
+  final double? latitude;
+  final double? longitude;
+  final String? geohash;
 
   const TutorEntity({
     required this.id,
     required this.displayName,
     this.photoUrl,
     this.headline,
+    this.bio,
+    this.qualification,
+    this.institution,
+    required this.searchKeys,
+    required this.teachingModes,
+    required this.onlinePrice,
+    required this.inPersonPrice,
     required this.rating,
     required this.reviewCount,
     required this.experienceYears,
     required this.isVerified,
-    required this.teachingModes,
+    this.latitude,
+    this.longitude,
+    this.geohash,
   });
 
   @override
@@ -30,11 +52,20 @@ class TutorEntity extends Equatable {
     displayName,
     photoUrl,
     headline,
+    bio,
+    qualification,
+    institution,
+    searchKeys,
+    teachingModes,
+    onlinePrice,
+    inPersonPrice,
     rating,
     reviewCount,
     experienceYears,
     isVerified,
-    teachingModes,
+    latitude,
+    longitude,
+    geohash,
   ];
 }
 

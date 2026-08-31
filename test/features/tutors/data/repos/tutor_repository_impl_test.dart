@@ -33,7 +33,7 @@ void main() {
             rating: 4.8,
             reviewCount: 10,
             experienceYears: 5,
-            isVerified: true,
+            isVerified: true, teachingModes: [],
           ),
         ],
         lastCursor: null,
@@ -70,7 +70,7 @@ void main() {
         rating: 4.8,
         reviewCount: 10,
         experienceYears: 5,
-        isVerified: true,
+        isVerified: true, teachingModes: [],
       );
 
       when(

@@ -12,7 +12,16 @@ class TutorModel extends TutorEntity {
     required super.reviewCount,
     required super.experienceYears,
     required super.isVerified, 
-    required super.teachingModes,
+    required super.teachingModes, 
+    required super.searchKeys, 
+    required super.onlinePrice, 
+    required super.inPersonPrice,
+    super.bio,
+    super.qualification,
+    super.institution,
+    super.latitude,
+    super.longitude,
+    super.geohash,
   });
 
   factory TutorModel.fromFirestore(Map<String, dynamic> map) {
@@ -21,27 +30,66 @@ class TutorModel extends TutorEntity {
       displayName: map['displayName'] as String,
       photoUrl: map['photoUrl'] as String?,
       headline: map['headline'] as String?,
-      rating: (map['rating'] as num?)?.toDouble() ?? 0.0,
-      reviewCount: (map['reviewCount'] as num?)?.toInt() ?? 0,
-      experienceYears: (map['experienceYears'] as num?)?.toInt() ?? 0,
-      isVerified: map['isVerified'] as bool? ?? false,
-      teachingModes: (map['teachingModes'] as List<String>? ?? [])
-                    .map((mode) => TeachingMode.values.byName(mode),)
-                    .toList(),
+
+      bio: map['bio'] as String?,
+      qualification: map['qualification'] as String?,
+      institution: map['institution'] as String?,
+
+      searchKeys: List<String>.from(
+        map['searchKeys'] ?? const [],
+      ),
+
+      teachingModes: (map['teachingModes'] as List<dynamic>? ?? [])
+          .map(
+            (mode) => TeachingMode.values.byName(
+              mode as String,
+            ),
+          )
+          .toList(),
+
+      onlinePrice: (map['onlinePrice'] as num).toDouble(),
+      inPersonPrice: (map['inPersonPrice'] as num).toDouble(),
+
+      rating: (map['rating'] as num).toDouble(),
+      reviewCount: map['reviewCount'] as int,
+      experienceYears: map['experienceYears'] as int,
+
+      isVerified: map['isVerified'] as bool,
+
+      latitude: (map['latitude'] as num?)?.toDouble(),
+      longitude: (map['longitude'] as num?)?.toDouble(),
+      geohash: map['geohash'] as String?,
     );
   }
 
   Map<String, dynamic> toFirestore() {
     return {
-      'id': id,
       'displayName': displayName,
       'photoUrl': photoUrl,
       'headline': headline,
+
+      'bio': bio,
+      'qualification': qualification,
+      'institution': institution,
+
+      'searchKeys': searchKeys,
+
+      'teachingModes': teachingModes
+          .map((mode) => mode.name)
+          .toList(),
+
+      'onlinePrice': onlinePrice,
+      'inPersonPrice': inPersonPrice,
+
       'rating': rating,
       'reviewCount': reviewCount,
       'experienceYears': experienceYears,
+
       'isVerified': isVerified,
-      'teachingModes': teachingModes.map((mode) => mode.name).toList(),
+
+      'latitude': latitude,
+      'longitude': longitude,
+      'geohash': geohash,
     };
   }
 }

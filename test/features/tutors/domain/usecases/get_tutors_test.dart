@@ -23,7 +23,7 @@ void main() {
       rating: 4.8,
       reviewCount: 10,
       experienceYears: 5,
-      isVerified: true,
+      isVerified: true, teachingModes: [],
     );
 
     const page = TutorPage(
