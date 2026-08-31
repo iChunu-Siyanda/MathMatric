@@ -5,8 +5,8 @@ class FirestoreCollections {
   static const mathmatric = 'mathmatric';
   static const mathslitmatric = 'mathslitmatric';
 
-  static const mathUser = 'mathUser';
-  static const mathLitsUser = 'mathLitsUser';
+  static const mathUser = 'mathematicsUser';
+  static const mathLitsUser = 'mathsLiteracyUser';
   
   static const subjects = 'subjects';
   static const topics = 'topics';
@@ -21,6 +21,7 @@ class FirestoreCollections {
   static const studySessions = 'studySessions';
 
   static const tutors = 'tutors';
+  static const bookings = 'bookings';
 
   const FirestoreCollections._();
 }
