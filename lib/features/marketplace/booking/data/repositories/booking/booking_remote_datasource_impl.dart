@@ -1,16 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:math_matric/core/constants/firestore_collections.dart';
 import 'package:math_matric/features/marketplace/booking/data/datasource/booking_remote_datasource.dart';
+import 'package:math_matric/features/marketplace/booking/data/models/booking_model.dart';
 import 'package:math_matric/features/marketplace/booking/domain/entities/booking_status.dart';
-import '../../models/booking_model.dart';
+import 'package:math_matric/features/marketplace/booking/domain/entities/request_booking_entity.dart';
 
 class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
   final FirebaseFirestore firestore;
+  final FirebaseFunctions functions;
+
   BookingRemoteDataSourceImpl({
     required this.firestore,
+    required this.functions,
   });
 
-  CollectionReference<Map<String, dynamic>> get _bookings => firestore.collection(FirestoreCollections.bookings);
+  CollectionReference<Map<String, dynamic>> get _bookings => firestore.collection(FirestoreCollections.bookings,);
 
   @override
   Future<BookingModel> getBooking(
@@ -55,22 +60,35 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
 
   @override
   Future<BookingModel> createBooking(
-    BookingModel booking,
+    RequestBookingEntity request,
   ) async {
-    await _bookings
-        .doc(booking.id)
-        .set(booking.toFirestore());
+    final callable = functions.httpsCallable('createBooking',);
 
-    return booking;
+    final result = await callable.call({
+      'tutorId': request.tutorId,
+      'scheduledAt': request.scheduledAt
+              .toUtc()
+              .toIso8601String(),
+      'durationMinutes': request.durationMinutes,
+      'teachingMode': request.teachingMode.name,
+    });
+
+    final data = Map<String, dynamic>.from(result.data as Map,);
+
+    return getBooking(data['bookingId'] as String,);
   }
 
   @override
   Future<void> cancelBooking(
     String bookingId,
   ) async {
-    await _bookings.doc(bookingId).update({
-      'status': BookingStatus.cancelled.name,
-      'updatedAt': FieldValue.serverTimestamp(),
+    final callable =
+        functions.httpsCallable(
+      'cancelBooking',
+    );
+
+    await callable.call({
+      'bookingId': bookingId,
     });
   }
 
@@ -85,31 +103,23 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
       date.day,
     );
 
-    final endOfDay = startOfDay.add(
-      const Duration(days: 1),
-    );
+    final endOfDay = startOfDay.add(const Duration(days: 1),);
 
-    final snapshot = await firestore
-        .collection('bookings')
-        .where(
+    final snapshot = await _bookings.where(
           'tutorId',
           isEqualTo: tutorId,
         )
         .where(
           'status',
-          isEqualTo: BookingStatus.confirmed.name,
+          isEqualTo:BookingStatus.confirmed.name,
         )
         .where(
           'scheduledAt',
-          isGreaterThanOrEqualTo: Timestamp.fromDate(
-            startOfDay,
-          ),
+          isGreaterThanOrEqualTo:Timestamp.fromDate(startOfDay,),
         )
         .where(
           'scheduledAt',
-          isLessThan: Timestamp.fromDate(
-            endOfDay,
-          ),
+          isLessThan:Timestamp.fromDate(endOfDay,),
         )
         .orderBy('scheduledAt')
         .get();
@@ -117,7 +127,10 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
     return snapshot.docs
         .map(
           (doc) => BookingModel.fromMap(
-            doc.data(),
+            {
+              ...doc.data(),
+              'id': doc.id,
+            },
           ),
         )
         .toList();

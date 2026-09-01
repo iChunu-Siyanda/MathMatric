@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../../domain/entities/booking_entity.dart';
+import 'package:math_matric/features/marketplace/booking/domain/entities/request_booking_entity.dart';
 
 sealed class BookingRequestEvent extends Equatable {
   const BookingRequestEvent();
@@ -9,12 +9,12 @@ sealed class BookingRequestEvent extends Equatable {
 }
 
 final class BookingRequestSubmittedEvent extends BookingRequestEvent {
-  final BookingEntity booking;
+  final RequestBookingEntity request;
 
-  const BookingRequestSubmittedEvent({required this.booking,});
+  const BookingRequestSubmittedEvent({required this.request,});
 
   @override
-  List<Object?> get props => [booking];
+  List<Object?> get props => [request];
 }
 
 final class BookingRequestReset extends BookingRequestEvent {

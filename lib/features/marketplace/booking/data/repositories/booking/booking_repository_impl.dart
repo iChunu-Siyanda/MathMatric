@@ -1,8 +1,8 @@
 import 'package:math_matric/features/marketplace/booking/data/datasource/booking_remote_datasource.dart';
+import 'package:math_matric/features/marketplace/booking/domain/entities/request_booking_entity.dart';
 
 import '../../../domain/entities/booking_entity.dart';
 import '../../../domain/repositories/booking_repository.dart';
-import '../../models/booking_model.dart';
 
 class BookingRepositoryImpl implements BookingRepository {
   final BookingRemoteDataSource remoteDataSource;
@@ -29,11 +29,9 @@ class BookingRepositoryImpl implements BookingRepository {
 
   @override
   Future<BookingEntity> createBooking(
-    BookingEntity booking,
+    RequestBookingEntity request,
   ) {
-    return remoteDataSource.createBooking(
-      booking as BookingModel,
-    );
+    return remoteDataSource.createBooking(request);
   }
 
   @override

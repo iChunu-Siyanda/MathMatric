@@ -1,3 +1,5 @@
+import 'package:math_matric/features/marketplace/booking/domain/entities/request_booking_entity.dart';
+
 import '../entities/booking_entity.dart';
 
 abstract class BookingRepository {
@@ -10,7 +12,7 @@ abstract class BookingRepository {
   });
 
   Future<BookingEntity> createBooking(
-    BookingEntity booking,
+    RequestBookingEntity request, 
   );
 
   Future<void> cancelBooking(
@@ -21,4 +23,8 @@ abstract class BookingRepository {
     required String tutorId,
     required DateTime date,
   });
+
+  // Stream<BookingEntity> watchBooking(String bookingId);
+
+  // Stream<List<BookingEntity>> watchStudentBookings();
 }
