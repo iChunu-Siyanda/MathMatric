@@ -46,7 +46,6 @@ app.*.map.json
 
 # Node.js / Firebase Functions
 **/node_modules/
-**/lib/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

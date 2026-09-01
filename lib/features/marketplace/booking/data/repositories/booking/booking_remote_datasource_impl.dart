@@ -82,14 +82,9 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
   Future<void> cancelBooking(
     String bookingId,
   ) async {
-    final callable =
-        functions.httpsCallable(
-      'cancelBooking',
-    );
+    final callable = functions.httpsCallable('cancelBooking',);
 
-    await callable.call({
-      'bookingId': bookingId,
-    });
+    await callable.call({'bookingId': bookingId,});
   }
 
   @override
