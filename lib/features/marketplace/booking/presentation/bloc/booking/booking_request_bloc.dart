@@ -22,13 +22,13 @@ class BookingRequestBloc extends Bloc<BookingRequestEvent, BookingRequestState> 
     );
 
     try {
-      final bookingRequest = await createBooking(
+      final booking = await createBooking(
         event.request,
       );
 
       emit(
         BookingRequestSubmittedState(
-          booking: bookingRequest,
+          booking: booking,
         ),
       );
     } catch (e) {
