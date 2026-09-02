@@ -26,7 +26,6 @@ void main() async {
 
   await setupLocator();
 
-  //Uncomment DevSeeder when you want to reset/sync.
   await DevSeeder.seedDatabaseOnce();
 
   final syncManager = getIt<SyncProgressManager>(); //SyncProgressManager is an application-lifetime service

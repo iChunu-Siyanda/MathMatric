@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:math_matric/features/curriculum/exams/domain/entities/exam_paper_entity.dart';
+import 'package:math_matric/features/ui/papers/domain/entities/paper_type.dart';
 import 'package:math_matric/shared/app_routes/routes.dart';
 import 'package:math_matric/shared/entities/section_context_modal.dart';
 import 'package:math_matric/features/ui/exam/domain/entities/exam_page_mode.dart.dart';
@@ -38,11 +41,15 @@ class _ExamPaperPageState extends State<ExamPaperPage> with SingleTickerProvider
   void initState() {
     super.initState();
 
+    final sessionName = widget.contextData.paper.section?.title ?? 
+                      widget.contextData.topic.pageTitle;
+    final paperType = widget.contextData.paperType == PaperType.paper1 ? 'Paper1' : 'Paper2';
+
     context.read<ExamBloc>().add(
       ExamPapersRequested(
-        subjectId: widget.contextData.topic.topicId.toString(), 
-        paperType: widget.contextData.paperType.toString(), 
-        session: widget.contextData.session!.toString(),
+        subjectId: widget.contextData.topic.topicId ?? 'mathematics_grade12', 
+        paperType: paperType, 
+        session: sessionName,
         year: widget.contextData.year, 
       ),
     );
@@ -78,6 +85,11 @@ class _ExamPaperPageState extends State<ExamPaperPage> with SingleTickerProvider
     return BlocListener<ExamBloc, ExamState>(
       listener: (context, state) {
         if (state is ExamPaperPagesLoaded) {
+          debugPrint('--> LOADED PAGES: ${state.pages}');
+          // Check if paths exist on physical device disk
+          for (final path in state.pages) {
+            debugPrint('--> File exists ($path): ${File(path).existsSync()}');
+          }
           context.push(
             Routes.examPaperViewer,
             extra: {
@@ -113,9 +125,23 @@ class _ExamPaperPageState extends State<ExamPaperPage> with SingleTickerProvider
               }
       
               if (state is ExamPaperListLoaded) {
+                debugPrint("DEBUG: Total papers fetched from BLoC: ${state.papers.length}");
+                for (var p in state.papers) {
+                  debugPrint("DEBUG: Paper ID: ${p.id} | isMemo: ${p.isMemo} | isNational: ${p.isNational}");
+                }
+
                 final papers = state.papers
                     .where((p) => isPaper ? !p.isMemo : p.isMemo)
                     .toList();
+
+                debugPrint("DEBUG: Filtered papers for mode ($widget.mode): ${papers.length}");  
+                if (papers.isEmpty) {
+                  return const SliverFillRemaining(
+                    child: Center(
+                      child: Text("No papers found for this criteria."),
+                    ),
+                  );
+                }
       
                 final national = papers
                     .where((p) => p.isNational)

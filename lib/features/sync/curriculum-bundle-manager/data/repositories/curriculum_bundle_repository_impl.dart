@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart' show debugPrint;
 import 'package:math_matric/features/sync/curriculum-bundle-manager/data/datasource/local/curriculum_bundle_local_data_source.dart';
 import 'package:math_matric/features/sync/curriculum-bundle-manager/data/datasource/local/downloaded_bundle_local_data_source.dart';
 import 'package:math_matric/features/sync/curriculum-bundle-manager/data/datasource/remote/bundle_remote_data_source.dart';
@@ -24,6 +25,7 @@ class CurriculumBundleRepositoryImpl implements CurriculumBundleRepository {
     final remoteInfo = await remote.getBundleInfo(bundleId);
 
     if (remoteInfo == null) {
+      debugPrint("CurriculumBundleRepositoryImpl - Bundle $bundleId not found.");
       throw Exception('Bundle $bundleId not found.',);
     }
 

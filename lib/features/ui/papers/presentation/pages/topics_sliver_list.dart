@@ -142,14 +142,14 @@ class _TopicsSliverListState extends State<TopicsSliverList>
           sliver: SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
-                final item = topics[index];
+                final topic = topics[index];
                 final animation = _itemInterval(index);
 
                 final years = TileTopicsP1Data.years;
                 final year = years[index % years.length];
 
                 final session = ExamSession.tryParse(
-                  item.pageTitle?.toString(),
+                  topic.pageTitle,
                 );
 
                 return AnimatedBuilder(
@@ -171,26 +171,27 @@ class _TopicsSliverListState extends State<TopicsSliverList>
                     );
                   },
                   child: TopicListTile(
-                    item: item,
+                    item: topic,
                     onTap: () {
                       debugPrint(
-                        'TopicListTile - topicId: ${item.topicId}',
+                        "Topic List Tile - Topic = $topic"
+                        'TopicListTile - topicId: ${topic.topicId}',
                       );
 
                       context.push(
                         Routes.sectionPage,
                         extra: SectionTypeArguments(
-                          pageTitle: item.pageTitle,
-                          tabs: item.tab.tabs,
-                          topicId: item.topicId,
+                          pageTitle: topic.pageTitle,
+                          tabs: topic.tab.tabs,
+                          topicId: topic.topicId,
                           sectionContext: SectionContext(
                             paper: widget.content,
                             session: session,
-                            topic: item,
+                            topic: topic,
                             paperType: widget.paperType,
                             year: year,
                           ),
-                          tabType: item.tab.tabType,
+                          tabType: topic.tab.tabType,
                         ),
                       );
                     },

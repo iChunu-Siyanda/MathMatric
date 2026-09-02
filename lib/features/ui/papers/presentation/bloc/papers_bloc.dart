@@ -20,8 +20,8 @@ class PapersBloc extends Bloc<PapersEvent, PapersState> {
     try {
       final paper = await getPaperData(event.paperType);
       emit(PapersLoaded(paper));
-    } catch (e) {
-      emit(PapersError('Failed to load paper and Error: $e'));
+    } catch (e,stackTrace) {
+      emit(PapersError('Failed to load paper and Error: $e, StackTrace: $stackTrace'));
     }
   }
 

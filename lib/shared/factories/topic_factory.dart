@@ -12,74 +12,108 @@ import 'package:math_matric/features/ui/quiz/presentation/pages/quizzes_page.dar
 import 'package:math_matric/shared/entities/tab_type.dart';
 
 class TopicFactory {
-  static Map<TabType, TabModel> tabSets = {
-    //My Progress
-    TabType.progress: TabModel(tabs: [
-      SectionTab(
+  static final Map<TabType, TabModel> tabSets = {
+    // -------------------------------------------------------------------------
+    // MY PROGRESS
+    // -------------------------------------------------------------------------
+    TabType.progress: TabModel(
+      tabs: [
+        SectionTab(
           title: "Streak",
-          builder: (ctx) =>
-              AnalyticsPage()), //Lazy-loaded widgets in the builder
-      SectionTab(title: "Scores", builder: (ctx) => AnalyticsPage())
-    ], tabType: TabType.progress),
+          builder: (_) => AnalyticsPage(),
+        ),
+        SectionTab(
+          title: "Scores",
+          builder: (_) => AnalyticsPage(),
+        ),
+      ],
+      tabType: TabType.progress,
+    ),
 
-    //Class Notes
+    // -------------------------------------------------------------------------
+    // CLASS NOTES
+    // -------------------------------------------------------------------------
     TabType.classNotes: TabModel(
       tabs: [
         SectionTab(
           title: "Tips",
-          builder: (ctx) => ClassNotesTips(),
+          builder: (_) => ClassNotesTips(),
         ),
-        SectionTab(title: "Class Notes", builder: (ctx) => ClassNotesPage(topicId: ctx.topic.topicId!,))
+        SectionTab(
+          title: "Class Notes",
+          builder: (ctx) => ClassNotesPage(
+            topicId: ctx.topic.topicId ?? 'general',
+          ),
+        ),
       ],
       tabType: TabType.classNotes,
     ),
 
-    //Practice
+    // -------------------------------------------------------------------------
+    // PRACTICE PAPERS
+    // -------------------------------------------------------------------------
     TabType.practicePapers: TabModel(
       tabs: [
         SectionTab(
           title: "Quiz",
-          builder: (ctx) => QuizzesPage(topicId: ctx.topic.topicId!,),
+          builder: (ctx) => QuizzesPage(
+            topicId: ctx.topic.topicId ?? 'general',
+          ),
         ),
         SectionTab(
           title: "Practice Tests",
-          builder: (ctx) => PracticePage(topicId: ctx.topic.topicId!,),
+          builder: (ctx) => PracticePage(
+            topicId: ctx.topic.topicId ?? 'general',
+          ),
         ),
       ],
       tabType: TabType.practicePapers,
     ),
 
-    //Exams
+    // -------------------------------------------------------------------------
+    // EXAM PAPERS & MEMOS (Supports National & Provincial per Year)
+    // -------------------------------------------------------------------------
     TabType.exam: TabModel(
       tabs: [
         SectionTab(
-            title: "Questions",
-            examMode: ExamPageMode.paper,
-            builder: (ctx) {
-              if (ctx.topic.paperId == null) {
-                debugPrint("DEBUG: paperId is null for topic: ${ctx.topic}");
-                return const Center(child: Text("Error: Paper ID missing"));
-              }
-              return ExamPaperPage(
-                contextData: ctx,
-                mode: ExamPageMode.paper,
-                paperId: ctx.topic.paperId!, 
-              );
-            }),
+          title: "Questions",
+          examMode: ExamPageMode.paper,
+          builder: (ctx) {
+            final paperId = ctx.topic.paperId ?? ctx.topic.topicId;
+            if (paperId == null) {
+              debugPrint("DEBUG: Missing paperId and topicId for context: $ctx");
+              return const Center(child: Text("Error: Subject ID missing"));
+            }
+            return ExamPaperPage(
+              contextData: ctx,
+              mode: ExamPageMode.paper,
+              paperId: paperId,
+            );
+          },
+        ),
         SectionTab(
           title: "Memo",
           examMode: ExamPageMode.memo,
-          builder: (ctx) => ExamPaperPage(
-            contextData: ctx,
-            mode: ExamPageMode.memo,
-            paperId: ctx.topic.paperId!, 
-          ),
+          builder: (ctx) {
+            final paperId = ctx.topic.paperId ?? ctx.topic.topicId;
+            if (paperId == null) {
+              return const Center(child: Text("Error: Subject ID missing"));
+            }
+            return ExamPaperPage(
+              contextData: ctx,
+              mode: ExamPageMode.memo,
+              paperId: paperId,
+            );
+          },
         ),
       ],
       tabType: TabType.exam,
     ),
   };
 
+  // ---------------------------------------------------------------------------
+  // YEAR RANGE GENERATOR (Exams: March, June, Prelims, November, IEB)
+  // ---------------------------------------------------------------------------
   static List<TopicItem> yearRange({
     required String title,
     required List<int> years,
@@ -87,13 +121,17 @@ class TopicFactory {
     required Color Function(int index) colorPicker,
     required IconData Function(int index) iconPicker,
     required String month,
+    String subjectId = 'mathematics_grade12',
   }) {
     return List.generate(years.length, (i) {
       final y = years[i];
+
       return TopicItem(
+        // Passes subjectId down so ExamPaperPage queries all National & Provincial papers for this year
+        topicId: subjectId,
+        paperId: subjectId,
         title: "$y",
         subtitle: "Grade 12 · Paper 1",
-        paperId: "${month.toLowerCase()}_p1_$y",
         color: colorPicker(i),
         icon: iconPicker(i),
         pageTitle: title,
@@ -102,22 +140,30 @@ class TopicFactory {
     });
   }
 
+  // ---------------------------------------------------------------------------
+  // CATEGORIES GENERATOR (Class Notes, Practice, Progress)
+  // ---------------------------------------------------------------------------
   static List<TopicItem> categories({
     required String title,
     required List<String> names,
     required TabType tabType,
     required Color Function(int index) colorPicker,
     required IconData Function(int index) iconPicker,
+    String subjectId = 'mathematics_grade12',
   }) {
     return List.generate(names.length, (i) {
+      final topicName = names[i];
+      final topicSlug = topicName.toLowerCase().replaceAll(' ', '_');
+
       return TopicItem(
-        title: names[i],
-        topicId: names[i],
+        topicId: topicSlug, // e.g. "algebra", "functions"
+        paperId: subjectId,
+        title: topicName,
         subtitle: "Grade 12 · Paper 1",
         color: colorPicker(i),
         icon: iconPicker(i),
         pageTitle: title,
-        tab: tabSets[tabType]!, 
+        tab: tabSets[tabType]!,
       );
     });
   }

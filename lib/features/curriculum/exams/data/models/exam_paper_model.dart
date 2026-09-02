@@ -38,8 +38,7 @@ class ExamPaperModel extends ExamPaperEntity {
       isNational: json['isNational'] as bool,
       year: json['year'] as int,
       pageCount: json['pageCount'] as int,
-      //downloaded: json['downloaded'] as bool? ?? false,
-      version: json['version'] as int,
+      version: json['version'] as int ,
     );
   }
 

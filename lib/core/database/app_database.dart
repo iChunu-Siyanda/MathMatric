@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:flutter/material.dart' show debugPrint;
 import 'package:math_matric/core/database/tables/class_notes.dart';
 import 'package:math_matric/core/database/tables/downloaded_bundle.dart';
 import 'package:math_matric/core/database/tables/exam_papers.dart';
@@ -39,8 +40,23 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.test(super.executor);
 
   Future<bool> hasCurriculumData() async {
-    final count = await select(topics).get().then((rows) => rows.length);
-    return count > 0;
+    final subjectsCount = await select(subjects).get().then((rows) => rows.length);
+    final topicsCount = await select(topics).get().then((rows) => rows.length);
+    final papersCount = await select(examPapers).get().then((rows) => rows.length);
+
+    debugPrint('[DB Check] Subjects count: $subjectsCount | Topics count: $topicsCount | Exam Papers count: $papersCount');
+
+    return subjectsCount > 0 && topicsCount > 0 && papersCount > 0;
+  }
+
+  Future<void> debugDumpExamPapers() async {
+    final allPapers = await select(examPapers).get();
+    debugPrint('--- DRIFT DB DUMP (${allPapers.length} total rows) ---');
+    for (final paper in allPapers) {
+      debugPrint(
+        'ID: ${paper.id} | Subject: ${paper.subjectId} | Session: ${paper.session} | Type: ${paper.paperType} | Year: ${paper.year}',
+      );
+    }
   }
   
   @override
@@ -68,6 +84,9 @@ LazyDatabase _openConnection() {
       p.join(dir.path, 'math_matric.db'),
     );
 
-    return NativeDatabase(file);
+    return NativeDatabase.createInBackground(
+      file,
+      logStatements: true,
+    );
   });
 }

@@ -1,6 +1,6 @@
 class FirestoreCollections {
   static const curriculum = 'curriculum';
-  static const userdata = 'userdata';
+  static const userdata = 'students';
 
   static const mathmatric = 'mathmatric';
   static const mathslitmatric = 'mathslitmatric';
@@ -12,7 +12,7 @@ class FirestoreCollections {
   static const topics = 'topics';
   static const levels = 'levels';
   static const questions = 'questions';
-  static const examPapers = 'examPapers';
+  static const examPaper = 'examPaper';
   static const bundles = 'bundles';
 
   static const questionAttempts = 'questionAttempts';

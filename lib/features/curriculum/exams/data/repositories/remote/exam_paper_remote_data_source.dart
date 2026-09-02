@@ -7,14 +7,33 @@ class ExamPaperRemoteDataSourceImpl  implements ExamPaperRemoteDataSource {
   final FirebaseFirestore firestore;
   ExamPaperRemoteDataSourceImpl(this.firestore);
 
-  DocumentReference<Map<String, dynamic>> get firestoreRef => firestore
+  CollectionReference<Map<String, dynamic>> get firestoreRef => firestore
                                               .collection(FirestoreCollections.curriculum)
-                                              .doc(FirestoreCollections.mathmatric);
+                                              .doc(FirestoreCollections.mathmatric)
+                                              .collection(FirestoreCollections.examPaper);
 
   @override
+  Future<List<ExamPaperModel>> getExamPapersBySubject(
+    String subjectId,
+  ) async {
+    final snapshot = await firestoreRef
+        .where(
+          'subjectId',
+          isEqualTo: subjectId,
+        )
+        .get();
+
+    return snapshot.docs.map(
+      (doc) => ExamPaperModel.fromFirestore(
+        doc.data(),
+      ),
+    )
+    .toList();
+  }
+
+   @override
   Future<List<ExamPaperModel>> getAllExamPapers() async {
     final snapshot = await firestoreRef
-        .collection(FirestoreCollections.examPapers)
         .get();
 
     return snapshot.docs
@@ -27,7 +46,6 @@ class ExamPaperRemoteDataSourceImpl  implements ExamPaperRemoteDataSource {
     String paperId,
   ) async {
     final doc = await firestoreRef
-        .collection(FirestoreCollections.examPapers)
         .doc(paperId)
         .get();
 
@@ -37,32 +55,10 @@ class ExamPaperRemoteDataSourceImpl  implements ExamPaperRemoteDataSource {
   }
 
   @override
-  Future<List<ExamPaperModel>> getExamPapersBySubject(
-    String subjectId,
-  ) async {
-    final snapshot = await firestoreRef
-        .collection(FirestoreCollections.examPapers)
-        .where(
-          'subjectId',
-          isEqualTo: subjectId,
-        )
-        .get();
-
-    return snapshot.docs
-        .map(
-          (doc) => ExamPaperModel.fromFirestore(
-            doc.data(),
-          ),
-        )
-        .toList();
-  }
-
-  @override
   Future<List<ExamPaperModel>> getExamPapersByYear(
     int year,
   ) async {
     final snapshot = await firestoreRef
-        .collection(FirestoreCollections.examPapers)
         .where('year', isEqualTo: year)
         .get();
 
@@ -76,7 +72,6 @@ class ExamPaperRemoteDataSourceImpl  implements ExamPaperRemoteDataSource {
     String session,
   ) async {
     final snapshot = await firestoreRef
-        .collection(FirestoreCollections.examPapers)
         .where('session', isEqualTo: session)
         .get();
 
@@ -88,7 +83,6 @@ class ExamPaperRemoteDataSourceImpl  implements ExamPaperRemoteDataSource {
   @override
   Future<List<ExamPaperModel>> getNationalExamPapers() async {
     final snapshot = await firestoreRef
-        .collection(FirestoreCollections.examPapers)
         .where('isNational', isEqualTo: true)
         .get();
 
@@ -102,7 +96,6 @@ class ExamPaperRemoteDataSourceImpl  implements ExamPaperRemoteDataSource {
     String province,
   ) async {
     final snapshot = await firestoreRef
-        .collection(FirestoreCollections.examPapers)
         .where('province', isEqualTo: province)
         .get();
 
@@ -114,7 +107,6 @@ class ExamPaperRemoteDataSourceImpl  implements ExamPaperRemoteDataSource {
   @override
   Future<List<ExamPaperModel>> getMemoPapers() async {
     final snapshot = await firestoreRef
-        .collection(FirestoreCollections.examPapers)
         .where('isMemo', isEqualTo: true)
         .get();
 
@@ -128,7 +120,6 @@ class ExamPaperRemoteDataSourceImpl  implements ExamPaperRemoteDataSource {
     String parentPaperId,
   ) async {
     final snapshot = await firestoreRef
-        .collection(FirestoreCollections.examPapers)
         .where(
           'parentPaperId',
           isEqualTo: parentPaperId,
@@ -143,7 +134,6 @@ class ExamPaperRemoteDataSourceImpl  implements ExamPaperRemoteDataSource {
   @override
   Future<List<ExamPaperModel>> getExamPapersByType(String paperType) async {
     final snapshot = await firestoreRef
-        .collection(FirestoreCollections.examPapers)
         .where(
           'paperType',
           isEqualTo: paperType,

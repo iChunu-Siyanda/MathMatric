@@ -1,10 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:math_matric/core/database/app_database.dart';
 import 'package:math_matric/features/ui/exam/domain/usercases/download_exam_paper_use_case.dart';
 import 'package:math_matric/features/ui/exam/domain/usercases/get_exam_paper_data.dart';
 import 'package:math_matric/features/ui/exam/domain/usercases/get_exam_paper_use_case.dart';
 import 'package:math_matric/features/ui/exam/domain/usercases/open_exam_paper_use_case.dart';
 import 'package:math_matric/features/ui/exam/presentation/bloc/exam_event.dart';
 import 'package:math_matric/features/ui/exam/presentation/bloc/exam_state.dart';
+import 'package:math_matric/shared/registrations/dependencies/register_app_database_module.dart';
 
 class ExamBloc extends Bloc<ExamEvent, ExamState> {
   final GetExamPapersUseCase getExamPapers;
@@ -30,6 +32,9 @@ class ExamBloc extends Bloc<ExamEvent, ExamState> {
     Emitter<ExamState> emit,
   ) async {
     emit(const ExamLoading());
+
+    final db = getIt<AppDatabase>();
+    await db.debugDumpExamPapers();
 
     try {
       final papers = await getExamPapers(

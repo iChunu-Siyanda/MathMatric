@@ -9,11 +9,11 @@ class PapersRepositoryImpl implements PapersTileRepository {
 
   @override
   Future<List<PaperItem>> getPaper1Tile() async {
-    return PaperTileLocalData().getPaperItems(PaperType.paper1);
+    return localDataSource.getPaperItems(PaperType.paper1);
   }
 
   @override
   Future<List<PaperItem>> getPaper2Tile() async {
-    return PaperTileLocalData().getPaperItems(PaperType.paper2);
+    return localDataSource.getPaperItems(PaperType.paper2);
   }
 }

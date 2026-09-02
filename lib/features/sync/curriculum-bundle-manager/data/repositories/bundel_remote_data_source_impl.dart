@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:math_matric/core/constants/firestore_collections.dart';
 import 'package:math_matric/features/curriculum/exams/data/datasource/remote/exam_paper_remote_data_source.dart';
 import 'package:math_matric/features/curriculum/exams/data/models/exam_paper_model.dart';
@@ -38,8 +39,11 @@ class BundleRemoteDataSourceImpl implements BundleRemoteDataSource {
         .collection(FirestoreCollections.bundles)
         .doc(bundleId)
         .get();
-
-    if (!doc.exists) {return null;}
+    
+    if (!doc.exists) {
+      debugPrint("BundleRemoteDataSourceImpl getBundleInfo - Bundle with ID $bundleId does not exist");
+      return null;
+    }
 
     return BundleInfoModel.fromFirestore(doc.data()!,);
   }
@@ -51,6 +55,7 @@ class BundleRemoteDataSourceImpl implements BundleRemoteDataSource {
     final info = await getBundleInfo(bundleId);
 
     if (info == null) {
+      debugPrint('BundleRemoteDataSource - Bundle $bundleId not found.');
       throw Exception(
         'Bundle $bundleId not found.',
       );
@@ -61,6 +66,7 @@ class BundleRemoteDataSourceImpl implements BundleRemoteDataSource {
     );
 
     if (subject == null) {
+      debugPrint('BundleRemoteDataSource - Subject ${info.subjectId} not found.');
       throw Exception(
         'Subject ${info.subjectId} not found.',
       );
@@ -80,6 +86,10 @@ class BundleRemoteDataSourceImpl implements BundleRemoteDataSource {
     final topics = results[0] as List<TopicModel>;
 
     final examPapers = results[1] as List<ExamPaperModel>;
+    for(var exam in examPapers){
+      debugPrint(exam.id);
+    }
+    if(examPapers == []) debugPrint("BundleRemoteDataSource - examPapers is empty");
 
     // Get levels for all topics in parallel.
     final levelResults = await Future.wait(

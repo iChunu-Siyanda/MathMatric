@@ -4,7 +4,14 @@ import 'package:math_matric/features/curriculum/exams/domain/repositories/exam_p
 
 class ExamPapersRepositoryImpl implements ExamPapersRepository {
   final ExamPaperLocalDataSource local;
-  ExamPapersRepositoryImpl(this.local);
+  //final ExamPaperLocalStorageDataSource localDataSource;
+  //final ExamPaperRemoteStorageDataSource remoteDataSource;
+  
+  ExamPapersRepositoryImpl(
+    this.local,
+    //this.localDataSource, 
+    //this.remoteDataSource,
+  );
 
   @override
   Future<List<ExamPaperEntity>> getAllExamPapers() async {
@@ -12,6 +19,45 @@ class ExamPapersRepositoryImpl implements ExamPapersRepository {
 
     return models.map((m) => m.toEntity()).toList();
   }
+
+  // Future<List<String>> getPaperPages({
+  //   required String paperId,
+  //   required String storagePath,
+  //   required int pageCount,
+  // }) async {
+  //   final List<String> resolvedPaths = [];
+
+  //   for (int i = 1; i <= pageCount; i++) {
+  //     final fileName = 'p-${i.toString().padLeft(2, '0')}.webp';
+      
+  //     // 1. Check if the page exists in device storage
+  //     final localPath = await localDataSource.getPagePath(
+  //       paperId: paperId,
+  //       fileName: fileName,
+  //     );
+
+  //     if (localPath != null) {
+  //       resolvedPaths.add(localPath);
+  //     } else {
+  //       // 2. Download from Firebase Storage if missing
+  //       final bytes = await remoteDataSource.downloadPage(
+  //         storagePath: storagePath,
+  //         fileName: fileName,
+  //       );
+
+  //       // 3. Persist to device storage via path_provider
+  //       final savedPath = await localDataSource.savePage(
+  //         paperId: paperId,
+  //         fileName: fileName,
+  //         data: bytes,
+  //       );
+
+  //       resolvedPaths.add(savedPath);
+  //     }
+  //   }
+
+  //   return resolvedPaths;
+  // }
 
   @override
   Future<ExamPaperEntity?> getExamPaper(

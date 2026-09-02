@@ -21,7 +21,7 @@ class DevSeeder {
         debugPrint('✅ [DevSeeder] Signed in as UID: ${credential.user?.uid}');
       } else {
         debugPrint('🔑 [DevSeeder] Using active auth session (UID: ${auth.currentUser?.uid})');
-      }
+      } 
 
       // 2. Allow Firestore a tiny tick to register the active auth state
       await Future.delayed(const Duration(milliseconds: 100));

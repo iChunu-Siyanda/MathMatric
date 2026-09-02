@@ -8,7 +8,7 @@ class SectionContext {
   final TopicItem topic;
   final PaperType paperType;
   final ExamSession? session;
-  final int? year; // Add year as an optional parameter
+  final int? year; 
 
   const SectionContext({
     required this.paper,

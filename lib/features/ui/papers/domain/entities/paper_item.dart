@@ -1,3 +1,5 @@
+import 'package:math_matric/features/ui/papers/domain/entities/topic_item.dart';
+
 class PaperItem {
   final String title;
   final String brief;
@@ -12,7 +14,7 @@ class PaperItem {
 
 class Section {
   final String title;
-  final List<dynamic> topics;
+  final List<TopicItem> topics;
   final String ? paperId;
 
   const Section({
