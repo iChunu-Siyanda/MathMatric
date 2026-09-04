@@ -1,5 +1,6 @@
 import 'package:math_matric/features/marketplace/booking/data/datasource/booking_remote_datasource.dart';
 import 'package:math_matric/features/marketplace/booking/domain/entities/request_booking_entity.dart';
+import 'package:math_matric/features/marketplace/booking/domain/entities/reschedule_booking_entity.dart';
 
 import '../../../domain/entities/booking_entity.dart';
 import '../../../domain/repositories/booking_repository.dart';
@@ -41,6 +42,13 @@ class BookingRepositoryImpl implements BookingRepository {
     return remoteDataSource.cancelBooking(
       bookingId,
     );
+  }
+
+  @override
+  Future<BookingEntity> rescheduleBooking(
+    RescheduleBookingEntity request,
+  ) {
+    return remoteDataSource.rescheduleBooking(request);
   }
 
   @override

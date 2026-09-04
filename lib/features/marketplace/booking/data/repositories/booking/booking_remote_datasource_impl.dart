@@ -5,6 +5,7 @@ import 'package:math_matric/features/marketplace/booking/data/datasource/booking
 import 'package:math_matric/features/marketplace/booking/data/models/booking_model.dart';
 import 'package:math_matric/features/marketplace/booking/domain/entities/booking_status.dart';
 import 'package:math_matric/features/marketplace/booking/domain/entities/request_booking_entity.dart';
+import 'package:math_matric/features/marketplace/booking/domain/entities/reschedule_booking_entity.dart';
 
 class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
   final FirebaseFirestore firestore;
@@ -27,7 +28,7 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
       throw Exception('Booking not found');
     }
 
-    return BookingModel.fromMap({
+    return BookingModel.fromFirestore({
       ...doc.data()!,
       'id': doc.id,
     });
@@ -50,7 +51,7 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
 
     return snapshot.docs
         .map(
-          (doc) => BookingModel.fromMap({
+          (doc) => BookingModel.fromFirestore({
             ...doc.data(),
             'id': doc.id,
           }),
@@ -88,6 +89,26 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
   }
 
   @override
+  Future<BookingModel> rescheduleBooking(
+    RescheduleBookingEntity request,
+  ) async {
+    final callable = functions.httpsCallable('rescheduleBooking');
+
+    final result = await callable.call({
+      'bookingId': request.bookingId,
+      'newScheduledAt': request.newScheduledAt.toUtc().toIso8601String(),
+    });
+
+    final data = Map<String, dynamic>.from(
+      result.data as Map,
+    );
+
+    return getBooking(
+      data['bookingId'] as String,
+    );
+  }
+
+  @override
   Future<List<BookingModel>> getConfirmedBookingsForDate({
     required String tutorId,
     required DateTime date,
@@ -121,7 +142,7 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
 
     return snapshot.docs
         .map(
-          (doc) => BookingModel.fromMap(
+          (doc) => BookingModel.fromFirestore(
             {
               ...doc.data(),
               'id': doc.id,

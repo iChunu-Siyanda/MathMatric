@@ -62,3 +62,12 @@ view()
 service()
 
 The callable is your transport layer. handleCreateBooking() contains the actual application flow.
+
+# Type Annotation: Dart Vs TypeScript
+| Dart                          |TypeScript                           |
+| ----------------------------- | ------------------------------------ |
+| `MockTransaction transaction` | `const transaction: MockTransaction` |
+| `String name`                 | `const name: string`                 |
+| `int age`                     | `const age: number`                  |
+| `bool active`                 | `const active: boolean`              |
+

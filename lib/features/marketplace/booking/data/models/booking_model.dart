@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:math_matric/features/marketplace/booking/domain/entities/booking_cancellation_reason.dart';
 import 'package:math_matric/features/marketplace/tutors/domain/entities/teaching_mode.dart';
 
 import '../../domain/entities/booking_entity.dart';
@@ -20,15 +21,23 @@ class BookingModel extends BookingEntity {
     required super.createdAt,
     required super.updatedAt,
     super.respondedAt,
+    super.cancelledBy,
+    super.cancelledAt,
+    super.cancellationReason,
+    super.cancellationComment,
+    super.rescheduledAt,
+    super.rescheduledBy,
+    super.previousScheduledAt,
   });
 
-  factory BookingModel.fromMap(
+  factory BookingModel.fromFirestore(
     Map<String, dynamic> map,
   ) {
     final scheduledAt = map['scheduledAt'];
     final createdAt = map['createdAt'];
     final updatedAt = map['updatedAt'];
     final respondedAt = map['respondedAt'];
+    final cancelledAt = map['cancelledAt'];
 
     return BookingModel(
       id: map['id'] as String,
@@ -68,7 +77,26 @@ class BookingModel extends BookingEntity {
       respondedAt: respondedAt is Timestamp
           ? respondedAt.toDate()
           : null,
-    );
+
+      cancelledBy: map['cancelledBy'] as String?,
+      cancelledAt: cancelledAt is Timestamp
+                  ? cancelledAt.toDate()  
+                  : null,
+      cancellationReason: map['cancellationReason'] != null
+                        ? BookingCancellationReason.values.byName(map['cancellationReason'] as String,)
+                        : null,
+      cancellationComment: map['cancellationComment'] as String?,
+
+      rescheduledAt: map['rescheduledAt'] != null
+          ? (map['rescheduledAt'] as Timestamp).toDate()
+          : null,
+
+      rescheduledBy: map['rescheduledBy'] as String?,
+
+      previousScheduledAt: map['previousScheduledAt'] != null
+          ? (map['previousScheduledAt'] as Timestamp).toDate()
+          : null,
+          );
   }
 
   Map<String, dynamic> toFirestore() {
@@ -89,6 +117,13 @@ class BookingModel extends BookingEntity {
       'respondedAt': respondedAt == null
                     ? null
                     : Timestamp.fromDate(respondedAt!),
+      'cancelledBy': cancelledBy,
+      'cancelledAt': cancelledAt == null ? null : Timestamp.fromDate(cancelledAt!),
+      'cancellationReason': cancellationReason,  
+      'cancellationComment': cancellationComment, 
+      'rescheduledAt': rescheduledAt,
+      'rescheduledBy': rescheduledBy,
+      'previousScheduledAt': previousScheduledAt,          
     };
   }
 }

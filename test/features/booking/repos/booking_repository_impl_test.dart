@@ -1,16 +1,17 @@
-// import 'package:flutter_test/flutter_test.dart';
-// import 'package:math_matric/features/marketplace/booking/data/datasource/booking_remote_datasource.dart';
-// import 'package:math_matric/features/marketplace/booking/data/models/booking_model.dart';
-// import 'package:math_matric/features/marketplace/booking/data/repositories/booking/booking_repository_impl.dart';
-// import 'package:math_matric/features/marketplace/booking/domain/entities/booking_status.dart';
-// import 'package:math_matric/features/marketplace/tutors/domain/entities/teaching_mode.dart';
-// import 'package:mocktail/mocktail.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:math_matric/features/marketplace/booking/data/datasource/booking_remote_datasource.dart';
+import 'package:math_matric/features/marketplace/booking/data/models/booking_model.dart';
+import 'package:math_matric/features/marketplace/booking/data/repositories/booking/booking_repository_impl.dart';
+import 'package:math_matric/features/marketplace/booking/domain/entities/booking_status.dart';
+import 'package:math_matric/features/marketplace/booking/domain/entities/reschedule_booking_entity.dart';
+import 'package:math_matric/features/marketplace/tutors/domain/entities/teaching_mode.dart';
+import 'package:mocktail/mocktail.dart';
 
-// class MockBookingRemoteDataSource extends Mock implements BookingRemoteDataSource {}
+class MockBookingRemoteDataSource extends Mock implements BookingRemoteDataSource {}
 
-// void main() {
-//   late MockBookingRemoteDataSource dataSource;
-//   late BookingRepositoryImpl repository;
+void main() {
+  late MockBookingRemoteDataSource dataSource;
+  late BookingRepositoryImpl repository;
 
 //   final booking = BookingModel(
 //     id: 'booking-1',
@@ -28,13 +29,64 @@
 //     updatedAt: DateTime(2026, 8, 31),
 //   );
 
-//   setUp(() {
-//     dataSource = MockBookingRemoteDataSource();
+  setUp(() {
+    dataSource = MockBookingRemoteDataSource();
 
-//     repository = BookingRepositoryImpl(
-//       remoteDataSource: dataSource,
-//     );
-//   });
+    repository = BookingRepositoryImpl(
+      remoteDataSource: dataSource,
+    );
+  });
+
+  test(
+    'reschedules booking through the remote datasource',
+    () async {
+      final newScheduledAt = DateTime(
+        2026,
+        9,
+        11,
+        15,
+      );
+
+      final request = RescheduleBookingEntity(
+        bookingId: 'booking-1',
+        newScheduledAt: newScheduledAt,
+      );
+
+      final expectedBooking = BookingModel(
+        id: 'booking-1',
+        studentId: 'student-1',
+        tutorId: 'tutor-1',
+        scheduledAt: newScheduledAt,
+        durationMinutes: 60,
+        teachingMode: TeachingMode.online,
+        priceCents: 25000,
+        currency: 'ZAR',
+        status: BookingStatus.confirmed,
+        tutorName: 'Jane Tutor',
+        tutorPhotoUrl: null,
+        createdAt: DateTime(2026, 9, 1),
+        updatedAt: DateTime(2026, 9, 11),
+        respondedAt: null,
+        rescheduledAt: DateTime(2026, 9, 11),
+        rescheduledBy: 'student',
+        previousScheduledAt: DateTime(2026,9,10,15,),
+      );
+
+      when(
+        () => dataSource.rescheduleBooking(request,),
+      ).thenAnswer(
+        (_) async => expectedBooking,
+      );
+
+      final result = await repository.rescheduleBooking(request);
+
+      expect(result, expectedBooking);
+
+      verify(
+        () => dataSource.rescheduleBooking(request,),
+      ).called(1);
+    },
+  );
 
 //   group('getBooking', () {
 //     test('returns booking from datasource', () async {
@@ -116,4 +168,4 @@
 //       ).called(1);
 //     });
 //   });
-// }
+ }
