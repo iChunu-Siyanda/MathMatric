@@ -1,6 +1,7 @@
 import {FieldValue,Timestamp,} from "firebase-admin/firestore";
 import { db } from "../shared/firebase";
 import {NotificationType,} from "./notification_types";
+import { notificationDeliveryService, NotificationDeliveryService } from "./notification_delivery_service";
 
 export interface NotificationTarget {
   feature: string;
@@ -20,12 +21,14 @@ export interface CreateNotificationRequest {
 export class NotificationService {
   constructor(
     private readonly firestore: FirebaseFirestore.Firestore,
+    private readonly delivery: NotificationDeliveryService,
   ) {}
 
   async create(request: CreateNotificationRequest,): Promise<string> {
     const notificationRef = this.firestore.collection("notifications").doc();
 
-    notificationRef.set({
+    // Create and save motification:
+    await notificationRef.set({ //since set() is asyncronous
       studentId: request.studentId,
       type: request.type,
       title: request.title,
@@ -38,8 +41,23 @@ export class NotificationService {
         : null,
     });
 
+    // Send push
+    await this.delivery.send({
+      studentId: request.studentId,
+      title: request.title,
+      body: request.body,
+      data: {
+        type: request.type,
+        feature: request.target.feature,
+        resourceId: request.target.resourceId,
+        ...(request.target.secondaryResourceId
+          ? {secondaryResourceId: request.target.secondaryResourceId,}
+          : {}),
+      },
+    });
+
     return notificationRef.id;
   }
 }
 
-export const notificationService = new NotificationService(db);
+export const notificationService = new NotificationService(db, notificationDeliveryService);
