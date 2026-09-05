@@ -1,212 +1,231 @@
-import {Timestamp } from "firebase-admin/firestore";
 import { describe, expect, it, vi } from "vitest";
 import {NotificationService,} from "./notification_service";
-import {NotificationType,} from "./notification_types";
 
 describe("NotificationService", () => {
-  it("creates a notification with the correct data", async () => {
-    const set = vi.fn().mockResolvedValue(undefined);
-    const doc = vi.fn().mockReturnValue({
+  function createFirestoreMock() {
+    const notificationRef = {
       id: "notification-123",
-      set,});
-    const collection = vi.fn().mockReturnValue({doc,});
+      set: vi.fn().mockResolvedValue(undefined),
+    };
 
-    const firestore = {collection,} as any;
-    const service = new NotificationService(firestore);
+    const notificationsCollection = {
+      doc: vi.fn().mockReturnValue(notificationRef),
+    };
+
+    const firestore = {
+      collection: vi.fn().mockReturnValue(notificationsCollection,),
+    };
+
+    return {
+      firestore,
+      notificationRef,
+      notificationsCollection,
+    };
+  }
+
+  function createDeliveryMock() {
+    return {
+      send: vi.fn().mockResolvedValue(undefined),
+    };
+  }
+
+  it("creates a notification in Firestore", async () => {
+    const {firestore,notificationRef,} = createFirestoreMock();
+
+    const delivery = createDeliveryMock();
+
+    const service = new NotificationService(
+      firestore as any,
+      delivery as any,
+    );
 
     const notificationId = await service.create({
-      studentId: "student-1",
-      type: NotificationType.quizAvailable,
+      studentId: "student-123",
+      type: "quiz_available",
       title: "New quiz available",
-      body: "A new quiz is available for Quadratic Functions.",
+      body: "A new mathematics quiz is ready.",
       target: {
         feature: "quiz",
-        resourceId: "quiz-1",
-        secondaryResourceId: "topic-1",
+        resourceId: "quiz-123",
       },
     });
 
-    expect(notificationId).toBeDefined();
-    expect(notificationId).toBeTypeOf("string");
-    expect(collection).toHaveBeenCalledWith("notifications",);
-    expect(doc).toHaveBeenCalledTimes(1);
-    expect(set).toHaveBeenCalledTimes(1);
-    expect(set).toHaveBeenCalledWith({
-      studentId: "student-1",
-      type: NotificationType.quizAvailable,
-      title: "New quiz available",
-      body: "A new quiz is available for Quadratic Functions.",
-      target: {
-        feature: "quiz",
-        resourceId: "quiz-1",
-        secondaryResourceId: "topic-1",
-      },
-      createdAt: expect.anything(),
-      readAt: null,
-      expiresAt: null,
-    });
+    expect(notificationId).toBe(
+      "notification-123",
+    );
+
+    expect(notificationRef.set).toHaveBeenCalledOnce();
   });
 
-  it("creates a notification without a secondary resource", async () => {
-    const set = vi.fn().mockResolvedValue(undefined);
-    const doc = vi.fn().mockReturnValue({set,});
-    const collection = vi.fn().mockReturnValue({doc,});
+  it("sends the notification through the delivery service", async () => {
+    const {firestore,} = createFirestoreMock();
 
-    const firestore = {collection,} as any;
-    const service = new NotificationService(firestore);
+    const delivery = createDeliveryMock();
+
+    const service = new NotificationService(
+      firestore as any,
+      delivery as any,
+    );
 
     await service.create({
-      studentId: "student-1",
-      type: NotificationType.system,
-      title: "Welcome to MathMatric",
-      body: "Welcome to MathMatric.",
+      studentId: "student-123",
+      type: "quiz_available",
+      title: "New quiz available",
+      body: "A new mathematics quiz is ready.",
       target: {
-        feature: "home",
-        resourceId: "home",
+        feature: "quiz",
+        resourceId: "quiz-123",
       },
     });
 
-    expect(set).toHaveBeenCalledWith({
-      studentId: "student-1",
-      type: NotificationType.system,
-      title: "Welcome to MathMatric",
-      body: "Welcome to MathMatric.",
-      target: {
-        feature: "home",
-        resourceId: "home",
+    expect(delivery.send).toHaveBeenCalledWith({
+      studentId: "student-123",
+      title: "New quiz available",
+      body: "A new mathematics quiz is ready.",
+      data: {
+        type: "quiz_available",
+        feature: "quiz",
+        resourceId: "quiz-123",
       },
-      createdAt: expect.anything(),
-      readAt: null,
-      expiresAt: null,
     });
   });
 
-  it("stores expiresAt when provided", async () => {
-    const set = vi.fn().mockResolvedValue(undefined);
-    const doc = vi.fn().mockReturnValue({set,});
-    const collection = vi.fn().mockReturnValue({doc,});
+  it("includes secondaryResourceId when provided", async () => {
+    const {firestore,} = createFirestoreMock();
 
-    const firestore = {collection,} as any;
-    const service = new NotificationService(firestore);
-    const expiresAt = new Date("2026-09-30T23:59:59.000Z",);
+    const delivery = createDeliveryMock();
+
+    const service = new NotificationService(
+      firestore as any,
+      delivery as any,
+    );
 
     await service.create({
-      studentId: "student-1",
-      type: NotificationType.quizAvailable,
-      title: "New quiz",
-      body: "A new quiz is available.",
+      studentId: "student-123",
+      type: "quiz_assigned",
+      title: "Quiz assigned",
+      body: "You have been assigned a quiz.",
       target: {
         feature: "quiz",
-        resourceId: "quiz-1",
+        resourceId: "quiz-123",
+        secondaryResourceId: "topic-456",
       },
-      expiresAt,
     });
 
-    expect(set).toHaveBeenCalledWith({
-      studentId: "student-1",
-      type: NotificationType.quizAvailable,
-      title: "New quiz",
-      body: "A new quiz is available.",
-      target: {
+    expect(delivery.send).toHaveBeenCalledWith({
+      studentId: "student-123",
+      title: "Quiz assigned",
+      body: "You have been assigned a quiz.",
+      data: {
+        type: "quiz_assigned",
         feature: "quiz",
-        resourceId: "quiz-1",
+        resourceId: "quiz-123",
+        secondaryResourceId: "topic-456",
       },
-      createdAt: expect.anything(),
-      readAt: null,
-      expiresAt: Timestamp.fromDate(expiresAt),
     });
   });
 
-  it("returns the generated notification ID", async () => {
-    const set = vi.fn().mockResolvedValue(undefined);
-    const doc = vi.fn().mockReturnValue({
-      id: "notification-123",
-      set,
-    });
-    const collection = vi.fn().mockReturnValue({doc,});
+  it("waits for Firestore before sending the push", async () => {
+    const {firestore,notificationRef,} = createFirestoreMock();
 
-    const firestore = {collection,} as any;
-    const service = new NotificationService(firestore);
+    const delivery = createDeliveryMock();
 
-    const result = await service.create({
-      studentId: "student-1",
-      type: NotificationType.masterclassAvailable,
-      title: "New masterclass",
-      body: "A new masterclass is available.",
-      target: {
-        feature: "masterclass",
-        resourceId: "masterclass-1",
+    let firestoreCompleted = false;
+
+    notificationRef.set.mockImplementation(async () => {firestoreCompleted = true;},);
+
+    delivery.send.mockImplementation(
+      async () => {
+        expect(firestoreCompleted).toBe(true);
       },
-    });
+    );
 
-    expect(result).toBe("notification-123");
-  });
+    const service = new NotificationService(
+      firestore as any,
+      delivery as any,
+    );
 
-  it("waits for Firestore to finish writing", async () => {
-    let resolveSet!: () => void;
-
-    const setPromise = new Promise<void>((resolve) => {resolveSet = resolve;});
-
-    const set = vi.fn().mockReturnValue(setPromise);
-    const doc = vi.fn().mockReturnValue({
-      id: "notification-123",
-      set,
-    });
-    const collection = vi.fn().mockReturnValue({doc,});
-
-    const firestore = {collection,} as any;
-    const service = new NotificationService(firestore);
-
-    const createPromise = service.create({
-      studentId: "student-1",
-      type: NotificationType.system,
+    await service.create({
+      studentId: "student-123",
+      type: "system",
       title: "System message",
-      body: "This is a system message.",
+      body: "Hello.",
       target: {
         feature: "home",
         resourceId: "home",
       },
     });
 
-    let completed = false;
-
-    createPromise.then(() => {completed = true;});
-
-    await Promise.resolve();
-
-    expect(completed).toBe(false);
-
-    resolveSet();
-
-    await createPromise;
-
-    expect(completed).toBe(true);
+    expect(delivery.send).toHaveBeenCalledOnce();
   });
 
-  it("propagates Firestore errors", async () => {
-    const error = new Error("Firestore write failed",);
+  it("does not send a push when Firestore creation fails", async () => {
+    const {
+      firestore,
+      notificationRef,
+    } = createFirestoreMock();
 
-    const set = vi.fn().mockRejectedValue(error);
-    const doc = vi.fn().mockReturnValue({
-      id: "notification-123",
-      set,
-    });
-    const collection = vi.fn().mockReturnValue({doc,});
+    const delivery = createDeliveryMock();
 
-    const firestore = {collection,} as any;
-    const service = new NotificationService(firestore);
+    notificationRef.set.mockRejectedValue(
+      new Error("Firestore failure"),
+    );
+
+    const service = new NotificationService(
+      firestore as any,
+      delivery as any,
+    );
 
     await expect(
       service.create({
-        studentId: "student-1",
-        type: NotificationType.system,
+        studentId: "student-123",
+        type: "system",
         title: "System message",
-        body: "This is a system message.",
+        body: "Hello.",
         target: {
           feature: "home",
           resourceId: "home",
         },
       }),
-    ).rejects.toThrow("Firestore write failed");
+    ).rejects.toThrow("Firestore failure");
+
+    expect(delivery.send).not.toHaveBeenCalled();
+  });
+
+  it("propagates delivery errors after Firestore succeeds", async () => {
+    const {
+      firestore,
+      notificationRef,
+    } = createFirestoreMock();
+
+    const delivery = createDeliveryMock();
+
+    notificationRef.set.mockResolvedValue(
+      undefined,
+    );
+
+    delivery.send.mockRejectedValue(
+      new Error("FCM failure"),
+    );
+
+    const service = new NotificationService(
+      firestore as any,
+      delivery as any,
+    );
+
+    await expect(
+      service.create({
+        studentId: "student-123",
+        type: "system",
+        title: "System message",
+        body: "Hello.",
+        target: {
+          feature: "home",
+          resourceId: "home",
+        },
+      }),
+    ).rejects.toThrow("FCM failure");
+
+    expect(notificationRef.set).toHaveBeenCalledOnce();
   });
 });
