@@ -22,6 +22,7 @@ class FirestoreCollections {
 
   static const tutors = 'tutors';
   static const bookings = 'bookings';
+  static const payments = 'payments';
 
   const FirestoreCollections._();
 }

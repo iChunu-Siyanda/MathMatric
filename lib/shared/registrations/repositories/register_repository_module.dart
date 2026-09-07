@@ -16,6 +16,18 @@ import 'package:math_matric/features/curriculum/subjects/data/repositories/subje
 import 'package:math_matric/features/curriculum/subjects/domain/repositories/subjects_repository.dart';
 import 'package:math_matric/features/curriculum/topics/data/repositories/topic_repository_impl.dart';
 import 'package:math_matric/features/curriculum/topics/domain/repositories/topic_repository.dart';
+import 'package:math_matric/features/marketplace/booking/data/datasource/booking_remote_datasource.dart';
+import 'package:math_matric/features/marketplace/booking/data/datasource/tutor_availability_remaote_data_source.dart';
+import 'package:math_matric/features/marketplace/booking/data/repositories/availability/tutor_availability_repository_impl.dart';
+import 'package:math_matric/features/marketplace/booking/data/repositories/booking/booking_repository_impl.dart';
+import 'package:math_matric/features/marketplace/booking/domain/repositories/booking_repository.dart';
+import 'package:math_matric/features/marketplace/booking/domain/repositories/tutor_availability_repository.dart';
+import 'package:math_matric/features/marketplace/payments/data/datasources/payment_remote_datasource.dart';
+import 'package:math_matric/features/marketplace/payments/data/repositories/payment_repository_impl.dart';
+import 'package:math_matric/features/marketplace/payments/domain/repositories/payment_repository.dart';
+import 'package:math_matric/features/marketplace/tutors/data/datasources/remote/tutor_remote_data_source.dart';
+import 'package:math_matric/features/marketplace/tutors/data/repositories/tutor_repository_impl.dart';
+import 'package:math_matric/features/marketplace/tutors/domain/repositories/tutor_repository.dart';
 import 'package:math_matric/features/progress/questionattempts/data/datasource/local/questions_attempt_local_data_source.dart';
 import 'package:math_matric/features/progress/questionattempts/data/datasource/remote/question_attempt_remote_data_source.dart';
 import 'package:math_matric/features/progress/questionattempts/data/repositories/questions_attempts_repository.dart';
@@ -138,5 +150,21 @@ void registerRepositoryModule() {
 
   getIt.registerLazySingleton(
     () => HabitRepository(getIt(),getIt<AppClock>()),
+  );
+
+  getIt.registerLazySingleton<TutorRepository>(
+    () => TutorRepositoryImpl(remoteDataSource: getIt<TutorRemoteDataSource>(),)
+  );
+
+  getIt.registerLazySingleton<BookingRepository>(
+    () => BookingRepositoryImpl(remoteDataSource: getIt<BookingRemoteDataSource>(),)
+  );
+
+  getIt.registerLazySingleton<PaymentRepository>(
+    () => PaymentRepositoryImpl(remoteDataSource: getIt<PaymentRemoteDataSource>(),),
+  );
+
+  getIt.registerLazySingleton<TutorAvailabilityRepository>(
+    () => TutorAvailabilityRepositoryImpl(dataSource: getIt<TutorAvailabilityRemoteDataSource>())
   );
 }

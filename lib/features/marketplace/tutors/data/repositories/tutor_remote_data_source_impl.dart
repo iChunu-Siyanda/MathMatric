@@ -8,9 +8,7 @@ import '../models/tutor_model.dart';
 class TutorRemoteDataSourceImpl implements TutorRemoteDataSource {
   final FirebaseFirestore firestore;
 
-  TutorRemoteDataSourceImpl({
-    required this.firestore,
-  });
+  TutorRemoteDataSourceImpl({required this.firestore,});
 
   CollectionReference<Map<String, dynamic>> get _tutors => firestore.collection(FirestoreCollections.tutors);
 

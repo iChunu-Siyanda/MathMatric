@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:math_matric/features/curriculum/exams/data/datasource/remote/exam_paper_remote_data_source.dart';
@@ -13,6 +14,14 @@ import 'package:math_matric/features/curriculum/subjects/data/datasource/remote/
 import 'package:math_matric/features/curriculum/subjects/data/repositories/subjects_remote_datasource_repository.dart';
 import 'package:math_matric/features/curriculum/topics/data/datasource/remote/topic_remote_datasource.dart';
 import 'package:math_matric/features/curriculum/topics/data/repositories/topic_remote_datasource_impl.dart';
+import 'package:math_matric/features/marketplace/booking/data/datasource/booking_remote_datasource.dart';
+import 'package:math_matric/features/marketplace/booking/data/datasource/tutor_availability_remaote_data_source.dart';
+import 'package:math_matric/features/marketplace/booking/data/repositories/availability/tutor_availability_remaote_data_source_impl.dart';
+import 'package:math_matric/features/marketplace/booking/data/repositories/booking/booking_remote_datasource_impl.dart';
+import 'package:math_matric/features/marketplace/payments/data/datasources/payment_remote_datasource.dart';
+import 'package:math_matric/features/marketplace/payments/data/repositories/payment_remote_datasource_impl.dart';
+import 'package:math_matric/features/marketplace/tutors/data/datasources/remote/tutor_remote_data_source.dart';
+import 'package:math_matric/features/marketplace/tutors/data/repositories/tutor_remote_data_source_impl.dart';
 import 'package:math_matric/features/progress/questionattempts/data/datasource/remote/question_attempt_remote_data_source.dart';
 import 'package:math_matric/features/progress/questionattempts/data/repositories/question_attempt_remote_data_source_impl.dart';
 import 'package:math_matric/features/progress/studysession/data/datasource/remote/study_session_remote_data_source.dart';
@@ -95,6 +104,28 @@ void registerRemoteDataSourceModule() {
   getIt.registerLazySingleton<UserTopicProgressRemoteDataSource>(
     () => UserTopicProgressRemoteDataSourceImpl(
       getIt<FirebaseFirestore>(),
+    ),
+  );
+
+  getIt.registerLazySingleton<TutorRemoteDataSource>(
+    () => TutorRemoteDataSourceImpl(firestore: getIt<FirebaseFirestore>(),),
+  );
+
+  getIt.registerLazySingleton<BookingRemoteDataSource>(
+    () => BookingRemoteDataSourceImpl(
+      firestore: getIt<FirebaseFirestore>(), 
+      functions: getIt<FirebaseFunctions>(),
+    ),
+  );
+
+  getIt.registerLazySingleton<TutorAvailabilityRemoteDataSource>(
+    () => TutorAvailabilityRemoteDataSourceImpl(firestore: getIt<FirebaseFirestore>(),),
+  );
+
+  getIt.registerLazySingleton<PaymentRemoteDataSource>(
+    () => PaymentRemoteDataSourceImpl(
+      functions: getIt<FirebaseFunctions>(),
+      firestore: getIt<FirebaseFirestore>(),
     ),
   );
 }

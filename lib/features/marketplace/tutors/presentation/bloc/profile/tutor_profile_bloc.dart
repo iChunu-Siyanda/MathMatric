@@ -3,8 +3,7 @@ import 'package:math_matric/features/marketplace/tutors/domain/usecases/get_tuto
 import 'tutor_profile_event.dart';
 import 'tutor_profile_state.dart';
 
-class TutorProfileBloc
-    extends Bloc<TutorProfileEvent, TutorProfileState> {
+class TutorProfileBloc extends Bloc<TutorProfileEvent, TutorProfileState> {
   final GetTutorProfileUseCase getTutorProfile;
 
   TutorProfileBloc({

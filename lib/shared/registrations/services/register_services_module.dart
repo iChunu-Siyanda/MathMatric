@@ -6,6 +6,9 @@ import 'package:math_matric/core/network/repositories/internet_checker.dart';
 import 'package:math_matric/core/network/services/connectivity_service_impl.dart';
 import 'package:math_matric/core/network/services/internet_checker_impl.dart';
 import 'package:math_matric/core/network/services/sync_progress_manager.dart';
+import 'package:math_matric/features/marketplace/booking/domain/services/availability_slot_generator.dart';
+import 'package:math_matric/features/marketplace/booking/domain/services/booking_conflict_checker.dart';
+import 'package:math_matric/features/marketplace/tutors/domain/services/tutor_search_key_builder.dart';
 import 'package:math_matric/features/progress/questionattempts/domain/repositories/question_atempts_repository.dart';
 import 'package:math_matric/features/progress/services/user_progress_calculator.dart';
 import 'package:math_matric/features/progress/services/xp_calculator.dart';
@@ -98,5 +101,17 @@ void registerServiceModule() {
 
   getIt.registerLazySingleton<XPCalculator>(
     () => XPCalculator(),
+  );
+
+  getIt.registerLazySingleton<TutorSearchKeyBuilder>(
+    () => TutorSearchKeyBuilder(),
+  );
+
+  getIt.registerLazySingleton<AvailabilitySlotGenerator>(
+    () => AvailabilitySlotGenerator(),
+  );
+
+  getIt.registerLazySingleton<BookingConflictChecker>(
+    () => BookingConflictChecker(),
   );
 }

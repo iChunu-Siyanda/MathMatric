@@ -1,9 +1,10 @@
 enum BookingStatus {
-  pending, // Student submitted request.
-  confirmed, // Tutor accepted request.
-  declined, // Tutor declined the request.
-  cancelled, // Student/tutor/system cancelled.
-  completed, // Lesson Finished.
+  pending,          // Student submitted request.
+  paymentRequired,  // Tutor accepted; student must pay.
+  confirmed,        // Payment succeeded; lesson is confirmed.
+  declined,         // Tutor declined the request.
+  cancelled,        // Student/tutor/system cancelled.
+  completed,        // Lesson finished.
 }
 
 // student clicks Book:

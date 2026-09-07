@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:math_matric/features/marketplace/booking/domain/usecases/get_student_bookings.dart';
 import 'package:math_matric/features/marketplace/booking/presentation/bloc/history/booking_history_event.dart';
@@ -5,11 +6,11 @@ import 'package:math_matric/features/marketplace/booking/presentation/bloc/histo
 
 class BookingHistoryBloc extends Bloc<BookingHistoryEvent,BookingHistoryState> {
   final GetStudentBookings getStudentBookings;
-  final String studentId;
+  final FirebaseAuth student;
 
   BookingHistoryBloc({
     required this.getStudentBookings,
-    required this.studentId,
+    required this.student,
   }) : super(const BookingHistoryInitial(),) {
     on<BookingHistoryRequested>(_onRequested,);
     on<BookingHistoryRefreshRequested>( _onRefreshRequested,);
@@ -20,9 +21,9 @@ class BookingHistoryBloc extends Bloc<BookingHistoryEvent,BookingHistoryState> {
     Emitter<BookingHistoryState> emit,
   ) async {
     emit(const BookingHistoryLoading(),);
-
+    
     try {
-      final bookings =await getStudentBookings(studentId: studentId,);
+      final bookings = await getStudentBookings(studentId: student.currentUser!.uid,);
 
       emit(BookingHistoryLoaded(bookings: bookings,),);
     } catch (e) {
@@ -35,7 +36,7 @@ class BookingHistoryBloc extends Bloc<BookingHistoryEvent,BookingHistoryState> {
     Emitter<BookingHistoryState> emit,
   ) async {
     try {
-      final bookings = await getStudentBookings(studentId: studentId,);
+      final bookings = await getStudentBookings(studentId: student.currentUser!.uid,);
 
       emit(BookingHistoryLoaded(bookings: bookings,),);
     } catch (e) {

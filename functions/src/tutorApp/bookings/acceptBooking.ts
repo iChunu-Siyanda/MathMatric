@@ -5,6 +5,7 @@ import {db} from "../../shared/firebase";
 import {getTutorDayBounds} from "../../shared/timezone";
 import {NotificationService, notificationService} from "../../notifications/notification_service";
 import { NotificationType } from "../../notifications/notification_types";
+import { BookingStatus } from "../../bookings/booking_status";
 
 interface AcceptBookingRequest {
   bookingId: string;
@@ -153,7 +154,7 @@ export async function handleAcceptBooking(
 
       return {
         bookingId,
-        status: "confirmed",
+        status: BookingStatus.paymentRequired,
         studentId: booking.studentId,
       };
     },
