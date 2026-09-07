@@ -29,10 +29,23 @@ service cloud.firestore {
     }
 
     // ============================================================
-    // PURE MATHEMATICS STUDENTS
+    // Student Accounts
     // ============================================================
 
-    match /students/mathematicsUser/{studentId} {
+    match /studentAccounts/{studentId} {
+
+      // Students may read their own account.
+      allow read: if request.auth != null && request.auth.uid == studentId;
+
+      // Account creation/update is handled by Cloud Functions.
+      allow write: if false;
+    }
+
+    // ============================================================
+    // PURE MATHEMATICS STUDENTS:
+    // ============================================================
+
+    match /students/pure_maths_students/users/{studentId} {
 
       // Student's own profile/root document
       allow read, write: if request.auth != null
@@ -61,10 +74,10 @@ service cloud.firestore {
 
 
     // ============================================================
-    // MATHEMATICAL LITERACY STUDENTS
+    // MATHEMATICAL LITERACY STUDENTS:
     // ============================================================
 
-    match /students/mathsLiteracyUser/{studentId} {
+    match /students/maths_literacy_students/users/{studentId} {
 
       // Student's own profile/root document
       allow read, write: if request.auth != null
@@ -113,7 +126,8 @@ service cloud.firestore {
                     && request.resource.data.target == resource.data.target
                     && request.resource.data.createdAt == resource.data.createdAt
                     && request.resource.data.expiresAt == resource.data.expiresAt
-                    && request.resource.data.readAt != resource.data.readAt;
+                    && resource.data.readAt == null
+                    && request.resource.data.readAt != null;
 
       // Students should never delete notifications.
       allow delete: if false;
@@ -123,7 +137,7 @@ service cloud.firestore {
     // Student Devices:
     // ============================================================
 
-    match /students/{studentType}/{studentId}/devices/{deviceId} {
+    match /students/{studentType}/users/{studentId}/devices/{deviceId} {
 
       // Device registration/unregistration is handled by
       // Cloud Functions. Clients should NEVER access these directly.
@@ -153,7 +167,8 @@ service cloud.firestore {
         && request.resource.data.target == resource.data.target
         && request.resource.data.createdAt == resource.data.createdAt
         && request.resource.data.expiresAt == resource.data.expiresAt
-        && request.resource.data.readAt != resource.data.readAt;
+        && resource.data.readAt == null
+        && request.resource.data.readAt != null
 
       // Tutors cannot delete notifications.
       allow delete: if false;
