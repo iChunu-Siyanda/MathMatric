@@ -1,6 +1,7 @@
 import { HttpsError, onCall } from "firebase-functions/https";
 import {FieldValue, Timestamp, Transaction} from "firebase-admin/firestore";
 import { db } from "../shared/firebase";
+import { getStudentAccount } from "../students/student_account_service";
 
 interface RescheduleBookingRequest {
   bookingId: string;
@@ -309,7 +310,13 @@ export async function handleRescheduleBooking(
   }
 
   const data = validateRescheduleBookingRequest(request.data,);
+
   const studentId = request.auth.uid;
+  await getStudentAccount(
+    studentId,
+    firestore,
+  );
+  
   const newScheduledAt = new Date(data.newScheduledAt);
 
   if (newScheduledAt <= new Date()) {

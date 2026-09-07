@@ -1,19 +1,9 @@
 import { HttpsError, onCall } from "firebase-functions/https";
 import { db } from "../shared/firebase";
+import { getStudentAccount } from "../students/student_account_service";
 
-const validStudentTypes = [
-  "pure_maths_student",
-  "maths_literacy_student",
-] as const;
-
-type StudentType = typeof validStudentTypes[number];
-
-function isStudentType(value: string): value is StudentType {
-  return validStudentTypes.includes(value as StudentType);
-}
 
 export interface UnregisterStudentDeviceRequest {
-  studentType: StudentType,
   deviceId: string;
 }
 
@@ -30,25 +20,6 @@ export function validateUnregisterStudentDeviceRequest(
   const request = data as Record<string, unknown>;
 
   if (
-    typeof request.studentType !== "string" ||
-    request.studentType.trim().length === 0
-  ) {
-    throw new HttpsError(
-      "invalid-argument",
-      "Student type is required.",
-    );
-  }
-
-  const studentType = request.studentType.trim();
-
-  if (!isStudentType(studentType)) {
-    throw new HttpsError(
-      "invalid-argument",
-      "Invalid student type.",
-    );
-  }
-
-  if (
     typeof request.deviceId !== "string" ||
     request.deviceId.trim().length === 0
   ) {
@@ -59,7 +30,6 @@ export function validateUnregisterStudentDeviceRequest(
   }
 
   return {
-    studentType,
     deviceId: request.deviceId.trim(),
   };
 }
@@ -80,9 +50,15 @@ export async function handleUnregisterStudentDevice(
 
   const data = validateUnregisterStudentDeviceRequest(request.data);
 
+  const studentId = request.auth.uid;
+  const studentAccount = await getStudentAccount(
+    studentId,
+    firestore
+  );
+
   const deviceRef = firestore
     .collection("students")
-    .doc(data.studentType)
+    .doc(studentAccount.studentType)
     .collection("users")
     .doc(request.auth.uid)
     .collection("devices")

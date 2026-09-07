@@ -1,7 +1,19 @@
-import {FieldValue,Timestamp,} from "firebase-admin/firestore";
+import {
+  FieldValue,
+  Timestamp,
+} from "firebase-admin/firestore";
+
 import { db } from "../shared/firebase";
-import {NotificationType,} from "./notification_types";
-import { notificationDeliveryService, NotificationDeliveryService } from "./notification_delivery_service";
+import {
+  getStudentAccount,
+} from "../students/student_account_service";
+import {
+  NotificationType,
+} from "./notification_types";
+import {
+  notificationDeliveryService,
+  NotificationDeliveryService,
+} from "./notification_delivery_service";
 
 export interface NotificationTarget {
   feature: string;
@@ -9,15 +21,7 @@ export interface NotificationTarget {
   secondaryResourceId?: string;
 }
 
-const validStudentTypes = [
-  "pure_maths_student",
-  "maths_literacy_student",
-] as const;
-
-type StudentType = typeof validStudentTypes[number];
-
 export interface CreateNotificationRequest {
-  studentType: StudentType,
   studentId: string;
   type: NotificationType;
   title: string;
@@ -32,12 +36,32 @@ export class NotificationService {
     private readonly delivery: NotificationDeliveryService,
   ) {}
 
-  async create(request: CreateNotificationRequest,): Promise<string> {
-    const notificationRef = this.firestore.collection("notifications").doc();
+  async create(
+    request: CreateNotificationRequest,
+  ): Promise<string> {
+    // ------------------------------------------------
+    // Resolve student account:
+    // ------------------------------------------------
+    // studentAccounts/{studentId} is the authoritative
+    // source for studentType.
 
-    // Create and save motification:
-    await notificationRef.set({ //since set() is asyncronous
-      studentType: request.studentType,
+    const studentAccount = await getStudentAccount(
+      request.studentId,
+      this.firestore,
+    );
+
+    const studentType = studentAccount.studentType;
+
+    // ------------------------------------------------
+    // Create notification:
+    // ------------------------------------------------
+
+    const notificationRef = this.firestore
+      .collection("notifications")
+      .doc();
+
+    await notificationRef.set({
+      studentType,
       studentId: request.studentId,
       type: request.type,
       title: request.title,
@@ -50,9 +74,11 @@ export class NotificationService {
         : null,
     });
 
-    // Send push
+    // ------------------------------------------------
+    // Send push notification:
+    // ------------------------------------------------
+
     await this.delivery.send({
-      studentType: request.studentType,
       studentId: request.studentId,
       title: request.title,
       body: request.body,
@@ -61,7 +87,10 @@ export class NotificationService {
         feature: request.target.feature,
         resourceId: request.target.resourceId,
         ...(request.target.secondaryResourceId
-          ? {secondaryResourceId: request.target.secondaryResourceId,}
+          ? {
+              secondaryResourceId:
+                request.target.secondaryResourceId,
+            }
           : {}),
       },
     });
@@ -70,4 +99,7 @@ export class NotificationService {
   }
 }
 
-export const notificationService = new NotificationService(db, notificationDeliveryService);
+export const notificationService = new NotificationService(
+  db,
+  notificationDeliveryService,
+);

@@ -1,18 +1,14 @@
 import { HttpsError, onCall } from "firebase-functions/https";
 import {FieldValue,Timestamp,} from "firebase-admin/firestore";
 import {db} from "../shared/firebase";
-import {
-  calculateBookingPrice,
-  getTutor,
-  hasConfirmedBookingConflict,
-  validateTeachingMode,
-} from "./bookingValidation";
+import {calculateBookingPrice,getTutor,hasConfirmedBookingConflict,validateTeachingMode,} from "./bookingValidation";
+import { getStudentAccount } from "../students/student_account_service";
 
 interface CreateBookingRequest {
-    tutorId: string;
-    scheduledAt: string;
-    durationMinutes: number;
-    teachingMode: "online"|"inPerson";
+  tutorId: string;
+  scheduledAt: string;
+  durationMinutes: number;
+  teachingMode: "online"|"inPerson";
 }
 
 export function validateCreateBookingRequest(
@@ -111,6 +107,13 @@ export async function handleCreateBooking(
 
   const studentId = request.auth.uid;
 
+  // Resolve the authenticated student's account.
+  // This is the authoritative source for student identity/type.
+  await getStudentAccount(
+    studentId,
+    firestore,
+  );
+
   const scheduledAt = new Date(
     data.scheduledAt,
   );
@@ -154,19 +157,14 @@ export async function handleCreateBooking(
     id: bookingRef.id,
     studentId,
     tutorId: data.tutorId,
-    scheduledAt:
-      Timestamp.fromDate(scheduledAt),
-    durationMinutes:
-      data.durationMinutes,
-    teachingMode:
-      data.teachingMode,
+    scheduledAt:Timestamp.fromDate(scheduledAt),
+    durationMinutes:data.durationMinutes,
+    teachingMode:data.teachingMode,
     priceCents,
     currency: "ZAR",
     status: "pending",
-    createdAt:
-      FieldValue.serverTimestamp(),
-    updatedAt:
-      FieldValue.serverTimestamp(),
+    createdAt:FieldValue.serverTimestamp(),
+    updatedAt:FieldValue.serverTimestamp(),
     respondedAt: null,
   };
 

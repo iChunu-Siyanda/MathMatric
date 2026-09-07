@@ -1,8 +1,8 @@
 import {HttpsError,onCall,} from "firebase-functions/v2/https";
 import {FieldValue,} from "firebase-admin/firestore";
-import {db} from "../../shared/firebase";
-import {NotificationService,notificationService,} from "../../notifications/notification_service";
-import {NotificationType} from "../../notifications/notification_types";
+import { db } from "../../shared/firebase";
+import {NotificationType,} from "../../notifications/notification_types";
+import { notificationService, NotificationService } from "../../notifications/notification_service";
 
 interface DeclineBookingRequest {
   bookingId: string;
@@ -21,7 +21,8 @@ export function validateDeclineBookingRequest(
   const request = data as Record<string, unknown>;
 
   if (
-    typeof request.bookingId !== "string" || request.bookingId.trim().length === 0
+    typeof request.bookingId !== "string" ||
+    request.bookingId.trim().length === 0
   ) {
     throw new HttpsError(
       "invalid-argument",
@@ -36,12 +37,18 @@ export function validateDeclineBookingRequest(
 
 export async function handleDeclineBooking(
   request: {
-    auth?: {uid: string} | null;
+    auth?: {
+      uid: string;
+    } | null;
     data: unknown;
   },
   firestore = db,
-  notifications: Pick<NotificationService, "create"> = notificationService,
+  notifications: Pick<NotificationService, "create" > = notificationService,
 ) {
+  // ------------------------------------------------
+  // Authentication:
+  // ------------------------------------------------
+
   if (!request.auth) {
     throw new HttpsError(
       "unauthenticated",
@@ -49,18 +56,29 @@ export async function handleDeclineBooking(
     );
   }
 
-  const data = validateDeclineBookingRequest(request.data);
+  const data = validateDeclineBookingRequest(
+    request.data,
+  );
 
   const tutorId = request.auth.uid;
+
+  // ------------------------------------------------
+  // Booking reference:
+  // ------------------------------------------------
 
   const bookingRef = firestore
     .collection("bookings")
     .doc(data.bookingId);
 
+  // ------------------------------------------------
+  // Read booking:
+  // ------------------------------------------------
+
   const bookingSnapshot = await bookingRef.get();
 
   if (
-    !bookingSnapshot.exists || !bookingSnapshot.data()
+    !bookingSnapshot.exists ||
+    !bookingSnapshot.data()
   ) {
     throw new HttpsError(
       "not-found",
@@ -70,12 +88,20 @@ export async function handleDeclineBooking(
 
   const booking = bookingSnapshot.data()!;
 
+  // ------------------------------------------------
+  // Ownership:
+  // ------------------------------------------------
+
   if (booking.tutorId !== tutorId) {
     throw new HttpsError(
       "permission-denied",
       "You cannot decline this booking.",
     );
   }
+
+  // ------------------------------------------------
+  // Status:
+  // ------------------------------------------------
 
   if (booking.status !== "pending") {
     throw new HttpsError(
@@ -84,16 +110,29 @@ export async function handleDeclineBooking(
     );
   }
 
+  // ------------------------------------------------
+  // Decline booking:
+  // ------------------------------------------------
+
   await bookingRef.update({
     status: "declined",
     tutorId: booking.tutorId,
-    respondedAt: FieldValue.serverTimestamp(),
-    updatedAt: FieldValue.serverTimestamp(),
+    respondedAt:
+      FieldValue.serverTimestamp(),
+    updatedAt:
+      FieldValue.serverTimestamp(),
   });
+
+  // ------------------------------------------------
+  // Notify student:
+  // ------------------------------------------------
+  // NotificationService resolves studentType from
+  // studentAccounts/{studentId}.
+  //
+  // We therefore only provide studentId here.
 
   try {
     await notifications.create({
-      studentType: booking.studentType,
       studentId: booking.studentId,
       type: NotificationType.tutorBookingDeclined,
       title: "Tutor booking declined",

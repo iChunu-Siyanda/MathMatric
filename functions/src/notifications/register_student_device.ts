@@ -1,21 +1,10 @@
-import { HttpsError } from "firebase-functions/https";
+import { HttpsError, onCall } from "firebase-functions/https";
 import { FieldValue } from "firebase-admin/firestore";
-import { onCall } from "firebase-functions/https";
+
 import { db } from "../shared/firebase";
-
-const validStudentTypes = [
-  "pure_maths_student",
-  "maths_literacy_student",
-] as const;
-
-type StudentType = typeof validStudentTypes[number];
-
-function isStudentType(value: string): value is StudentType {
-  return validStudentTypes.includes(value as StudentType);
-}
+import { getStudentAccount } from "../students/student_account_service";
 
 export interface RegisterStudentDeviceRequest {
-  studentType: StudentType,
   deviceId: string;
   token: string;
   platform: "android" | "ios";
@@ -34,26 +23,8 @@ export function validateRegisterStudentDeviceRequest(
   const request = data as Record<string, unknown>;
 
   if (
-    typeof request.studentType !== "string" ||
-    request.studentType.trim().length === 0
-  ) {
-    throw new HttpsError(
-      "invalid-argument",
-      "Student type is required.",
-    );
-  }
-
-  const studentType = request.studentType.trim();
-
-  if (!isStudentType(studentType)) {
-    throw new HttpsError(
-      "invalid-argument",
-      "Invalid student type.",
-    );
-  }
-
-  if (
-    typeof request.deviceId !== "string" || request.deviceId.trim().length === 0
+    typeof request.deviceId !== "string" ||
+    request.deviceId.trim().length === 0
   ) {
     throw new HttpsError(
       "invalid-argument",
@@ -62,7 +33,8 @@ export function validateRegisterStudentDeviceRequest(
   }
 
   if (
-    typeof request.token !== "string" || request.token.trim().length === 0
+    typeof request.token !== "string" ||
+    request.token.trim().length === 0
   ) {
     throw new HttpsError(
       "invalid-argument",
@@ -71,7 +43,8 @@ export function validateRegisterStudentDeviceRequest(
   }
 
   if (
-    request.platform !== "android" && request.platform !== "ios"
+    request.platform !== "android" &&
+    request.platform !== "ios"
   ) {
     throw new HttpsError(
       "invalid-argument",
@@ -80,7 +53,6 @@ export function validateRegisterStudentDeviceRequest(
   }
 
   return {
-    studentType,
     deviceId: request.deviceId.trim(),
     token: request.token.trim(),
     platform: request.platform,
@@ -88,12 +60,18 @@ export function validateRegisterStudentDeviceRequest(
 }
 
 export async function handleRegisterStudentDevice(
-  request:{
-    auth?: {uid:string}|null;
+  request: {
+    auth?: {
+      uid: string;
+    } | null;
     data: unknown;
   },
   firestore = db,
 ) {
+  // ------------------------------------------------
+  // Authentication:
+  // ------------------------------------------------
+
   if (!request.auth) {
     throw new HttpsError(
       "unauthenticated",
@@ -101,35 +79,66 @@ export async function handleRegisterStudentDevice(
     );
   }
 
-  const data = validateRegisterStudentDeviceRequest(request.data);
+  const data = validateRegisterStudentDeviceRequest(
+    request.data,
+  );
+
   const studentId = request.auth.uid;
+
+  // ------------------------------------------------
+  // Resolve student account:
+  // ------------------------------------------------
+  // studentAccounts/{studentId} is the authoritative
+  // source for the student's student type.
+  //
+  // studentType is therefore NOT accepted from Flutter.
+
+  const studentAccount = await getStudentAccount(
+    studentId,
+    firestore,
+  );
+
+  // ------------------------------------------------
+  // Device location:
+  // ------------------------------------------------
 
   const deviceRef = firestore
     .collection("students")
-    .doc(data.studentType)
+    .doc(studentAccount.studentType)
     .collection("users")
     .doc(studentId)
     .collection("devices")
     .doc(data.deviceId);
 
-  await firestore.runTransaction(async (transaction) => {
-    const snapshot = await transaction.get(deviceRef);
+  // ------------------------------------------------
+  // Register / update device:
+  // ------------------------------------------------
 
-    if (snapshot.exists) {
-      transaction.update(deviceRef, {
-        token: data.token,
-        platform: data.platform,
-        updatedAt: FieldValue.serverTimestamp(),
-      });
-    } else {
-      transaction.set(deviceRef, {
-        token: data.token,
-        platform: data.platform,
-        createdAt: FieldValue.serverTimestamp(),
-        updatedAt: FieldValue.serverTimestamp(),
-      });
-    }
-  });  
+  await firestore.runTransaction(
+    async (transaction) => {
+      const snapshot = await transaction.get(
+        deviceRef,
+      );
+
+      if (snapshot.exists) {
+        transaction.update(deviceRef, {
+          token: data.token,
+          platform: data.platform,
+          updatedAt:
+            FieldValue.serverTimestamp(),
+        });
+      } else {
+        transaction.set(deviceRef, {
+          token: data.token,
+          platform: data.platform,
+          createdAt:
+            FieldValue.serverTimestamp(),
+          updatedAt:
+            FieldValue.serverTimestamp(),
+        });
+      }
+    },
+  );
 
   return {
     success: true,

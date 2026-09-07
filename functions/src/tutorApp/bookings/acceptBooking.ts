@@ -16,7 +16,7 @@ export async function handleAcceptBooking(
     data: unknown;
   },
   firestore = db,
-  notifications: Pick<NotificationService, "create"> =notificationService,
+  notifications: Pick<NotificationService, "create"> = notificationService,
 ) {
   if (!request.auth) {
     throw new HttpsError(

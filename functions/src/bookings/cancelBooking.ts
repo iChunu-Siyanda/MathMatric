@@ -3,6 +3,7 @@ import { FieldValue } from "firebase-admin/firestore";
 import { db } from "../shared/firebase";
 import { TutorNotificationType } from "../tutorApp/notifications/tutor_notification_types";
 import { TutorNotificationService, tutorNotificationService } from "../tutorApp/notifications/tutor_notification_service";
+import { getStudentAccount } from "../students/student_account_service";
 
 const validStudentCancellationReasons = [
   "changedMind",
@@ -101,8 +102,15 @@ export async function handleCancelBooking(
     data: unknown;
   },
   firestore = db,
-  notifications: Pick<TutorNotificationService,"create" >= tutorNotificationService,
+  notifications: Pick<
+    TutorNotificationService,
+    "create"
+  > = tutorNotificationService,
 ) {
+  // ------------------------------------------------
+  // Authentication:
+  // ------------------------------------------------
+
   if (!request.auth) {
     throw new HttpsError(
       "unauthenticated",
@@ -110,71 +118,118 @@ export async function handleCancelBooking(
     );
   }
 
-  const data = validateCancelBookingRequest(request.data,);
+  const data = validateCancelBookingRequest(
+    request.data,
+  );
 
   const studentId = request.auth.uid;
 
-  const bookingRef = firestore.collection("bookings").doc(data.bookingId);
+  // ------------------------------------------------
+  // Resolve authenticated student account:
+  // ------------------------------------------------
+  // studentAccounts/{studentId} is the authoritative
+  // source for the student's account and student type.
+  // Do not accept studentType from the client.
+  await getStudentAccount(
+    studentId,
+    firestore,
+  );
 
-  const result = await firestore.runTransaction(async (transaction) => {
-    const bookingSnapshot = await transaction.get(bookingRef,);
+  const bookingRef = firestore
+    .collection("bookings")
+    .doc(data.bookingId);
 
-    if (!bookingSnapshot.exists) {
-      throw new HttpsError(
-        "not-found",
-        "Booking not found.",
-      );
-    }
+  const result = await firestore.runTransaction(
+    async (transaction) => {
+      // --------------------------------------------------
+      // 1. Read booking
+      // --------------------------------------------------
 
-    const booking = bookingSnapshot.data();
+      const bookingSnapshot =
+        await transaction.get(bookingRef);
 
-    if (!booking) {
-      throw new HttpsError(
-        "not-found",
-        "Booking not found.",
-      );
-    }
+      if (!bookingSnapshot.exists) {
+        throw new HttpsError(
+          "not-found",
+          "Booking not found.",
+        );
+      }
 
-    if (booking.studentId !== studentId) {
-      throw new HttpsError(
-        "permission-denied",
-        "You cannot cancel this booking.",
-      );
-    }
+      const booking = bookingSnapshot.data();
 
-    if (
-      booking.status !== "pending" && booking.status !== "confirmed"
-    ) {
-      throw new HttpsError(
-        "failed-precondition",
-        "This booking cannot be cancelled.",
-      );
-    }
+      if (!booking) {
+        throw new HttpsError(
+          "not-found",
+          "Booking not found.",
+        );
+      }
 
-    transaction.update(bookingRef, {
-      status: "cancelled",
-      cancelledAt: FieldValue.serverTimestamp(),
-      cancelledBy: "student",
-      cancellationReason: data.reason,
-      cancellationComment: data.comment,
-      updatedAt: FieldValue.serverTimestamp(),
-    });
+      // --------------------------------------------------
+      // 2. Ownership
+      // --------------------------------------------------
 
-    return {
-      bookingId: data.bookingId,
-      status: "cancelled",
-      tutorId: booking.tutorId,
-      studentId: booking.studentId,
-    }
-  });
- 
-  // CreateNofications for tutors
+      if (booking.studentId !== studentId) {
+        throw new HttpsError(
+          "permission-denied",
+          "You cannot cancel this booking.",
+        );
+      }
+
+      // --------------------------------------------------
+      // 3. Status
+      // --------------------------------------------------
+
+      if (
+        booking.status !== "pending" &&
+        booking.status !== "confirmed"
+      ) {
+        throw new HttpsError(
+          "failed-precondition",
+          "This booking cannot be cancelled.",
+        );
+      }
+
+      // --------------------------------------------------
+      // 4. Cancel booking
+      // --------------------------------------------------
+
+      transaction.update(bookingRef, {
+        status: "cancelled",
+
+        cancelledAt:
+          FieldValue.serverTimestamp(),
+
+        cancelledBy: "student",
+
+        cancellationReason:
+          data.reason,
+
+        cancellationComment:
+          data.comment,
+
+        updatedAt:
+          FieldValue.serverTimestamp(),
+      });
+
+      return {
+        bookingId: data.bookingId,
+        status: "cancelled",
+        tutorId: booking.tutorId,
+        studentId: booking.studentId,
+      };
+    },
+  );
+
+  // ------------------------------------------------
+  // Notify tutor:
+  // ------------------------------------------------
+
   try {
-    await tutorNotificationService.create({
+    await notifications.create({
       tutorId: result.tutorId,
       type: TutorNotificationType.bookingCancelledByStudent,
-      title: "Tutor cancelled your booking",
-      body: "Your tutor has cancelled your booking.",
+      title: "Student cancelled your booking",
+      body: "The student has cancelled their booking.",
       target: {
         feature: "booking",
         resourceId: result.bookingId,
@@ -182,10 +237,10 @@ export async function handleCancelBooking(
     });
   } catch (error) {
     console.error(
-      "Failed to send tutor cancellation notification.",
+      "Failed to send student cancellation notification.",
       {
         bookingId: result.bookingId,
-        studentId: result.studentId,
+        tutorId: result.tutorId,
         error,
       },
     );
@@ -193,7 +248,7 @@ export async function handleCancelBooking(
 
   return {
     success: true,
-    bookingId: data.bookingId,
+    bookingId: result.bookingId,
     status: "cancelled",
   };
 }
