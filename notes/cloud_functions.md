@@ -71,3 +71,15 @@ The callable is your transport layer. handleCreateBooking() contains the actual 
 | `int age`                     | `const age: number`                  |
 | `bool active`                 | `const active: boolean`              |
 
+
+# Also:
+Dart                         TypeScript
+
+Entity                       interface / type
+Repository                   service / repository
+Use case                     function
+Datasource                   Firestore/FCM access
+BLoC                         Cloud Function orchestration
+Exception                   HttpsError
+Mocktail                     Vitest mocks
+FirebaseFirestore            Firebase Admin Firestore

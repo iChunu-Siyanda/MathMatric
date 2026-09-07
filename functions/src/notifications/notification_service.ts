@@ -9,7 +9,15 @@ export interface NotificationTarget {
   secondaryResourceId?: string;
 }
 
+const validStudentTypes = [
+  "pure_maths_student",
+  "maths_literacy_student",
+] as const;
+
+type StudentType = typeof validStudentTypes[number];
+
 export interface CreateNotificationRequest {
+  studentType: StudentType,
   studentId: string;
   type: NotificationType;
   title: string;
@@ -29,6 +37,7 @@ export class NotificationService {
 
     // Create and save motification:
     await notificationRef.set({ //since set() is asyncronous
+      studentType: request.studentType,
       studentId: request.studentId,
       type: request.type,
       title: request.title,
@@ -43,6 +52,7 @@ export class NotificationService {
 
     // Send push
     await this.delivery.send({
+      studentType: request.studentType,
       studentId: request.studentId,
       title: request.title,
       body: request.body,

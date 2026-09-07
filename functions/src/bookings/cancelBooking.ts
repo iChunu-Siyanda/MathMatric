@@ -1,9 +1,12 @@
 import { HttpsError, onCall } from "firebase-functions/https";
 import { FieldValue } from "firebase-admin/firestore";
 import { db } from "../shared/firebase";
+import { TutorNotificationType } from "../tutorApp/notifications/tutor_notification_types";
+import { TutorNotificationService, tutorNotificationService } from "../tutorApp/notifications/tutor_notification_service";
 
 const validStudentCancellationReasons = [
   "changedMind",
+  "illness",
   "wantToPostpone",
   "scheduleChanged",
   "foundAnotherTutor",
@@ -98,6 +101,7 @@ export async function handleCancelBooking(
     data: unknown;
   },
   firestore = db,
+  notifications: Pick<TutorNotificationService,"create" >= tutorNotificationService,
 ) {
   if (!request.auth) {
     throw new HttpsError(
@@ -112,7 +116,7 @@ export async function handleCancelBooking(
 
   const bookingRef = firestore.collection("bookings").doc(data.bookingId);
 
-  await firestore.runTransaction(async (transaction) => {
+  const result = await firestore.runTransaction(async (transaction) => {
     const bookingSnapshot = await transaction.get(bookingRef,);
 
     if (!bookingSnapshot.exists) {
@@ -149,9 +153,43 @@ export async function handleCancelBooking(
 
     transaction.update(bookingRef, {
       status: "cancelled",
+      cancelledAt: FieldValue.serverTimestamp(),
+      cancelledBy: "student",
+      cancellationReason: data.reason,
+      cancellationComment: data.comment,
       updatedAt: FieldValue.serverTimestamp(),
     });
+
+    return {
+      bookingId: data.bookingId,
+      status: "cancelled",
+      tutorId: booking.tutorId,
+      studentId: booking.studentId,
+    }
   });
+ 
+  // CreateNofications for tutors
+  try {
+    await tutorNotificationService.create({
+      tutorId: result.tutorId,
+      type: TutorNotificationType.bookingCancelledByStudent,
+      title: "Tutor cancelled your booking",
+      body: "Your tutor has cancelled your booking.",
+      target: {
+        feature: "booking",
+        resourceId: result.bookingId,
+      },
+    });
+  } catch (error) {
+    console.error(
+      "Failed to send tutor cancellation notification.",
+      {
+        bookingId: result.bookingId,
+        studentId: result.studentId,
+        error,
+      },
+    );
+  }
 
   return {
     success: true,

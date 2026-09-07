@@ -1,7 +1,9 @@
 import { getMessaging, Messaging } from "firebase-admin/messaging";
 import { db } from "../shared/firebase";
+import { StudentType } from "../shared/student_type";
 
 export interface NotificationDeliveryRequest {
+  studentType: StudentType;
   studentId: string;
   title: string;
   body: string;
@@ -17,6 +19,8 @@ export class NotificationDeliveryService {
   async send(request: NotificationDeliveryRequest,): Promise<void> {
     const devicesSnapshot = await this.firestore
       .collection("students")
+      .doc(request.studentType)
+      .collection("users")
       .doc(request.studentId)
       .collection("devices")
       .get();

@@ -1,9 +1,9 @@
 import {HttpsError,onCall,} from "firebase-functions/https";
-import { db } from "../shared/firebase";
+import {db} from "../../shared/firebase";
 
-export async function handleGetUnreadNotificationCount(
+export async function handleGetTutorUnreadNotificationCount(
   request: {
-    auth?: { uid: string } | null;
+    auth?: {uid: string} | null;
   },
   firestore = db,
 ) {
@@ -15,8 +15,8 @@ export async function handleGetUnreadNotificationCount(
   }
 
   const snapshot = await firestore
-    .collection("notifications")
-    .where("studentId", "==", request.auth.uid)
+    .collection("tutorNotifications")
+    .where("tutorId", "==", request.auth.uid)
     .where("readAt", "==", null)
     .count()
     .get();
@@ -26,9 +26,9 @@ export async function handleGetUnreadNotificationCount(
   };
 }
 
-export const getUnreadNotificationCount = onCall(
+export const getTutorUnreadNotificationCount = onCall(
   async (request) => {
-    return handleGetUnreadNotificationCount(
+    return handleGetTutorUnreadNotificationCount(
       request,
     );
   },
