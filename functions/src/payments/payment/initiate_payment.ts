@@ -1,6 +1,6 @@
 import { HttpsError, onCall } from "firebase-functions/v2/https";
-import { db } from "../shared/firebase";
-import { getStudentAccount } from "../students/student_account_service";
+import { db } from "../../shared/firebase";
+import { getStudentAccount } from "../../students/student_account_service";
 import { PaymentService } from "./payment_service";
 import { MockPaymentProvider } from "./mock_payment_provider";
 

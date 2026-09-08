@@ -14,10 +14,10 @@ vi.mock("./payment_service", () => ({
   },
 }));
 
-import { initiatePayment } from "./initiate_payment";
-import { PaymentStatus } from "./payment_entity";
+import { initiatePayment } from "../payment/initiate_payment";
+import { PaymentStatus } from "../payment/payment_entity";
 //import { BookingStatus } from "../bookings/booking_status";
-import { getStudentAccount } from "../students/student_account_service";
+import { getStudentAccount } from "../../students/student_account_service";
 
 describe("initiatePayment", () => {
   const studentId = "student-123";

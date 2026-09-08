@@ -1,3 +1,4 @@
+import { Timestamp } from "firebase-admin/firestore";
 import { vi } from "vitest";
 
 type DocumentData = Record<string, any>;
@@ -18,6 +19,77 @@ interface MockDocumentSnapshot {
 
 export function createMockFirestore() {
   const documents = new Map<string,DocumentData>();
+
+  const resolveValue = (
+    value: unknown,
+    existingValue?: unknown,
+  ): unknown => {
+    if (
+      value &&
+      typeof value === "object" &&
+      "_methodName" in value
+    ) {
+      const methodName =
+        (value as { _methodName?: string })._methodName;
+
+      if (methodName === "serverTimestamp") {
+        return Timestamp.now();
+      }
+
+      if (methodName === "increment") {
+        const operand =
+          (value as { operand?: number }).operand ?? 0;
+
+        return (
+          (typeof existingValue === "number"
+            ? existingValue
+            : 0) + operand
+        );
+      }
+    }
+
+    return value;
+  };
+
+  const resolveData = (
+    data: DocumentData,
+    existing?: DocumentData,
+  ): DocumentData => {
+    return Object.fromEntries(
+      Object.entries(data).map(
+        ([key, value]) => [
+          key,
+          resolveValue(
+            value,
+            existing?.[key],
+          ),
+        ],
+      ),
+    );
+  };
+
+  const normalizeSeedValue = (
+    value: unknown,
+  ): unknown => {
+    if (value instanceof Date) {
+      return Timestamp.fromDate(value);
+    }
+
+    return value;
+  };
+
+  const normalizeSeedData = (
+    data: DocumentData,
+  ): DocumentData => {
+    return Object.fromEntries(
+      Object.entries(data).map(
+        ([key, value]) => [
+          key,
+          normalizeSeedValue(value),
+        ],
+      ),
+    );
+  };
 
   // --------------------------------------------------
   // Transaction GET
@@ -55,9 +127,7 @@ export function createMockFirestore() {
         );
       }
 
-      documents.set(ref.path, {
-        ...data,
-      });
+      documents.set(ref.path, resolveData(data));
     },
   );
 
@@ -70,8 +140,7 @@ export function createMockFirestore() {
       ref: MockDocumentReference,
       data: DocumentData,
     ): void => {
-      const existing =
-        documents.get(ref.path);
+      const existing = documents.get(ref.path);
 
       if (existing === undefined) {
         throw new Error(
@@ -81,7 +150,7 @@ export function createMockFirestore() {
 
       documents.set(ref.path, {
         ...existing,
-        ...data,
+        ...resolveData(data, existing),
       });
     },
   );
@@ -147,7 +216,7 @@ export function createMockFirestore() {
 
                   documents.set(path, {
                     ...existing,
-                    ...data,
+                    ...resolveData(data,existing),
                   });
                 },
               )
@@ -166,9 +235,7 @@ export function createMockFirestore() {
     path: string,
     data: DocumentData,
   ): void => {
-    documents.set(path, {
-      ...data,
-    });
+    documents.set(path, normalizeSeedData(data));
   };
 
   // --------------------------------------------------

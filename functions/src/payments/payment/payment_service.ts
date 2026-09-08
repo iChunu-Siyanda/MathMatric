@@ -1,6 +1,6 @@
 import {FieldValue,} from "firebase-admin/firestore";
 import {PaymentStatus,Payment,} from "./payment_entity";
-import { BookingStatus } from "../bookings/booking_status";
+import { BookingStatus } from "../../bookings/booking_status";
 import { Timestamp } from "firebase-admin/firestore";
 import { paymentFromFirestore } from "./payment_mapper";
 import { PaymentProvider } from "./payment_provider";
@@ -178,7 +178,8 @@ export class PaymentService {
     };
   }
 
-  async markProcessing(paymentId: string): Promise<void> {
+  async markProcessing(
+    {paymentId}:{paymentId: string}): Promise<void> {
     const paymentRef = this.firestore
       .collection("payments")
       .doc(paymentId)
@@ -209,11 +210,15 @@ export class PaymentService {
     });
   }
 
-  async markPaid(
+  async markPaid({
+    bookingId,
+    provider,
+    providerPaymentId,
+  }:{
     bookingId: string,
     provider:string,
     providerPaymentId:string,
-  ): Promise<void> {
+  }): Promise<void> {
     const paymentRef = this.firestore
       .collection("payments")
       .doc(bookingId);
@@ -295,10 +300,130 @@ export class PaymentService {
     });
   }
 
-  async markFailed(
+  async markPaidFromProvider({
+    bookingId,
+    provider,
+    providerPaymentId,
+  }: {
+    bookingId: string;
+    provider: string;
+    providerPaymentId: string;
+  }): Promise<void> {
+    const paymentRef = this.firestore
+      .collection("payments")
+      .doc(bookingId);
+
+    const bookingRef = this.firestore
+      .collection("bookings")
+      .doc(bookingId);
+
+    await this.firestore.runTransaction(
+      async (transaction) => {
+        const paymentSnapshot = await transaction.get(paymentRef);
+
+        if (!paymentSnapshot.exists) {
+          throw new Error("Payment not found.");
+        }
+
+        const payment = paymentFromFirestore(
+          paymentSnapshot.id,
+          paymentSnapshot.data()!,
+        );
+
+        // Idempotency:
+        // If the payment is already paid, there is nothing else to do.
+        if (payment.status === PaymentStatus.paid) return;
+
+        if (
+          payment.status !== PaymentStatus.pending &&
+          payment.status !== PaymentStatus.processing
+        ) {
+          throw new Error(
+            "Payment cannot be marked as paid from its current status.",
+          );
+        }
+
+        if (payment.provider !== null &&
+            payment.provider !== provider) {
+          throw new Error(
+            "Payment provider does not match.",
+          );
+        }
+
+        if (
+          payment.providerPaymentId !== null &&
+          payment.providerPaymentId !== providerPaymentId
+        ) {
+          throw new Error(
+            "Provider payment ID does not match.",
+          );
+        }
+
+        const bookingSnapshot = await transaction.get(bookingRef);
+
+        if (!bookingSnapshot.exists) {
+          throw new Error("Booking not found.");
+        }
+
+        const booking = bookingSnapshot.data();
+
+        if (
+          booking?.studentId !== payment.studentId
+        ) {
+          throw new Error(
+            "Payment student does not match booking.",
+          );
+        }
+
+        if (
+          booking?.tutorId !== payment.tutorId
+        ) {
+          throw new Error(
+            "Payment tutor does not match booking.",
+          );
+        }
+
+        if (
+          typeof booking.priceCents !== "number" ||
+          booking.priceCents !== payment.amountCents
+        ) {
+          throw new Error(
+            "Payment amount does not match booking price.",
+          );
+        }
+
+        if (
+          booking.status !== BookingStatus.paymentRequired
+        ) {
+          throw new Error(
+            "Booking is not awaiting payment.",
+          );
+        }
+
+        transaction.update(paymentRef, {
+          status: PaymentStatus.paid,
+          provider,
+          providerPaymentId,
+          paidAt: FieldValue.serverTimestamp(),
+          updatedAt: FieldValue.serverTimestamp(),
+          failureReason: null,
+        });
+
+        transaction.update(bookingRef, {
+          status: BookingStatus.confirmed,
+          updatedAt: FieldValue.serverTimestamp(),
+        });
+      },
+    );
+  }
+
+  async markFailed({
+    bookingId,
+    failureReason,
+  }:{
     bookingId: string,
     failureReason: string,
-  ): Promise<void> {
+  }): Promise<void> {
     const paymentRef = this.firestore
       .collection("payments")
       .doc(bookingId);

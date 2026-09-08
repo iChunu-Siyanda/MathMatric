@@ -1,10 +1,10 @@
 import { Timestamp } from "firebase-admin/firestore";
 import {beforeEach, afterEach, describe, expect, it,vi} from "vitest";
 import { PaymentService } from "./payment_service";
-import { PaymentStatus } from "./payment_entity";
-import { PaymentProvider } from "./payment_provider";
+import { PaymentStatus } from "./payment/payment_entity";
+import { PaymentProvider } from "./payment/payment_provider";
 import { BookingStatus } from "../bookings/booking_status";
-import { createMockFirestore } from "./mock_firestore";
+import { createMockFirestore } from "./tests/mock_firestore";
 
 describe("PaymentService", () => {
   let firestore: ReturnType<typeof createMockFirestore>;
