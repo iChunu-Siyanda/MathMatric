@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:math_matric/core/constants/firestore_collections.dart';
 import 'package:math_matric/features/marketplace/payments/data/datasources/payment_remote_datasource.dart';
+import 'package:math_matric/features/marketplace/payments/domain/entities/payment_checkout_entity.dart';
 import '../models/payment_model.dart';
 
 class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource {
@@ -12,7 +13,7 @@ class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource {
   CollectionReference<Map<String, dynamic>> get _firestore => firestore.collection(FirestoreCollections.payments);
 
   @override
-  Future<PaymentModel> initiatePayment({
+  Future<PaymentCheckoutEntity> initiatePayment({
     required String bookingId,
   }) async {
     final callable = functions.httpsCallable('initiatePayment');
@@ -21,9 +22,16 @@ class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource {
 
     final data = Map<String, dynamic>.from(result.data);
 
-    final paymentData = Map<String,dynamic>.from(data['payment']);
+    final paymentData = Map<String,dynamic>.from(data['payment'] as Map);
 
-    return PaymentModel.fromFirestore(paymentData);
+    final checkoutData = Map<String, dynamic>.from(data['checkout'] as Map,);
+
+    return PaymentCheckoutEntity(
+      payment: PaymentModel.fromFirestore(paymentData),
+      provider: checkoutData['provider'] as String,
+      providerPaymentId: checkoutData['providerPaymentId'] as String,
+      checkoutUrl:checkoutData['checkoutUrl'] as String,
+    );
   }
 
   @override

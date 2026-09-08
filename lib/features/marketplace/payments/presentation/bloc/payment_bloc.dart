@@ -24,9 +24,9 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     emit(const PaymentLoading());
 
     try {
-      final payment = await initiatePayment(bookingId: event.bookingId,);
+      final checkout = await initiatePayment(bookingId: event.bookingId,);
 
-      emit(PaymentLoaded(payment: payment,),);
+      emit(PaymentCheckoutLoaded(checkout: checkout,),);
     } catch (error) {
       emit(PaymentFailure(message: _errorMessage(error),),);
     }

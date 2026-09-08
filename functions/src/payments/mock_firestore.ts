@@ -5,6 +5,9 @@ type DocumentData = Record<string, any>;
 interface MockDocumentReference {
   id: string;
   path: string;
+  update: (
+    data: DocumentData
+  ) => Promise<void>;
 }
 
 interface MockDocumentSnapshot {
@@ -14,10 +17,7 @@ interface MockDocumentSnapshot {
 }
 
 export function createMockFirestore() {
-  const documents = new Map<
-    string,
-    DocumentData
-  >();
+  const documents = new Map<string,DocumentData>();
 
   // --------------------------------------------------
   // Transaction GET
@@ -27,8 +27,7 @@ export function createMockFirestore() {
     async (
       ref: MockDocumentReference,
     ): Promise<MockDocumentSnapshot> => {
-      const document =
-        documents.get(ref.path);
+      const document = documents.get(ref.path);
 
       return {
         exists: document !== undefined,
@@ -128,11 +127,31 @@ export function createMockFirestore() {
           (
             documentId: string,
           ): MockDocumentReference => {
+            const path = `${collectionName}/${documentId}`;
+
             return {
               id: documentId,
-              path:
-                `${collectionName}/${documentId}`,
-            };
+              path,
+              update: vi.fn(
+                async (
+                  data: DocumentData,
+                ): Promise<void> => {
+                  const existing =
+                    documents.get(path);
+
+                  if (existing === undefined) {
+                    throw new Error(
+                      `Document does not exist: ${path}`,
+                    );
+                  }
+
+                  documents.set(path, {
+                    ...existing,
+                    ...data,
+                  });
+                },
+              )
+            }
           },
         ),
       };
@@ -159,8 +178,7 @@ export function createMockFirestore() {
   const get = (
     path: string,
   ): DocumentData | undefined => {
-    const document =
-      documents.get(path);
+    const document = documents.get(path);
 
     if (document === undefined) {
       return undefined;

@@ -1,3 +1,5 @@
+import 'package:math_matric/features/marketplace/payments/domain/entities/payment_checkout_entity.dart';
+
 import '../../domain/entities/payment_entity.dart';
 import '../../domain/repositories/payment_repository.dart';
 import '../datasources/payment_remote_datasource.dart';
@@ -7,7 +9,7 @@ class PaymentRepositoryImpl implements PaymentRepository {
   const PaymentRepositoryImpl({required this.remoteDataSource,});
 
   @override
-  Future<PaymentEntity> initiatePayment({
+  Future<PaymentCheckoutEntity> initiatePayment({
     required String bookingId,
   }) {
     return remoteDataSource.initiatePayment(

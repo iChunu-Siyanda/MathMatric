@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:math_matric/features/marketplace/payments/domain/entities/payment_checkout_entity.dart';
 import '../../domain/entities/payment_entity.dart';
 
 sealed class PaymentState extends Equatable {
@@ -25,6 +26,17 @@ final class PaymentLoaded extends PaymentState {
 
   @override
   List<Object?> get props => [payment];
+}
+
+final class PaymentCheckoutLoaded extends PaymentState {
+  final PaymentCheckoutEntity checkout;
+
+  const PaymentCheckoutLoaded({
+    required this.checkout,
+  });
+
+  @override
+  List<Object?> get props => [checkout];
 }
 
 final class PaymentNotFound extends PaymentState {

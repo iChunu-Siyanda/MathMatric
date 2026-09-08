@@ -2,8 +2,9 @@ import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { db } from "../shared/firebase";
 import { getStudentAccount } from "../students/student_account_service";
 import { PaymentService } from "./payment_service";
+import { MockPaymentProvider } from "./mock_payment_provider";
 
-const paymentService = new PaymentService(db);
+const paymentService = new PaymentService(db, new MockPaymentProvider());
 
 export const initiatePayment = onCall(async (request) => {
   if (!request.auth) {
@@ -17,7 +18,7 @@ export const initiatePayment = onCall(async (request) => {
 
   if (
     typeof bookingId !== "string" ||
-    bookingId.trim().length !== 0
+    bookingId.trim().length === 0
   ) {
     throw new HttpsError(
       "invalid-argument",
@@ -30,14 +31,19 @@ export const initiatePayment = onCall(async (request) => {
   await getStudentAccount(studentId);
 
   try {
-    const paymentId = await paymentService.createPayment({
+    const checkout =await paymentService.createPayment({
       bookingId,
       studentId,
     });
 
     return {
       success: true,
-      paymentId,
+      payment: checkout.payment,
+      checkout: {
+        provider: checkout.provider,
+        providerPaymentId: checkout.providerPaymentId,
+        checkoutUrl: checkout.checkoutUrl,
+      },
     };
   } catch (error) {
     if (error instanceof HttpsError) {
