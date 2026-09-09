@@ -6,9 +6,9 @@ import {RefundDecisionType,} from "./refund_decision";
 import {CancellationPolicy,} from "./cancellation_policy";
 import {RefundResult,} from "./refund_result";
 import {BookingStatus,} from "../../bookings/booking_status";
-import { PaymentProviderValidator } from "../payment/payment_provider_validator";
-import { PaymentProvider } from "../payment/payment_provider";
-import { PaymentProviderRefundIdentity } from "./provider_refund_identity_service";
+import { PaymentProviderValidator } from "../provider/payment_provider_validator";
+import { PaymentProvider } from "../provider/payment_provider";
+import { PaymentProviderRefundIdentity } from "../provider/provider_refund_identity_service";
 
 export interface CreateRefundInput {
   bookingId: string;

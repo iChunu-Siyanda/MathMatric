@@ -7,7 +7,7 @@ import {
 import {
   WebhookEventService,
   WebhookEventStatus,
-} from "../payment/webhook_event_service";
+} from "../webhooks/webhook_event_service";
 
 import { createMockFirestore } from "./mock_firestore";
 

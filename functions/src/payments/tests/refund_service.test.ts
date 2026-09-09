@@ -28,13 +28,13 @@ import {
 
 import {
   PaymentProvider,
-} from "../payment/payment_provider";
+} from "../provider/payment_provider";
 
 
 import {
   createMockFirestore,
 } from "./mock_firestore";
-import { PaymentProviderRefundIdentity } from "../refund/provider_refund_identity_service";
+import { PaymentProviderRefundIdentity } from "../provider/provider_refund_identity_service";
 
 
 // ============================================================

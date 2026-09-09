@@ -7,6 +7,7 @@ export interface PaymentWebhookEvent {
     | "failed";
   failureReason: string | null;
   eventId: string;
+  occurredAt: Date;
 }
 
 export interface RefundPaymentResult {

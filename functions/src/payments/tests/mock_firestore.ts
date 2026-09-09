@@ -1,32 +1,14 @@
-import { Timestamp } from "firebase-admin/firestore";
+import {Firestore, Timestamp } from "firebase-admin/firestore";
 import { vi } from "vitest";
+import { FirestoreCollectionReference, FirestoreDocumentReference, FirestoreDocumentSnapshot, FirestoreTransaction } from "./firestore_database";
 
 type DocumentData = Record<string, any>;
 
-interface MockDocumentReference {
-  id: string;
-  path: string;
+interface MockDocumentReference extends FirestoreDocumentReference {}
 
-  update(
-    data: DocumentData,
-  ): Promise<void>;
+interface MockCollectionReference extends FirestoreCollectionReference {}
 
-  collection(
-    collectionName: string,
-  ): MockCollectionReference;
-}
-
-interface MockCollectionReference {
-  doc(
-    documentId: string,
-  ): MockDocumentReference;
-}
-
-interface MockDocumentSnapshot {
-  exists: boolean;
-  id: string;
-  data: () => DocumentData | undefined;
-}
+interface MockDocumentSnapshot extends FirestoreDocumentSnapshot {}
 
 export function createMockFirestore() {
   const documents = new Map<
@@ -41,6 +23,10 @@ export function createMockFirestore() {
     value: unknown,
     existingValue?: unknown,
   ): unknown => {
+    if (value instanceof Date) {
+      return Timestamp.fromDate(value);
+    }
+
     if (
       value &&
       typeof value === "object" &&
@@ -274,7 +260,7 @@ export function createMockFirestore() {
   // Mock Transaction
   // --------------------------------------------------
 
-  type MockTransaction = {
+  type MockTransaction = FirestoreTransaction & {
     get: typeof transactionGet;
     create: typeof transactionCreate;
     update: typeof transactionUpdate;
@@ -365,6 +351,7 @@ export function createMockFirestore() {
   // Return
   // --------------------------------------------------
 
+
   return {
     collection,
     runTransaction,
@@ -377,4 +364,10 @@ export function createMockFirestore() {
     get,
     clear,
   };
+}
+
+export function asFirestore(
+  mock: ReturnType<typeof createMockFirestore>,
+): Firestore {
+  return mock as unknown as Firestore;
 }

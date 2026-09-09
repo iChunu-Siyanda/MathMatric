@@ -3,9 +3,9 @@ import {PaymentStatus,Payment,} from "./payment_entity";
 import { BookingStatus } from "../../bookings/booking_status";
 import { Timestamp } from "firebase-admin/firestore";
 import { paymentFromFirestore } from "./payment_mapper";
-import { PaymentProvider } from "./payment_provider";
+import { PaymentProvider } from "../provider/payment_provider";
 import { PaymentCheckout } from "./payment_checkout";
-import { PaymentProviderValidator } from "./payment_provider_validator";
+import { PaymentProviderValidator } from "../provider/payment_provider_validator";
 
 export interface PaymentDocument {
   bookingId: string;

@@ -46,12 +46,34 @@ export class MockPaymentProvider
 
     const event = JSON.parse(payload);
 
+    if (
+      typeof event.occurredAt !==
+      "string"
+    ) {
+      throw new Error(
+        "Webhook occurredAt is required.",
+      );
+    }
+
+    const occurredAt = new Date(event.occurredAt);
+
+    if (
+      Number.isNaN(
+        occurredAt.getTime(),
+      )
+    ) {
+      throw new Error(
+        "Webhook occurredAt is invalid.",
+      );
+    }
+
     return {
       providerPaymentId: event.providerPaymentId,
       bookingId: event.bookingId,
       status: event.status,
       failureReason: event.failureReason ?? null,
       eventId: event.eventId,
+      occurredAt: occurredAt,
     };
   }
 }

@@ -55,7 +55,7 @@ vi.mock("../shared/firebase", () => ({
   db: {},
 }));
 
-import { paymentWebhook } from "../payment/payment_webhook";
+import { paymentWebhook } from "../webhooks/payment_webhook";
 
 describe("paymentWebhook", () => {
   const event = {
