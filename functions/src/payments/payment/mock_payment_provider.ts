@@ -22,6 +22,20 @@ export class MockPaymentProvider
     };
   }
 
+  async refundPayment({
+    refundId,
+  }: {
+    providerPaymentId: string;
+    amountCents: number;
+    currency: "ZAR";
+    refundId: string;
+    bookingId: string;
+  }) {
+    return {
+      providerRefundId: `mock-refund-${refundId}`,
+    };
+  }
+
   verifyWebhook(
     payload: string,
     signature: string,
@@ -41,3 +55,17 @@ export class MockPaymentProvider
     };
   }
 }
+
+// {
+//   provider: "mock",
+//   providerRefundId: "mock-refund-refund-1",
+
+//   bookingId: "booking-1",
+//   paymentId: "booking-1",
+//   refundId: "refund-1",
+
+//   refundPath:
+//     "payments/booking-1/refunds/refund-1",
+
+//   createdAt: Timestamp
+// }

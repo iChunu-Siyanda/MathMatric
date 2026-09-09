@@ -13,6 +13,22 @@ export function paymentFromFirestore(
     throw new Error("Payment updatedAt is invalid.");
   }
 
+  if (
+    typeof data.refundReservedAmountCents !== "number" ||
+    !Number.isInteger(data.refundReservedAmountCents,) ||
+    data.refundReservedAmountCents < 0
+  ) {
+    throw new Error(
+      "Payment refundReservedAmountCents is invalid.",
+    );
+  }
+
+  if (
+    data.refundedAmountCents + data.refundReservedAmountCents > data.amountCents
+  ) {
+    throw new Error("Payment refund amounts exceed amountCents.",);
+  }
+
   return {
     id,
     bookingId: data.bookingId,
@@ -20,6 +36,8 @@ export function paymentFromFirestore(
     tutorId: data.tutorId,
 
     amountCents: data.amountCents,
+    refundedAmountCents: data.refundedAmountCents,
+    refundReservedAmountCents: data.refundReservedAmountCents,
     currency: data.currency,
 
     status: data.status,
@@ -30,8 +48,7 @@ export function paymentFromFirestore(
     createdAt: data.createdAt.toDate(),
     updatedAt: data.updatedAt.toDate(),
 
-    paidAt:
-      data.paidAt instanceof Timestamp
+    paidAt: data.paidAt instanceof Timestamp
         ? data.paidAt.toDate()
         : null,
 

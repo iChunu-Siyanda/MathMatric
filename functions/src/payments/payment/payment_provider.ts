@@ -9,6 +9,10 @@ export interface PaymentWebhookEvent {
   eventId: string;
 }
 
+export interface RefundPaymentResult {
+  providerRefundId: string;
+}
+
 export interface PaymentProvider {
   readonly name: string;
 
@@ -26,6 +30,20 @@ export interface PaymentProvider {
     providerPaymentId: string;
     checkoutUrl: string;
   }>;
+
+  refundPayment({
+    providerPaymentId,
+    amountCents,
+    currency,
+    refundId,
+    bookingId,
+  }: {
+    providerPaymentId: string;
+    amountCents: number;
+    currency: "ZAR";
+    refundId: string;
+    bookingId: string;
+  }): Promise<RefundPaymentResult>;
 
   verifyWebhook(
     payload: string,

@@ -5,6 +5,7 @@ import { Timestamp } from "firebase-admin/firestore";
 import { paymentFromFirestore } from "./payment_mapper";
 import { PaymentProvider } from "./payment_provider";
 import { PaymentCheckout } from "./payment_checkout";
+import { PaymentProviderValidator } from "./payment_provider_validator";
 
 export interface PaymentDocument {
   bookingId: string;
@@ -103,6 +104,8 @@ export class PaymentService {
           tutorId: booking.tutorId,
 
           amountCents: booking.priceCents,
+          refundedAmountCents: 0,
+          refundReservedAmountCents: 0,
           currency: "ZAR",
 
           status: PaymentStatus.pending,
@@ -123,6 +126,8 @@ export class PaymentService {
           tutorId: booking.tutorId,
 
           amountCents: booking.priceCents,
+          refundedAmountCents: 0,
+          refundReservedAmountCents: 0,
           currency: "ZAR",
 
           status: PaymentStatus.pending,
@@ -343,21 +348,13 @@ export class PaymentService {
           );
         }
 
-        if (payment.provider !== null &&
-            payment.provider !== provider) {
-          throw new Error(
-            "Payment provider does not match.",
-          );
-        }
+        PaymentProviderValidator.validateProviderName(
+          provider,
+        );
 
-        if (
-          payment.providerPaymentId !== null &&
-          payment.providerPaymentId !== providerPaymentId
-        ) {
-          throw new Error(
-            "Provider payment ID does not match.",
-          );
-        }
+        PaymentProviderValidator.validateProviderPaymentId(
+          providerPaymentId,
+        );
 
         const bookingSnapshot = await transaction.get(bookingRef);
 

@@ -6,9 +6,20 @@ type DocumentData = Record<string, any>;
 interface MockDocumentReference {
   id: string;
   path: string;
-  update: (
-    data: DocumentData
-  ) => Promise<void>;
+
+  update(
+    data: DocumentData,
+  ): Promise<void>;
+
+  collection(
+    collectionName: string,
+  ): MockCollectionReference;
+}
+
+interface MockCollectionReference {
+  doc(
+    documentId: string,
+  ): MockDocumentReference;
 }
 
 interface MockDocumentSnapshot {
@@ -18,8 +29,14 @@ interface MockDocumentSnapshot {
 }
 
 export function createMockFirestore() {
-  const documents = new Map<string,DocumentData>();
+  const documents = new Map<
+    string,
+    DocumentData
+  >();
 
+  // --------------------------------------------------
+  // Value resolution
+  // --------------------------------------------------
   const resolveValue = (
     value: unknown,
     existingValue?: unknown,
@@ -27,18 +44,27 @@ export function createMockFirestore() {
     if (
       value &&
       typeof value === "object" &&
-      "_methodName" in value
+      "methodName" in value
     ) {
-      const methodName =
-        (value as { _methodName?: string })._methodName;
+      const methodName = (
+        value as {
+          methodName?: unknown;
+        }
+      ).methodName;
 
-      if (methodName === "serverTimestamp") {
+      if (
+        methodName === "FieldValue.serverTimestamp"
+      ) {
         return Timestamp.now();
       }
 
-      if (methodName === "increment") {
+      if (
+        methodName === "FieldValue.increment"
+      ) {
         const operand =
-          (value as { operand?: number }).operand ?? 0;
+          (value as {
+            operand?: number;
+          }).operand ?? 0;
 
         return (
           (typeof existingValue === "number"
@@ -68,6 +94,10 @@ export function createMockFirestore() {
     );
   };
 
+  // --------------------------------------------------
+  // Seed normalization
+  // --------------------------------------------------
+
   const normalizeSeedValue = (
     value: unknown,
   ): unknown => {
@@ -92,6 +122,81 @@ export function createMockFirestore() {
   };
 
   // --------------------------------------------------
+  // Document reference factory
+  // --------------------------------------------------
+
+  const createDocumentReference = (
+    path: string,
+    documentId: string,
+  ): MockDocumentReference => {
+    const update = vi.fn(
+      async (
+        data: DocumentData,
+      ): Promise<void> => {
+        const existing =
+          documents.get(path);
+
+        if (existing === undefined) {
+          throw new Error(
+            `Document does not exist: ${path}`,
+          );
+        }
+
+        documents.set(path, {
+          ...existing,
+          ...resolveData(
+            data,
+            existing,
+          ),
+        });
+      },
+    );
+
+    const collection = vi.fn(
+      (
+        collectionName: string,
+      ): MockCollectionReference => {
+        return createCollectionReference(
+          `${path}/${collectionName}`,
+        );
+      },
+    );
+
+    return {
+      id: documentId,
+      path,
+      update,
+      collection,
+    };
+  };
+
+  // --------------------------------------------------
+  // Collection reference factory
+  // --------------------------------------------------
+
+  const createCollectionReference = (
+    collectionPath: string,
+  ): MockCollectionReference => {
+    const doc = vi.fn(
+      (
+        documentId: string,
+      ): MockDocumentReference => {
+        const path =
+          `${collectionPath}/${documentId}`;
+
+        return createDocumentReference(
+          path,
+          documentId,
+        );
+      },
+    );
+
+    return {
+      doc,
+    };
+  };
+
+  // --------------------------------------------------
   // Transaction GET
   // --------------------------------------------------
 
@@ -99,10 +204,12 @@ export function createMockFirestore() {
     async (
       ref: MockDocumentReference,
     ): Promise<MockDocumentSnapshot> => {
-      const document = documents.get(ref.path);
+      const document =
+        documents.get(ref.path);
 
       return {
-        exists: document !== undefined,
+        exists:
+          document !== undefined,
         id: ref.id,
         data: () =>
           document === undefined
@@ -121,13 +228,17 @@ export function createMockFirestore() {
       ref: MockDocumentReference,
       data: DocumentData,
     ): void => {
+
       if (documents.has(ref.path)) {
         throw new Error(
           `Document already exists: ${ref.path}`,
         );
       }
 
-      documents.set(ref.path, resolveData(data));
+      documents.set(
+        ref.path,
+        resolveData(data),
+      );
     },
   );
 
@@ -140,7 +251,8 @@ export function createMockFirestore() {
       ref: MockDocumentReference,
       data: DocumentData,
     ): void => {
-      const existing = documents.get(ref.path);
+      const existing =
+        documents.get(ref.path);
 
       if (existing === undefined) {
         throw new Error(
@@ -150,13 +262,16 @@ export function createMockFirestore() {
 
       documents.set(ref.path, {
         ...existing,
-        ...resolveData(data, existing),
+        ...resolveData(
+          data,
+          existing,
+        ),
       });
     },
   );
 
   // --------------------------------------------------
-  // MockTransaction
+  // Mock Transaction
   // --------------------------------------------------
 
   type MockTransaction = {
@@ -186,44 +301,16 @@ export function createMockFirestore() {
   );
 
   // --------------------------------------------------
-  // collection
+  // Root collection
   // --------------------------------------------------
 
   const collection = vi.fn(
-    (collectionName: string) => {
-      return {
-        doc: vi.fn(
-          (
-            documentId: string,
-          ): MockDocumentReference => {
-            const path = `${collectionName}/${documentId}`;
-
-            return {
-              id: documentId,
-              path,
-              update: vi.fn(
-                async (
-                  data: DocumentData,
-                ): Promise<void> => {
-                  const existing =
-                    documents.get(path);
-
-                  if (existing === undefined) {
-                    throw new Error(
-                      `Document does not exist: ${path}`,
-                    );
-                  }
-
-                  documents.set(path, {
-                    ...existing,
-                    ...resolveData(data,existing),
-                  });
-                },
-              )
-            }
-          },
-        ),
-      };
+    (
+      collectionName: string,
+    ): MockCollectionReference => {
+      return createCollectionReference(
+        collectionName,
+      );
     },
   );
 
@@ -235,7 +322,10 @@ export function createMockFirestore() {
     path: string,
     data: DocumentData,
   ): void => {
-    documents.set(path, normalizeSeedData(data));
+    documents.set(
+      path,
+      normalizeSeedData(data),
+    );
   };
 
   // --------------------------------------------------

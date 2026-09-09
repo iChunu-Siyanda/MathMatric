@@ -7,6 +7,7 @@ export interface PaymentDocument {
   tutorId: string;
 
   amountCents: number;
+  refundedAmountCents: number;
   currency: "ZAR";
 
   status: PaymentStatus;
