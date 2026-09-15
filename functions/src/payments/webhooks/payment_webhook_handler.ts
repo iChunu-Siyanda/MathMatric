@@ -27,8 +27,7 @@ export interface PaymentWebhookHandlerResult {
 
 export class PaymentWebhookHandler {
   constructor(
-    private readonly dependencies:
-      PaymentWebhookHandlerDependencies,
+    private readonly dependencies: PaymentWebhookHandlerDependencies,
   ) {}
 
   async handle(

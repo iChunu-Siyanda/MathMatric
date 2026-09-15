@@ -6,695 +6,428 @@ import {
 } from "vitest";
 
 import {
-  PaymentWebhookHandler,
-  PaymentWebhookHandlerDependencies,
-} from "../webhooks/payment_webhook_handler";
+  Request,
+  Response,
+} from "express";
 
 import {
-  PaymentService,
-} from "../payment/payment_service";
-
-import {
-  PaymentSuccessService,
-} from "../payment/payent_success_service";
-
-import {
-  WebhookEventService,
-} from "../webhooks/webhook_event_service";
-
-import {
+  PaymentProvider,
   PaymentWebhookEvent,
 } from "../provider/payment_provider";
 
-function createEvent(
-  overrides:
-    Partial<PaymentWebhookEvent> = {},
-): PaymentWebhookEvent {
-  return {
-    providerPaymentId:
-      "mock-payment-1",
+import {
+  PaymentWebhookHandler,
+} from "../webhooks/payment_webhook_handler";
 
-    bookingId:
-      "booking-1",
-
-    status:
-      "paid",
-
-    failureReason:
-      null,
-
-    eventId:
-      "event-1",
-
-    occurredAt:
-      new Date(
-        "2026-02-01T15:00:00.000Z",
-      ),
-
-    ...overrides,
-  };
-}
-
-function createDependencies() {
-  const paymentService = {
-    markProcessing:
-      vi.fn().mockResolvedValue(undefined),
-
-    markFailed:
-      vi.fn().mockResolvedValue(undefined),
-  } as unknown as PaymentService;
-
-  const paymentSuccessService = {
-    markPaymentPaid:
-      vi.fn().mockResolvedValue(undefined),
-  } as unknown as PaymentSuccessService;
-
-  const webhookEventService = {
-    startProcessing:
-      vi.fn().mockResolvedValue(true),
-
-    markProcessed:
-      vi.fn().mockResolvedValue(undefined),
-
-    markFailed:
-      vi.fn().mockResolvedValue(undefined),
-  } as unknown as WebhookEventService;
-
-  const dependencies:
-    PaymentWebhookHandlerDependencies =
-    {
-      paymentService,
-      paymentSuccessService,
-      webhookEventService,
-    };
-
-  return {
-    dependencies,
-    paymentService,
-    paymentSuccessService,
-    webhookEventService,
-  };
-}
+import {
+  handlePaymentWebhookRequest,
+} from "../webhooks/payment_webhook_request_handler";
 
 describe(
-  "PaymentWebhookHandler",
+  "handlePaymentWebhookRequest",
   () => {
-    it(
-      "processes a paid event",
-      async () => {
-        const {
-          dependencies,
-          paymentSuccessService,
-          webhookEventService,
-        } = createDependencies();
+    const event: PaymentWebhookEvent = {
+      providerPaymentId:
+        "provider-payment-1",
+      bookingId:
+        "booking-1",
+      status:
+        "paid",
+      failureReason:
+        null,
+      eventId:
+        "event-1",
+      occurredAt:
+        new Date(
+          "2026-02-01T15:00:00.000Z",
+        ),
+    };
 
-        const handler =
-          new PaymentWebhookHandler(
-            dependencies,
-          );
+    function createRequest(
+      overrides: Partial<Request> = {},
+    ): Request {
+      return {
+        method: "POST",
+        headers: {
+          "x-payment-signature":
+            "valid-signature",
+        },
+        rawBody: Buffer.from(
+          JSON.stringify(event),
+        ),
+        ...overrides,
+      } as unknown as Request;
+    }
 
-        const event =
-          createEvent({
-            status: "paid",
-          });
+    function createResponse(): Response {
+      const response = {
+        status: vi.fn(),
+        send: vi.fn(),
+      };
 
-        const result =
-          await handler.handle(event);
+      response.status.mockReturnValue(
+        response,
+      );
 
-        expect(result)
-          .toEqual({
+      return response as unknown as Response;
+    }
+
+    function createDependencies() {
+      const paymentProvider = {
+        name: "mock",
+
+        verifyWebhook:
+          vi.fn().mockReturnValue(event),
+      } as unknown as PaymentProvider;
+
+      const paymentWebhookHandler = {
+        handle:
+          vi.fn().mockResolvedValue({
             statusCode: 200,
             message:
               "Webhook processed.",
+          }),
+      } as unknown as PaymentWebhookHandler;
+
+      return {
+        paymentProvider,
+        paymentWebhookHandler,
+      };
+    }
+
+    it(
+      "processes a valid POST webhook",
+      async () => {
+        const {
+          paymentProvider,
+          paymentWebhookHandler,
+        } = createDependencies();
+
+        const request =
+          createRequest();
+
+        const response =
+          createResponse();
+
+        await handlePaymentWebhookRequest(
+          request,
+          response,
+          paymentProvider,
+          paymentWebhookHandler,
+        );
+
+        expect(
+          paymentProvider.verifyWebhook,
+        ).toHaveBeenCalledWith(
+          request.rawBody!.toString(
+            "utf8",
+          ),
+          "valid-signature",
+        );
+
+        expect(
+          paymentWebhookHandler.handle,
+        ).toHaveBeenCalledWith(
+          event,
+        );
+
+        expect(
+          response.status,
+        ).toHaveBeenCalledWith(
+          200,
+        );
+
+        expect(
+          response.send,
+        ).toHaveBeenCalledWith(
+          "Webhook processed.",
+        );
+      },
+    );
+
+    it(
+      "rejects non-POST requests",
+      async () => {
+        const {
+          paymentProvider,
+          paymentWebhookHandler,
+        } = createDependencies();
+
+        const request =
+          createRequest({
+            method: "GET",
           });
 
+        const response =
+          createResponse();
+
+        await handlePaymentWebhookRequest(
+          request,
+          response,
+          paymentProvider,
+          paymentWebhookHandler,
+        );
+
         expect(
-          webhookEventService
-            .startProcessing,
+          response.status,
         ).toHaveBeenCalledWith(
-          "event-1",
+          405,
         );
 
         expect(
-          paymentSuccessService
-            .markPaymentPaid,
-        ).toHaveBeenCalledWith({
-          bookingId:
-            "booking-1",
-
-          providerPaymentId:
-            "mock-payment-1",
-
-          paidAt:
-            new Date(
-              "2026-02-01T15:00:00.000Z",
-            ),
-        });
-
-        expect(
-          webhookEventService
-            .markProcessed,
+          response.send,
         ).toHaveBeenCalledWith(
-          "event-1",
-        );
-      },
-    );
-
-    it(
-      "processes a processing event",
-      async () => {
-        const {
-          dependencies,
-          paymentService,
-          paymentSuccessService,
-          webhookEventService,
-        } = createDependencies();
-
-        const handler =
-          new PaymentWebhookHandler(
-            dependencies,
-          );
-
-        await handler.handle(
-          createEvent({
-            status: "processing",
-          }),
+          "Method Not Allowed",
         );
 
         expect(
-          paymentService
-            .markProcessing,
-        ).toHaveBeenCalledWith({
-          paymentId:
-            "booking-1",
-        });
-
-        expect(
-          paymentSuccessService
-            .markPaymentPaid,
+          paymentProvider.verifyWebhook,
         ).not.toHaveBeenCalled();
 
         expect(
-          webhookEventService
-            .markProcessed,
-        ).toHaveBeenCalledWith(
-          "event-1",
-        );
-      },
-    );
-
-    it(
-      "processes a failed event",
-      async () => {
-        const {
-          dependencies,
-          paymentService,
-          paymentSuccessService,
-          webhookEventService,
-        } = createDependencies();
-
-        const handler =
-          new PaymentWebhookHandler(
-            dependencies,
-          );
-
-        await handler.handle(
-          createEvent({
-            status: "failed",
-            failureReason:
-              "Insufficient funds.",
-          }),
-        );
-
-        expect(
-          paymentService.markFailed,
-        ).toHaveBeenCalledWith({
-          bookingId:
-            "booking-1",
-
-          failureReason:
-            "Insufficient funds.",
-        });
-
-        expect(
-          paymentSuccessService
-            .markPaymentPaid,
+          paymentWebhookHandler.handle,
         ).not.toHaveBeenCalled();
-
-        expect(
-          webhookEventService
-            .markProcessed,
-        ).toHaveBeenCalledWith(
-          "event-1",
-        );
       },
     );
 
     it(
-      "uses the default failure reason when none is provided",
+      "rejects a missing webhook signature",
       async () => {
         const {
-          dependencies,
-          paymentService,
+          paymentProvider,
+          paymentWebhookHandler,
         } = createDependencies();
 
-        const handler =
-          new PaymentWebhookHandler(
-            dependencies,
-          );
-
-        await handler.handle(
-          createEvent({
-            status: "failed",
-            failureReason: null,
-          }),
-        );
-
-        expect(
-          paymentService.markFailed,
-        ).toHaveBeenCalledWith({
-          bookingId:
-            "booking-1",
-
-          failureReason:
-            "Payment failed.",
-        });
-      },
-    );
-
-    it(
-      "returns 200 without processing a duplicate webhook",
-      async () => {
-        const {
-          dependencies,
-          paymentService,
-          paymentSuccessService,
-          webhookEventService,
-        } = createDependencies();
-
-        vi.mocked(
-          webhookEventService
-            .startProcessing,
-        ).mockResolvedValue(false);
-
-        const handler =
-          new PaymentWebhookHandler(
-            dependencies,
-          );
-
-        const result =
-          await handler.handle(
-            createEvent(),
-          );
-
-        expect(result)
-          .toEqual({
-            statusCode: 200,
-            message:
-              "Already processed.",
+        const request =
+          createRequest({
+            headers: {},
           });
 
-        expect(
-          paymentService
-            .markProcessing,
-        ).not.toHaveBeenCalled();
+        const response =
+          createResponse();
 
-        expect(
-          paymentService.markFailed,
-        ).not.toHaveBeenCalled();
-
-        expect(
-          paymentSuccessService
-            .markPaymentPaid,
-        ).not.toHaveBeenCalled();
-
-        expect(
-          webhookEventService
-            .markProcessed,
-        ).not.toHaveBeenCalled();
-
-        expect(
-          webhookEventService
-            .markFailed,
-        ).not.toHaveBeenCalled();
-      },
-    );
-
-    it(
-      "marks the webhook failed when payment processing fails",
-      async () => {
-        const {
-          dependencies,
-          paymentSuccessService,
-          webhookEventService,
-        } = createDependencies();
-
-        vi.mocked(
-          paymentSuccessService
-            .markPaymentPaid,
-        ).mockRejectedValue(
-          new Error(
-            "Ledger creation failed.",
-          ),
-        );
-
-        const handler =
-          new PaymentWebhookHandler(
-            dependencies,
-          );
-
-        await expect(
-          handler.handle(
-            createEvent({
-              status: "paid",
-            }),
-          ),
-        ).rejects.toThrow(
-          "Ledger creation failed.",
+        await handlePaymentWebhookRequest(
+          request,
+          response,
+          paymentProvider,
+          paymentWebhookHandler,
         );
 
         expect(
-          webhookEventService
-            .markFailed,
+          response.status,
         ).toHaveBeenCalledWith(
-          "event-1",
-          "Ledger creation failed.",
+          401,
         );
 
         expect(
-          webhookEventService
-            .markProcessed,
+          response.send,
+        ).toHaveBeenCalledWith(
+          "Missing webhook signature.",
+        );
+
+        expect(
+          paymentProvider.verifyWebhook,
+        ).not.toHaveBeenCalled();
+
+        expect(
+          paymentWebhookHandler.handle,
         ).not.toHaveBeenCalled();
       },
     );
 
     it(
-      "marks the webhook failed when processing event handling fails",
+      "rejects a missing webhook body",
       async () => {
         const {
-          dependencies,
-          paymentService,
-          webhookEventService,
+          paymentProvider,
+          paymentWebhookHandler,
+        } = createDependencies();
+
+        const request =
+          createRequest({
+            rawBody: undefined,
+          });
+
+        const response =
+          createResponse();
+
+        await handlePaymentWebhookRequest(
+          request,
+          response,
+          paymentProvider,
+          paymentWebhookHandler,
+        );
+
+        expect(
+          response.status,
+        ).toHaveBeenCalledWith(
+          400,
+        );
+
+        expect(
+          response.send,
+        ).toHaveBeenCalledWith(
+          "Missing webhook body.",
+        );
+
+        expect(
+          paymentProvider.verifyWebhook,
+        ).not.toHaveBeenCalled();
+
+        expect(
+          paymentWebhookHandler.handle,
+        ).not.toHaveBeenCalled();
+      },
+    );
+
+    it(
+      "passes the raw request body to the provider",
+      async () => {
+        const {
+          paymentProvider,
+          paymentWebhookHandler,
+        } = createDependencies();
+
+        const request =
+          createRequest();
+
+        const response =
+          createResponse();
+
+        await handlePaymentWebhookRequest(
+          request,
+          response,
+          paymentProvider,
+          paymentWebhookHandler,
+        );
+
+        expect(
+          paymentProvider.verifyWebhook,
+        ).toHaveBeenCalledWith(
+          request.rawBody!.toString(
+            "utf8",
+          ),
+          "valid-signature",
+        );
+      },
+    );
+
+    it(
+      "returns 500 when webhook verification fails",
+      async () => {
+        const {
+          paymentProvider,
+          paymentWebhookHandler,
         } = createDependencies();
 
         vi.mocked(
-          paymentService.markProcessing,
+          paymentProvider.verifyWebhook,
+        ).mockImplementation(() => {
+          throw new Error(
+            "Invalid webhook signature.",
+          );
+        });
+
+        const response =
+          createResponse();
+
+        await handlePaymentWebhookRequest(
+          createRequest(),
+          response,
+          paymentProvider,
+          paymentWebhookHandler,
+        );
+
+        expect(
+          response.status,
+        ).toHaveBeenCalledWith(
+          500,
+        );
+
+        expect(
+          response.send,
+        ).toHaveBeenCalledWith(
+          "Webhook processing failed.",
+        );
+
+        expect(
+          paymentWebhookHandler.handle,
+        ).not.toHaveBeenCalled();
+      },
+    );
+
+    it(
+      "returns 500 when the webhook handler fails",
+      async () => {
+        const {
+          paymentProvider,
+          paymentWebhookHandler,
+        } = createDependencies();
+
+        vi.mocked(
+          paymentWebhookHandler.handle,
         ).mockRejectedValue(
           new Error(
             "Payment processing failed.",
           ),
         );
 
-        const handler =
-          new PaymentWebhookHandler(
-            dependencies,
-          );
+        const response =
+          createResponse();
 
-        await expect(
-          handler.handle(
-            createEvent({
-              status: "processing",
-            }),
-          ),
-        ).rejects.toThrow(
-          "Payment processing failed.",
+        await handlePaymentWebhookRequest(
+          createRequest(),
+          response,
+          paymentProvider,
+          paymentWebhookHandler,
         );
 
         expect(
-          webhookEventService
-            .markFailed,
+          response.status,
         ).toHaveBeenCalledWith(
-          "event-1",
-          "Payment processing failed.",
+          500,
         );
 
         expect(
-          webhookEventService
-            .markProcessed,
-        ).not.toHaveBeenCalled();
-      },
-    );
-
-    it(
-      "marks the webhook failed when failed-payment handling fails",
-      async () => {
-        const {
-          dependencies,
-          paymentService,
-          webhookEventService,
-        } = createDependencies();
-
-        vi.mocked(
-          paymentService.markFailed,
-        ).mockRejectedValue(
-          new Error(
-            "Failed to update payment.",
-          ),
-        );
-
-        const handler =
-          new PaymentWebhookHandler(
-            dependencies,
-          );
-
-        await expect(
-          handler.handle(
-            createEvent({
-              status: "failed",
-            }),
-          ),
-        ).rejects.toThrow(
-          "Failed to update payment.",
-        );
-
-        expect(
-          webhookEventService
-            .markFailed,
+          response.send,
         ).toHaveBeenCalledWith(
-          "event-1",
-          "Failed to update payment.",
-        );
-
-        expect(
-          webhookEventService
-            .markProcessed,
-        ).not.toHaveBeenCalled();
-      },
-    );
-
-    it(
-      "does not mark the webhook processed when payment success fails",
-      async () => {
-        const {
-          dependencies,
-          paymentSuccessService,
-          webhookEventService,
-        } = createDependencies();
-
-        vi.mocked(
-          paymentSuccessService
-            .markPaymentPaid,
-        ).mockRejectedValue(
-          new Error(
-            "Payment transaction failed.",
-          ),
-        );
-
-        const handler =
-          new PaymentWebhookHandler(
-            dependencies,
-          );
-
-        await expect(
-          handler.handle(
-            createEvent(),
-          ),
-        ).rejects.toThrow(
-          "Payment transaction failed.",
-        );
-
-        expect(
-          webhookEventService
-            .markProcessed,
-        ).not.toHaveBeenCalled();
-
-        expect(
-          webhookEventService
-            .markFailed,
-        ).toHaveBeenCalledTimes(1);
-      },
-    );
-
-    it(
-      "propagates the original processing error when recording webhook failure also fails",
-      async () => {
-        const {
-          dependencies,
-          paymentSuccessService,
-          webhookEventService,
-        } = createDependencies();
-
-        vi.mocked(
-          paymentSuccessService
-            .markPaymentPaid,
-        ).mockRejectedValue(
-          new Error(
-            "Original payment error.",
-          ),
-        );
-
-        vi.mocked(
-          webhookEventService
-            .markFailed,
-        ).mockRejectedValue(
-          new Error(
-            "Webhook failure recording error.",
-          ),
-        );
-
-        const handler =
-          new PaymentWebhookHandler(
-            dependencies,
-          );
-
-        await expect(
-          handler.handle(
-            createEvent(),
-          ),
-        ).rejects.toThrow(
-          "Original payment error.",
+          "Webhook processing failed.",
         );
       },
     );
 
     it(
-      "passes the provider occurrence time to payment success",
+      "does not call the handler when verification fails",
       async () => {
         const {
-          dependencies,
-          paymentSuccessService,
+          paymentProvider,
+          paymentWebhookHandler,
         } = createDependencies();
 
-        const handler =
-          new PaymentWebhookHandler(
-            dependencies,
+        vi.mocked(
+          paymentProvider.verifyWebhook,
+        ).mockImplementation(() => {
+          throw new Error(
+            "Invalid webhook.",
           );
-
-        const occurredAt =
-          new Date(
-            "2026-04-10T12:30:00.000Z",
-          );
-
-        await handler.handle(
-          createEvent({
-            status: "paid",
-            occurredAt,
-          }),
-        );
-
-        expect(
-          paymentSuccessService
-            .markPaymentPaid,
-        ).toHaveBeenCalledWith({
-          bookingId:
-            "booking-1",
-
-          providerPaymentId:
-            "mock-payment-1",
-
-          paidAt: occurredAt,
         });
-      },
-    );
 
-    it(
-      "does not process a webhook after startProcessing returns false",
-      async () => {
-        const {
-          dependencies,
-          paymentService,
-          paymentSuccessService,
-          webhookEventService,
-        } = createDependencies();
+        const response =
+          createResponse();
 
-        vi.mocked(
-          webhookEventService
-            .startProcessing,
-        ).mockResolvedValue(false);
-
-        const handler =
-          new PaymentWebhookHandler(
-            dependencies,
-          );
-
-        await handler.handle(
-          createEvent({
-            status: "paid",
-          }),
+        await handlePaymentWebhookRequest(
+          createRequest(),
+          response,
+          paymentProvider,
+          paymentWebhookHandler,
         );
 
         expect(
-          paymentSuccessService
-            .markPaymentPaid,
+          paymentWebhookHandler.handle,
         ).not.toHaveBeenCalled();
-
-        expect(
-          paymentService
-            .markProcessing,
-        ).not.toHaveBeenCalled();
-
-        expect(
-          paymentService.markFailed,
-        ).not.toHaveBeenCalled();
-      },
-    );
-
-    it(
-      "does not mark the event processed if payment processing throws",
-      async () => {
-        const {
-          dependencies,
-          paymentService,
-          webhookEventService,
-        } = createDependencies();
-
-        vi.mocked(
-          paymentService
-            .markProcessing,
-        ).mockRejectedValue(
-          new Error(
-            "Processing unavailable.",
-          ),
-        );
-
-        const handler =
-          new PaymentWebhookHandler(
-            dependencies,
-          );
-
-        await expect(
-          handler.handle(
-            createEvent({
-              status: "processing",
-            }),
-          ),
-        ).rejects.toThrow(
-          "Processing unavailable.",
-        );
-
-        expect(
-          webhookEventService
-            .markProcessed,
-        ).not.toHaveBeenCalled();
-
-        expect(
-          webhookEventService
-            .markFailed,
-        ).toHaveBeenCalledWith(
-          "event-1",
-          "Processing unavailable.",
-        );
       },
     );
   },
 );
+
+
