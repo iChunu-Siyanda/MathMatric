@@ -452,17 +452,4 @@ export class PaymentService {
       });
     });
   }
-
-  // private async updateStatus(
-  //   paymentId: string,
-  //   status: PaymentStatus,
-  // ): Promise<void> {
-  //   await this.firestore
-  //     .collection("payments")
-  //     .doc(paymentId)
-  //     .update({
-  //       status,
-  //       updatedAt: FieldValue.serverTimestamp(),
-  //     });
-  // }
 }

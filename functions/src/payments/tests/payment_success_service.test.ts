@@ -1,7 +1,7 @@
 import {Timestamp,Firestore,} from "firebase-admin/firestore";
 import { beforeEach, describe, expect, it, } from "vitest";
 import {Payment,PaymentStatus,} from "../payment/payment_entity";
-import {PaymentSuccessService,} from "../payment/payent_success_service";
+import {PaymentSuccessService,} from "../payment/payment_success_service";
 import {TransactionDirection,TransactionStatus,TransactionType,} from "../transactions/transaction";
 import {TransactionReferenceIdentity,} from "../transactions/transaction_reference_identity";
 import {TransactionService,} from "../transactions/transaction_service";
@@ -120,9 +120,8 @@ describe(
 
         const result =
           await service.markPaymentPaid({
-            paymentId: "payment-1",
-            providerPaymentId:
-              "mock-payment-1",
+            bookingId: "payment-1",
+            providerPaymentId: "mock-payment-1",
             paidAt,
           });
 
@@ -230,7 +229,7 @@ describe(
 
         const result =
           await service.markPaymentPaid({
-            paymentId: "payment-1",
+            bookingId: "payment-1",
             providerPaymentId:
               "mock-payment-1",
             paidAt,
@@ -275,7 +274,7 @@ describe(
 
         const result =
           await service.markPaymentPaid({
-            paymentId: "payment-1",
+            bookingId: "payment-1",
             providerPaymentId:
               "mock-payment-1",
             paidAt,
@@ -306,7 +305,7 @@ describe(
         );
 
         await service.markPaymentPaid({
-          paymentId: "payment-1",
+          bookingId: "payment-1",
           providerPaymentId:
             "mock-payment-1",
           paidAt:
@@ -340,7 +339,7 @@ describe(
         );
 
         await service.markPaymentPaid({
-          paymentId: "payment-1",
+          bookingId: "payment-1",
           providerPaymentId:
             "mock-payment-1",
           paidAt,
@@ -374,7 +373,7 @@ describe(
         );
 
         await service.markPaymentPaid({
-          paymentId: "payment-1",
+          bookingId: "payment-1",
           providerPaymentId:
             "mock-payment-1",
           paidAt:
@@ -405,7 +404,7 @@ describe(
         );
 
         await service.markPaymentPaid({
-          paymentId: "payment-1",
+          bookingId: "payment-1",
           providerPaymentId:
             "mock-payment-1",
           paidAt:
@@ -437,7 +436,7 @@ describe(
 
         await expect(
           service.markPaymentPaid({
-            paymentId: "payment-1",
+            bookingId: "payment-1",
             providerPaymentId:
               "different-provider-payment",
             paidAt:
@@ -486,7 +485,7 @@ describe(
 
         await expect(
           service.markPaymentPaid({
-            paymentId: "payment-1",
+            bookingId: "payment-1",
             providerPaymentId:
               "mock-payment-1",
             paidAt:
@@ -527,7 +526,7 @@ describe(
 
         await expect(
           service.markPaymentPaid({
-            paymentId: "payment-1",
+            bookingId: "payment-1",
             providerPaymentId:
               "mock-payment-1",
             paidAt:
@@ -568,7 +567,7 @@ describe(
 
         await expect(
           service.markPaymentPaid({
-            paymentId: "payment-1",
+            bookingId: "payment-1",
             providerPaymentId:
               "mock-payment-1",
             paidAt:
@@ -609,7 +608,7 @@ describe(
 
         await expect(
           service.markPaymentPaid({
-            paymentId: "payment-1",
+            bookingId: "payment-1",
             providerPaymentId:
               "mock-payment-1",
             paidAt:
@@ -642,7 +641,7 @@ describe(
       async () => {
         await expect(
           service.markPaymentPaid({
-            paymentId: "payment-1",
+            bookingId: "payment-1",
             providerPaymentId:
               "mock-payment-1",
             paidAt:
@@ -681,7 +680,7 @@ describe(
 
         const result =
           await service.markPaymentPaid({
-            paymentId: "payment-1",
+            bookingId: "payment-1",
             providerPaymentId:
               "mock-payment-1",
             paidAt,
@@ -715,7 +714,7 @@ describe(
         );
 
         await service.markPaymentPaid({
-          paymentId: "payment-1",
+          bookingId: "payment-1",
           providerPaymentId:
             "mock-payment-1",
           paidAt,
@@ -735,7 +734,7 @@ describe(
          * not create another ledger transaction.
          */
         await service.markPaymentPaid({
-          paymentId: "payment-1",
+          bookingId: "payment-1",
           providerPaymentId:
             "mock-payment-1",
           paidAt,
@@ -786,7 +785,7 @@ describe(
 
         await expect(
           service.markPaymentPaid({
-            paymentId: "payment-1",
+            bookingId: "payment-1",
             providerPaymentId:
               "wrong-provider-id",
             paidAt,
@@ -884,7 +883,7 @@ describe(
         );
 
         await service.markPaymentPaid({
-          paymentId: "payment-1",
+          bookingId: "payment-1",
           providerPaymentId:
             "mock-payment-1",
           paidAt:
@@ -920,7 +919,7 @@ describe(
         );
 
         await service.markPaymentPaid({
-          paymentId: "payment-1",
+          bookingId: "payment-1",
           providerPaymentId:
             "mock-payment-1",
           paidAt:
@@ -960,7 +959,7 @@ describe(
         );
 
         await service.markPaymentPaid({
-          paymentId: "payment-1",
+          bookingId: "payment-1",
           providerPaymentId:
             "mock-payment-1",
           paidAt:

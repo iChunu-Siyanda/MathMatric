@@ -29,6 +29,13 @@ export interface CreateTransactionResult {
   created: boolean;
 }
 
+export interface TransactionReadResult {
+  transactionRef: FirebaseFirestore.DocumentReference;
+  existing: Transaction | null;
+  referenceExists: boolean;
+  referenceTransactionId: string | null;
+}
+
 export class TransactionService {
   constructor(
     private readonly firestore: Firestore,
@@ -42,9 +49,16 @@ export class TransactionService {
 
     return this.firestore.runTransaction(
       async (firestoreTransaction) => {
-        return this.createTransactionInTransaction(
+        const readResult =
+          await this.readTransactionInTransaction(
+            firestoreTransaction,
+            input,
+          );
+
+        return this.createTransactionFromReadResultInTransaction(
           firestoreTransaction,
           input,
+          readResult,
         );
       },
     );
@@ -54,6 +68,94 @@ export class TransactionService {
     firestoreTransaction: FirestoreTransaction,
     input: CreateTransactionInput,
   ): Promise<CreateTransactionResult> {
+    this.validateInput(input);
+
+    const readResult =
+      await this.readTransactionInTransaction(
+        firestoreTransaction,
+        input,
+      );
+
+    return this.createTransactionFromReadResultInTransaction(
+      firestoreTransaction,
+      input,
+      readResult,
+    );
+  }
+
+  async readTransactionInTransaction(
+    firestoreTransaction: FirestoreTransaction,
+    input: CreateTransactionInput,
+  ): Promise<TransactionReadResult> {
+    this.validateInput(input);
+
+    const transactionRef = this.firestore
+      .collection("transactions")
+      .doc(input.transactionId);
+
+    const referenceRef =
+      this.referenceIdentity.getReference(
+        input.type,
+        input.referenceId,
+      );
+
+    const [
+      existingSnapshot,
+      referenceSnapshot,
+    ] = await Promise.all([
+      firestoreTransaction.get(transactionRef),
+      firestoreTransaction.get(referenceRef),
+    ]);
+
+    let existing: Transaction | null = null;
+
+    if (existingSnapshot.exists) {
+      const existingData =
+        existingSnapshot.data();
+
+      if (!existingData) {
+        throw new Error(
+          "Transaction data is missing.",
+        );
+      }
+
+      existing =
+        transactionFromFirestore(
+          existingSnapshot.id,
+          existingData,
+        );
+    }
+
+    let referenceTransactionId:
+      string | null = null;
+
+    if (referenceSnapshot.exists) {
+      const referenceData =
+        referenceSnapshot.data();
+
+      if (
+        referenceData &&
+        typeof referenceData.transactionId ===
+          "string"
+      ) {
+        referenceTransactionId =
+          referenceData.transactionId;
+      }
+    }
+
+    return {
+      transactionRef,
+      existing,
+      referenceExists: referenceSnapshot.exists,
+      referenceTransactionId,
+    };
+  }
+
+  createTransactionFromReadResultInTransaction(
+    firestoreTransaction: FirestoreTransaction,
+    input: CreateTransactionInput,
+    readResult: TransactionReadResult,
+  ): CreateTransactionResult {
     this.validateInput(input);
 
     const {
@@ -72,29 +174,21 @@ export class TransactionService {
       completedAt = null,
     } = input;
 
-    const transactionRef = this.firestore
-      .collection("transactions")
-      .doc(transactionId);
+    const {
+      transactionRef,
+      existing,
+      referenceExists,
+      referenceTransactionId,
+    } = readResult;
 
-    const existingSnapshot =
-      await firestoreTransaction.get(transactionRef);
-
-    if (existingSnapshot.exists) {
-      const existingData =
-        existingSnapshot.data();
-
-      if (!existingData) {
-        throw new Error(
-          "Transaction data is missing.",
-        );
-      }
-
-      const existing =
-        transactionFromFirestore(
-          existingSnapshot.id,
-          existingData,
-        );
-
+    /*
+     * Existing transaction path.
+     *
+     * A transaction ID is itself an idempotency key.
+     * If it already exists, its financial identity must
+     * match the request.
+     */
+    if (existing !== null) {
       if (
         existing.referenceId !== referenceId ||
         existing.type !== type
@@ -104,10 +198,33 @@ export class TransactionService {
         );
       }
 
+      /*
+       * If the reference exists, it must point to
+       * this same transaction.
+       */
+      if (
+        referenceExists &&
+        referenceTransactionId !== transactionId
+      ) {
+        throw new Error(
+          "Transaction reference is already associated with another transaction.",
+        );
+      }
+
       return {
         transaction: existing,
         created: false,
       };
+    }
+
+    /*
+     * No transaction exists, so a reference collision
+     * must be rejected.
+     */
+    if (referenceExists) {
+      throw new Error(
+        "Transaction reference is already associated with another transaction.",
+      );
     }
 
     const transactionEntity: Transaction = {
@@ -127,16 +244,11 @@ export class TransactionService {
       completedAt,
     };
 
-    await this.referenceIdentity.claimInTransaction(
-      firestoreTransaction,
-      {
-        type,
-        referenceId,
-        transactionId,
-        bookingId,
-        paymentId,
-      },
-    );
+    /*
+     * At this point ALL reads have already happened.
+     *
+     * From here onward we only write.
+     */
 
     firestoreTransaction.create(
       transactionRef,
@@ -158,6 +270,25 @@ export class TransactionService {
           completedAt === null
             ? null
             : completedAt,
+      },
+    );
+
+    const referenceRef =
+      this.referenceIdentity.getReference(
+        type,
+        referenceId,
+      );
+
+    firestoreTransaction.create(
+      referenceRef,
+      {
+        type,
+        referenceId,
+        transactionId,
+        bookingId,
+        paymentId,
+        createdAt:
+          FieldValue.serverTimestamp(),
       },
     );
 
@@ -237,9 +368,7 @@ export class TransactionService {
       );
     }
 
-    if (
-      input.currency !== "ZAR"
-    ) {
+    if (input.currency !== "ZAR") {
       throw new Error(
         "Unsupported currency.",
       );

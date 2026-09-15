@@ -1,7 +1,7 @@
 import {onRequest,} from "firebase-functions/v2/https";
 import {db,} from "../../shared/firebase";
 import {PaymentService,} from "../payment/payment_service";
-import {PaymentSuccessService,} from "../payment/payent_success_service";
+import { PaymentSuccessService } from "../payment/payment_success_service";
 import {TransactionReferenceIdentity,} from "../transactions/transaction_reference_identity";
 import {TransactionService,} from "../transactions/transaction_service";
 import {MockPaymentProvider,} from "../provider/mock_payment_provider";

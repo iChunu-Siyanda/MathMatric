@@ -4,7 +4,7 @@ import {
 
 import {
   PaymentSuccessService,
-} from "../payment/payent_success_service";
+} from "../payment/payment_success_service";
 
 import {
   PaymentWebhookEvent,
@@ -38,11 +38,16 @@ export class PaymentWebhookHandler {
       paymentSuccessService,
       webhookEventService,
     } = this.dependencies;
-
+    
+    console.log("A. starting webhook processing");
     const shouldProcess =
       await webhookEventService
         .startProcessing(event.eventId);
-
+    
+    console.log(
+      "B. startProcessing returned:",
+      shouldProcess,
+    );
     if (!shouldProcess) {
       return {
         statusCode: 200,
@@ -51,8 +56,10 @@ export class PaymentWebhookHandler {
     }
 
     try {
+      console.log("C. entering event switch");
       switch (event.status) {
         case "processing":
+          console.log("D. processing event");
           await paymentService
             .markProcessing({
               paymentId:
@@ -62,21 +69,22 @@ export class PaymentWebhookHandler {
           break;
 
         case "paid":
+          console.log("D. paid event");
+          console.log("E. calling markPaymentPaid");
           await paymentSuccessService
             .markPaymentPaid({
               bookingId:
                 event.bookingId,
-
               providerPaymentId:
                 event.providerPaymentId,
-
               paidAt:
                 event.occurredAt,
             });
-
+            console.log("F. markPaymentPaid returned");
           break;
 
         case "failed":
+          console.log("D. failed event");
           await paymentService
             .markFailed({
               bookingId:
@@ -94,17 +102,20 @@ export class PaymentWebhookHandler {
             "Unsupported payment status.",
           );
       }
-
+      
+      console.log("G. marking webhook processed");
       await webhookEventService
         .markProcessed(
           event.eventId,
         );
-
+      
+        console.log("H. webhook marked processed");
       return {
         statusCode: 200,
         message: "Webhook processed.",
       };
     } catch (error) {
+      console.log("I. webhook handler caught error", error);
       try {
         await webhookEventService
           .markFailed(

@@ -1,6 +1,6 @@
 import {describe, expect, it, vi} from "vitest";
 import {handleTutorCancelBooking,validateTutorCancelBookingRequest,} from "./tutorCancelBooking";
-import { NotificationType } from "../notifications/notification_types";
+import { NotificationType } from "../../notifications/notification_types";
 
 type MockCallableRequest = {
   auth?: {uid: string} | null;

@@ -1,10 +1,10 @@
 import { Timestamp } from "firebase-admin/firestore";
 import {beforeEach, afterEach, describe, expect, it,vi} from "vitest";
-import { PaymentService } from "./payment_service";
-import { PaymentStatus } from "./payment/payment_entity";
-import { PaymentProvider } from "./payment/payment_provider";
-import { BookingStatus } from "../bookings/booking_status";
-import { createMockFirestore } from "./tests/mock_firestore";
+import { PaymentService } from "../payment/payment_service";
+import { PaymentStatus } from "../payment/payment_entity";
+import { PaymentProvider } from "../provider/payment_provider";
+import { BookingStatus } from "../../bookings/booking_status";
+import { createMockFirestore } from "./mock_firestore";
 
 describe("PaymentService", () => {
   let firestore: ReturnType<typeof createMockFirestore>;
@@ -30,6 +30,8 @@ describe("PaymentService", () => {
           };
         },
       ),
+      refundPayment: vi.fn(),
+      verifyWebhook: vi.fn(),
     };
 
     service = new PaymentService(
@@ -422,9 +424,9 @@ describe("PaymentService", () => {
         failureReason: null,
       });
 
-      await service.markProcessing(
-        "booking-1",
-      );
+      await service.markProcessing({
+        paymentId: "booking-1",
+      });
 
       expect(
         firestore.get("payments/booking-1")
@@ -434,9 +436,9 @@ describe("PaymentService", () => {
 
     it("rejects when the payment does not exist", async () => {
       await expect(
-        service.markProcessing(
-          "booking-1",
-        ),
+        service.markProcessing({
+          paymentId: "booking-1",
+        }),
       ).rejects.toThrow(
         "Payment not found.",
       );
@@ -447,9 +449,9 @@ describe("PaymentService", () => {
         status: PaymentStatus.processing,
       });
 
-      await service.markProcessing(
-        "booking-1",
-      );
+      await service.markProcessing({
+        paymentId: "booking-1",
+      });
 
       expect(
         firestore.transactionUpdate,
@@ -462,9 +464,9 @@ describe("PaymentService", () => {
       });
 
       await expect(
-        service.markProcessing(
-          "booking-1",
-        ),
+        service.markProcessing({
+          paymentId: "booking-1"
+        }),
       ).rejects.toThrow(
         //"Payment cannot be marked as processing.",
         "Payment cannot become processing from paid.",
@@ -477,9 +479,9 @@ describe("PaymentService", () => {
       });
 
       await expect(
-        service.markProcessing(
-          "booking-1",
-        ),
+        service.markProcessing({
+          paymentId: "booking-1",
+        }),
       ).rejects.toThrow(
         //"Payment cannot be marked as processing.",
         "Payment cannot become processing from failed.",
@@ -526,11 +528,11 @@ describe("PaymentService", () => {
     it("marks payment as paid and booking as confirmed", async () => {
       seedValidPaymentAndBooking();
 
-      await service.markPaid(
-        "booking-1",
-        "mock",
-        "mock-booking-1",
-      );
+      await service.markPaid({
+        bookingId: "booking-1",
+        provider: "mock",
+        providerPaymentId:"mock-booking-1",
+      });
 
       const payment =
         firestore.get("payments/booking-1");
@@ -561,11 +563,11 @@ describe("PaymentService", () => {
 
     it("rejects when the payment does not exist", async () => {
       await expect(
-        service.markPaid(
-          "booking-1",
-          "mock",
-          "mock-booking-1",
-        ),
+        service.markPaid({
+          bookingId: "booking-1",
+          provider: "mock",
+          providerPaymentId:"mock-booking-1",
+        })
       ).rejects.toThrow(
         "Payment not found.",
       );
@@ -576,11 +578,11 @@ describe("PaymentService", () => {
         status: PaymentStatus.paid,
       });
 
-      await service.markPaid(
-        "booking-1",
-        "mock",
-        "mock-booking-1",
-      );
+      await service.markPaid({
+        bookingId: "booking-1",
+        provider: "mock",
+        providerPaymentId:"mock-booking-1",
+      });
 
       expect(
         firestore.transactionUpdate,
@@ -593,11 +595,11 @@ describe("PaymentService", () => {
       });
 
       await expect(
-        service.markPaid(
-          "booking-1",
-          "mock",
-          "mock-booking-1",
-        ),
+        service.markPaid({
+          bookingId: "booking-1",
+          provider: "mock",
+          providerPaymentId: "mock-booking-1",
+        }),
       ).rejects.toThrow(
         "Payment cannot become paid from pending.",
         //"Payment must be processing before it can be marked as paid.",
@@ -613,11 +615,11 @@ describe("PaymentService", () => {
       });
 
       await expect(
-        service.markPaid(
-          "booking-1",
-          "mock",
-          "mock-booking-1",
-        ),
+        service.markPaid({
+          bookingId: "booking-1",
+          provider: "mock",
+          providerPaymentId:"mock-booking-1",
+        })
       ).rejects.toThrow(
         "Booking not found.",
       );
@@ -639,11 +641,11 @@ describe("PaymentService", () => {
       });
 
       await expect(
-        service.markPaid(
-          "booking-1",
-          "mock",
-          "mock-booking-1",
-        ),
+        service.markPaid({
+          bookingId: "booking-1",
+          provider: "mock",
+          providerPaymentId:"mock-booking-1",
+        })
       ).rejects.toThrow(
         "Booking is not awaiting payment.",
       );
@@ -666,11 +668,11 @@ describe("PaymentService", () => {
       });
 
       await expect(
-        service.markPaid(
-          "booking-1",
-          "mock",
-          "mock-booking-1",
-        ),
+        service.markPaid({
+          bookingId: "booking-1",
+          provider: "mock",
+          providerPaymentId:"mock-booking-1",
+        })
       ).rejects.toThrow(
         //"Payment student does not match booking.",
         "Payment does not belong to the booking.",
@@ -694,11 +696,11 @@ describe("PaymentService", () => {
       });
 
       await expect(
-        service.markPaid(
-          "booking-1",
-          "mock",
-          "mock-booking-1",
-        ),
+        service.markPaid({
+          bookingId: "booking-1",
+          provider: "mock",
+          providerPaymentId:"mock-booking-1",
+        })
       ).rejects.toThrow(
         //"Payment tutor does not match booking.",
         "Payment does not belong to the booking.",
@@ -722,11 +724,11 @@ describe("PaymentService", () => {
       });
 
       await expect(
-        service.markPaid(
-          "booking-1",
-          "mock",
-          "mock-booking-1",
-      ),
+        service.markPaid({
+          bookingId: "booking-1",
+          provider: "mock",
+          providerPaymentId:"mock-booking-1",
+        })
       ).rejects.toThrow(
         "Payment amount does not match booking price.",
       );
@@ -744,10 +746,10 @@ describe("PaymentService", () => {
         failureReason: null,
       });
 
-      await service.markFailed(
-        "booking-1",
-        "Card declined.",
-      );
+      await service.markFailed({
+        bookingId: "booking-1",
+        failureReason: "Card declined.",
+      });
 
       const payment =
         firestore.get("payments/booking-1");
@@ -767,10 +769,10 @@ describe("PaymentService", () => {
         failureReason: null,
       });
 
-      await service.markFailed(
-        "booking-1",
-        "Payment rejected.",
-      );
+      await service.markFailed({
+        bookingId: "booking-1",
+        failureReason: "Payment rejected.",
+      });
 
       const payment = firestore.get("payments/booking-1");
 
@@ -785,10 +787,10 @@ describe("PaymentService", () => {
 
     it("rejects when payment does not exist", async () => {
       await expect(
-        service.markFailed(
-          "booking-1",
-          "Card declined.",
-        ),
+        service.markFailed({
+          bookingId: "booking-1",
+          failureReason: "Payment rejected.",
+        })
       ).rejects.toThrow(
         "Payment not found.",
       );
@@ -800,10 +802,10 @@ describe("PaymentService", () => {
         failureReason: "Card declined.",
       });
 
-      await service.markFailed(
-        "booking-1",
-        "Another reason.",
-      );
+      await service.markFailed({
+        bookingId: "booking-1",
+        failureReason: "Payment rejected.",
+      });
 
       const payment = firestore.get("payments/booking-1");
 
@@ -826,10 +828,10 @@ describe("PaymentService", () => {
       });
 
       await expect(
-        service.markFailed(
-          "booking-1",
-          "Card declined.",
-        ),
+        service.markFailed({
+          bookingId: "booking-1",
+          failureReason: "Payment rejected.",
+        })
       ).rejects.toThrow(
         //"Payment cannot be marked as failed.",
         "Payment cannot be marked failed from paid.",
@@ -842,10 +844,10 @@ describe("PaymentService", () => {
       });
 
       await expect(
-        service.markFailed(
-          "booking-1",
-          "Card declined.",
-        ),
+        service.markFailed({
+          bookingId: "booking-1",
+          failureReason: "Card declined.",
+        }),
       ).rejects.toThrow(
         //"Payment cannot be marked as failed.",
         "Payment cannot be marked failed from cancelled.",

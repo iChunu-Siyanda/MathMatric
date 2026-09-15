@@ -4,7 +4,7 @@ import {
   handleDeclineBooking,
   validateDeclineBookingRequest,
 } from "./declineBooking";
-import { NotificationType } from "../notifications/notification_types";
+import { NotificationType } from "../../notifications/notification_types";
 
 type MockCallableRequest = {
   auth: {
