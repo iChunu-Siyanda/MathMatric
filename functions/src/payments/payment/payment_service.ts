@@ -5,7 +5,7 @@ import { Timestamp } from "firebase-admin/firestore";
 import { paymentFromFirestore } from "./payment_mapper";
 import { PaymentProvider } from "../provider/payment_provider";
 import { PaymentCheckout } from "./payment_checkout";
-import { PaymentProviderValidator } from "../provider/payment_provider_validator";
+import { ProviderValidator } from "../provider/provider_validator";
 
 export interface PaymentDocument {
   bookingId: string;
@@ -348,11 +348,11 @@ export class PaymentService {
           );
         }
 
-        PaymentProviderValidator.validateProviderName(
+        ProviderValidator.validateProviderName(
           provider,
         );
 
-        PaymentProviderValidator.validateProviderPaymentId(
+        ProviderValidator.validateProviderPaymentId(
           providerPaymentId,
         );
 

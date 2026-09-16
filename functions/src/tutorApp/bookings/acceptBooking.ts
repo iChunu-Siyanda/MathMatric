@@ -190,16 +190,3 @@ export const acceptBooking = onCall(
     return handleAcceptBooking(request);
   },
 );
-
-// Partially Designed:
-// ✅ Function structure
-// ✅ Tutor authentication
-// ✅ Booking ownership check
-// ✅ Pending-status check
-// ✅ Confirmed-slot conflict check
-// ✅ Firestore transaction
-// ⏳ Tests
-// ⏳ Handling competing pending requests
-// ⏳ Decline function
-// ⏳ Notifications/state updates
-// ⏳ Integration testing

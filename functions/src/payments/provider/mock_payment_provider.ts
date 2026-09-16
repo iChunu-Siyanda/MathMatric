@@ -1,7 +1,4 @@
-import {
-  PaymentProvider,
-  PaymentWebhookEvent,
-} from "./payment_provider";
+import {PaymentProvider,PaymentWebhookEvent,} from "./payment_provider";
 
 export class MockPaymentProvider
   implements PaymentProvider

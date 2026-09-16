@@ -1,4 +1,4 @@
-export class PaymentProviderValidator {
+export class ProviderValidator {
   static validateProviderName(
     provider: string,
   ): void {
@@ -38,6 +38,19 @@ export class PaymentProviderValidator {
     }
   }
 
+  static validateProviderPayoutId(
+    providerPayoutId: string,
+  ): void {
+    if (
+      typeof providerPayoutId !== "string" ||
+      providerPayoutId.trim().length === 0
+    ) {
+      throw new Error(
+        "Provider payout ID is required.",
+      );
+    }
+  }  
+  
   static validateAmount(
     amountCents: number,
   ): void {
