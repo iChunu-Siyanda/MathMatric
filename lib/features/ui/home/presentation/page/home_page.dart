@@ -120,7 +120,7 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     HomeSectionHeader(
                       title: "Continue Studying",
-                      onSeeAll: () => context.push(Routes.studyHistoryPage,),
+                      onSeeAll: () => context.push(Routes.studyHistory,),
                     ),
                     ContinueStudyingSection(state: state,),
                   ],

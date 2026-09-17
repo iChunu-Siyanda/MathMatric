@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:math_matric/features/auth/presentation/navigation/login_or_register.dart';
-import 'package:math_matric/features/ui/home/presentation/page/home_page.dart';
+import 'package:math_matric/shared/app_routes/routes.dart';
 
 class AuthFirebase extends StatelessWidget {
   const AuthFirebase({super.key});
@@ -14,7 +15,14 @@ class AuthFirebase extends StatelessWidget {
         builder: (context,snapshot) {
           //Home page if user logged in
           if (snapshot.hasData){
-            return HomePage();
+            // Trigger GoRouter to navigate to the shell route
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (context.mounted) context.go(Routes.home);
+          });
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+            
           }
 
           //Login or register if user not logged in

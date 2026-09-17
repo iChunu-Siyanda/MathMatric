@@ -1,6 +1,9 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:go_router/go_router.dart';
+import 'package:math_matric/core/theme/app_colours.dart';
+import 'package:math_matric/shared/widgets/navigation_destination_item.dart';
 
 class MainNavigationShell extends StatefulWidget {
   final StatefulNavigationShell navigationShell;
@@ -15,83 +18,107 @@ class MainNavigationShell extends StatefulWidget {
 }
 
 class _MainNavigationShellState extends State<MainNavigationShell> {
-  // Flag to manage bottom nav visibility
   bool _isNavBarVisible = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // 1. Wrap the shell in a NotificationListener to detect scrolling anywhere in child views
+      backgroundColor: AppColours.background,
+      extendBody: true, // Crucial for floating/glassmorphic effect
       body: NotificationListener<UserScrollNotification>(
-        onNotification: (notification) { //No need for Scroll controllers
+        onNotification: (notification) {
           if (notification.direction == ScrollDirection.reverse) {
-            // User scrolled down -> Hide navigation bar
             if (_isNavBarVisible) {
-              setState(() {
-                _isNavBarVisible = false;
-              });
+              setState(() => _isNavBarVisible = false);
             }
           } else if (notification.direction == ScrollDirection.forward) {
-            // User scrolled up -> Show navigation bar
             if (!_isNavBarVisible) {
-              setState(() {
-                _isNavBarVisible = true;
-              });
+              setState(() => _isNavBarVisible = true);
             }
           }
           return true;
         },
         child: widget.navigationShell,
       ),
-
-      // 2. Animate the bottom navigation bar sliding down/up
       bottomNavigationBar: AnimatedSlide(
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeInOut,
-        // Offset (0, 0) is default position, Offset (0, 1) slides down completely off-screen
-        offset: _isNavBarVisible ? Offset.zero : const Offset(0, 1),
+        offset: _isNavBarVisible ? Offset.zero : const Offset(0, 1.2),
         child: AnimatedOpacity(
           duration: const Duration(milliseconds: 200),
           opacity: _isNavBarVisible ? 1.0 : 0.0,
-          child: NavigationBar(
-            selectedIndex: widget.navigationShell.currentIndex,
-            onDestinationSelected: (int index) {
-              // Ensure bar stays visible when switching tabs
-              if (!_isNavBarVisible) {
-                setState(() => _isNavBarVisible = true);
-              }
-              widget.navigationShell.goBranch(
-                index,
-                initialLocation: index == widget.navigationShell.currentIndex,
-              );
-            },
-            destinations: const [
-              NavigationDestination(
-                icon: Icon(Icons.home_outlined),
-                selectedIcon: Icon(Icons.home_rounded,),
-                label: 'Home',
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(24),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                child: Container(
+                  height: 68,
+                  decoration: BoxDecoration(
+                    color: AppColours.surface.withValues(alpha: 0.85),
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: AppColours.surfaceSecondary.withValues(alpha: 0.6),
+                      width: 1.5,
+                    ),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0x1A2563EB), // Ambient glow using cobaltBlue
+                        blurRadius: 20,
+                        offset: Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      NavDestinationItem(
+                        icon: Icons.home_outlined,
+                        selectedIcon: Icons.home_rounded,
+                        label: 'Home',
+                        isSelected: widget.navigationShell.currentIndex == 0,
+                        onTap: () => _onTabSelected(0),
+                      ),
+                      NavDestinationItem(
+                        icon: Icons.school_outlined,
+                        selectedIcon: Icons.school_rounded,
+                        label: 'Tutors',
+                        isSelected: widget.navigationShell.currentIndex == 1,
+                        onTap: () => _onTabSelected(1),
+                      ),
+                      NavDestinationItem(
+                        icon: Icons.groups_outlined,
+                        selectedIcon: Icons.groups_rounded,
+                        label: 'Masterclasses',
+                        isSelected: widget.navigationShell.currentIndex == 2,
+                        onTap: () => _onTabSelected(2),
+                      ),
+                      NavDestinationItem(
+                        icon: Icons.receipt_long_outlined,
+                        selectedIcon: Icons.receipt_long_rounded,
+                        label: 'History',
+                        isSelected: widget.navigationShell.currentIndex == 3,
+                        onTap: () => _onTabSelected(3),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              NavigationDestination(
-                icon: Icon(Icons.search_outlined),
-                selectedIcon: Icon(Icons.search_rounded),
-                label: 'Search',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.school_outlined),
-                selectedIcon: Icon(Icons.school_rounded),
-                label: 'Tutors',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.person_outline_rounded),
-                selectedIcon: Icon(Icons.person_rounded),
-                label: 'Profile',
-              ),
-            ],
+            ),
           ),
         ),
       ),
     );
   }
-}
 
-//Must learn!!
+  void _onTabSelected(int index) {
+    if (!_isNavBarVisible) {
+      setState(() => _isNavBarVisible = true);
+    }
+    widget.navigationShell.goBranch(
+      index,
+      initialLocation: index == widget.navigationShell.currentIndex,
+    );
+  }
+}

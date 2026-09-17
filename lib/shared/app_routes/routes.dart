@@ -6,11 +6,11 @@ class Routes {
   static const String forgotPassword = '/forgotPassword';
 
   static const String home = '/home';
-  static const String studyHistoryPage = '/studyHistoryPage';
+  static const String studyHistory = '/studyHistory';
   
   static const String analytics = '/analytics';
 
-  static const String classNotePage = '/classNotePage';
+  static const String classNotePage = '/classNotes';
   static const String classNoteTips = '/classNoteTips';
 
   static const String paperTypePage = '/paperTypePage';
@@ -21,4 +21,12 @@ class Routes {
 
   static const String quizPage = '/quizPage';
   static const String quizResults = '/quizResults';
+
+  static const String tutorDiscovery= '/tutors';
+  static const String tutorProfile = '/rtutorProfile';
+
+  static const masterclasses = '/masterclasses';
+  static const marketPlaceHistory = '/marketPlaceHistory';
+
+  static const String studentProfile = 'studentProfile';
 }
