@@ -184,7 +184,13 @@ export class PaymentService {
   }
 
   async markProcessing(
-    {paymentId}:{paymentId: string}): Promise<void> {
+    {
+      paymentId,
+      expectedProviderPayoutId,
+    }:{
+      paymentId: string,
+      expectedProviderPayoutId?: string,
+    }): Promise<void> {
     const paymentRef = this.firestore
       .collection("payments")
       .doc(paymentId)
@@ -207,6 +213,13 @@ export class PaymentService {
           `Payment cannot become processing from ${payment.status}.`,
         );
       }
+
+      const paymentFirestore:Payment = paymentFromFirestore(payment.id, payment);
+
+      this.validateExpectedProviderPayoutId(
+        paymentFirestore,
+        expectedProviderPayoutId,
+      );
 
       transaction.update(paymentRef, {
         status: PaymentStatus.processing,
@@ -452,4 +465,33 @@ export class PaymentService {
       });
     });
   }
+
+  private validateExpectedProviderPayoutId(
+      payment: Payment,
+      expectedProviderPayoutId: string | undefined,
+    ): void {
+      /*
+       * Internal callers (e.g. initiatePayout, before the
+       * provider has been contacted) omit this and skip
+       * the check entirely.
+       */
+      if (expectedProviderPayoutId === undefined) {
+        return;
+      }
+  
+      if (payment.providerPaymentId === null) {
+        throw new Error(
+          "Payout has no provider payout ID attached yet.",
+        );
+      }
+  
+      if (
+        payment.providerPaymentId !==
+        expectedProviderPayoutId
+      ) {
+        throw new Error(
+          "Provider payout ID does not match the payout.",
+        );
+      }
+    }
 }

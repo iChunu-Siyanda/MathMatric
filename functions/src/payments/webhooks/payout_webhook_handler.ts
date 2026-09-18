@@ -72,8 +72,7 @@ export class PayoutWebhookHandler {
           await payoutService
             .markFailed(
               event.payoutId,
-              event.failureReason ??
-                "Payout failed.",
+              event.failureReason ?? "Payout failed.",
               event.providerPayoutId,
             );
           break;

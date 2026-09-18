@@ -62,8 +62,7 @@ export class PaymentWebhookHandler {
           console.log("D. processing event");
           await paymentService
             .markProcessing({
-              paymentId:
-                event.bookingId,
+              paymentId: event.bookingId,
             });
 
           break;
@@ -73,12 +72,9 @@ export class PaymentWebhookHandler {
           console.log("E. calling markPaymentPaid");
           await paymentSuccessService
             .markPaymentPaid({
-              bookingId:
-                event.bookingId,
-              providerPaymentId:
-                event.providerPaymentId,
-              paidAt:
-                event.occurredAt,
+              bookingId: event.bookingId,
+              providerPaymentId: event.providerPaymentId,
+              paidAt: event.occurredAt,
             });
             console.log("F. markPaymentPaid returned");
           break;
@@ -87,20 +83,14 @@ export class PaymentWebhookHandler {
           console.log("D. failed event");
           await paymentService
             .markFailed({
-              bookingId:
-                event.bookingId,
-
-              failureReason:
-                event.failureReason ??
-                "Payment failed.",
+              bookingId: event.bookingId,
+              failureReason: event.failureReason ?? "Payment failed.",
             });
 
           break;
 
         default:
-          throw new Error(
-            "Unsupported payment status.",
-          );
+          throw new Error("Unsupported payment status.",);
       }
       
       console.log("G. marking webhook processed");

@@ -230,17 +230,14 @@ export class PayoutService {
         firestoreTransaction.update(
           payoutRef,
           {
-            status:
-              PayoutStatus.processing,
-            updatedAt:
-              FieldValue.serverTimestamp(),
+            status: PayoutStatus.processing,
+            updatedAt: FieldValue.serverTimestamp(),
           },
         );
 
         return {
           ...payout,
-          status:
-            PayoutStatus.processing,
+          status: PayoutStatus.processing,
         };
       },
     );
@@ -444,9 +441,7 @@ export class PayoutService {
     payoutId: string,
     providerPayoutId: string,
   ): Promise<void> {
-    ProviderValidator.validateProviderPayoutId(
-      providerPayoutId,
-    );
+    ProviderValidator.validateProviderPayoutId(providerPayoutId,);
 
     const payoutRef = this.firestore
       .collection("tutorPayouts")

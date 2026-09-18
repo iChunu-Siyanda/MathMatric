@@ -3,6 +3,7 @@ export const PaymentStatus = {
   processing: "processing",
   paid: "paid",
   failed: "failed",
+  stuck: "stuck",
   cancelled: "cancelled",
   refunded: "refunded",
   partiallyRefunded: "partially_refunded",
