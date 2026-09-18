@@ -13,9 +13,7 @@ export class PayoutProviderIdentity {
   ) {
     return this.firestore
       .collection("payoutProviderIds")
-      .doc(
-        `${this.payoutProvider.name}:${providerPayoutId}`,
-      );
+      .doc(`${this.payoutProvider.name}:${providerPayoutId}`,);
   }
 
   async claimInTransaction(

@@ -3,6 +3,7 @@ export const PayoutStatus = {
   processing: "processing",
   succeeded: "succeeded",
   failed: "failed",
+  stuck: "stuck",
   cancelled: "cancelled",
 } as const;
 

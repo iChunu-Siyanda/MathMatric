@@ -19,6 +19,7 @@ import {
 } from "../transactions/transaction_mapper";
 
 import {
+  TransactionReadResult,
   TransactionService,
 } from "../transactions/transaction_service";
 
@@ -241,42 +242,20 @@ export class PayoutTransactionService {
     },
     payment: Payment,
   ): Promise<PayoutTransactionResult> {
-    this.validateInput(
+    const readResult = await this.readForPayoutInTransaction(
+      firestoreTransaction,
       payout,
       booking,
       payment,
     );
 
-    const transactionId = `payout-${payout.id}`;
-
-    const input = {
-      transactionId,
-      bookingId: payout.bookingId,
-      paymentId: payout.paymentId,
-      type: TransactionType.payout,
-      direction: TransactionDirection.debit,
-      status: TransactionStatus.pending,
-      amountCents: payout.amountCents,
-      currency: payout.currency,
-      studentId: booking.studentId,
-      tutorId: payout.tutorId,
-      referenceId: payout.id,
-      description: `Tutor payout for booking ${payout.bookingId}`,
-      completedAt: null,
-    } as const;
-
-    const readResult = await this.transactionService
-        .readTransactionInTransaction(
-          firestoreTransaction,
-          input,
-        );
-
-    return this.transactionService
-      .createTransactionFromReadResultInTransaction(
-        firestoreTransaction,
-        input,
-        readResult,
-      );
+    return this.createFromReadResultForPayoutInTransaction(
+      firestoreTransaction,
+      payout,
+      booking,
+      payment,
+      readResult,
+    );
   }
 
   async markSucceededInTransaction(
@@ -392,6 +371,138 @@ export class PayoutTransactionService {
       status:
         TransactionStatus.failed,
     };
+  }
+
+  /*
+  * READ-ONLY half of createForPayoutInTransaction.
+  * Callers that need to perform additional writes
+  * of their own (e.g. PayoutService creating the
+  * payout doc itself) must call this BEFORE any
+  * writes, then call
+  * createFromReadResultForPayoutInTransaction after
+  * all writes have started.
+  */
+  async readForPayoutInTransaction(
+    firestoreTransaction: FirestoreTransaction,
+    payout: TutorPayout,
+    booking: {
+      id: string;
+      studentId: string;
+    },
+    payment: Payment,
+  ): Promise<TransactionReadResult> {
+    this.validateInput(payout, booking, payment);
+
+    const input = this.buildPayoutTransactionInput(payout, booking);
+
+    return this.transactionService.readTransactionInTransaction(
+      firestoreTransaction,
+      input,
+    );
+  }
+
+  async markPendingForRetryInTransaction(
+    firestoreTransaction: FirestoreTransaction,
+    payout: TutorPayout,
+  ): Promise<Transaction> {
+    const transactionId = `payout-${payout.id}`;
+
+    const transaction = await this.getTransaction(
+      firestoreTransaction,
+      transactionId,
+    );
+
+    this.validatePayoutTransaction(
+      transaction,
+      payout,
+    );
+
+    /*
+    * Idempotent: already reset.
+    */
+    if (
+      transaction.status ===
+      TransactionStatus.pending
+    ) {
+      return transaction;
+    }
+
+    if (
+      transaction.status !==
+      TransactionStatus.failed
+    ) {
+      throw new Error(
+        "Only a failed payout transaction can be reset for retry.",
+      );
+    }
+
+    const transactionRef =
+      this.firestore
+        .collection("transactions")
+        .doc(transactionId);
+
+    firestoreTransaction.update(
+      transactionRef,
+      {
+        status: TransactionStatus.pending,
+      },
+    );
+
+    return {
+      ...transaction,
+      status: TransactionStatus.pending,
+    };
+  }
+
+  /*
+  * WRITE-ONLY half of createForPayoutInTransaction.
+  * Must be called with the TransactionReadResult
+  * obtained from readForPayoutInTransaction above,
+  * using the SAME Firestore transaction.
+  */
+  createFromReadResultForPayoutInTransaction(
+    firestoreTransaction: FirestoreTransaction,
+    payout: TutorPayout,
+    booking: {
+      id: string;
+      studentId: string;
+    },
+    payment: Payment,
+    readResult: TransactionReadResult,
+  ): PayoutTransactionResult {
+    this.validateInput(payout, booking, payment);
+
+    const input = this.buildPayoutTransactionInput(payout, booking);
+
+    return this.transactionService.createTransactionFromReadResultInTransaction(
+      firestoreTransaction,
+      input,
+      readResult,
+    );
+  }
+
+  private buildPayoutTransactionInput(
+    payout: TutorPayout,
+    booking: {
+      id: string;
+      studentId: string;
+    },
+  ) {
+    return {
+      transactionId: `payout-${payout.id}`,
+      bookingId: payout.bookingId,
+      paymentId: payout.paymentId,
+      type: TransactionType.payout,
+      direction: TransactionDirection.debit,
+      status: TransactionStatus.pending,
+      amountCents: payout.amountCents,
+      currency: payout.currency,
+      studentId: booking.studentId,
+      tutorId: payout.tutorId,
+      referenceId: payout.id,
+      description: `Tutor payout for booking ${payout.bookingId}`,
+      completedAt: null,
+    } as const;
   }
 
   private async getTransaction(

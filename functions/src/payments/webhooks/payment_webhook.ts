@@ -10,7 +10,7 @@ import {WebhookEventService,} from "./webhook_event_service";
 import {PaymentWebhookHandler,} from "./payment_webhook_handler";
 import { handlePaymentWebhookRequest } from "./payment_webhook_request_handler";
 
-const paymentProvider: PaymentProvider =new MockPaymentProvider();
+const paymentProvider: PaymentProvider = new MockPaymentProvider();
 
 const paymentService = new PaymentService(db,paymentProvider,);
 
@@ -29,8 +29,7 @@ const paymentSuccessService =
     transactionService,
   );
 
-const webhookEventService =
-  new WebhookEventService(db);
+const webhookEventService = new WebhookEventService(db, "paymentWebhookEvents");
 
 const paymentWebhookHandler =
   new PaymentWebhookHandler({

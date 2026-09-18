@@ -32,3 +32,12 @@ export interface PayoutProvider {
     signature: string,
   ): PayoutWebhookEvent;
 }
+
+export class PayoutProviderOutcomeUnknownError extends Error {
+  constructor(
+    message = "Payout provider call outcome is unknown.",
+  ) {
+    super(message);
+    this.name = "PayoutProviderOutcomeUnknownError";
+  }
+}

@@ -16,13 +16,14 @@ const PROCESSING_LEASE_MS = 5 * 60 * 1000;
 export class WebhookEventService {
   constructor(
     private readonly firestore: Firestore,
+    private readonly collectionName: string,
   ) {}
 
   async startProcessing(
     eventId: string,
   ): Promise<boolean> {
     const eventRef = this.firestore
-      .collection("paymentWebhookEvents")
+      .collection(this.collectionName)
       .doc(eventId);
 
     return this.firestore.runTransaction(
@@ -97,7 +98,7 @@ export class WebhookEventService {
     eventId: string,
   ): Promise<void> {
     const eventRef = this.firestore
-      .collection("paymentWebhookEvents")
+      .collection(this.collectionName)
       .doc(eventId);
 
     await eventRef.update({
@@ -114,7 +115,7 @@ export class WebhookEventService {
     error: string,
   ): Promise<void> {
     const eventRef = this.firestore
-      .collection("paymentWebhookEvents")
+      .collection(this.collectionName)
       .doc(eventId);
 
     await eventRef.update({
@@ -125,3 +126,5 @@ export class WebhookEventService {
     });
   }
 }
+
+//paymentWebhookEvents

@@ -125,7 +125,7 @@ describe("payment webhook integration", () => {
     console.log("6. payment success service created");
 
     webhookEventService =
-      new WebhookEventService(db);
+      new WebhookEventService(db, "paymentWebhookEvents");
     console.log("7. webhook event service created");  
 
     paymentWebhookHandler =

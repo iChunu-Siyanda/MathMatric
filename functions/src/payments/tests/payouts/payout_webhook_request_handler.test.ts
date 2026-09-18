@@ -11,28 +11,28 @@ import {
 } from "express";
 
 import {
-  PaymentProvider,
-  PaymentWebhookEvent,
-} from "../provider/payment_provider";
+  PayoutProvider,
+  PayoutWebhookEvent,
+} from "../../provider/payout_provider";
 
 import {
-  PaymentWebhookHandler,
-} from "../webhooks/payment_webhook_handler";
+  PayoutWebhookHandler,
+} from "../../webhooks/payout_webhook_handler";
 
 import {
-  handlePaymentWebhookRequest,
-} from "../webhooks/payment_webhook_request_handler";
+  handlePayoutWebhookRequest,
+} from "../../webhooks/payout_webhook_request_handler";
 
 describe(
-  "handlePaymentWebhookRequest",
+  "handlePayoutWebhookRequest",
   () => {
-    const event: PaymentWebhookEvent = {
-      providerPaymentId:
-        "provider-payment-1",
-      bookingId:
-        "booking-1",
+    const event: PayoutWebhookEvent = {
+      providerPayoutId:
+        "provider-payout-1",
+      payoutId:
+        "payout-1",
       status:
-        "paid",
+        "succeeded",
       failureReason:
         null,
       eventId:
@@ -49,7 +49,7 @@ describe(
       return {
         method: "POST",
         headers: {
-          "x-payment-signature":
+          "x-payout-signature":
             "valid-signature",
         },
         rawBody: Buffer.from(
@@ -73,25 +73,25 @@ describe(
     }
 
     function createDependencies() {
-      const paymentProvider = {
+      const payoutProvider = {
         name: "mock",
 
         verifyWebhook:
           vi.fn().mockReturnValue(event),
-      } as unknown as PaymentProvider;
+      } as unknown as PayoutProvider;
 
-      const paymentWebhookHandler = {
+      const payoutWebhookHandler = {
         handle:
           vi.fn().mockResolvedValue({
             statusCode: 200,
             message:
               "Webhook processed.",
           }),
-      } as unknown as PaymentWebhookHandler;
+      } as unknown as PayoutWebhookHandler;
 
       return {
-        paymentProvider,
-        paymentWebhookHandler,
+        payoutProvider,
+        payoutWebhookHandler,
       };
     }
 
@@ -99,8 +99,8 @@ describe(
       "processes a valid POST webhook",
       async () => {
         const {
-          paymentProvider,
-          paymentWebhookHandler,
+          payoutProvider,
+          payoutWebhookHandler,
         } = createDependencies();
 
         const request =
@@ -109,15 +109,15 @@ describe(
         const response =
           createResponse();
 
-        await handlePaymentWebhookRequest(
+        await handlePayoutWebhookRequest(
           request,
           response,
-          paymentProvider,
-          paymentWebhookHandler,
+          payoutProvider,
+          payoutWebhookHandler,
         );
 
         expect(
-          paymentProvider.verifyWebhook,
+          payoutProvider.verifyWebhook,
         ).toHaveBeenCalledWith(
           request.rawBody!.toString(
             "utf8",
@@ -126,7 +126,7 @@ describe(
         );
 
         expect(
-          paymentWebhookHandler.handle,
+          payoutWebhookHandler.handle,
         ).toHaveBeenCalledWith(
           event,
         );
@@ -149,8 +149,8 @@ describe(
       "rejects non-POST requests",
       async () => {
         const {
-          paymentProvider,
-          paymentWebhookHandler,
+          payoutProvider,
+          payoutWebhookHandler,
         } = createDependencies();
 
         const request =
@@ -161,11 +161,11 @@ describe(
         const response =
           createResponse();
 
-        await handlePaymentWebhookRequest(
+        await handlePayoutWebhookRequest(
           request,
           response,
-          paymentProvider,
-          paymentWebhookHandler,
+          payoutProvider,
+          payoutWebhookHandler,
         );
 
         expect(
@@ -181,11 +181,11 @@ describe(
         );
 
         expect(
-          paymentProvider.verifyWebhook,
+          payoutProvider.verifyWebhook,
         ).not.toHaveBeenCalled();
 
         expect(
-          paymentWebhookHandler.handle,
+          payoutWebhookHandler.handle,
         ).not.toHaveBeenCalled();
       },
     );
@@ -194,8 +194,8 @@ describe(
       "rejects a missing webhook signature",
       async () => {
         const {
-          paymentProvider,
-          paymentWebhookHandler,
+          payoutProvider,
+          payoutWebhookHandler,
         } = createDependencies();
 
         const request =
@@ -206,11 +206,11 @@ describe(
         const response =
           createResponse();
 
-        await handlePaymentWebhookRequest(
+        await handlePayoutWebhookRequest(
           request,
           response,
-          paymentProvider,
-          paymentWebhookHandler,
+          payoutProvider,
+          payoutWebhookHandler,
         );
 
         expect(
@@ -226,11 +226,11 @@ describe(
         );
 
         expect(
-          paymentProvider.verifyWebhook,
+          payoutProvider.verifyWebhook,
         ).not.toHaveBeenCalled();
 
         expect(
-          paymentWebhookHandler.handle,
+          payoutWebhookHandler.handle,
         ).not.toHaveBeenCalled();
       },
     );
@@ -239,8 +239,8 @@ describe(
       "rejects a missing webhook body",
       async () => {
         const {
-          paymentProvider,
-          paymentWebhookHandler,
+          payoutProvider,
+          payoutWebhookHandler,
         } = createDependencies();
 
         const request =
@@ -251,11 +251,11 @@ describe(
         const response =
           createResponse();
 
-        await handlePaymentWebhookRequest(
+        await handlePayoutWebhookRequest(
           request,
           response,
-          paymentProvider,
-          paymentWebhookHandler,
+          payoutProvider,
+          payoutWebhookHandler,
         );
 
         expect(
@@ -271,11 +271,11 @@ describe(
         );
 
         expect(
-          paymentProvider.verifyWebhook,
+          payoutProvider.verifyWebhook,
         ).not.toHaveBeenCalled();
 
         expect(
-          paymentWebhookHandler.handle,
+          payoutWebhookHandler.handle,
         ).not.toHaveBeenCalled();
       },
     );
@@ -284,8 +284,8 @@ describe(
       "passes the raw request body to the provider",
       async () => {
         const {
-          paymentProvider,
-          paymentWebhookHandler,
+          payoutProvider,
+          payoutWebhookHandler,
         } = createDependencies();
 
         const request =
@@ -294,15 +294,15 @@ describe(
         const response =
           createResponse();
 
-        await handlePaymentWebhookRequest(
+        await handlePayoutWebhookRequest(
           request,
           response,
-          paymentProvider,
-          paymentWebhookHandler,
+          payoutProvider,
+          payoutWebhookHandler,
         );
 
         expect(
-          paymentProvider.verifyWebhook,
+          payoutProvider.verifyWebhook,
         ).toHaveBeenCalledWith(
           request.rawBody!.toString(
             "utf8",
@@ -316,12 +316,12 @@ describe(
       "returns 500 when webhook verification fails",
       async () => {
         const {
-          paymentProvider,
-          paymentWebhookHandler,
+          payoutProvider,
+          payoutWebhookHandler,
         } = createDependencies();
 
         vi.mocked(
-          paymentProvider.verifyWebhook,
+          payoutProvider.verifyWebhook,
         ).mockImplementation(() => {
           throw new Error(
             "Invalid webhook signature.",
@@ -331,11 +331,11 @@ describe(
         const response =
           createResponse();
 
-        await handlePaymentWebhookRequest(
+        await handlePayoutWebhookRequest(
           createRequest(),
           response,
-          paymentProvider,
-          paymentWebhookHandler,
+          payoutProvider,
+          payoutWebhookHandler,
         );
 
         expect(
@@ -351,7 +351,7 @@ describe(
         );
 
         expect(
-          paymentWebhookHandler.handle,
+          payoutWebhookHandler.handle,
         ).not.toHaveBeenCalled();
       },
     );
@@ -360,26 +360,26 @@ describe(
       "returns 500 when the webhook handler fails",
       async () => {
         const {
-          paymentProvider,
-          paymentWebhookHandler,
+          payoutProvider,
+          payoutWebhookHandler,
         } = createDependencies();
 
         vi.mocked(
-          paymentWebhookHandler.handle,
+          payoutWebhookHandler.handle,
         ).mockRejectedValue(
           new Error(
-            "Payment processing failed.",
+            "Payout processing failed.",
           ),
         );
 
         const response =
           createResponse();
 
-        await handlePaymentWebhookRequest(
+        await handlePayoutWebhookRequest(
           createRequest(),
           response,
-          paymentProvider,
-          paymentWebhookHandler,
+          payoutProvider,
+          payoutWebhookHandler,
         );
 
         expect(
@@ -400,12 +400,12 @@ describe(
       "does not call the handler when verification fails",
       async () => {
         const {
-          paymentProvider,
-          paymentWebhookHandler,
+          payoutProvider,
+          payoutWebhookHandler,
         } = createDependencies();
 
         vi.mocked(
-          paymentProvider.verifyWebhook,
+          payoutProvider.verifyWebhook,
         ).mockImplementation(() => {
           throw new Error(
             "Invalid webhook.",
@@ -415,15 +415,15 @@ describe(
         const response =
           createResponse();
 
-        await handlePaymentWebhookRequest(
+        await handlePayoutWebhookRequest(
           createRequest(),
           response,
-          paymentProvider,
-          paymentWebhookHandler,
+          payoutProvider,
+          payoutWebhookHandler,
         );
 
         expect(
-          paymentWebhookHandler.handle,
+          payoutWebhookHandler.handle,
         ).not.toHaveBeenCalled();
       },
     );

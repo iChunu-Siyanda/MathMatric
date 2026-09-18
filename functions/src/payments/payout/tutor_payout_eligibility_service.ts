@@ -40,6 +40,12 @@ export class TutorPayoutEligibilityService {
       );
     }
 
+    if (payment.bookingId !== booking.id) {
+      return this.ineligible(
+        "Payment booking does not match the booking.",
+      );
+    }
+
     if (payment.status !== PaymentStatus.paid) {
       return this.ineligible(
         "Payment is not paid.",
