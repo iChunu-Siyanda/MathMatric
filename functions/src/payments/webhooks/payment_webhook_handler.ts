@@ -64,7 +64,6 @@ export class PaymentWebhookHandler {
             .markProcessing({
               paymentId: event.bookingId,
             });
-
           break;
 
         case "paid":

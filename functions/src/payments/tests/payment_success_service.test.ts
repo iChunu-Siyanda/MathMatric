@@ -74,11 +74,9 @@ describe(
       typeof createMockFirestore
     >;
 
-    let transactionService:
-      TransactionService;
+    let transactionService: TransactionService;
 
-    let service:
-      PaymentSuccessService;
+    let service: PaymentSuccessService;
 
     beforeEach(() => {
       mockFirestore =
@@ -976,6 +974,41 @@ describe(
         expect(
           payment?.failureReason,
         ).toBeNull();
+      },
+    );
+
+    it(
+      "marks a stuck payment as paid and creates the ledger transaction",
+      async () => {
+        const paidAt =
+          new Date(
+            "2026-02-01T15:00:00.000Z",
+          );
+
+        seedPayment(
+          mockFirestore,
+          createPayment({
+            status:
+              PaymentStatus.stuck,
+          }),
+        );
+
+        const result =
+          await service.markPaymentPaid({
+            bookingId: "payment-1",
+            providerPaymentId:
+              "mock-payment-1",
+            paidAt,
+          });
+
+        expect(result.status)
+          .toBe(PaymentStatus.paid);
+
+        expect(
+          mockFirestore.get(
+            "transactions/payment-payment-1",
+          ),
+        ).toBeDefined();
       },
     );
   },

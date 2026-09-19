@@ -13,6 +13,15 @@ export interface CreatePayoutResult {
   created: boolean;
 }
 
+export class PayoutInitiationInProgressError extends Error {
+  constructor(
+    message = "Payout initiation is already in progress for this payout. Retry shortly.",
+  ) {
+    super(message);
+    this.name = "PayoutInitiationInProgressError";
+  }
+}
+
 export class PayoutService {
   constructor(
     private readonly firestore: Firestore,
@@ -515,32 +524,12 @@ export class PayoutService {
   async initiatePayout(
     payoutId: string,
   ): Promise<TutorPayout> {
-    const payoutRef = this.firestore
-      .collection("tutorPayouts")
-      .doc(payoutId);
-
-    const payoutSnapshot =
-      await payoutRef.get();
-
-    if (!payoutSnapshot.exists) {
-      throw new Error(
-        "Payout does not exist.",
-      );
-    }
-
-    const payoutData =
-      payoutSnapshot.data();
-
-    if (!payoutData) {
-      throw new Error(
-        "Payout data is missing.",
-      );
-    }
-
-    const payout =
-      payoutFromFirestore(
-        payoutSnapshot.id,
-        payoutData,
+    const {
+      payout,
+      claimed,
+    } =
+      await this.claimForInitiation(
+        payoutId,
       );
 
     if (
@@ -556,18 +545,9 @@ export class PayoutService {
       return payout;
     }
 
-    if (
-      payout.status !==
-      PayoutStatus.pending
-    ) {
-      throw new Error(
-        "Only pending payouts can be initiated.",
-      );
+    if (!claimed) {
+      throw new PayoutInitiationInProgressError();
     }
-
-    await this.markProcessing(
-      payoutId,
-    );
 
     try {
       const result =
@@ -591,6 +571,11 @@ export class PayoutService {
         payout.id,
         result.providerPayoutId,
       );
+
+      const payoutRef =
+        this.firestore
+          .collection("tutorPayouts")
+          .doc(payoutId);
 
       const updatedSnapshot =
         await payoutRef.get();
@@ -616,22 +601,9 @@ export class PayoutService {
       );
     } catch (error) {
       if (
-        error instanceof PayoutProviderOutcomeUnknownError
+        error instanceof
+        PayoutProviderOutcomeUnknownError
       ) {
-        /*
-         * The provider call's outcome is unknown (timeout,
-         * network failure, ambiguous response). The provider
-         * may have accepted the payout despite us not
-         * receiving a confirmed response, so we must NOT mark
-         * this failed — doing so could cause a duplicate real
-         * transfer via retryPayout().
-         *
-         * The payout stays "processing" with no
-         * providerPayoutId attached. It resolves either via
-         * the eventual provider webhook (which attaches the
-         * provider payout ID itself) or via manual
-         * reconciliation.
-         */
         throw error;
       }
 
@@ -970,6 +942,7 @@ export class PayoutService {
 
     return this.firestore.runTransaction(
       async (firestoreTransaction) => {
+        // Read 1: payout.
         const snapshot =
           await firestoreTransaction.get(
             payoutRef,
@@ -1011,25 +984,46 @@ export class PayoutService {
             "Stuck payout unexpectedly already has a provider payout ID attached.",
           );
         }
+        
+        // Read 2: provider identity claim.
+        const identityReadResult =
+          await this.payoutProviderIdentity
+            .readClaimInTransaction(
+              firestoreTransaction,
+              confirmedProviderPayoutId,
+            );
+        
+        // Read 3: payout ledger transaction.
+        const transactionReadResult =
+          await this.payoutTransactionService
+            .readForMarkSucceededInTransaction(
+              firestoreTransaction,
+              {
+                ...payout,
+                providerPayoutId: confirmedProviderPayoutId,
+              },
+            );  
+        
+        // All reads done.    
 
-        await this.payoutProviderIdentity
-          .claimInTransaction(
+        this.payoutProviderIdentity
+          .commitClaimFromReadResultInTransaction(
             firestoreTransaction,
             {
-              providerPayoutId:
-                confirmedProviderPayoutId,
+              providerPayoutId: confirmedProviderPayoutId,
               payoutId,
             },
+            identityReadResult,
           );
 
-        await this.payoutTransactionService
-          .markSucceededInTransaction(
+        this.payoutTransactionService
+          .markSucceededFromReadResultInTransaction(
             firestoreTransaction,
             {
               ...payout,
-              providerPayoutId:
-                confirmedProviderPayoutId,
+              providerPayoutId: confirmedProviderPayoutId,
             },
+            transactionReadResult,
           );
 
         const completedAt = new Date();
@@ -1038,13 +1032,10 @@ export class PayoutService {
           payoutRef,
           {
             status: PayoutStatus.succeeded,
-            provider:
-              this.payoutProvider.name,
-            providerPayoutId:
-              confirmedProviderPayoutId,
+            provider: this.payoutProvider.name,
+            providerPayoutId: confirmedProviderPayoutId,
             completedAt,
-            updatedAt:
-              FieldValue.serverTimestamp(),
+            updatedAt: FieldValue.serverTimestamp(),
             failureReason: null,
           },
         );
@@ -1052,10 +1043,8 @@ export class PayoutService {
         return {
           ...payout,
           status: PayoutStatus.succeeded,
-          provider:
-            this.payoutProvider.name,
-          providerPayoutId:
-            confirmedProviderPayoutId,
+          provider: this.payoutProvider.name,
+          providerPayoutId: confirmedProviderPayoutId,
           completedAt,
           failureReason: null,
         };
@@ -1146,5 +1135,114 @@ export class PayoutService {
         "Provider payout ID does not match the payout.",
       );
     }
+  }
+
+  private async claimForInitiation(
+    payoutId: string,
+  ): Promise<{
+    payout: TutorPayout;
+    claimed: boolean;
+  }> {
+    const payoutRef = this.firestore
+      .collection("tutorPayouts")
+      .doc(payoutId);
+
+    return this.firestore.runTransaction(
+      async (firestoreTransaction) => {
+        const snapshot =
+          await firestoreTransaction.get(
+            payoutRef,
+          );
+
+        if (!snapshot.exists) {
+          throw new Error(
+            "Payout does not exist.",
+          );
+        }
+
+        const data = snapshot.data();
+
+        if (!data) {
+          throw new Error(
+            "Payout data is missing.",
+          );
+        }
+
+        const payout =
+          payoutFromFirestore(
+            snapshot.id,
+            data,
+          );
+
+        /*
+         * Already resolved one way or another.
+         * Not a claim; the caller returns this
+         * result directly without contacting the
+         * provider.
+         */
+        if (
+          payout.providerPayoutId !== null ||
+          payout.status ===
+            PayoutStatus.succeeded
+        ) {
+          return {
+            payout,
+            claimed: false,
+          };
+        }
+
+        /*
+         * Already processing with no provider
+         * payout ID: another initiatePayout call
+         * currently owns this payout and is
+         * contacting the provider right now.
+         */
+        if (
+          payout.status ===
+          PayoutStatus.processing
+        ) {
+          return {
+            payout,
+            claimed: false,
+          };
+        }
+
+        if (
+          payout.status !==
+          PayoutStatus.pending
+        ) {
+          throw new Error(
+            "Only pending payouts can be initiated.",
+          );
+        }
+
+        /*
+         * This transaction is the atomic
+         * concurrency lock. Firestore serializes
+         * concurrent writers here: exactly one
+         * commits with claimed=true; any concurrent
+         * caller is automatically retried by the SDK
+         * and will observe status=processing above.
+         */
+        firestoreTransaction.update(
+          payoutRef,
+          {
+            status:
+              PayoutStatus.processing,
+            updatedAt:
+              FieldValue.serverTimestamp(),
+          },
+        );
+
+        return {
+          payout: {
+            ...payout,
+            status:
+              PayoutStatus.processing,
+          },
+          claimed: true,
+        };
+      },
+    );
   }
 }

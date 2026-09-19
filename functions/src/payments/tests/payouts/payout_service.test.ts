@@ -133,6 +133,18 @@ function createPayoutService({
   );
 }
 
+async function setPayoutUpdatedAt(
+  payoutId: string,
+  date: Date,
+): Promise<void> {
+  await db
+    .collection("tutorPayouts")
+    .doc(payoutId)
+    .update({
+      updatedAt: date,
+    });
+}
+
 
 /* -------------------------------------------------------------------------- */
 /* PayoutTransactionService                                                    */
@@ -1367,7 +1379,7 @@ describe(
                   payout.id,
                 ),
             ).rejects.toThrow(
-              "Only pending payouts can be initiated.",
+              "Payout initiation is already in progress for this payout. Retry shortly.",
             );
 
 
@@ -1377,7 +1389,7 @@ describe(
           },
         );
 
-                it(
+        it(
           "leaves the payout processing and does not mark it failed when the provider outcome is unknown",
           async () => {
             const {
@@ -1453,6 +1465,119 @@ describe(
             expect(
               snapshot.data()?.failureReason,
             ).toBeNull();
+          },
+        );
+
+        it(
+          "calls the provider only once when initiatePayout is invoked concurrently for the same payout",
+          async () => {
+            const {
+              booking,
+              payment,
+            } =
+              await seedEligiblePayout();
+
+            const spyProvider =
+              new SpyPayoutProvider();
+
+            payoutService =
+              createPayoutService({
+                eligibilityService,
+                payoutTransactionService,
+                payoutProvider:
+                  spyProvider,
+              });
+
+            const {
+              payout,
+            } =
+              await payoutService.createPayout({
+                booking,
+                payment,
+              });
+
+            const results =
+              await Promise.allSettled([
+                payoutService
+                  .initiatePayout(
+                    payout.id,
+                  ),
+                payoutService
+                  .initiatePayout(
+                    payout.id,
+                  ),
+              ]);
+
+            expect(
+              spyProvider.createPayout,
+            ).toHaveBeenCalledTimes(1);
+
+            const fulfilled =
+              results.filter(
+                (r) =>
+                  r.status ===
+                  "fulfilled",
+              );
+
+            const rejected =
+              results.filter(
+                (r) =>
+                  r.status ===
+                  "rejected",
+              );
+
+            /*
+             * Exactly one call wins and resolves;
+             * the other either loses the claim
+             * (PayoutInitiationInProgressError) or,
+             * if it happened to run after the
+             * winner fully completed, also resolves
+             * idempotently. Either way the provider
+             * is contacted exactly once.
+             */
+            expect(
+              fulfilled.length,
+            ).toBeGreaterThanOrEqual(1);
+
+            for (const result of fulfilled) {
+              if (
+                result.status ===
+                "fulfilled"
+              ) {
+                expect(
+                  result.value
+                    .providerPayoutId,
+                ).toBe(
+                  `mock-payout-${payout.id}`,
+                );
+              }
+            }
+
+            for (const result of rejected) {
+              if (
+                result.status ===
+                "rejected"
+              ) {
+                expect(
+                  result.reason
+                    .message,
+                ).toBe(
+                  "Payout initiation is already in progress for this payout. Retry shortly.",
+                );
+              }
+            }
+
+            const snapshot =
+              await db
+                .collection("tutorPayouts")
+                .doc(payout.id)
+                .get();
+
+            expect(
+              snapshot.data()?.status,
+            ).toBe(
+              PayoutStatus.processing,
+            );
           },
         );
       },
@@ -1911,6 +2036,193 @@ describe(
     );
 
     describe(
+      "findStuckPayoutCandidates",
+      () => {
+
+        it(
+          "finds a processing payout with no provider payout ID older than the threshold",
+          async () => {
+            const {
+              booking,
+              payment,
+            } =
+              await seedEligiblePayout();
+
+            const {
+              payout,
+            } =
+              await payoutService.createPayout({
+                booking,
+                payment,
+              });
+
+            await payoutService
+              .markProcessing(
+                payout.id,
+              );
+
+            await setPayoutUpdatedAt(
+              payout.id,
+              new Date(
+                Date.now() -
+                  60 * 60 * 1000,
+              ),
+            );
+
+            const candidates =
+              await payoutService
+                .findStuckPayoutCandidates(
+                  30 * 60 * 1000,
+                );
+
+            expect(
+              candidates.map(
+                (c) => c.id,
+              ),
+            ).toContain(
+              payout.id,
+            );
+          },
+        );
+
+
+        it(
+          "excludes a processing payout that was updated recently",
+          async () => {
+            const {
+              booking,
+              payment,
+            } =
+              await seedEligiblePayout();
+
+            const {
+              payout,
+            } =
+              await payoutService.createPayout({
+                booking,
+                payment,
+              });
+
+            await payoutService
+              .markProcessing(
+                payout.id,
+              );
+
+            const candidates =
+              await payoutService
+                .findStuckPayoutCandidates(
+                  30 * 60 * 1000,
+                );
+
+            expect(
+              candidates.map(
+                (c) => c.id,
+              ),
+            ).not.toContain(
+              payout.id,
+            );
+          },
+        );
+
+
+        it(
+          "excludes a processing payout that already has a provider payout ID attached",
+          async () => {
+            const {
+              booking,
+              payment,
+            } =
+              await seedEligiblePayout();
+
+            const {
+              payout,
+            } =
+              await payoutService.createPayout({
+                booking,
+                payment,
+              });
+
+            await payoutService
+              .attachProviderPayoutId(
+                payout.id,
+                "mock-payout-in-flight",
+              );
+
+            await payoutService
+              .markProcessing(
+                payout.id,
+                "mock-payout-in-flight",
+              );
+
+            await setPayoutUpdatedAt(
+              payout.id,
+              new Date(
+                Date.now() -
+                  60 * 60 * 1000,
+              ),
+            );
+
+            const candidates =
+              await payoutService
+                .findStuckPayoutCandidates(
+                  30 * 60 * 1000,
+                );
+
+            expect(
+              candidates.map(
+                (c) => c.id,
+              ),
+            ).not.toContain(
+              payout.id,
+            );
+          },
+        );
+
+
+        it(
+          "excludes payouts that are not processing",
+          async () => {
+            const {
+              booking,
+              payment,
+            } =
+              await seedEligiblePayout();
+
+            const {
+              payout,
+            } =
+              await payoutService.createPayout({
+                booking,
+                payment,
+              });
+
+            await setPayoutUpdatedAt(
+              payout.id,
+              new Date(
+                Date.now() -
+                  60 * 60 * 1000,
+              ),
+            );
+
+            const candidates =
+              await payoutService
+                .findStuckPayoutCandidates(
+                  30 * 60 * 1000,
+                );
+
+            expect(
+              candidates.map(
+                (c) => c.id,
+              ),
+            ).not.toContain(
+              payout.id,
+            );
+          },
+        );
+      },
+    );
+
+    describe(
       "markProcessing (provider ID validation)",
       () => {
 
@@ -2052,6 +2364,664 @@ describe(
       },
     );
 
+    describe(
+      "markStuck",
+      () => {
+
+        it(
+          "marks a processing payout with no provider payout ID as stuck",
+          async () => {
+            const {
+              booking,
+              payment,
+            } =
+              await seedEligiblePayout();
+
+            const {
+              payout,
+            } =
+              await payoutService.createPayout({
+                booking,
+                payment,
+              });
+
+            await payoutService
+              .markProcessing(
+                payout.id,
+              );
+
+            const result =
+              await payoutService
+                .markStuck(
+                  payout.id,
+                );
+
+            expect(
+              result.status,
+            ).toBe(
+              PayoutStatus.stuck,
+            );
+
+            const snapshot =
+              await db
+                .collection("tutorPayouts")
+                .doc(payout.id)
+                .get();
+
+            expect(
+              snapshot.data()?.status,
+            ).toBe(
+              PayoutStatus.stuck,
+            );
+          },
+        );
+
+
+        it(
+          "is idempotent when already stuck",
+          async () => {
+            const {
+              booking,
+              payment,
+            } =
+              await seedEligiblePayout();
+
+            const {
+              payout,
+            } =
+              await payoutService.createPayout({
+                booking,
+                payment,
+              });
+
+            await payoutService
+              .markProcessing(
+                payout.id,
+              );
+
+            await payoutService
+              .markStuck(
+                payout.id,
+              );
+
+            const result =
+              await payoutService
+                .markStuck(
+                  payout.id,
+                );
+
+            expect(
+              result.status,
+            ).toBe(
+              PayoutStatus.stuck,
+            );
+          },
+        );
+
+
+        it(
+          "rejects a payout that is not processing",
+          async () => {
+            const {
+              booking,
+              payment,
+            } =
+              await seedEligiblePayout();
+
+            const {
+              payout,
+            } =
+              await payoutService.createPayout({
+                booking,
+                payment,
+              });
+
+            await expect(
+              payoutService
+                .markStuck(
+                  payout.id,
+                ),
+            ).rejects.toThrow(
+              "Only a processing payout can be marked stuck.",
+            );
+          },
+        );
+
+
+        it(
+          "rejects a processing payout that already has a provider payout ID attached",
+          async () => {
+            const {
+              booking,
+              payment,
+            } =
+              await seedEligiblePayout();
+
+            const {
+              payout,
+            } =
+              await payoutService.createPayout({
+                booking,
+                payment,
+              });
+
+            await payoutService
+              .attachProviderPayoutId(
+                payout.id,
+                "mock-payout-in-flight-2",
+              );
+
+            await payoutService
+              .markProcessing(
+                payout.id,
+                "mock-payout-in-flight-2",
+              );
+
+            await expect(
+              payoutService
+                .markStuck(
+                  payout.id,
+                ),
+            ).rejects.toThrow(
+              "Payout has a provider payout ID attached and is not stuck; it is awaiting a provider webhook.",
+            );
+          },
+        );
+
+
+        it(
+          "rejects a missing payout",
+          async () => {
+            await expect(
+              payoutService
+                .markStuck(
+                  "payout-does-not-exist",
+                ),
+            ).rejects.toThrow(
+              "Payout does not exist.",
+            );
+          },
+        );
+      },
+    );
+
+    describe(
+      "resolveStuckPayoutAsFailed",
+      () => {
+
+        it(
+          "resets a stuck payout to pending with a failure note and resets the ledger",
+          async () => {
+            const {
+              booking,
+              payment,
+            } =
+              await seedEligiblePayout();
+
+            const {
+              payout,
+            } =
+              await payoutService.createPayout({
+                booking,
+                payment,
+              });
+
+            await payoutService
+              .markProcessing(
+                payout.id,
+              );
+
+            await payoutService
+              .markStuck(
+                payout.id,
+              );
+
+            const result =
+              await payoutService
+                .resolveStuckPayoutAsFailed(
+                  payout.id,
+                  "Confirmed with provider support: request was never received.",
+                );
+
+            expect(
+              result.status,
+            ).toBe(
+              PayoutStatus.pending,
+            );
+
+            expect(
+              result.failureReason,
+            ).toContain(
+              "Confirmed with provider support",
+            );
+
+            const snapshot =
+              await db
+                .collection("tutorPayouts")
+                .doc(payout.id)
+                .get();
+
+            expect(
+              snapshot.data()?.status,
+            ).toBe(
+              PayoutStatus.pending,
+            );
+
+            const transactionSnapshot =
+              await db
+                .collection("transactions")
+                .doc(
+                  `payout-${payout.id}`,
+                )
+                .get();
+
+            expect(
+              transactionSnapshot.data()?.status,
+            ).toBe(
+              TransactionStatus.pending,
+            );
+          },
+        );
+
+
+        it(
+          "rejects a payout that is not stuck",
+          async () => {
+            const {
+              booking,
+              payment,
+            } =
+              await seedEligiblePayout();
+
+            const {
+              payout,
+            } =
+              await payoutService.createPayout({
+                booking,
+                payment,
+              });
+
+            await expect(
+              payoutService
+                .resolveStuckPayoutAsFailed(
+                  payout.id,
+                  "Some note.",
+                ),
+            ).rejects.toThrow(
+              "Only a stuck payout can be resolved as failed.",
+            );
+          },
+        );
+
+
+        it(
+          "rejects an empty resolution note",
+          async () => {
+            const {
+              booking,
+              payment,
+            } =
+              await seedEligiblePayout();
+
+            const {
+              payout,
+            } =
+              await payoutService.createPayout({
+                booking,
+                payment,
+              });
+
+            await payoutService
+              .markProcessing(
+                payout.id,
+              );
+
+            await payoutService
+              .markStuck(
+                payout.id,
+              );
+
+            await expect(
+              payoutService
+                .resolveStuckPayoutAsFailed(
+                  payout.id,
+                  "   ",
+                ),
+            ).rejects.toThrow(
+              "Resolution note cannot be empty.",
+            );
+          },
+        );
+
+
+        it(
+          "rejects a missing payout",
+          async () => {
+            await expect(
+              payoutService
+                .resolveStuckPayoutAsFailed(
+                  "payout-does-not-exist",
+                  "Some note.",
+                ),
+            ).rejects.toThrow(
+              "Payout does not exist.",
+            );
+          },
+        );
+
+
+        it(
+          "allows initiatePayout to run again after resolution",
+          async () => {
+            const {
+              booking,
+              payment,
+            } =
+              await seedEligiblePayout();
+
+            const spyProvider =
+              new SpyPayoutProvider();
+
+            payoutService =
+              createPayoutService({
+                eligibilityService,
+                payoutTransactionService,
+                payoutProvider:
+                  spyProvider,
+              });
+
+            const {
+              payout,
+            } =
+              await payoutService.createPayout({
+                booking,
+                payment,
+              });
+
+            await payoutService
+              .markProcessing(
+                payout.id,
+              );
+
+            await payoutService
+              .markStuck(
+                payout.id,
+              );
+
+            await payoutService
+              .resolveStuckPayoutAsFailed(
+                payout.id,
+                "Never received by provider.",
+              );
+
+            const result =
+              await payoutService
+                .initiatePayout(
+                  payout.id,
+                );
+
+            expect(
+              result.status,
+            ).toBe(
+              PayoutStatus.processing,
+            );
+
+            expect(
+              result.providerPayoutId,
+            ).toBe(
+              `mock-payout-${payout.id}`,
+            );
+          },
+        );
+      },
+    );
+    
+    describe(
+      "resolveStuckPayoutAsSucceeded",
+      () => {
+
+        it(
+          "resolves a stuck payout as succeeded and attaches the confirmed provider payout ID",
+          async () => {
+            const {
+              booking,
+              payment,
+            } =
+              await seedEligiblePayout();
+
+            const {
+              payout,
+            } =
+              await payoutService.createPayout({
+                booking,
+                payment,
+              });
+
+            await payoutService
+              .markProcessing(
+                payout.id,
+              );
+
+            await payoutService
+              .markStuck(
+                payout.id,
+              );
+
+            const result =
+              await payoutService
+                .resolveStuckPayoutAsSucceeded(
+                  payout.id,
+                  "mock-payout-confirmed-1",
+                );
+
+            expect(
+              result.status,
+            ).toBe(
+              PayoutStatus.succeeded,
+            );
+
+            expect(
+              result.providerPayoutId,
+            ).toBe(
+              "mock-payout-confirmed-1",
+            );
+
+            const snapshot =
+              await db
+                .collection("tutorPayouts")
+                .doc(payout.id)
+                .get();
+
+            expect(
+              snapshot.data()?.status,
+            ).toBe(
+              PayoutStatus.succeeded,
+            );
+
+            expect(
+              snapshot.data()?.provider,
+            ).toBe("mock");
+
+            expect(
+              snapshot.data()?.providerPayoutId,
+            ).toBe(
+              "mock-payout-confirmed-1",
+            );
+
+            const transactionSnapshot =
+              await db
+                .collection("transactions")
+                .doc(
+                  `payout-${payout.id}`,
+                )
+                .get();
+
+            expect(
+              transactionSnapshot.data()?.status,
+            ).toBe(
+              TransactionStatus.completed,
+            );
+
+            const identitySnapshot =
+              await db
+                .collection("payoutProviderIds")
+                .doc(
+                  "mock:mock-payout-confirmed-1",
+                )
+                .get();
+
+            expect(
+              identitySnapshot.exists,
+            ).toBe(true);
+          },
+        );
+
+
+        it(
+          "rejects a payout that is not stuck",
+          async () => {
+            const {
+              booking,
+              payment,
+            } =
+              await seedEligiblePayout();
+
+            const {
+              payout,
+            } =
+              await payoutService.createPayout({
+                booking,
+                payment,
+              });
+
+            await expect(
+              payoutService
+                .resolveStuckPayoutAsSucceeded(
+                  payout.id,
+                  "mock-payout-confirmed-2",
+                ),
+            ).rejects.toThrow(
+              "Only a stuck payout can be resolved as succeeded.",
+            );
+          },
+        );
+
+
+        it(
+          "rejects an invalid confirmed provider payout ID",
+          async () => {
+            const {
+              booking,
+              payment,
+            } =
+              await seedEligiblePayout();
+
+            const {
+              payout,
+            } =
+              await payoutService.createPayout({
+                booking,
+                payment,
+              });
+
+            await payoutService
+              .markProcessing(
+                payout.id,
+              );
+
+            await payoutService
+              .markStuck(
+                payout.id,
+              );
+
+            await expect(
+              payoutService
+                .resolveStuckPayoutAsSucceeded(
+                  payout.id,
+                  "",
+                ),
+            ).rejects.toThrow();
+          },
+        );
+
+
+        it(
+          "rejects a missing payout",
+          async () => {
+            await expect(
+              payoutService
+                .resolveStuckPayoutAsSucceeded(
+                  "payout-does-not-exist",
+                  "mock-payout-confirmed-3",
+                ),
+            ).rejects.toThrow(
+              "Payout does not exist.",
+            );
+          },
+        );
+
+
+        it(
+          "rejects a provider payout ID already claimed by another payout",
+          async () => {
+            const {
+              booking,
+              payment,
+            } =
+              await seedEligiblePayout();
+
+            const first =
+              await payoutService.createPayout({
+                booking,
+                payment,
+              });
+
+            await payoutService
+              .attachProviderPayoutId(
+                first.payout.id,
+                "mock-payout-collision-stuck",
+              );
+
+            const secondBooking = {
+              ...booking,
+              id: "booking-789",
+            };
+
+            const secondPayment = {
+              ...payment,
+              id: "booking-789",
+              bookingId: "booking-789",
+            };
+
+            const second =
+              await payoutService.createPayout({
+                booking: secondBooking,
+                payment: secondPayment,
+              });
+
+            await payoutService
+              .markProcessing(
+                second.payout.id,
+              );
+
+            await payoutService
+              .markStuck(
+                second.payout.id,
+              );
+
+            await expect(
+              payoutService
+                .resolveStuckPayoutAsSucceeded(
+                  second.payout.id,
+                  "mock-payout-collision-stuck",
+                ),
+            ).rejects.toThrow(
+              "Provider payout ID is already associated with another payout.",
+            );
+          },
+        );
+      },
+    );
 
     describe(
       "markSucceeded (provider ID validation)",
@@ -2184,7 +3154,6 @@ describe(
         );
       },
     );
-
 
     describe(
       "markFailed (provider ID validation)",

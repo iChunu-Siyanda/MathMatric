@@ -5,7 +5,6 @@ import { Timestamp } from "firebase-admin/firestore";
 import { paymentFromFirestore } from "./payment_mapper";
 import { PaymentProvider } from "../provider/payment_provider";
 import { PaymentCheckout } from "./payment_checkout";
-import { ProviderValidator } from "../provider/provider_validator";
 
 export interface PaymentDocument {
   bookingId: string;
@@ -186,10 +185,8 @@ export class PaymentService {
   async markProcessing(
     {
       paymentId,
-      expectedProviderPayoutId,
     }:{
       paymentId: string,
-      expectedProviderPayoutId?: string,
     }): Promise<void> {
     const paymentRef = this.firestore
       .collection("payments")
@@ -214,217 +211,11 @@ export class PaymentService {
         );
       }
 
-      const paymentFirestore:Payment = paymentFromFirestore(payment.id, payment);
-
-      this.validateExpectedProviderPayoutId(
-        paymentFirestore,
-        expectedProviderPayoutId,
-      );
-
       transaction.update(paymentRef, {
         status: PaymentStatus.processing,
         updatedAt: FieldValue.serverTimestamp(),
       });
     });
-  }
-
-  async markPaid({
-    bookingId,
-    provider,
-    providerPaymentId,
-  }:{
-    bookingId: string,
-    provider:string,
-    providerPaymentId:string,
-  }): Promise<void> {
-    const paymentRef = this.firestore
-      .collection("payments")
-      .doc(bookingId);
-    
-    const bookingRef = this.firestore
-      .collection("bookings")
-      .doc(bookingId); 
-
-    await this.firestore.runTransaction(async (transaction) => {
-      const paymentSnapshot = await transaction.get(paymentRef);
- 
-      // =====================================
-      // 1. Payment Auth and Validation:
-      // =====================================
-      if (!paymentSnapshot.exists) {
-        throw new Error("Payment not found.");
-      }
-
-      const payment = paymentSnapshot.data()!;
-      
-      // duplicate provider webhook should do nothing.
-      if (payment.status === PaymentStatus.paid) {
-        return;
-      }
-
-      if (payment.status !== PaymentStatus.processing) {
-        throw new Error(
-          `Payment cannot become paid from ${payment.status}.`,
-        );
-      }
-
-      // =====================================
-      // 2. Booking Auth and Validation:
-      // =====================================
-      const bookingSnapshot = await transaction.get(bookingRef);
-
-      if (!bookingSnapshot.exists) {
-        throw new Error("Booking not found.");
-      }
-
-      const booking = bookingSnapshot.data();
-
-      if (booking?.status !== BookingStatus.paymentRequired) {
-        throw new Error(
-            "Booking is not awaiting payment.",
-        );
-      }
-
-      if (
-        booking.studentId !== payment.studentId ||
-        booking.tutorId !== payment.tutorId
-      ) {
-        throw new Error(
-          "Payment does not belong to the booking.",
-        );
-      }
-
-      if (
-        booking.priceCents !== payment.amountCents
-      ) {
-        throw new Error(
-          "Payment amount does not match booking price.",
-        );
-      }
-
-      // Update payment and booking states:
-      transaction.update(paymentRef, {
-        status: PaymentStatus.paid,
-        provider,
-        providerPaymentId,
-        paidAt: FieldValue.serverTimestamp(),
-        updatedAt: FieldValue.serverTimestamp(),
-      });
-
-      transaction.update(bookingRef, {
-        status: BookingStatus.confirmed,
-        updatedAt: FieldValue.serverTimestamp(),
-      });
-    });
-  }
-
-  async markPaidFromProvider({
-    bookingId,
-    provider,
-    providerPaymentId,
-  }: {
-    bookingId: string;
-    provider: string;
-    providerPaymentId: string;
-  }): Promise<void> {
-    const paymentRef = this.firestore
-      .collection("payments")
-      .doc(bookingId);
-
-    const bookingRef = this.firestore
-      .collection("bookings")
-      .doc(bookingId);
-
-    await this.firestore.runTransaction(
-      async (transaction) => {
-        const paymentSnapshot = await transaction.get(paymentRef);
-
-        if (!paymentSnapshot.exists) {
-          throw new Error("Payment not found.");
-        }
-
-        const payment = paymentFromFirestore(
-          paymentSnapshot.id,
-          paymentSnapshot.data()!,
-        );
-
-        // Idempotency:
-        // If the payment is already paid, there is nothing else to do.
-        if (payment.status === PaymentStatus.paid) return;
-
-        if (
-          payment.status !== PaymentStatus.pending &&
-          payment.status !== PaymentStatus.processing
-        ) {
-          throw new Error(
-            "Payment cannot be marked as paid from its current status.",
-          );
-        }
-
-        ProviderValidator.validateProviderName(
-          provider,
-        );
-
-        ProviderValidator.validateProviderPaymentId(
-          providerPaymentId,
-        );
-
-        const bookingSnapshot = await transaction.get(bookingRef);
-
-        if (!bookingSnapshot.exists) {
-          throw new Error("Booking not found.");
-        }
-
-        const booking = bookingSnapshot.data();
-
-        if (
-          booking?.studentId !== payment.studentId
-        ) {
-          throw new Error(
-            "Payment student does not match booking.",
-          );
-        }
-
-        if (
-          booking?.tutorId !== payment.tutorId
-        ) {
-          throw new Error(
-            "Payment tutor does not match booking.",
-          );
-        }
-
-        if (
-          typeof booking.priceCents !== "number" ||
-          booking.priceCents !== payment.amountCents
-        ) {
-          throw new Error(
-            "Payment amount does not match booking price.",
-          );
-        }
-
-        if (
-          booking.status !== BookingStatus.paymentRequired
-        ) {
-          throw new Error(
-            "Booking is not awaiting payment.",
-          );
-        }
-
-        transaction.update(paymentRef, {
-          status: PaymentStatus.paid,
-          provider,
-          providerPaymentId,
-          paidAt: FieldValue.serverTimestamp(),
-          updatedAt: FieldValue.serverTimestamp(),
-          failureReason: null,
-        });
-
-        transaction.update(bookingRef, {
-          status: BookingStatus.confirmed,
-          updatedAt: FieldValue.serverTimestamp(),
-        });
-      },
-    );
   }
 
   async markFailed({
@@ -466,32 +257,142 @@ export class PaymentService {
     });
   }
 
-  private validateExpectedProviderPayoutId(
-      payment: Payment,
-      expectedProviderPayoutId: string | undefined,
-    ): void {
-      /*
-       * Internal callers (e.g. initiatePayout, before the
-       * provider has been contacted) omit this and skip
-       * the check entirely.
-       */
-      if (expectedProviderPayoutId === undefined) {
-        return;
-      }
-  
-      if (payment.providerPaymentId === null) {
-        throw new Error(
-          "Payout has no provider payout ID attached yet.",
-        );
-      }
-  
-      if (
-        payment.providerPaymentId !==
-        expectedProviderPayoutId
-      ) {
-        throw new Error(
-          "Provider payout ID does not match the payout.",
-        );
-      }
+  async findStuckPaymentCandidates(
+    stuckThresholdMs: number,
+  ): Promise<Payment[]> {
+    const cutoff = new Date(
+      Date.now() - stuckThresholdMs,
+    );
+
+    const snapshot = await this.firestore
+      .collection("payments")
+      .where(
+        "status",
+        "==",
+        PaymentStatus.processing,
+      )
+      .where(
+        "updatedAt",
+        "<=",
+        cutoff,
+      )
+      .get();
+
+    return snapshot.docs.map((doc) =>
+      paymentFromFirestore(
+        doc.id,
+        doc.data(),
+      ),
+    );
+  }
+
+  async markStuck(
+    paymentId: string,
+  ): Promise<void> {
+    const paymentRef = this.firestore
+      .collection("payments")
+      .doc(paymentId);
+
+    await this.firestore.runTransaction(
+      async (transaction) => {
+        const snapshot =
+          await transaction.get(
+            paymentRef,
+          );
+
+        if (!snapshot.exists) {
+          throw new Error(
+            "Payment not found.",
+          );
+        }
+
+        const data = snapshot.data()!;
+
+        /*
+         * Idempotent.
+         */
+        if (
+          data.status ===
+          PaymentStatus.stuck
+        ) {
+          return;
+        }
+
+        if (
+          data.status !==
+          PaymentStatus.processing
+        ) {
+          throw new Error(
+            `Payment cannot become stuck from ${data.status}.`,
+          );
+        }
+
+        transaction.update(paymentRef, {
+          status: PaymentStatus.stuck,
+          updatedAt:
+            FieldValue.serverTimestamp(),
+        });
+      },
+    );
+  }
+
+  /*
+   * Operator confirmed (via provider dashboard/support)
+   * that the student's charge never actually went
+   * through. Terminal — unlike payout, there is no safe
+   * automatic retry here; the student must re-initiate
+   * checkout, which createPayment already handles on its
+   * own via a fresh call.
+   */
+  async resolvePaymentAsFailed(
+    bookingId: string,
+    resolutionNote: string,
+  ): Promise<void> {
+    if (!resolutionNote.trim()) {
+      throw new Error(
+        "Resolution note cannot be empty.",
+      );
     }
+
+    const paymentRef = this.firestore
+      .collection("payments")
+      .doc(bookingId);
+
+    await this.firestore.runTransaction(
+      async (transaction) => {
+        const snapshot =
+          await transaction.get(
+            paymentRef,
+          );
+
+        if (!snapshot.exists) {
+          throw new Error(
+            "Payment not found.",
+          );
+        }
+
+        const data = snapshot.data()!;
+
+        if (
+          data.status !==
+          PaymentStatus.stuck
+        ) {
+          throw new Error(
+            "Only a stuck payment can be resolved as failed.",
+          );
+        }
+
+        const note =
+          resolutionNote.trim();
+
+        transaction.update(paymentRef, {
+          status: PaymentStatus.failed,
+          failureReason:
+            `Resolved from stuck: ${note}`,
+          updatedAt:
+            FieldValue.serverTimestamp(),
+        });
+      },
+    );
+  }
 }

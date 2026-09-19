@@ -125,7 +125,9 @@ export class PaymentSuccessService {
           payment.status !==
             PaymentStatus.pending &&
           payment.status !==
-            PaymentStatus.processing
+            PaymentStatus.processing &&
+          payment.status !== 
+            PaymentStatus.stuck
         ) {
           throw new Error(
             "Payment cannot be marked as paid from its current status.",

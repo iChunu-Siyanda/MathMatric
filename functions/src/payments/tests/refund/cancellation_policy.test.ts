@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { CancellationPolicy } from "../refund/cancellation_policy";
+import { CancellationPolicy } from "../../refund/cancellation_policy";
 import {
   RefundDecisionType,
-} from "../refund/refund_decision";
+} from "../../refund/refund_decision";
 
 describe("CancellationPolicy", () => {
   const policy = new CancellationPolicy();

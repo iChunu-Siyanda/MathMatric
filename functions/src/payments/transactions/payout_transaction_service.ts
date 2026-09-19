@@ -258,12 +258,11 @@ export class PayoutTransactionService {
     );
   }
 
-  async markSucceededInTransaction(
+  async readForMarkSucceededInTransaction(
     firestoreTransaction: FirestoreTransaction,
     payout: TutorPayout,
   ): Promise<Transaction> {
-    const transactionId =
-      `payout-${payout.id}`;
+    const transactionId = `payout-${payout.id}`;
 
     const transaction =
       await this.getTransaction(
@@ -276,7 +275,17 @@ export class PayoutTransactionService {
       payout,
     );
 
-    // Idempotent.
+    return transaction;
+  }
+
+  markSucceededFromReadResultInTransaction(
+    firestoreTransaction: FirestoreTransaction,
+    payout: TutorPayout,
+    transaction: Transaction,
+  ): Transaction {
+    /*
+     * Idempotent.
+     */
     if (
       transaction.status ===
       TransactionStatus.completed
@@ -296,10 +305,9 @@ export class PayoutTransactionService {
     const transactionRef =
       this.firestore
         .collection("transactions")
-        .doc(transactionId);
+        .doc(`payout-${payout.id}`);
 
-    const completedAt =
-      new Date();
+    const completedAt = new Date();
 
     firestoreTransaction.update(
       transactionRef,
@@ -316,6 +324,23 @@ export class PayoutTransactionService {
         TransactionStatus.completed,
       completedAt,
     };
+  }
+
+  async markSucceededInTransaction(
+    firestoreTransaction: FirestoreTransaction,
+    payout: TutorPayout,
+  ): Promise<Transaction> {
+    const transaction =
+      await this.readForMarkSucceededInTransaction(
+        firestoreTransaction,
+        payout,
+      );
+
+    return this.markSucceededFromReadResultInTransaction(
+      firestoreTransaction,
+      payout,
+      transaction,
+    );
   }
 
   async markFailedInTransaction(

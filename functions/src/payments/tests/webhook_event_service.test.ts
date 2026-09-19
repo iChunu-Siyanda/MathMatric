@@ -20,7 +20,7 @@ describe("WebhookEventService", () => {
 
   beforeEach(() => {
     firestore = createMockFirestore();
-    service = new WebhookEventService(firestore as any,);
+    service = new WebhookEventService(firestore as any,"paymentWebhookEvents");
   });
 
   describe("startProcessing", () => {

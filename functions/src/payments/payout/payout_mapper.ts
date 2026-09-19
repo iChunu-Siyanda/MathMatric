@@ -9,6 +9,7 @@ function isPayoutStatus(
     value === PayoutStatus.processing ||
     value === PayoutStatus.succeeded ||
     value === PayoutStatus.failed ||
+    value === PayoutStatus.stuck ||
     value === PayoutStatus.cancelled
   );
 }

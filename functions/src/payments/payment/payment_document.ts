@@ -1,23 +1,23 @@
-import { Timestamp } from "firebase-admin/firestore";
-import { PaymentStatus } from "./payment_entity";
+// import { Timestamp } from "firebase-admin/firestore";
+// import { PaymentStatus } from "./payment_entity";
 
-export interface PaymentDocument {
-  bookingId: string;
-  studentId: string;
-  tutorId: string;
+// export interface PaymentDocument {
+//   bookingId: string;
+//   studentId: string;
+//   tutorId: string;
 
-  amountCents: number;
-  refundedAmountCents: number;
-  currency: "ZAR";
+//   amountCents: number;
+//   refundedAmountCents: number;
+//   currency: "ZAR";
 
-  status: PaymentStatus;
+//   status: PaymentStatus;
 
-  provider: string | null;
-  providerPaymentId: string | null;
+//   provider: string | null;
+//   providerPaymentId: string | null;
 
-  createdAt: Timestamp;
-  updatedAt: Timestamp;
+//   createdAt: Timestamp;
+//   updatedAt: Timestamp;
 
-  paidAt: Timestamp | null;
-  failureReason: string | null;
-}
+//   paidAt: Timestamp | null;
+//   failureReason: string | null;
+// }
