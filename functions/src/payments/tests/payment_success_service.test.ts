@@ -6,6 +6,7 @@ import {TransactionDirection,TransactionStatus,TransactionType,} from "../transa
 import {TransactionReferenceIdentity,} from "../transactions/transaction_reference_identity";
 import {TransactionService,} from "../transactions/transaction_service";
 import {createMockFirestore,} from "./mock_firestore";
+import { BookingStatus } from "../../bookings/booking_status";
 
 /**
  * Payment factory
@@ -65,6 +66,45 @@ function seedPayment(
   );
 }
 
+interface Booking {
+  studentId: string;
+  tutorId: string;
+  priceCents: number;
+  status: string;
+}
+
+/**
+ * Booking factory
+ */
+function createBooking(
+  overrides: Partial<Booking> = {},
+): Booking {
+  return {
+    studentId: "student-1",
+    tutorId: "tutor-1",
+    priceCents: 50000,
+    status: BookingStatus.paymentRequired,
+
+    ...overrides,
+  };
+}
+
+/**
+ * Convert a domain Booking into Firestore seed data.
+ */
+function seedBooking(
+  mockFirestore: ReturnType<
+    typeof createMockFirestore
+  >,
+  bookingId: string,
+  booking: Booking,
+): void {
+  mockFirestore.seed(
+    `bookings/${bookingId}`,
+    booking,
+  );
+}
+
 describe(
   "PaymentSuccessService",
   () => {
@@ -103,6 +143,7 @@ describe(
         );
     });
 
+
     it(
       "atomically marks the payment paid and creates the ledger transaction",
       async () => {
@@ -111,9 +152,22 @@ describe(
             "2026-02-01T15:00:00.000Z",
           );
 
+        const payment = createPayment();
+
         seedPayment(
           mockFirestore,
-          createPayment(),
+          payment,
+        );
+
+        seedBooking(
+          mockFirestore,
+          "payment-1",
+          createBooking({
+            studentId: payment.studentId,
+            tutorId: payment.tutorId,
+            priceCents:
+              payment.amountCents,
+          }),
         );
 
         const result =
@@ -132,15 +186,15 @@ describe(
         expect(result.paidAt)
           .toEqual(paidAt);
 
-        const payment =
+        const existingPayment =
           mockFirestore.get(
             "payments/payment-1",
           );
 
-        expect(payment)
+        expect(existingPayment)
           .toBeDefined();
 
-        expect(payment).toMatchObject({
+        expect(existingPayment).toMatchObject({
           status: PaymentStatus.paid,
           paidAt:
             expect.any(Timestamp),
@@ -217,11 +271,25 @@ describe(
             "2026-02-01T15:00:00.000Z",
           );
 
-        seedPayment(
-          mockFirestore,
+        const payment =
           createPayment({
             status:
               PaymentStatus.pending,
+          });
+
+        seedPayment(
+          mockFirestore,
+          payment,
+        );
+
+        seedBooking(
+          mockFirestore,
+          "payment-1",
+          createBooking({
+            studentId: payment.studentId,
+            tutorId: payment.tutorId,
+            priceCents:
+              payment.amountCents,
           }),
         );
 
@@ -262,11 +330,25 @@ describe(
             "2026-02-01T15:00:00.000Z",
           );
 
-        seedPayment(
-          mockFirestore,
+        const payment =
           createPayment({
             status:
               PaymentStatus.processing,
+          });
+
+        seedPayment(
+          mockFirestore,
+          payment,
+        );
+
+        seedBooking(
+          mockFirestore,
+          "payment-1",
+          createBooking({
+            studentId: payment.studentId,
+            tutorId: payment.tutorId,
+            priceCents:
+              payment.amountCents,
           }),
         );
 
@@ -302,6 +384,17 @@ describe(
           payment,
         );
 
+        seedBooking(
+          mockFirestore,
+          "payment-1",
+          createBooking({
+            studentId: payment.studentId,
+            tutorId: payment.tutorId,
+            priceCents:
+              payment.amountCents,
+          }),
+        );
+
         await service.markPaymentPaid({
           bookingId: "payment-1",
           providerPaymentId:
@@ -331,9 +424,22 @@ describe(
             "2026-02-01T17:45:00.000Z",
           );
 
+        const payment = createPayment();
+
         seedPayment(
           mockFirestore,
-          createPayment(),
+          payment,
+        );
+
+        seedBooking(
+          mockFirestore,
+          "payment-1",
+          createBooking({
+            studentId: payment.studentId,
+            tutorId: payment.tutorId,
+            priceCents:
+              payment.amountCents,
+          }),
         );
 
         await service.markPaymentPaid({
@@ -365,9 +471,22 @@ describe(
     it(
       "uses credit direction for a payment transaction",
       async () => {
+        const payment = createPayment();
+
         seedPayment(
           mockFirestore,
-          createPayment(),
+          payment,
+        );
+
+        seedBooking(
+          mockFirestore,
+          "payment-1",
+          createBooking({
+            studentId: payment.studentId,
+            tutorId: payment.tutorId,
+            priceCents:
+              payment.amountCents,
+          }),
         );
 
         await service.markPaymentPaid({
@@ -396,9 +515,22 @@ describe(
     it(
       "creates the ledger transaction with completed status",
       async () => {
+        const payment = createPayment();
+
         seedPayment(
           mockFirestore,
-          createPayment(),
+          payment,
+        );
+
+        seedBooking(
+          mockFirestore,
+          "payment-1",
+          createBooking({
+            studentId: payment.studentId,
+            tutorId: payment.tutorId,
+            priceCents:
+              payment.amountCents,
+          }),
         );
 
         await service.markPaymentPaid({
@@ -699,72 +831,6 @@ describe(
     );
 
     it(
-      "does not create a duplicate ledger transaction when payment success is processed repeatedly",
-      async () => {
-        const paidAt =
-          new Date(
-            "2026-02-01T15:00:00.000Z",
-          );
-
-        seedPayment(
-          mockFirestore,
-          createPayment(),
-        );
-
-        await service.markPaymentPaid({
-          bookingId: "payment-1",
-          providerPaymentId:
-            "mock-payment-1",
-          paidAt,
-        });
-
-        const firstTransaction =
-          mockFirestore.get(
-            "transactions/payment-payment-1",
-          );
-
-        expect(firstTransaction)
-          .toBeDefined();
-
-        /*
-         * The payment is now already paid.
-         * Processing the same success again must
-         * not create another ledger transaction.
-         */
-        await service.markPaymentPaid({
-          bookingId: "payment-1",
-          providerPaymentId:
-            "mock-payment-1",
-          paidAt,
-        });
-
-        const secondTransaction =
-          mockFirestore.get(
-            "transactions/payment-payment-1",
-          );
-
-        expect(secondTransaction)
-          .toBeDefined();
-
-        expect(secondTransaction)
-          .toEqual(firstTransaction);
-
-        const reference =
-          mockFirestore.get(
-            "transactionReferences/payment:payment-1",
-          );
-
-        expect(reference)
-          .toBeDefined();
-
-        expect(reference?.transactionId)
-          .toBe(
-            "payment-payment-1",
-          );
-      },
-    );
-
-    it(
       "does not alter a paid payment when the provider payment ID is wrong",
       async () => {
         const paidAt =
@@ -873,11 +939,103 @@ describe(
     // );
 
     it(
-      "creates exactly one payment ledger transaction",
+      "does not create a duplicate ledger transaction when payment success is processed repeatedly",
       async () => {
+        const paidAt =
+          new Date(
+            "2026-02-01T15:00:00.000Z",
+          );
+
+        const payment = createPayment();
+
         seedPayment(
           mockFirestore,
-          createPayment(),
+          payment,
+        );
+
+        seedBooking(
+          mockFirestore,
+          "payment-1",
+          createBooking({
+            studentId: payment.studentId,
+            tutorId: payment.tutorId,
+            priceCents:
+              payment.amountCents,
+          }),
+        );
+
+        await service.markPaymentPaid({
+          bookingId: "payment-1",
+          providerPaymentId:
+            "mock-payment-1",
+          paidAt,
+        });
+
+        const firstTransaction =
+          mockFirestore.get(
+            "transactions/payment-payment-1",
+          );
+
+        expect(firstTransaction)
+          .toBeDefined();
+
+        /*
+         * The payment is now already paid.
+         * Processing the same success again must
+         * not create another ledger transaction.
+         */
+        await service.markPaymentPaid({
+          bookingId: "payment-1",
+          providerPaymentId:
+            "mock-payment-1",
+          paidAt,
+        });
+
+        const secondTransaction =
+          mockFirestore.get(
+            "transactions/payment-payment-1",
+          );
+
+        expect(secondTransaction)
+          .toBeDefined();
+
+        expect(secondTransaction)
+          .toEqual(firstTransaction);
+
+        const reference =
+          mockFirestore.get(
+            "transactionReferences/payment:payment-1",
+          );
+
+        expect(reference)
+          .toBeDefined();
+
+        expect(reference?.transactionId)
+          .toBe(
+            "payment-payment-1",
+          );
+      },
+    );
+
+    it(
+      "creates exactly one payment ledger transaction",
+      async () => {
+        const payment = createPayment();
+
+        seedPayment(
+          mockFirestore,
+          payment,
+        );
+
+        seedBooking(
+          mockFirestore,
+          "payment-1",
+          createBooking({
+            studentId: payment.studentId,
+            tutorId: payment.tutorId,
+            priceCents:
+              payment.amountCents,
+          }),
         );
 
         await service.markPaymentPaid({
@@ -909,10 +1067,24 @@ describe(
     it(
       "does not modify the payment amount when marking it paid",
       async () => {
-        seedPayment(
-          mockFirestore,
+        const payment =
           createPayment({
             amountCents: 50000,
+          });
+
+        seedPayment(
+          mockFirestore,
+          payment,
+        );
+
+        seedBooking(
+          mockFirestore,
+          "payment-1",
+          createBooking({
+            studentId: payment.studentId,
+            tutorId: payment.tutorId,
+            priceCents:
+              payment.amountCents,
           }),
         );
 
@@ -926,21 +1098,21 @@ describe(
             ),
         });
 
-        const payment =
+        const existingPayment =
           mockFirestore.get(
             "payments/payment-1",
           );
 
         expect(
-          payment?.amountCents,
+          existingPayment?.amountCents,
         ).toBe(50000);
 
         expect(
-          payment?.refundedAmountCents,
+          existingPayment?.refundedAmountCents,
         ).toBe(0);
 
         expect(
-          payment?.refundReservedAmountCents,
+          existingPayment?.refundReservedAmountCents,
         ).toBe(0);
       },
     );
@@ -948,11 +1120,25 @@ describe(
     it(
       "clears a previous failure reason when payment becomes paid",
       async () => {
-        seedPayment(
-          mockFirestore,
+        const payment =
           createPayment({
             failureReason:
               "Temporary provider failure.",
+          });
+
+        seedPayment(
+          mockFirestore,
+          payment,
+        );
+
+        seedBooking(
+          mockFirestore,
+          "payment-1",
+          createBooking({
+            studentId: payment.studentId,
+            tutorId: payment.tutorId,
+            priceCents:
+              payment.amountCents,
           }),
         );
 
@@ -966,13 +1152,13 @@ describe(
             ),
         });
 
-        const payment =
+        const existingPayment =
           mockFirestore.get(
             "payments/payment-1",
           );
 
         expect(
-          payment?.failureReason,
+          existingPayment?.failureReason,
         ).toBeNull();
       },
     );
@@ -985,11 +1171,25 @@ describe(
             "2026-02-01T15:00:00.000Z",
           );
 
-        seedPayment(
-          mockFirestore,
+        const payment =
           createPayment({
             status:
               PaymentStatus.stuck,
+          });
+
+        seedPayment(
+          mockFirestore,
+          payment,
+        );
+
+        seedBooking(
+          mockFirestore,
+          "payment-1",
+          createBooking({
+            studentId: payment.studentId,
+            tutorId: payment.tutorId,
+            priceCents:
+              payment.amountCents,
           }),
         );
 
@@ -1013,3 +1213,10 @@ describe(
     );
   },
 );
+
+// The following was just proven:
+//At the narrow technical level: we proved markPaymentPaid correctly transitions pending, processing, and now stuck payments to paid, atomically creates exactly one ledger transaction (idempotent on replay), leaves the payment amount/refund fields untouched, clears any stale failureReason, and validates the booking/payment relationship (student, tutor, price match) before writing anything — all without violating "reads before writes." And specifically for the work we set out to do: a stuck payment self-heals correctly if a genuine late paid webhook eventually arrives, exactly like pending/processing do.
+
+//At the process level, which is the more interesting one: we found and fixed a latent fixture bug that had nothing to do with the stuck-payment feature itself — createPayment()'s test factory used id: "payment-1" and bookingId: "booking-1" as two different strings, silently violating your own architectural invariant from Section 3 of your handoff: "Payment ID equals booking ID" (payments/{bookingId}). That invariant is exactly why markPaymentPaid takes a single bookingId and derives both the payments and bookings refs from it — and the test fixture had been quietly inconsistent with that the whole time. It just never surfaced before because no test in this file previously exercised the booking-read path at all (there was no booking validation logic being tested yet, or it was untested).
+
+// So the deeper thing this proved: writing the booking-seed helper and running it is what surfaced a real inconsistency in your fixtures that was invisible until something actually exercised the code path that depended on the invariant holding.

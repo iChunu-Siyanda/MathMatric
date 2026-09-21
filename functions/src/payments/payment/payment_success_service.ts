@@ -72,24 +72,6 @@ export class PaymentSuccessService {
             paymentData,
           );
 
-        const bookingSnapshot =
-          await transaction.get(bookingRef);
-
-        if (!bookingSnapshot.exists) {
-          throw new Error(
-            "Booking does not exist.",
-          );
-        }
-
-        const bookingData =
-          bookingSnapshot.data();
-
-        if (!bookingData) {
-          throw new Error(
-            "Booking data is missing.",
-          );
-        }
-
         /*
          * ==================================================
          * PAYMENT VALIDATION
@@ -139,6 +121,24 @@ export class PaymentSuccessService {
          * BOOKING VALIDATION
          * ==================================================
          */
+
+        const bookingSnapshot =
+          await transaction.get(bookingRef);
+
+        if (!bookingSnapshot.exists) {
+          throw new Error(
+            "Booking does not exist.",
+          );
+        }
+
+        const bookingData =
+          bookingSnapshot.data();
+
+        if (!bookingData) {
+          throw new Error(
+            "Booking data is missing.",
+          );
+        }
 
         if (
           bookingData.status !==

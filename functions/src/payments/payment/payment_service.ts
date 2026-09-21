@@ -242,7 +242,8 @@ export class PaymentService {
 
       if (
         payment.status !== PaymentStatus.pending &&
-        payment.status !== PaymentStatus.processing
+        payment.status !== PaymentStatus.processing &&
+        payment.status !== PaymentStatus.stuck
       ) {
         throw new Error(
           `Payment cannot be marked failed from ${payment.status}.`,
@@ -266,16 +267,8 @@ export class PaymentService {
 
     const snapshot = await this.firestore
       .collection("payments")
-      .where(
-        "status",
-        "==",
-        PaymentStatus.processing,
-      )
-      .where(
-        "updatedAt",
-        "<=",
-        cutoff,
-      )
+      .where("status","==",PaymentStatus.processing,)
+      .where("updatedAt","<=",cutoff,)
       .get();
 
     return snapshot.docs.map((doc) =>
