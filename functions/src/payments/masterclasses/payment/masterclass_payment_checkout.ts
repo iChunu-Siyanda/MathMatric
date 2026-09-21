@@ -1,4 +1,4 @@
-import { MasterclassPayment } from "../masterclass/masterclass_payment_entity";
+import { MasterclassPayment } from "./masterclass_payment_entity";
 
 export interface MasterclassPaymentCheckout {
   payment: MasterclassPayment;

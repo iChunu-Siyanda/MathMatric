@@ -1,5 +1,5 @@
 import { MasterclassEnrollment, MasterclassEnrollmentStatus } from "../enrollment/masterclass_enrollment_entity";
-import { MasterclassPayment, MasterclassPaymentStatus } from "../masterclass/masterclass_payment_entity";
+import { MasterclassPayment, MasterclassPaymentStatus } from "../payment/masterclass_payment_entity";
 import { PlatformFeeCalculator } from "../../payout/platform_fee_calculator";
 
 const REFUND_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;

@@ -1,22 +1,22 @@
 import { Timestamp } from "firebase-admin/firestore";
 import {
-  MasterclassPayment,
-  MasterclassPaymentStatus,
-} from "./masterclass_payment_entity";
+  MasterclassPayout,
+  MasterclassPayoutStatus,
+} from "./masterclass_payout_entity";
 
-export function masterclassPaymentFromFirestore(
+export function masterclassPayoutFromFirestore(
   id: string,
   data: FirebaseFirestore.DocumentData,
-): MasterclassPayment {
+): MasterclassPayout {
   if (!(data.createdAt instanceof Timestamp)) {
     throw new Error(
-      "Masterclass payment createdAt is invalid.",
+      "Masterclass payout createdAt is invalid.",
     );
   }
 
   if (!(data.updatedAt instanceof Timestamp)) {
     throw new Error(
-      "Masterclass payment updatedAt is invalid.",
+      "Masterclass payout updatedAt is invalid.",
     );
   }
 
@@ -26,25 +26,25 @@ export function masterclassPaymentFromFirestore(
     data.amountCents <= 0
   ) {
     throw new Error(
-      "Masterclass payment amountCents is invalid.",
+      "Masterclass payout amountCents is invalid.",
     );
   }
 
   if (
-    !Object.values(MasterclassPaymentStatus).includes(
+    !Object.values(MasterclassPayoutStatus).includes(
       data.status,
     )
   ) {
     throw new Error(
-      "Masterclass payment status is invalid.",
+      "Masterclass payout status is invalid.",
     );
   }
 
   return {
     id,
     enrollmentId: data.enrollmentId,
+    paymentId: data.paymentId,
     masterclassId: data.masterclassId,
-    studentId: data.studentId,
     tutorId: data.tutorId,
 
     amountCents: data.amountCents,
@@ -53,14 +53,14 @@ export function masterclassPaymentFromFirestore(
     status: data.status,
 
     provider: data.provider ?? null,
-    providerPaymentId: data.providerPaymentId ?? null,
+    providerPayoutId: data.providerPayoutId ?? null,
 
     createdAt: data.createdAt.toDate(),
     updatedAt: data.updatedAt.toDate(),
 
-    paidAt:
-      data.paidAt instanceof Timestamp
-        ? data.paidAt.toDate()
+    completedAt:
+      data.completedAt instanceof Timestamp
+        ? data.completedAt.toDate()
         : null,
 
     failureReason: data.failureReason ?? null,

@@ -2,7 +2,7 @@ import { FieldValue, Firestore } from "firebase-admin/firestore";
 import {
   MasterclassPayment,
   MasterclassPaymentStatus,
-} from "../masterclass/masterclass_payment_entity";
+} from "./masterclass_payment_entity";
 import { masterclassPaymentFromFirestore } from "./masterclass_payment_mapper";
 import { MasterclassEnrollmentStatus } from "../enrollment/masterclass_enrollment_entity";
 import {

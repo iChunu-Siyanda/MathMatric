@@ -2,7 +2,7 @@ import { FieldValue, Firestore } from "firebase-admin/firestore";
 import {
   MasterclassPayment,
   MasterclassPaymentStatus,
-} from "../masterclass/masterclass_payment_entity";
+} from "./masterclass_payment_entity";
 import { masterclassPaymentFromFirestore } from "./masterclass_payment_mapper";
 import { MasterclassEnrollmentStatus } from "../enrollment/masterclass_enrollment_entity";
 import { PaymentProvider } from "../../provider/payment_provider";
@@ -265,6 +265,121 @@ export class MasterclassPaymentService {
           status: MasterclassPaymentStatus.failed,
           failureReason,
           updatedAt: FieldValue.serverTimestamp(),
+        });
+      },
+    );
+  }
+
+  async findStuckPaymentCandidates(
+    stuckThresholdMs: number,
+  ): Promise<MasterclassPayment[]> {
+    const cutoff = new Date(
+      Date.now() - stuckThresholdMs,
+    );
+
+    const snapshot = await this.firestore
+      .collection("masterclassPayments")
+      .where("status","==",MasterclassPaymentStatus.processing,)
+      .where("updatedAt","<=",cutoff,)
+      .get();
+
+    return snapshot.docs.map((doc) =>
+      masterclassPaymentFromFirestore(
+        doc.id,
+        doc.data(),
+      ),
+    );
+  }
+
+  async markStuck(
+    enrollmentId: string,
+  ): Promise<void> {
+    const paymentRef = this.firestore
+      .collection("masterclassPayments")
+      .doc(enrollmentId);
+
+    await this.firestore.runTransaction(
+      async (transaction) => {
+        const snapshot =
+          await transaction.get(paymentRef);
+
+        if (!snapshot.exists) {
+          throw new Error(
+            "Masterclass payment not found.",
+          );
+        }
+
+        const data = snapshot.data()!;
+
+        if (
+          data.status ===
+          MasterclassPaymentStatus.stuck
+        ) {
+          return;
+        }
+
+        if (
+          data.status !==
+          MasterclassPaymentStatus.processing
+        ) {
+          throw new Error(
+            `Masterclass payment cannot become stuck from ${data.status}.`,
+          );
+        }
+
+        transaction.update(paymentRef, {
+          status: MasterclassPaymentStatus.stuck,
+          updatedAt:
+            FieldValue.serverTimestamp(),
+        });
+      },
+    );
+  }
+
+  async resolvePaymentAsFailed(
+    enrollmentId: string,
+    resolutionNote: string,
+  ): Promise<void> {
+    if (!resolutionNote.trim()) {
+      throw new Error(
+        "Resolution note cannot be empty.",
+      );
+    }
+
+    const paymentRef = this.firestore
+      .collection("masterclassPayments")
+      .doc(enrollmentId);
+
+    await this.firestore.runTransaction(
+      async (transaction) => {
+        const snapshot =
+          await transaction.get(paymentRef);
+
+        if (!snapshot.exists) {
+          throw new Error(
+            "Masterclass payment not found.",
+          );
+        }
+
+        const data = snapshot.data()!;
+
+        if (
+          data.status !==
+          MasterclassPaymentStatus.stuck
+        ) {
+          throw new Error(
+            "Only a stuck masterclass payment can be resolved as failed.",
+          );
+        }
+
+        const note = resolutionNote.trim();
+
+        transaction.update(paymentRef, {
+          status: MasterclassPaymentStatus.failed,
+          failureReason:
+            `Resolved from stuck: ${note}`,
+          updatedAt:
+            FieldValue.serverTimestamp(),
         });
       },
     );
