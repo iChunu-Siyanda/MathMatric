@@ -494,4 +494,4 @@ The project is actively under development, with major upcoming work focused on *
 **Siyanda Mchunu**
 
 GitHub: [@iChunu-Siyanda](https://github.com/iChunu-Siyanda)
-LinkedIn: (linkedin.com/in/siyanda-mchunu-ichunu)
+LinkedIn: [Siyanda-Mchunu](https://www.linkedin.com/in/siyanda-mchunu-ichunu/)
