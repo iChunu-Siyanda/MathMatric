@@ -30,6 +30,20 @@ export {
   listStuckPayoutCandidates,
 } from "./payments/payout/payout_admin_actions";
 
+// Masterclass — Student content access
+export {
+  getMasterclassStreamingAccess,
+  getMasterclassDownloadAccess,
+} from "./payments/masterclasses/access/masterclass_content_access_actions";
+
+// Masterclass — Tutor management
+export {
+  createMasterclass,
+  attachMasterclassStreamVideo,
+  publishMasterclass,
+  archiveMasterclass,
+  requestMasterclassUploadUrl,
+} from "./tutorApp/masterclass/masterclass_tutor_actions";
 
 // // Masterclass — Payment
 // export { masterclassPaymentWebhook } from "./payments/webhooks/masterclass_payment_webhook";

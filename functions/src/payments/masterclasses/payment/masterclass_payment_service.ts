@@ -254,7 +254,8 @@ export class MasterclassPaymentService {
           payment.status !==
             MasterclassPaymentStatus.pending &&
           payment.status !==
-            MasterclassPaymentStatus.processing
+            MasterclassPaymentStatus.processing &&
+            payment.status !== MasterclassPaymentStatus.stuck
         ) {
           throw new Error(
             `Masterclass payment cannot be marked failed from ${payment.status}.`,

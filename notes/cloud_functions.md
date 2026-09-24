@@ -1,3 +1,11 @@
+# Register on bash: This will run locally instead of Google Cloud.
+$env:FIRESTORE_EMULATOR_HOST="127.0.0.1:8080"
+$env:GCLOUD_PROJECT="mathmatric-c4bcc"
+$env:FIREBASE_CONFIG='{"projectId":"mathmatric-c4bcc"}'
+
+# Runf Firestore Emulators:
+firebase emulators:start --only firestore
+
 # Django Vs Cloud Functions:
 | Django           | Cloud Functions                   |
 | ---------------- | --------------------------------- |

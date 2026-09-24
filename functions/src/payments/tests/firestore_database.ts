@@ -13,6 +13,8 @@ export interface FirestoreDocumentReference {
   collection(
     collectionName: string,
   ): FirestoreCollectionReference;
+
+  get(): Promise<FirestoreDocumentSnapshot>;
 }
 
 export interface FirestoreCollectionReference {

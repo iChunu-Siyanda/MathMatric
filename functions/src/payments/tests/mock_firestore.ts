@@ -148,11 +148,27 @@ export function createMockFirestore() {
       },
     );
 
+    const get = vi.fn(
+      async (): Promise<MockDocumentSnapshot> => {
+        const document = documents.get(path);
+
+        return {
+          exists: document !== undefined,
+          id: documentId,
+          data: () =>
+            document === undefined
+              ? undefined
+              : { ...document },
+        };
+      },
+    );
+
     return {
       id: documentId,
       path,
       update,
       collection,
+      get,
     };
   };
 

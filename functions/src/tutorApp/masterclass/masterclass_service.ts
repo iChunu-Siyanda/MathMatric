@@ -69,20 +69,24 @@ export class MasterclassService {
       updatedAt: now,
     };
 
-    await masterclassRef.set({
-      tutorId,
-      title: masterclass.title,
-      description: masterclass.description,
-      subjectId,
-      topicIds,
-      examPaperId,
-      priceCents,
-      currency: "ZAR",
-      streamVideoId: null,
-      status: MasterclassStatus.draft,
-      createdAt: FieldValue.serverTimestamp(),
-      updatedAt: FieldValue.serverTimestamp(),
-    });
+    await this.firestore.runTransaction(
+      async (transaction) => {
+        transaction.create(masterclassRef, {
+          tutorId,
+          title: masterclass.title,
+          description: masterclass.description,
+          subjectId,
+          topicIds,
+          examPaperId,
+          priceCents,
+          currency: "ZAR",
+          streamVideoId: null,
+          status: MasterclassStatus.draft,
+          createdAt: FieldValue.serverTimestamp(),
+          updatedAt: FieldValue.serverTimestamp(),
+        });
+      },
+    );
 
     return masterclass;
   }
